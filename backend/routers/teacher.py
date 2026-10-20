@@ -1,0 +1,434 @@
+"""教师相关路由：CSV 批量导入学生、重置学生密码、审计日志查询、班级/学生列表。"""
+
+import csv
+import io
+import json
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from pydantic import BaseModel
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import Session
+
+from database import get_db
+from deps import CurrentUser, get_current_teacher
+from llm_service import DEFAULT_SYSTEM_PROMPT
+from agent_service import SUBJECT_NAMES
+from models import AgentConfig, AuditLog, Class, Role, User
+from security import generate_initial_password, hash_password
+from services import require_teacher_classes, write_audit_log
+
+router = APIRouter(prefix="/api/teacher", tags=["teacher"])
+
+REQUIRED_COLUMN = "学号"
+NAME_COLUMNS = ("学生姓名", "姓名")
+PHONE_COLUMN = "手机号"
+CLASS_COLUMN = "班级"
+
+
+class ImportResult(BaseModel):
+    total_rows: int
+    created: int
+    updated: int
+    message: str
+
+
+class ResetPasswordRequest(BaseModel):
+    student_id: int
+
+
+class ResetPasswordResponse(BaseModel):
+    message: str
+    initial_password: str
+
+
+@router.post("/import-students", response_model=ImportResult)
+async def import_students(
+    file: UploadFile = File(...),
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+):
+    tc = require_teacher_classes(current.teaching_classes)
+    # Excel 导出的 CSV 常带 BOM，使用 utf-8-sig 兼容
+    raw = await file.read()
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="文件编码不支持，请使用 UTF-8 编码的 CSV 文件",
+        )
+
+    reader = csv.DictReader(io.StringIO(text))
+    headers = reader.fieldnames or []
+    if REQUIRED_COLUMN not in headers:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='CSV 格式错误：缺少必需的"学号"列',
+        )
+
+    name_column = next((c for c in NAME_COLUMNS if c in headers), None)
+    created = 0
+    updated = 0
+    total_rows = 0
+
+    # 全部操作在单事务中执行，任一行失败则整体回滚
+    try:
+        for line_no, row in enumerate(reader, start=2):  # 表头为第 1 行
+            identifier = (row.get(REQUIRED_COLUMN) or "").strip()
+            if not identifier:
+                raise ValueError(f"第 {line_no} 行：学号不能为空")
+
+            name = (row.get(name_column) or "").strip() if name_column else None
+            phone = (row.get(PHONE_COLUMN) or "").strip() if PHONE_COLUMN in headers else ""
+            class_name = (
+                (row.get(CLASS_COLUMN) or "").strip() if CLASS_COLUMN in headers else ""
+            )
+
+            class_id = None
+            if class_name:
+                clazz = db.query(Class).filter_by(name=class_name).one_or_none()
+                if clazz is None:
+                    raise HTTPException(status_code=403, detail=f"第 {line_no} 行：只能导入已分配的任教班级")
+                class_id = clazz.id
+                if class_id not in tc:
+                    raise HTTPException(status_code=403, detail=f"第 {line_no} 行：无权导入非任教班级")
+
+            student = (
+                db.query(User)
+                .filter_by(role=Role.student, identifier=identifier)
+                .one_or_none()
+            )
+            if student is None:
+                if class_id is None:
+                    raise ValueError(f"第 {line_no} 行：新学生必须填写任教班级")
+                student = User(
+                    role=Role.student,
+                    identifier=identifier,
+                    password_hash=hash_password(generate_initial_password(identifier)),
+                    phone=phone or None,
+                    name=name or None,
+                    class_id=class_id,
+                    must_change_password=True,
+                )
+                db.add(student)
+                created += 1
+            else:
+                # 即使 CSV 省略班级或写入本人任教班级，也不能接管其他班学生。
+                if student.class_id not in tc:
+                    raise HTTPException(status_code=403, detail=f"第 {line_no} 行：无权修改非任教班级学生")
+                # 复用已有账号：更新手机号（含绑定）、姓名、班级
+                if phone:
+                    student.phone = phone
+                if name:
+                    student.name = name
+                if class_id is not None:
+                    student.class_id = class_id
+                updated += 1
+
+            total_rows += 1
+
+        db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+    except Exception:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="导入失败，所有数据已回滚",
+        )
+
+    return ImportResult(
+        total_rows=total_rows,
+        created=created,
+        updated=updated,
+        message=f"导入完成：新建 {created} 个账号，更新 {updated} 个账号",
+    )
+
+
+# ---------------------------------------------------------------------------
+# 班级与学生列表（数据隔离：仅返回 teaching_classes 范围内数据）
+# ---------------------------------------------------------------------------
+
+
+class ClassItem(BaseModel):
+    id: int
+    name: str
+
+
+class StudentItem(BaseModel):
+    id: int
+    identifier: str
+    name: str | None = None
+    class_id: int | None = None
+    class_name: str | None = None
+    phone: str | None = None
+
+
+class StudentListResponse(BaseModel):
+    items: list[StudentItem]
+    total: int
+
+
+@router.get("/classes", response_model=list[ClassItem])
+def list_classes(
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+):
+    """返回教师任教班级列表（仅 teaching_classes 范围内）。
+
+    无班级边界处理：teaching_classes 为空时返回 403。
+    """
+    tc = require_teacher_classes(current.teaching_classes)
+    rows = db.query(Class).filter(Class.id.in_(tc)).all()
+    return [ClassItem(id=c.id, name=c.name) for c in rows]
+
+
+@router.get("/students", response_model=StudentListResponse)
+def list_students(
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+    class_id: int | None = Query(None),
+):
+    """返回教师任教班级的学生列表（数据隔离：WHERE class_id IN teaching_classes）。
+
+    无班级边界处理：teaching_classes 为空时返回 403。
+    跨班访问拦截：请求参数 class_id 不在 teaching_classes 中时返回 403。
+    """
+    tc = require_teacher_classes(current.teaching_classes)
+    # 不信任请求体中的 class_id：即使传入也必须 IN teaching_classes
+    if class_id is not None and class_id not in tc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="无权查看非任教班级的学生",
+        )
+    target_classes = [class_id] if class_id is not None else tc
+
+    rows = (
+        db.query(User, Class.name)
+        .outerjoin(Class, User.class_id == Class.id)
+        .filter(
+            User.role == Role.student,
+            User.class_id.in_(target_classes),
+        )
+        .all()
+    )
+    return StudentListResponse(
+        items=[
+            StudentItem(
+                id=u.id,
+                identifier=u.identifier,
+                name=u.name,
+                class_id=u.class_id,
+                class_name=cname,
+                phone=u.phone,
+            )
+            for u, cname in rows
+        ],
+        total=len(rows),
+    )
+
+
+@router.post("/reset-password", response_model=ResetPasswordResponse)
+def reset_password(
+    body: ResetPasswordRequest,
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+):
+    """将学生密码重置为初始密码，并重新置 must_change_password=True。
+
+    仅允许该学生所在班级的班主任重置密码。
+    """
+    student = db.get(User, body.student_id)
+    if student is None or student.role != Role.student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="学生账号不存在",
+        )
+
+    # 重置密码属于班级管理权限，任课身份本身不授予此权限。
+    if student.class_id is None or student.class_id != current.homeroom_class_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="仅该班班主任可重置学生密码",
+        )
+
+    initial_password = generate_initial_password(student.identifier)
+    student.password_hash = hash_password(initial_password)
+    student.must_change_password = True
+    db.commit()
+
+    return ResetPasswordResponse(
+        message="密码已重置为初始密码，学生首次登录需修改密码",
+        initial_password=initial_password,
+    )
+
+
+# ---------------------------------------------------------------------------
+# AI 解题助手 · 班级级提示词与技能配置
+# ---------------------------------------------------------------------------
+
+
+class AgentConfigRequest(BaseModel):
+    class_id: int
+    # 自定义系统提示词；留空表示使用默认提示词
+    system_prompt: str = ""
+    # 「解题引导技能」开关：只给思路引导、不直接给最终答案
+    tutor_enabled: bool = True
+
+
+class AgentConfigResponse(BaseModel):
+    class_id: int
+    subject: str
+    teacher_id: int
+    system_prompt: str
+    tutor_enabled: bool
+
+
+@router.get("/agent-config", response_model=AgentConfigResponse)
+def get_agent_config(
+    class_id: int = Query(...),
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+):
+    """读取某班 AI 解题助手的提示词与技能配置（仅任教班级范围内）。"""
+    require_teacher_classes(current.teaching_classes)
+    if class_id not in (current.teaching_classes or []):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="无权配置非任教班级的 AI 助手",
+        )
+    if current.subject not in SUBJECT_NAMES:
+        raise HTTPException(status_code=403, detail="请先分配任教学科")
+    cfg = db.query(AgentConfig).filter_by(class_id=class_id, subject=current.subject, teacher_id=current.user_id).one_or_none()
+    return AgentConfigResponse(
+        class_id=class_id,
+        subject=current.subject,
+        teacher_id=current.user_id,
+        system_prompt=cfg.system_prompt if cfg is not None else "",
+        tutor_enabled=cfg.tutor_enabled if cfg is not None else True,
+    )
+
+
+@router.put("/agent-config", response_model=AgentConfigResponse)
+def save_agent_config(
+    body: AgentConfigRequest,
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+):
+    """保存某班 AI 解题助手的提示词与技能配置（缺省提示词常量随默认值展示）。"""
+    require_teacher_classes(current.teaching_classes)
+    if body.class_id not in (current.teaching_classes or []):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="无权配置非任教班级的 AI 助手",
+        )
+    if current.subject not in SUBJECT_NAMES:
+        raise HTTPException(status_code=403, detail="请先分配任教学科")
+    cfg = db.query(AgentConfig).filter_by(class_id=body.class_id, subject=current.subject, teacher_id=current.user_id).one_or_none()
+    if cfg is None:
+        cfg = AgentConfig(class_id=body.class_id, subject=current.subject, teacher_id=current.user_id)
+        db.add(cfg)
+    cfg.teacher_id = current.user_id
+    cfg.system_prompt = (body.system_prompt or "").strip()
+    cfg.tutor_enabled = body.tutor_enabled
+    db.commit()
+    return AgentConfigResponse(
+        class_id=cfg.class_id,
+        subject=cfg.subject,
+        teacher_id=cfg.teacher_id,
+        system_prompt=cfg.system_prompt,
+        tutor_enabled=cfg.tutor_enabled,
+    )
+
+
+@router.get("/agent-config/default-prompt", response_model=dict)
+def agent_default_prompt(
+    current: CurrentUser = Depends(get_current_teacher),
+):
+    """返回默认系统提示词与「解题引导技能」文案，供教师端界面预填/预览。"""
+    from llm_service import TUTOR_SKILL_PROMPT
+
+    return {"system_prompt": DEFAULT_SYSTEM_PROMPT, "tutor_skill_prompt": TUTOR_SKILL_PROMPT}
+
+
+# ---------------------------------------------------------------------------
+# 审计日志查询
+# ---------------------------------------------------------------------------
+
+
+class AuditLogItem(BaseModel):
+    id: int
+    user_id: int | None = None
+    role: str | None = None
+    request_path: str
+    method: str
+    status_code: int
+    ip_address: str | None = None
+    created_at: datetime
+
+
+class AuditLogListResponse(BaseModel):
+    items: list[AuditLogItem]
+    total: int
+
+
+@router.get("/audit-logs", response_model=AuditLogListResponse)
+def query_audit_logs(
+    current: CurrentUser = Depends(get_current_teacher),
+    db: Session = Depends(get_db),
+    user_id: int | None = Query(None),
+    request_path: str | None = Query(None),
+    role: str | None = Query(None),
+    status_code: int | None = Query(None),
+    start: datetime | None = Query(None),
+    end: datetime | None = Query(None),
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+    class_id: int | None = Query(None),
+):
+    """查询审计日志（按 user_id / request_path / role / status_code / 时间范围筛选）。"""
+    head_class = current.homeroom_class_id
+    if head_class is None or (class_id is not None and class_id != head_class):
+        raise HTTPException(status_code=403, detail="仅班主任可查看本班审计日志")
+    student_ids = db.query(User.id).filter(User.role == Role.student, User.class_id == head_class)
+    # 旧日志没有班级上下文时，仅显示当前本班学生的日志，不泄露其他教师日志。
+    q = db.query(AuditLog).filter(or_(
+        AuditLog.class_id == head_class,
+        and_(AuditLog.class_id.is_(None), AuditLog.user_id.in_(student_ids)),
+    ))
+    if user_id is not None:
+        q = q.filter(AuditLog.user_id == user_id)
+    if request_path is not None:
+        q = q.filter(AuditLog.request_path.contains(request_path))
+    if role is not None:
+        q = q.filter(AuditLog.role == role)
+    if status_code is not None:
+        q = q.filter(AuditLog.status_code == status_code)
+    if start is not None:
+        q = q.filter(AuditLog.created_at >= start)
+    if end is not None:
+        q = q.filter(AuditLog.created_at <= end)
+
+    total = q.count()
+    rows = q.order_by(AuditLog.created_at.desc()).offset(offset).limit(limit).all()
+    return AuditLogListResponse(
+        items=[
+            AuditLogItem(
+                id=r.id,
+                user_id=r.user_id,
+                role=r.role,
+                request_path=r.request_path,
+                method=r.method,
+                status_code=r.status_code,
+                ip_address=r.ip_address,
+                created_at=r.created_at,
+            )
+            for r in rows
+        ],
+        total=total,
+    )

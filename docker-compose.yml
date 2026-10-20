@@ -1,0 +1,71 @@
+name: campusclaw-group
+
+services:
+  # 唯一对外入口：根目录 .env 可用 CAMPUSCLAW_PORT 调整端口
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "${CAMPUSCLAW_PORT:-8080}:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    # 仅 Docker 内网可达，宿主机/外网无法直连 8000
+    expose:
+      - "8000"
+    environment:
+      # SQLite 落在挂载卷内，容器重建数据不丢
+      DATABASE_URL: sqlite:////app/data/campusclaw.db
+      # Windows 主机共享目录不使用 WAL 的共享内存；Linux 原生存储可显式改为 WAL。
+      SQLITE_JOURNAL_MODE: ${SQLITE_JOURNAL_MODE:-DELETE}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?请在根目录 .env 中设置 JWT_SECRET_KEY}
+      # 生产关闭交互式 API 文档
+      ENABLE_DOCS: "false"
+      FRONTEND_ORIGINS: http://localhost:${CAMPUSCLAW_PORT:-8080},http://127.0.0.1:${CAMPUSCLAW_PORT:-8080}
+      # AI 解题助手 DeepSeek Key（从根目录 .env 读取，不硬编码）
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    volumes:
+      # 材料文件本体持久化（与本地开发 backend/uploads 同源）
+      - ./backend/uploads:/app/uploads
+      # SQLite 数据文件持久化
+      - ${CAMPUSCLAW_DATA_DIR:-./data}:/app/data
+    # 用 venv 内 uvicorn 直跑，避免 `uv run` 启动时联网解析依赖（国内网络易超时）
+    command: ["/app/.venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        BACKEND_INTERNAL_URL: http://backend:8000
+    # 仅 Docker 内网可达，由 nginx 反代
+    expose:
+      - "3000"
+    environment:
+      # Next.js rewrites 的反代目标（容器内 localhost 不通，须指向服务名）
+      BACKEND_INTERNAL_URL: http://backend:8000
+      NODE_ENV: production
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/login').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));"]
+      interval: 10s
+      timeout: 6s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped

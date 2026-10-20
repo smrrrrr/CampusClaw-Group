@@ -1,0 +1,25 @@
+schema: spec-driven
+
+context: |
+  CampusClaw 小组项目，FastAPI + SQLAlchemy + SQLite 后端，Next.js 14/React 18/TypeScript 前端，Docker Compose + Nginx 部署。
+  角色为 teacher/student；权限按当前数据库身份、任教班级、学科及资源归属校验。
+  教研组完整教师素材、本人私有教师教案、已发布班级学生稿分别保存；学生助手只检索本班本科目学生资料。
+  AI 使用服务端 DeepSeek 配置及 SSE；解题引导开启时固定框架覆盖自定义提示词，但保留自定义保存值。
+  最近实现和边界见 openspec/README.md；正式要求见 specs/，动机/设计/任务/验收见 changes/。
+  当前小组环境为 8081；数据目录、部署操作及备份见 DEPLOYMENT.md，不将个人项目目录混入本项目。
+
+rules:
+  proposal:
+    - 明确具体功能、受影响能力和既有流程，不把演示控件或后续功能写成已实现。
+  specs:
+    - 使用 Requirement 与 WHEN/THEN 场景，明确角色、班级、学科、归属、失败及版本边界。
+    - 来源编号和文件指纹校验不等于语义证明；学生稿仍需人工核对，完整教师稿不得进入学生索引。
+  design:
+    - 写明数据流、模型状态、权限、并发/失败处理及已知限制，与现有实现一致。
+  tasks:
+    - 只勾选已完成且有依据的工作；历史验收与本次执行分开，不伪称重跑业务测试。
+
+operations:
+  archive:
+    guidance:
+      - 不因一次文档同步自动归档未完成变更；先核对任务及增量操作与主规约的一致性。
