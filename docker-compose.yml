@@ -15,6 +15,24 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # 自建 MCP 工具服务：仅在 Compose 内网暴露 8090，不映射宿主机端口。
+  # 后端不 depends_on 它，工具服务不可用不影响主应用启动与普通问答。
+  mcp-tools:
+    build:
+      context: ./mcp-server
+    expose:
+      - "8090"
+    environment:
+      # 与后端共享的访问令牌；为空时服务拒绝所有 /mcp 请求
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:-}
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 6
+      start_period: 10s
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
@@ -27,11 +45,15 @@ services:
       # Windows 主机共享目录不使用 WAL 的共享内存；Linux 原生存储可显式改为 WAL。
       SQLITE_JOURNAL_MODE: ${SQLITE_JOURNAL_MODE:-DELETE}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:?请在根目录 .env 中设置 JWT_SECRET_KEY}
-      # 生产关闭交互式 API 文档
-      ENABLE_DOCS: "false"
+      # 交互式 API 文档：默认关闭，本地调试可在 .env 置 ENABLE_DOCS=true
+      ENABLE_DOCS: ${ENABLE_DOCS:-false}
       FRONTEND_ORIGINS: http://localhost:${CAMPUSCLAW_PORT:-8080},http://127.0.0.1:${CAMPUSCLAW_PORT:-8080}
       # AI 解题助手 DeepSeek Key（从根目录 .env 读取，不硬编码）
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      # MCP：与 mcp-tools 共享的令牌 + 加密教师令牌用的服务端密钥 + SSRF 允许清单
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:-}
+      MCP_TOKEN_KEY: ${MCP_TOKEN_KEY:-}
+      MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-mcp-tools:8090}
     volumes:
       # 材料文件本体持久化（与本地开发 backend/uploads 同源）
       - ./backend/uploads:/app/uploads

@@ -27,9 +27,21 @@ Nginx 等待前后端健康检查通过后启动。前后端仅在 Docker 内网
 - `DEEPSEEK_API_KEY`：使用已有服务端密钥；留空时使用现有问答降级行为。
 - `CAMPUSCLAW_DATA_DIR`：SQLite 数据目录，默认 `./data`。
 - `CAMPUSCLAW_PORT`：浏览器入口端口，默认 `8080`。
+- `MCP_AUTH_TOKEN`：自建 MCP 工具服务的共享令牌，同时注入 `mcp-tools` 与后端，两边必须一致；留空时 `mcp-tools` 拒绝所有 `/mcp` 请求。生成：`openssl rand -hex 32`。
+- `MCP_TOKEN_KEY`：加密教师登记令牌的 Fernet 密钥，只放服务端。**请与 `.env` 一并妥善保管**：丢失或轮换后，已登记服务器需重新填写令牌。生成：`python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"`。
+- `MCP_ALLOWED_HOSTS`：允许服务端连接的 MCP 主机清单（`host[:port]`，逗号分隔），默认 `mcp-tools:8090`，用于防 SSRF；回环、链路本地与云元数据地址一律拒绝。
+- `ENABLE_DOCS`：是否开放 Swagger（`/docs`、`/openapi.json`），默认 `false`；仅本地调试临时置 `true`。
 
 真实 `.env` 已被 Git 忽略，也不会复制进前后端镜像。前端构建时固定容器内后端地址为
 `http://backend:8000`，运行镜像包含 standalone 与匹配的静态资源。
+
+## MCP 工具服务（add-mcp-tool-integration）
+
+- `mcp-server/` 与主应用同仓构建，Compose 服务名 `mcp-tools`，仅 `expose: 8090`，不映射宿主机端口，宿主机无法直连。
+- 后端不 `depends_on` 它：工具服务不可用时主应用照常启动，学生未命中工具技能的提问不受影响。
+- 教师登记服务器时填写的 Base URL 必须命中 `MCP_ALLOWED_HOSTS`（默认只有内网的 `mcp-tools:8090`），因此不能填 `127.0.0.1`、`backend:8000` 或元数据地址。
+- 令牌只以密文落库，接口与日志不返回；断网或令牌不一致时「连接」返回 502 并保持未连接。
+- **数据交接**：交接包须清空 `mcp_servers.auth_token_enc`（令牌列）与 `mcp_tool_calls`（学生调用记录）；`MCP_TOKEN_KEY` 不随包分发，换机恢复后已登记服务器需重新填写令牌。
 
 ## 本次数据目录
 

@@ -15,7 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import models  # noqa: F401  # 确保模型注册到 Base.metadata
 from config import settings
 from database import Base, SessionLocal, engine, run_simple_migrations
-from routers import auth, materials, student, teacher, research_materials, lesson_plans
+from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills
 from security import JWTError, TOKEN_TYPE_ACCESS, decode_token
 from services import write_audit_log
 
@@ -56,6 +56,8 @@ app.include_router(student.router)
 app.include_router(materials.router)
 app.include_router(research_materials.router)
 app.include_router(lesson_plans.router)
+app.include_router(mcp.router)
+app.include_router(skills.router)
 
 
 # ---------------------------------------------------------------------------

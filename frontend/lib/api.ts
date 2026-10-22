@@ -295,6 +295,34 @@ export const api = {
 
   materialDownloadUrl: (materialId: number, expectedSha256?: string | null) => `/api/materials/${materialId}/download${expectedSha256 ? `?expected_sha256=${encodeURIComponent(expectedSha256)}` : ""}`,
   materialPreviewUrl: (materialId: number) => `/api/materials/${materialId}/preview`,
+
+  // --- MCP 服务器与调用记录 ---
+  listMcpServers: (classId: number) =>
+    apiRequest<{ items: McpServerDTO[] }>(`/api/mcp/servers?class_id=${classId}`),
+  createMcpServer: (payload: { class_id: number; name: string; base_url: string; auth_token: string }) =>
+    apiRequest<McpServerDTO>("/api/mcp/servers", { method: "POST", body: payload }),
+  updateMcpServer: (id: number, payload: { name?: string; base_url?: string; auth_token?: string }) =>
+    apiRequest<McpServerDTO>(`/api/mcp/servers/${id}`, { method: "PUT", body: payload }),
+  deleteMcpServer: (id: number) =>
+    apiRequest<{ message: string; id: number }>(`/api/mcp/servers/${id}`, { method: "DELETE" }),
+  connectMcpServer: (id: number) =>
+    apiRequest<{ server: McpServerDTO; excluded: string[] }>(`/api/mcp/servers/${id}/connect`, { method: "POST" }),
+  disconnectMcpServer: (id: number) =>
+    apiRequest<McpServerDTO>(`/api/mcp/servers/${id}/disconnect`, { method: "POST" }),
+  listMcpTools: (id: number) =>
+    apiRequest<{ connected: boolean; items: McpToolDTO[] }>(`/api/mcp/servers/${id}/tools`),
+  listMcpToolCalls: (classId: number) =>
+    apiRequest<{ items: McpToolCallDTO[] }>(`/api/mcp/tool-calls?class_id=${classId}`),
+
+  // --- 教师技能文件 ---
+  listSkills: (classId: number) =>
+    apiRequest<{ items: SkillDTO[] }>(`/api/teacher/skills?class_id=${classId}`),
+  createSkill: (payload: { class_id: number; source: string }) =>
+    apiRequest<SkillDTO>("/api/teacher/skills", { method: "POST", body: payload }),
+  updateSkill: (id: number, source: string) =>
+    apiRequest<SkillDTO>(`/api/teacher/skills/${id}`, { method: "PUT", body: { source } }),
+  deleteSkill: (id: number) =>
+    apiRequest<{ message: string; id: number }>(`/api/teacher/skills/${id}`, { method: "DELETE" }),
 };
 
 export interface ResearchMaterialDTO {
@@ -401,7 +429,64 @@ export interface ChatDoneData {
   remaining: number;
 }
 
+// --- MCP 与技能（add-mcp-tool-integration）---
+export interface McpServerDTO {
+  id: number;
+  class_id: number;
+  name: string;
+  base_url: string;
+  connected: boolean;
+  has_auth: boolean;
+  tool_count: number;
+  last_error: string | null;
+  connected_at: string | null;
+}
+
+export interface McpToolDTO {
+  name: string;
+  description: string;
+  input_schema: Record<string, unknown>;
+}
+
+export interface McpToolCallDTO {
+  id: number;
+  server_name: string;
+  tool_ref: string;
+  status: "ok" | "denied" | "error";
+  user_id: number | null;
+  conversation_id: number | null;
+  round: number | null;
+  detail: string | null;
+  created_at: string;
+}
+
+export interface SkillDTO {
+  id: number;
+  class_id: number;
+  subject: string;
+  name: string;
+  trigger: string;
+  tools: string[];
+  enabled: boolean;
+  description: string;
+  source: string;
+  updated_at: string;
+}
+
+/** SSE meta 事件中的单次工具调用状态。 */
+export interface ToolCallEvent {
+  ref: string;
+  status: "ok" | "denied" | "error";
+  reason?: string;
+}
+
+export interface ChatMetaData {
+  skill: { name: string };
+  tool_calls?: ToolCallEvent[];
+}
+
 interface ChatStreamCallbacks {
+  onMeta?: (data: ChatMetaData) => void;
   onDelta?: (text: string) => void;
   onDone?: (data: ChatDoneData) => void;
   onError?: (message: string, citations?: AnswerCitation[]) => void;
@@ -460,7 +545,8 @@ export async function streamChat(
       if (!payload) continue;
       try {
         const evt = JSON.parse(payload);
-        if (evt.type === "delta") cb.onDelta?.(evt.content ?? "");
+        if (evt.type === "meta") cb.onMeta?.({ skill: evt.skill ?? { name: "" }, tool_calls: evt.tool_calls });
+        else if (evt.type === "delta") cb.onDelta?.(evt.content ?? "");
         else if (evt.type === "done")
           cb.onDone?.({ answer: evt.answer ?? "", citations: evt.citations ?? [], remaining: evt.remaining ?? 0 });
         else if (evt.type === "error") cb.onError?.(evt.message ?? "AI 响应异常", evt.citations);

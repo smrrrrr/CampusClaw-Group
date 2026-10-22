@@ -4,18 +4,19 @@
 
 ## 最近功能与规约
 
-| 功能 | 已实现范围 | 主规约 | 设计、任务及验收 |
-| --- | --- | --- | --- |
-| 学生学科助手 | 按班级/科目/任课教师选配置，多轮会话、SSE、历史管理、每日限次 | [agent-assistant](specs/agent-assistant/spec.md) | [助手变更](changes/add-agent-assistant/proposal.md)、[学科教师变更](changes/subject-teacher-assistants/proposal.md) |
-| 解题引导 | 开启后使用固定框架并保留但忽略教师自定义提示词；分步提示、概念解释、短追问接续、完成总结 | [agent-assistant](specs/agent-assistant/spec.md) | [设计](changes/add-agent-assistant/design.md)、[任务](changes/add-agent-assistant/tasks.md)、[验收](changes/add-agent-assistant/validation.md) |
-| 资料检索与引用 | 本班本科目过滤、文件指纹、真实摘录、本轮有效编号、夹角等公式召回改进 | [rag-search](specs/rag-search/spec.md) | [检索验收](changes/add-rag-search/validation.md)、[引用验收](changes/harden-citation-provenance/validation.md) |
-| 教研组资料 | 教师版 MD/图文 ZIP、同科共享、去答案学生版预览、编辑核对、多班发布、知识点标签 | [research-materials](specs/research-materials/spec.md) | [设计](changes/add-research-materials/design.md)、[任务](changes/add-research-materials/tasks.md)、[验收](changes/add-research-materials/validation.md) |
-| 智能备课 | 组内素材生成教师教案、编辑/章节重写、审阅定稿、版本、新修订、两种学生稿、分班发布 | [smart-lesson-prep](specs/smart-lesson-prep/spec.md) | [提案](changes/add-smart-lesson-prep/proposal.md)、[设计](changes/add-smart-lesson-prep/design.md)、[任务](changes/add-smart-lesson-prep/tasks.md)、[验收](changes/add-smart-lesson-prep/validation.md) |
-| 教案共享 | 教师定稿默认私有，主动发布独立副本到同科教研组，可查阅/复用，学生不可见 | [smart-lesson-prep](specs/smart-lesson-prep/spec.md)、[research-materials](specs/research-materials/spec.md) | 同上备课及资料变更 |
-| 配图与导出 | 中文空格图片路径、鉴权原图、图文包、统一“预览与下载”、浏览器打印/另存 PDF | [material-upload](specs/material-upload/spec.md)、[research-materials](specs/research-materials/spec.md)、[smart-lesson-prep](specs/smart-lesson-prep/spec.md) | 对应资料及备课验收 |
-| 学生搜索/提问历史 | 每账号/班级/科目/功能最近 10 条，浏览器保存，搜索历史可重搜，提问历史仅回填 | [student-workspace](specs/student-workspace/spec.md) | [工作空间任务](changes/align-teacher-student-workspaces/tasks.md)、[验收](changes/align-teacher-student-workspaces/validation.md) |
-| 页面与导航 | 班主任模块按身份常驻、单科资料入口、助手配置独立菜单、学生资料切科布局稳定 | [teacher-workspace](specs/teacher-workspace/spec.md)、[student-workspace](specs/student-workspace/spec.md) | [工作空间变更](changes/align-teacher-student-workspaces/proposal.md)、[单科资料变更](changes/add-subject-materials-navigation/proposal.md) |
-| 运行可靠性 | Windows Docker SQLite 日志模式、数据库读健康检查、异常 503、业务数据保留 | [runtime-reliability](specs/runtime-reliability/spec.md) | [提案](changes/harden-runtime-reliability/proposal.md)、[设计](changes/harden-runtime-reliability/design.md)、[任务](changes/harden-runtime-reliability/tasks.md)、[验收](changes/harden-runtime-reliability/validation.md) |
+| 功能        | 已实现范围                                             | 主规约                                                                                                                                                          | 设计、任务及验收                                                                                                                                                                                                         |
+| --------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 学生学科助手    | 按班级/科目/任课教师选配置，多轮会话、SSE、历史管理、每日限次                 | [agent-assistant](specs/agent-assistant/spec.md)                                                                                                             | [助手变更](changes/add-agent-assistant/proposal.md)、[学科教师变更](changes/subject-teacher-assistants/proposal.md)                                                                                                         |
+| 解题引导      | 开启后使用固定框架并保留但忽略教师自定义提示词；分步提示、概念解释、短追问接续、完成总结      | [agent-assistant](specs/agent-assistant/spec.md)                                                                                                             | [设计](changes/add-agent-assistant/design.md)、[任务](changes/add-agent-assistant/tasks.md)、[验收](changes/add-agent-assistant/validation.md)                                                                           |
+| 资料检索与引用   | 本班本科目过滤、文件指纹、真实摘录、本轮有效编号、夹角等公式召回改进                | [rag-search](specs/rag-search/spec.md)                                                                                                                       | [检索验收](changes/add-rag-search/validation.md)、[引用验收](changes/harden-citation-provenance/validation.md)                                                                                                            |
+| 教研组资料     | 教师版 MD/图文 ZIP、同科共享、去答案学生版预览、编辑核对、多班发布、知识点标签       | [research-materials](specs/research-materials/spec.md)                                                                                                       | [设计](changes/add-research-materials/design.md)、[任务](changes/add-research-materials/tasks.md)、[验收](changes/add-research-materials/validation.md)                                                                  |
+| 智能备课      | 组内素材生成教师教案、编辑/章节重写、审阅定稿、版本、新修订、两种学生稿、分班发布         | [smart-lesson-prep](specs/smart-lesson-prep/spec.md)                                                                                                         | [提案](changes/add-smart-lesson-prep/proposal.md)、[设计](changes/add-smart-lesson-prep/design.md)、[任务](changes/add-smart-lesson-prep/tasks.md)、[验收](changes/add-smart-lesson-prep/validation.md)                     |
+| 教案共享      | 教师定稿默认私有，主动发布独立副本到同科教研组，可查阅/复用，学生不可见              | [smart-lesson-prep](specs/smart-lesson-prep/spec.md)、[research-materials](specs/research-materials/spec.md)                                                  | 同上备课及资料变更                                                                                                                                                                                                        |
+| 配图与导出     | 中文空格图片路径、鉴权原图、图文包、统一“预览与下载”、浏览器打印/另存 PDF          | [material-upload](specs/material-upload/spec.md)、[research-materials](specs/research-materials/spec.md)、[smart-lesson-prep](specs/smart-lesson-prep/spec.md) | 对应资料及备课验收                                                                                                                                                                                                        |
+| 学生搜索/提问历史 | 每账号/班级/科目/功能最近 10 条，浏览器保存，搜索历史可重搜，提问历史仅回填         | [student-workspace](specs/student-workspace/spec.md)                                                                                                         | [工作空间任务](changes/align-teacher-student-workspaces/tasks.md)、[验收](changes/align-teacher-student-workspaces/validation.md)                                                                                         |
+| 页面与导航     | 班主任模块按身份常驻、单科资料入口、助手配置独立菜单、学生资料切科布局稳定             | [teacher-workspace](specs/teacher-workspace/spec.md)、[student-workspace](specs/student-workspace/spec.md)                                                    | [工作空间变更](changes/align-teacher-student-workspaces/proposal.md)、[单科资料变更](changes/add-subject-materials-navigation/proposal.md)                                                                                    |
+| 运行可靠性     | Windows Docker SQLite 日志模式、数据库读健康检查、异常 503、业务数据保留 | [runtime-reliability](specs/runtime-reliability/spec.md)                                                                                                     | [提案](changes/harden-runtime-reliability/proposal.md)、[设计](changes/harden-runtime-reliability/design.md)、[任务](changes/harden-runtime-reliability/tasks.md)、[验收](changes/harden-runtime-reliability/validation.md) |
+| MCP 工具集成   | 自建 MCP 工具服务、教师登记/连接/发现/断开、技能文件 `工具名@服务器名`、服务端鉴权调用、`meta` 事件与调用审计 | [mcp-tool-integration](specs/mcp-tool-integration/spec.md)、[agent-assistant](specs/agent-assistant/spec.md) | [提案](changes/add-mcp-tool-integration/proposal.md)、[设计](changes/add-mcp-tool-integration/design.md)、[任务](changes/add-mcp-tool-integration/tasks.md) |
 
 认证、初始密码限制、刷新恢复、学生导入和班主任权限另见 [登录规约](specs/login-and-account-system/spec.md)、[身份权限](specs/teacher-identity-and-permissions/spec.md)、[角色权限](specs/rbac-role-permissions/spec.md)、[班级隔离](specs/class-data-isolation/spec.md)。
 
@@ -34,7 +35,7 @@
 - 快捷搜索/提问历史仅在当前浏览器保存，与后端真实会话独立，不跨设备同步。助手历史点击不自动调用 AI。
 - 教研组直接导入目前支持 MD/图文 ZIP。班级直传支持更多文件格式，不代表教师版 Word/PDF 已能自动生成备课资料或可靠去除答案。
 - 配图使用已导入原图，当前没有自动绘制新几何图；浏览器另存 PDF 不等于后端 PDF 转换服务。
-- 作业批改、错题收录/讲解、真实学情诊断、技能注册、MCP 连接仍是演示或待接入；不作为已完成业务交付。
+- 作业批改、错题收录/讲解、真实学情诊断仍是演示或待接入；技能注册与 MCP 连接已接入真实接口，但不作为自动语义证明。MCP 句式检查只是软防线，不能宣称完整防提示词注入。
 - AI 生成受模型遵循程度影响。学生稿正文、配图答案、公式和引用仍须教师核对。
 
 ## 检查与交接
@@ -47,15 +48,16 @@ openspec validate --all --strict --no-interactive
 
 文档校验只检查规约结构，不能替代功能测试。对应回归入口位于 `apitest/`：
 
-| 检查入口 | 覆盖范围 |
-| --- | --- |
-| `check_lessons_2_5.py` | 认证权限、分科助手、会话、引导与引用 |
-| `check_formula_retrieval.py` | 公式召回、原始摘录和来源过滤 |
-| `check_research_materials.py` | 组内导入、学生版与发布隔离 |
-| `check_lesson_prep.py` | 教案状态、并发版本、学生稿发布和可选共享 |
-| `check_sqlite_storage.py` | 日志模式、事务和数据库健康检查 |
-| `check_markdown_images.cjs` | 中文空格配图真实 Markdown 解析 |
-| `check_recent_history.cjs` | 快捷历史持久化、隔离、清空及异常存储 |
+| 检查入口                          | 覆盖范围                 |
+| ----------------------------- | -------------------- |
+| `check_lessons_2_5.py`        | 认证权限、分科助手、会话、引导与引用   |
+| `check_formula_retrieval.py`  | 公式召回、原始摘录和来源过滤       |
+| `check_research_materials.py` | 组内导入、学生版与发布隔离        |
+| `check_lesson_prep.py`        | 教案状态、并发版本、学生稿发布和可选共享 |
+| `check_sqlite_storage.py`     | 日志模式、事务和数据库健康检查      |
+| `check_markdown_images.cjs`   | 中文空格配图真实 Markdown 解析 |
+| `check_recent_history.cjs`    | 快捷历史持久化、隔离、清空及异常存储   |
+| `check_mcp_tools.py`          | MCP 管理权限、令牌不回传、连接失败/重复连接、技能引用校验、候选集、调用上限、ok/denied/error 记录与归属隔离 |
 
 真实 AI 试跑使用 `probe_tutor_guidance.py --real-llm`，会访问模型服务并产生费用；已有验收使用虚构题目/片段，不能将其表述为对真实学生数据的全面验证。本次规约同步不重新调用 AI、不修改业务数据、不提交 Git。
 

@@ -447,3 +447,109 @@ class MistakeNote(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (Index("ix_mistake_note_class_id", "class_id"),)
+
+
+# ---------------------------------------------------------------------------
+# MCP 工具集成（add-mcp-tool-integration）
+# 四张新表由启动时 create_all 创建，不改动旧表结构。
+# ---------------------------------------------------------------------------
+
+
+class McpServer(Base):
+    """教师登记的 MCP 服务器。令牌只存密文，任何响应/日志不返回。"""
+
+    __tablename__ = "mcp_servers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    class_id: Mapped[int] = mapped_column(Integer, ForeignKey("classes.id"), nullable=False)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(32), nullable=False)
+    base_url: Mapped[str] = mapped_column(String(512), nullable=False)
+    # Fernet 密文；None 表示未配置令牌
+    auth_token_enc: Mapped[str | None] = mapped_column(Text, nullable=True)
+    connected: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    connected_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("teacher_id", "class_id", "name", name="uq_mcp_server_teacher_class_name"),
+        Index("ix_mcp_server_teacher_class", "teacher_id", "class_id"),
+    )
+
+
+class McpTool(Base):
+    """连接时从远端发现的工具缓存；每次连接在同一事务内先删后插。"""
+
+    __tablename__ = "mcp_tools"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    server_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("mcp_servers.id", ondelete="CASCADE"), nullable=False
+    )
+    name: Mapped[str] = mapped_column(String(64), nullable=False)
+    description: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    input_schema: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    discovered_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("server_id", "name", name="uq_mcp_tool_server_name"),
+        Index("ix_mcp_tool_server", "server_id"),
+    )
+
+
+class AssistantSkill(Base):
+    """教师技能文件（按班级、学科、教师隔离）。"""
+
+    __tablename__ = "assistant_skills"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    class_id: Mapped[int] = mapped_column(Integer, ForeignKey("classes.id"), nullable=False)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(32), nullable=False)
+    trigger: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    # JSON 数组，如 ["knowledge_search", "formula_hint@campus-tools"]
+    tools: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    description: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    source: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("class_id", "subject", "teacher_id", "name", name="uq_skill_scope_name"),
+        Index("ix_skill_teacher_class", "teacher_id", "class_id"),
+    )
+
+
+class McpToolCall(Base):
+    """MCP 工具调用审计：每次可归属到服务器的调用一行。"""
+
+    __tablename__ = "mcp_tool_calls"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    class_id: Mapped[int] = mapped_column(Integer, ForeignKey("classes.id"), nullable=False)
+    subject: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    # 服务器删除后该列置空，仍保留 server_name 文本
+    server_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    server_name: Mapped[str] = mapped_column(String(32), nullable=False)
+    tool_name: Mapped[str] = mapped_column(String(64), nullable=False)
+    tool_ref: Mapped[str] = mapped_column(String(160), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)  # ok / error / denied
+    user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    conversation_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    round: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+
+    __table_args__ = (
+        Index("ix_mcp_call_server_created", "server_id", "created_at"),
+        Index("ix_mcp_call_conversation", "conversation_id"),
+    )

@@ -60,9 +60,27 @@ class Settings(BaseSettings):
     deepseek_timeout: float = 60             # 单次请求超时（秒）
     deepseek_temperature: float = 0.3        # 偏低以贴合资料、减少编造
 
+    # MCP 工具集成（add-mcp-tool-integration）
+    # 与 mcp-tools 服务共享的访问令牌；仅用于宿主侧调用远端时携带
+    mcp_auth_token: str = ""
+    # 加密教师登记令牌用的 Fernet 密钥；为空则拒绝保存令牌
+    mcp_token_key: str = ""
+    # 允许服务端连接的 MCP 主机清单（host[:port]，逗号分隔），防 SSRF
+    mcp_allowed_hosts: str = "mcp-tools:8090"
+    # 调用循环上限与超时
+    mcp_max_rounds: int = 3                   # 每次提问最多决策轮次
+    mcp_max_calls_per_question: int = 4       # 每次提问最多工具调用
+    mcp_max_calls_per_conversation: int = 20  # 单会话累计调用上限
+    mcp_call_timeout: float = 10              # 单次 tools/call 超时（秒）
+
     @property
     def frontend_origin_list(self) -> list[str]:
         return [o.strip() for o in self.frontend_origins.split(",") if o.strip()]
+
+    @property
+    def mcp_allowed_host_set(self) -> set[str]:
+        """归一化为小写 host[:port] 集合，供 Base URL 校验。"""
+        return {h.strip().lower() for h in self.mcp_allowed_hosts.split(",") if h.strip()}
 
 
 @lru_cache

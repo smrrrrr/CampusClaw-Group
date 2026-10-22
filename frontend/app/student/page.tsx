@@ -15,6 +15,7 @@ import {
   type ConversationMessageDTO,
   type AssistantSubject,
   type StudentAssistantConfigDTO,
+  type ChatMetaData,
 } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
 import { getStudentNavItem, STUDENT_NAV_ITEMS } from "@/components/student-navigation";
@@ -190,6 +191,7 @@ function StudentHome() {
   const [streaming, setStreaming] = useState(false);
   const [streamText, setStreamText] = useState("");
   const [streamCites, setStreamCites] = useState<AnswerCitation[]>([]);
+  const [streamMeta, setStreamMeta] = useState<ChatMetaData | null>(null);
   const [error, setError] = useState("");
   const [assistantConfig, setAssistantConfig] = useState<StudentAssistantConfigDTO | null>(null);
   const [assistantLoading, setAssistantLoading] = useState(false);
@@ -308,10 +310,15 @@ function StudentHome() {
     setStreaming(true);
     setStreamText("");
     setStreamCites([]);
+    setStreamMeta(null);
 
     // 局部累加，避免回调内读取过期的 state
     let acc = "";
     await streamChat(cid, q, {
+      onMeta: (m) => {
+        if (version !== subjectVersion.current) return;
+        setStreamMeta(m);
+      },
       onDelta: (t) => {
         if (version !== subjectVersion.current) return;
         acc += t;
@@ -332,6 +339,7 @@ function StudentHome() {
         setRemaining(d.remaining);
         setStreamText("");
         setStreamCites([]);
+        setStreamMeta(null);
         setStreaming(false);
         loadConversations();
       },
@@ -587,6 +595,16 @@ function StudentHome() {
                         AI
                       </span>
                       <div style={{ flex: 1, background: "#fff", padding: 8, borderRadius: 8, fontSize: 14 }}>
+                        {streamMeta && (
+                          <div className="student-tool-bar" data-testid="tool-bar">
+                            <span className="student-tool-skill">🧩 {streamMeta.skill?.name}</span>
+                            {(streamMeta.tool_calls ?? []).map((tc, i) => (
+                              <span key={i} className={`student-tool-chip ${tc.status}`} title={tc.reason ?? ""}>
+                                {tc.ref} · {tc.status === "ok" ? "成功" : tc.status === "denied" ? "被拒" : "错误"}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                         <p className="hint">生成中，引用编号将在完成后核对。</p>
                         <MarkdownAnswer text={streamText + "▍"} />
                       </div>

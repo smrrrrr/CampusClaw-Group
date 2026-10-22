@@ -672,3 +672,22 @@ html:has(.student-materials-page) { scrollbar-gutter: stable; }
 .research-published { border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 28px; }
 .research-message { color: #157343; background: #e9f8ee; padding: 14px 20px; border-radius: 10px; }
 @media(max-width:1000px) { .research-columns { grid-template-columns: 1fr; } .research-document { padding: 20px; } }
+
+/* ===== MCP 工具集成与技能（add-mcp-tool-integration）===== */
+.agent-mcp-form { display: grid; gap: 10px; margin: 14px 0; padding: 14px; border: 1px dashed var(--line); border-radius: 10px; }
+.agent-mcp-form .field { margin: 0; }
+.agent-mcp-list { display: grid; gap: 12px; margin-top: 12px; }
+.agent-mcp-tools { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); display: grid; gap: 10px; }
+.agent-mcp-tool strong { font-size: 13px; color: var(--accent); }
+.agent-mcp-tool p { margin: 4px 0; font-size: 12px; }
+.agent-tool-schema { background: #f6f8fa; border: 1px solid var(--line); border-radius: 6px; padding: 8px; font-size: 11px; overflow: auto; max-height: 180px; }
+.agent-mcp-calls { margin-top: 16px; }
+.agent-mcp-calls table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.agent-mcp-calls th, .agent-mcp-calls td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+.agent-skill-list { display: grid; gap: 10px; margin: 12px 0; }
+.student-tool-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
+.student-tool-skill { font-size: 12px; font-weight: 700; color: var(--accent); }
+.student-tool-chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
+.student-tool-chip.ok { color: #157343; background: #e9f8ee; border-color: #bfe7cd; }
+.student-tool-chip.denied { color: #6b7280; background: #f3f4f6; }
+.student-tool-chip.error { color: #b45309; background: #fef3c7; border-color: #fde68a; }

@@ -2,10 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# 系统依赖（PyMuPDF 等 wheel 自带，无需额外系统库）
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+# 说明：所有第三方依赖（PyMuPDF、python-docx、python-pptx、cryptography、uvloop 等）
+# 都有预编译 wheel，无需在镜像内安装 gcc 等编译工具，避免构建时依赖 apt 源可达性。
+# 若将来新增了需要编译的依赖，再在此处按需安装构建工具。
 
 # 安装 uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv

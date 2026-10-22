@@ -18,6 +18,8 @@ dependencies = [
     "python-docx>=1.1.0",
     # AI 解题助手：调用 DeepSeek 生成回答
     "httpx>=0.28.1",
+    # MCP 工具集成：Fernet 加密教师登记的令牌（python-jose 已带入，此处显式声明）
+    "cryptography>=42.0.0",
 ]
 
 [tool.uv]

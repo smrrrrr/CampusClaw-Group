@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from dataclasses import dataclass
 
 import httpx
 
@@ -215,6 +216,77 @@ def generate_answer(question: str, context_block: str | None, *, system_prompt: 
             except (httpx.HTTPError, KeyError, ValueError, IndexError):
                 pass
         raise LLMGenerationError(f"DeepSeek 调用失败: {exc}") from exc
+
+
+@dataclass
+class ToolCall:
+    """模型提出的一个工具调用（尚未执行）。"""
+
+    id: str
+    name: str
+    arguments: dict
+
+
+@dataclass
+class DecisionResult:
+    """一轮工具决策结果：模型正文 + 它提出的工具调用列表。"""
+
+    content: str
+    tool_calls: list[ToolCall]
+
+
+def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float | None = None) -> DecisionResult:
+    """带工具声明的非流式决策轮（OpenAI 兼容 tools / tool_calls）。
+
+    返回模型正文与它提出的工具调用；未配置 Key 抛 LLMGenerationError。
+    决策归模型、执行归服务端：这里只解析调用意图，不执行任何工具。
+    """
+    if not settings.deepseek_api_key:
+        raise LLMGenerationError("未配置 DeepSeek API Key")
+
+    payload: dict = {
+        "model": settings.deepseek_model,
+        "messages": messages,
+        "temperature": settings.deepseek_temperature,
+        "stream": False,
+        "tool_choice": "auto",
+    }
+    if tools:
+        payload["tools"] = tools
+    headers = {
+        "Authorization": f"Bearer {settings.deepseek_api_key}",
+        "Content-Type": "application/json",
+    }
+    try:
+        resp = httpx.post(
+            f"{settings.deepseek_base_url.rstrip('/')}/chat/completions",
+            json=payload,
+            headers=headers,
+            timeout=timeout or settings.deepseek_timeout,
+        )
+        resp.raise_for_status()
+        message = resp.json()["choices"][0]["message"]
+    except (httpx.HTTPError, KeyError, ValueError, IndexError) as exc:
+        raise LLMGenerationError(f"DeepSeek 工具决策调用失败: {exc}") from exc
+
+    content = (message.get("content") or "").strip()
+    calls: list[ToolCall] = []
+    for item in message.get("tool_calls") or []:
+        if not isinstance(item, dict):
+            continue
+        function = item.get("function") or {}
+        name = function.get("name")
+        if not isinstance(name, str) or not name:
+            continue
+        raw_args = function.get("arguments") or "{}"
+        try:
+            args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+        except json.JSONDecodeError:
+            args = {}
+        if not isinstance(args, dict):
+            args = {}
+        calls.append(ToolCall(id=str(item.get("id") or name), name=name, arguments=args))
+    return DecisionResult(content=content, tool_calls=calls)
 
 
 async def stream_chat(

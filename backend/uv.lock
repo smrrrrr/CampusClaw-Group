@@ -58,6 +58,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "bcrypt" },
+    { name = "cryptography" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "passlib", extra = ["bcrypt"] },
@@ -79,6 +80,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bcrypt", specifier = "==4.0.1" },
+    { name = "cryptography", specifier = ">=42.0.0" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },

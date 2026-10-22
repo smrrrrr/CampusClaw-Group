@@ -8,7 +8,7 @@ import { AppShell } from "@/components/app-layout";
 import { findTeacherNavItem, useTeacherNavigation } from "@/components/teacher-navigation";
 import { ClassSelector } from "@/components/class-selector";
 import { LogoutButton } from "@/components/logout-button";
-import { api, ApiError, type AgentConfigDTO } from "@/lib/api";
+import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO } from "@/lib/api";
 
 interface StudentRow {
   id: number;
@@ -67,6 +67,49 @@ function TeacherHome() {
   const [agentPreviewMsg, setAgentPreviewMsg] = useState("");
   const defaultPromptRef = useRef("");
 
+  // MCP 服务器管理
+  const [mcpServers, setMcpServers] = useState<McpServerDTO[]>([]);
+  const [mcpBusy, setMcpBusy] = useState(false);
+  const [mcpMsg, setMcpMsg] = useState("");
+  const [mcpError, setMcpError] = useState("");
+  const [mcpForm, setMcpForm] = useState({ name: "", base_url: "", auth_token: "" });
+  const [mcpTools, setMcpTools] = useState<Record<number, McpToolDTO[]>>({});
+  const [mcpOpenTools, setMcpOpenTools] = useState<number | null>(null);
+  const [toolCalls, setToolCalls] = useState<McpToolCallDTO[]>([]);
+
+  // 技能文件
+  const [skills, setSkills] = useState<SkillDTO[]>([]);
+  const [skillSource, setSkillSource] = useState("");
+  const [editingSkillId, setEditingSkillId] = useState<number | null>(null);
+  const [skillMsg, setSkillMsg] = useState("");
+  const [skillError, setSkillError] = useState("");
+
+  const loadMcp = async (cid: number) => {
+    try {
+      const [servers, calls] = await Promise.all([api.listMcpServers(cid), api.listMcpToolCalls(cid)]);
+      setMcpServers(servers.items);
+      setToolCalls(calls.items);
+    } catch (e) {
+      setMcpError(e instanceof ApiError ? e.message : "加载 MCP 服务器失败");
+    }
+  };
+
+  const loadSkills = async (cid: number) => {
+    try {
+      const data = await api.listSkills(cid);
+      setSkills(data.items);
+    } catch (e) {
+      setSkillError(e instanceof ApiError ? e.message : "加载技能失败");
+    }
+  };
+
+  useEffect(() => {
+    if (classId === null || view !== "agent") return;
+    setMcpMsg(""); setMcpError(""); setSkillMsg(""); setSkillError("");
+    loadMcp(classId);
+    loadSkills(classId);
+  }, [classId, view]);
+
   useEffect(() => {
     api
       .getAgentDefaultPrompt()
@@ -111,12 +154,127 @@ function TeacherHome() {
     }
   };
 
+  const submitMcpServer = async () => {
+    if (classId === null) return;
+    setMcpBusy(true); setMcpMsg(""); setMcpError("");
+    try {
+      await api.createMcpServer({
+        class_id: classId,
+        name: mcpForm.name.trim(),
+        base_url: mcpForm.base_url.trim(),
+        auth_token: mcpForm.auth_token,
+      });
+      // 令牌提交后立即清空，页面不再持有
+      setMcpForm({ name: "", base_url: "", auth_token: "" });
+      setMcpMsg("服务器已登记，请点击「连接并发现」获取工具。");
+      await loadMcp(classId);
+    } catch (e) {
+      setMcpError(e instanceof ApiError ? e.message : "登记失败");
+    } finally {
+      setMcpBusy(false);
+    }
+  };
+
+  const connectMcp = async (id: number) => {
+    if (classId === null) return;
+    setMcpBusy(true); setMcpMsg(""); setMcpError("");
+    try {
+      const res = await api.connectMcpServer(id);
+      const excluded = res.excluded?.length ? `；已排除不合规工具：${res.excluded.join("、")}` : "";
+      setMcpMsg(`已连接，发现 ${res.server.tool_count} 个工具${excluded}`);
+      await loadMcp(classId);
+    } catch (e) {
+      setMcpError(e instanceof ApiError ? e.message : "连接失败");
+      await loadMcp(classId);
+    } finally {
+      setMcpBusy(false);
+    }
+  };
+
+  const disconnectMcp = async (id: number) => {
+    if (classId === null) return;
+    setMcpBusy(true); setMcpMsg(""); setMcpError("");
+    try {
+      await api.disconnectMcpServer(id);
+      setMcpMsg("已断开，工具缓存已清空。");
+      await loadMcp(classId);
+      setMcpTools((prev) => ({ ...prev, [id]: [] }));
+    } catch (e) {
+      setMcpError(e instanceof ApiError ? e.message : "断开失败");
+    } finally {
+      setMcpBusy(false);
+    }
+  };
+
+  const removeMcp = async (id: number) => {
+    if (classId === null || !window.confirm("确定删除该 MCP 服务器？已产生的调用记录会保留。")) return;
+    setMcpBusy(true); setMcpMsg(""); setMcpError("");
+    try {
+      await api.deleteMcpServer(id);
+      setMcpMsg("服务器已删除。");
+      await loadMcp(classId);
+    } catch (e) {
+      setMcpError(e instanceof ApiError ? e.message : "删除失败");
+    } finally {
+      setMcpBusy(false);
+    }
+  };
+
+  const toggleTools = async (id: number) => {
+    if (mcpOpenTools === id) { setMcpOpenTools(null); return; }
+    setMcpOpenTools(id);
+    if (!mcpTools[id]) {
+      try {
+        const data = await api.listMcpTools(id);
+        setMcpTools((prev) => ({ ...prev, [id]: data.items }));
+      } catch (e) {
+        setMcpError(e instanceof ApiError ? e.message : "加载工具失败");
+      }
+    }
+  };
+
+  const saveSkill = async () => {
+    if (classId === null || !skillSource.trim()) return;
+    setSkillMsg(""); setSkillError("");
+    try {
+      if (editingSkillId !== null) {
+        await api.updateSkill(editingSkillId, skillSource);
+        setSkillMsg("技能已更新。");
+      } else {
+        await api.createSkill({ class_id: classId, source: skillSource });
+        setSkillMsg("技能已保存。");
+      }
+      setSkillSource(""); setEditingSkillId(null);
+      await loadSkills(classId);
+    } catch (e) {
+      setSkillError(e instanceof ApiError ? e.message : "保存技能失败");
+    }
+  };
+
+  const startEditSkill = (s: SkillDTO) => {
+    setEditingSkillId(s.id);
+    setSkillSource(s.source);
+    setSkillMsg(""); setSkillError("");
+  };
+
+  const removeSkill = async (id: number) => {
+    if (classId === null || !window.confirm("确定删除该技能？")) return;
+    setSkillMsg(""); setSkillError("");
+    try {
+      await api.deleteSkill(id);
+      setSkillMsg("技能已删除。");
+      if (editingSkillId === id) { setEditingSkillId(null); setSkillSource(""); }
+      await loadSkills(classId);
+    } catch (e) {
+      setSkillError(e instanceof ApiError ? e.message : "删除技能失败");
+    }
+  };
+
   // 只请求当前班级，后端再次校验任教范围。
   useEffect(() => {
     if (classId === null || !isStudentView) return;
     let cancelled = false;
-    setLoadingStudents(true);
-    setError("");
+    setLoadingStudents(true);    setError("");
     setResetMsg("");
     api
       .listStudents(classId)
@@ -303,7 +461,31 @@ function TeacherHome() {
                     <div className="agent-skill-top"><strong>{title} <span className="agent-required">必做</span></strong><label className="agent-toggle" aria-label={`切换${title}`}><input type="checkbox" checked={key === "tutor" ? cfgTutor : agentSkills[key]} onChange={(e) => { if (key === "tutor") setCfgTutor(e.target.checked); setAgentSkills({ ...agentSkills, [key]: e.target.checked }); setAgentPreviewMsg("技能开关当前为界面预览；解题引导保存提示词时一并生效。"); }} /><span /></label></div>
                     <p>{description}</p><span className="agent-tool-tag">⌁ {tools}</span>
                   </div>)}
-                  <button className="agent-add-button" onClick={() => setAgentPreviewMsg("技能注册接口尚未接入。")}>＋ 上传 / 注册技能</button>
+                  {skillError && <div className="error" role="alert">{skillError}</div>}
+                  {skillMsg && <div className="success" role="status">{skillMsg}</div>}
+                  <div className="agent-skill-list">
+                    {skills.length === 0 && <p className="hint">还没有技能文件。可在下方粘贴技能文件新建。</p>}
+                    {skills.map((s) => <div className="agent-skill-card" key={s.id}>
+                      <div className="agent-skill-top"><strong>{s.name} {s.enabled ? <span className="agent-tool-tag">已启用</span> : <span className="agent-required">已停用</span>}</strong>
+                        <span style={{ display: "flex", gap: 8 }}>
+                          <button className="btn-pill ghost sm" onClick={() => startEditSkill(s)}>改写</button>
+                          <button className="btn-pill ghost sm" onClick={() => removeSkill(s.id)}>删除</button>
+                        </span>
+                      </div>
+                      <p className="hint">适用条件：{s.trigger}</p>
+                      <span className="agent-tool-tag">⌁ {s.tools.join(" · ")}</span>
+                    </div>)}
+                  </div>
+                  <div className="field" style={{ marginTop: 12 }}>
+                    <label htmlFor="skill-source">{editingSkillId !== null ? "改写技能文件" : "新建技能文件"}</label>
+                    <textarea id="skill-source" value={skillSource} onChange={(e) => setSkillSource(e.target.value)} rows={8}
+                      placeholder={"名称：公式提示\n适用条件：夹角,公式\n工具：knowledge_search, formula_hint@campus-tools\n启用：是\n\n说明：先给公式与步骤，引导学生自行计算。"} />
+                    <p className="hint">头部每行「键：值」，空行以下是技能说明；工具可写 knowledge_search 或 工具名@服务器名。</p>
+                  </div>
+                  <div className="agent-actions">
+                    <button className="btn-pill" onClick={saveSkill} disabled={!skillSource.trim()}>{editingSkillId !== null ? "保存改写" : "保存技能"}</button>
+                    {editingSkillId !== null && <button className="btn-pill ghost sm" onClick={() => { setEditingSkillId(null); setSkillSource(""); }}>取消改写</button>}
+                  </div>
                   <section className="agent-reference-materials" aria-label="助手参考资料">
                     <h3 className="agent-panel-heading agent-knowledge-heading">助手参考资料（{nav.subjectName}）</h3>
                     <p className="hint">助手会自动检索所选班级已发布且完成索引的{nav.subjectName}资料，无需手动绑定。</p>
@@ -311,11 +493,48 @@ function TeacherHome() {
                     {nav.teachingClassId !== null ? <Link className="btn-pill ghost sm" href={nav.materialHref(nav.teachingClassId, "teaching")}>查看本班资料</Link> : <p className="hint">请先选择任教班级，再查看参考资料。</p>}
                   </section>
                 </section>
-                <section className="panel agent-mcp-panel"><div><h3 className="agent-panel-heading">MCP 服务器（Model Context Protocol）</h3><p>通过 MCP 为助手接入工具，展示工具连接与执行状态。</p></div><button className="btn-pill" onClick={() => setAgentPreviewMsg("MCP 服务器接口尚未接入。")}>＋ 添加服务器</button>
-                  {["知识库检索服务", `${nav.subjectName}计算工具`].map((name) => <div className="agent-mcp-card" key={name}>🔌　{name}<span>预览</span></div>)}
+                <section className="panel agent-mcp-panel"><div><h3 className="agent-panel-heading">MCP 服务器（Model Context Protocol）</h3><p>登记服务器、连接并发现工具，令牌只保存在服务端。</p></div>
+                  {mcpError && <div className="error" role="alert">{mcpError}</div>}
+                  {mcpMsg && <div className="success" role="status">{mcpMsg}</div>}
+                  <div className="agent-mcp-form">
+                    <div className="field"><label htmlFor="mcp-name">服务器名称</label>
+                      <input id="mcp-name" value={mcpForm.name} onChange={(e) => setMcpForm({ ...mcpForm, name: e.target.value })} placeholder="campus-tools" /></div>
+                    <div className="field"><label htmlFor="mcp-url">Base URL</label>
+                      <input id="mcp-url" value={mcpForm.base_url} onChange={(e) => setMcpForm({ ...mcpForm, base_url: e.target.value })} placeholder="http://mcp-tools:8090" /></div>
+                    <div className="field"><label htmlFor="mcp-token">访问令牌</label>
+                      <input id="mcp-token" type="password" autoComplete="off" value={mcpForm.auth_token} onChange={(e) => setMcpForm({ ...mcpForm, auth_token: e.target.value })} placeholder="只发送到服务端，不保存到浏览器" /></div>
+                    <button className="btn-pill" onClick={submitMcpServer} disabled={mcpBusy || !mcpForm.name.trim() || !mcpForm.base_url.trim()}>{mcpBusy ? "处理中…" : "登记服务器"}</button>
+                  </div>
+                  <div className="agent-mcp-list">
+                    {mcpServers.length === 0 && <p className="hint">还没有登记 MCP 服务器。</p>}
+                    {mcpServers.map((s) => <div className="agent-mcp-card" key={s.id}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span>🔌 {s.name} · {s.connected ? "已连接" : "未连接"} · {s.tool_count} 个工具 · {s.has_auth ? "已配令牌" : "无令牌"}</span>
+                        <span style={{ display: "flex", gap: 8 }}>
+                          <button className="btn-pill ghost sm" onClick={() => connectMcp(s.id)} disabled={mcpBusy}>{s.connected ? "重新连接" : "连接并发现"}</button>
+                          <button className="btn-pill ghost sm" onClick={() => disconnectMcp(s.id)} disabled={mcpBusy || !s.connected}>断开</button>
+                          <button className="btn-pill ghost sm" onClick={() => toggleTools(s.id)}>{mcpOpenTools === s.id ? "收起工具" : "查看工具"}</button>
+                          <button className="btn-pill ghost sm" onClick={() => removeMcp(s.id)} disabled={mcpBusy}>删除</button>
+                        </span>
+                      </div>
+                      {s.last_error && <p className="hint warn">上次错误：{s.last_error}</p>}
+                      {mcpOpenTools === s.id && <div className="agent-mcp-tools">
+                        {(mcpTools[s.id] ?? []).length === 0 ? <p className="hint">暂无工具（需先连接）。</p> : (mcpTools[s.id] ?? []).map((t) => <div key={t.name} className="agent-mcp-tool">
+                          <strong>{t.name}</strong><p className="hint">{t.description}</p>
+                          <pre className="agent-tool-schema">{JSON.stringify(t.input_schema, null, 2)}</pre>
+                        </div>)}
+                      </div>}
+                    </div>)}
+                  </div>
+                  <div className="agent-mcp-calls">
+                    <h4 className="agent-panel-heading">最近调用记录</h4>
+                    {toolCalls.length === 0 ? <p className="hint">暂无调用记录。</p> : <table><thead><tr><th>时间</th><th>工具</th><th>状态</th><th>说明</th></tr></thead>
+                      <tbody>{toolCalls.slice(0, 10).map((c) => <tr key={c.id}><td>{new Date(c.created_at.endsWith("Z") ? c.created_at : `${c.created_at}Z`).toLocaleString("zh-CN")}</td><td>{c.tool_ref}</td><td>{c.status === "ok" ? "成功" : c.status === "denied" ? "被拒" : "错误"}</td><td>{c.detail ?? "—"}</td></tr>)}</tbody>
+                    </table>}
+                  </div>
                 </section>
                 {agentPreviewMsg && <p className="hint agent-preview-message" role="status">{agentPreviewMsg}</p>}
-                <p className="hint agent-integration-note">提示词按班级、学科及教师独立保存；解题引导开启时使用固定引导框架。作业批改、错题讲解、技能注册与 MCP 控件仍为界面预览。</p>
+                <p className="hint agent-integration-note">提示词按班级、学科及教师独立保存；解题引导开启时使用固定引导框架。技能与 MCP 服务器为真实配置；作业批改与错题讲解开关仍为界面预览。</p>
               </div>
             </>
           ) : view === "audit" ? (
