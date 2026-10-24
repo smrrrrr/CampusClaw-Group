@@ -147,3 +147,4 @@
 - 归档前回归：`check_question_bank` 108/108、`check_model_json` 65/65、`check_lesson_prep` 119/119。
 - 归档后在主规约 `specs/smart-question-generation/spec.md` 补写了 Purpose（替换 openspec 自动生成的 TBD 占位）。
 - **已知遗留问题**：未归档的历史变更 `align-teacher-student-workspaces` 中，teacher-workspace 的两个 MODIFIED 块（《教师共用工作空间导航》《全科总览与单科教学入口区分》）基于旧主规约，缺少本变更新增的 Scenario「教师进入智能命题页」「智能命题不再是占位」。`openspec validate --all --strict` 因此报 21 passed、1 failed。这是既有归档债务，本次没有改动那个变更；归档它之前，需要把这两个 Scenario 补进对应 MODIFIED 块，否则会被冲掉。
+  - 已解决（2026-10-25）：两个 MODIFIED 块改为主规约现行全文，补入上述两个 Scenario，同时补上正文里的 `/teacher/quiz` 路由与「智能命题」入口说明。只补 Scenario 不够：旧正文仍写着「智能命题…使用占位状态」，与新 Scenario 矛盾，归档时还会把主规约的正文改回去。主规约原本就包含旧块的全部内容，该变更其余 6 个 MODIFIED 块也与主规约一致。处理后 `openspec validate --all --strict --no-interactive` 结果为 22 passed、0 failed。
