@@ -323,6 +323,50 @@ export const api = {
     apiRequest<SkillDTO>(`/api/teacher/skills/${id}`, { method: "PUT", body: { source } }),
   deleteSkill: (id: number) =>
     apiRequest<{ message: string; id: number }>(`/api/teacher/skills/${id}`, { method: "DELETE" }),
+
+  // --- 智能命题 ---
+  quizKnowledgePoints: () =>
+    apiRequest<{ subject: string; knowledge_points: string[] }>("/api/teacher/quiz/knowledge-points"),
+  listQuizItems: (params: Record<string, string | number | boolean | undefined>) => {
+    const qs = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => { if (v !== undefined && v !== "") qs.set(k, String(v)); });
+    const q = qs.toString();
+    return apiRequest<{ items: QuizItemDTO[]; total: number; page: number }>(
+      q ? `/api/teacher/quiz/items?${q}` : "/api/teacher/quiz/items");
+  },
+  getQuizItem: (id: number) => apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}`),
+  updateQuizItem: (id: number, body: Record<string, unknown>) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}`, { method: "PUT", body }),
+  approveQuizItem: (id: number, revision: number) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}/approve`, { method: "POST", body: { revision, confirmed: true } }),
+  rejectQuizItem: (id: number, revision: number, reason: string) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}/reject`, { method: "POST", body: { revision, reason } }),
+  copyQuizItem: (id: number) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}/copy`, { method: "POST" }),
+  archiveQuizItem: (id: number, revision: number) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}/archive`, { method: "POST", body: { revision } }),
+  restoreQuizItem: (id: number, revision: number) =>
+    apiRequest<QuizItemDetailDTO>(`/api/teacher/quiz/items/${id}/restore`, { method: "POST", body: { revision } }),
+  deleteQuizItem: (id: number) =>
+    apiRequest<{ message: string; id: number }>(`/api/teacher/quiz/items/${id}`, { method: "DELETE" }),
+  createQuizPaper: (body: Record<string, unknown>) =>
+    apiRequest<QuizPaperDTO>("/api/teacher/quiz/papers", { method: "POST", body }),
+  listQuizPapers: () => apiRequest<{ items: QuizPaperDTO[] }>("/api/teacher/quiz/papers"),
+  getQuizPaper: (id: number) => apiRequest<QuizPaperDTO>(`/api/teacher/quiz/papers/${id}`),
+  updateQuizPaper: (id: number, body: Record<string, unknown>) =>
+    apiRequest<QuizPaperDTO>(`/api/teacher/quiz/papers/${id}`, { method: "PUT", body }),
+  finalizeQuizPaper: (id: number, revision: number) =>
+    apiRequest<QuizPaperDTO>(`/api/teacher/quiz/papers/${id}/finalize`, { method: "POST", body: { revision } }),
+  copyQuizPaper: (id: number) =>
+    apiRequest<QuizPaperDTO>(`/api/teacher/quiz/papers/${id}/copy`, { method: "POST" }),
+  deleteQuizPaper: (id: number) =>
+    apiRequest<{ message: string; id: number }>(`/api/teacher/quiz/papers/${id}`, { method: "DELETE" }),
+  publishQuizPaper: (id: number, revision: number, classIds: number[]) =>
+    apiRequest<{ message: string; material_ids: number[]; class_ids: number[] }>(
+      `/api/teacher/quiz/papers/${id}/publish`, { method: "POST", body: { revision, reviewed: true, class_ids: classIds } }),
+  quizPaperPreviewUrl: (id: number) => `/api/teacher/quiz/papers/${id}/preview`,
+  quizPaperAnswerKeyUrl: (id: number) => `/api/teacher/quiz/papers/${id}/answer-key`,
+  listQuizEvents: () => apiRequest<{ items: QuizEventDTO[] }>("/api/teacher/quiz/events"),
 };
 
 export interface ResearchMaterialDTO {
@@ -483,6 +527,111 @@ export interface ToolCallEvent {
 export interface ChatMetaData {
   skill: { name: string };
   tool_calls?: ToolCallEvent[];
+}
+
+// --- 智能命题类型 ---
+export interface QuizOption { label: string; text: string; }
+export interface QuizSourceSnapshot {
+  ref: string; research_material_id: number; filename: string;
+  start_line: number; end_line: number; excerpt: string; file_sha256: string;
+}
+export interface QuizItemDTO {
+  id: number; subject: string; author_id: number;
+  type: string; difficulty: string; knowledge_points: string[];
+  stem: string; options: QuizOption[]; answer: unknown; explanation: string;
+  origin: string; status: "pending" | "approved" | "rejected";
+  archived: boolean; modified_in_review: boolean;
+  reject_reason: string | null; revision: number;
+  created_at: string | null; updated_at: string | null;
+}
+export interface QuizItemDetailDTO extends QuizItemDTO {
+  sources: QuizSourceSnapshot[];
+  assets: { name: string; path: string; sha256: string; mime: string }[];
+  source_status: string;
+  can_archive?: boolean;
+  events?: { action: string; detail: Record<string, unknown>; actor_id: number; created_at: string | null }[];
+}
+export interface QuizPaperItemDTO {
+  position: number; question_item_id: number; score: number;
+  snapshot: QuizItemDetailDTO;
+}
+export interface QuizPaperDTO {
+  id: number; title: string; subject: string; duration: number;
+  status: "draft" | "final"; revision: number; item_count: number; total_score: number;
+  created_at: string | null; updated_at: string | null; finalized_at: string | null;
+  blueprint?: Record<string, unknown>;
+  items?: QuizPaperItemDTO[];
+}
+export interface QuizEventDTO {
+  id: number; subject: string | null; target_type: string; target_id: number | null;
+  action: string; detail: Record<string, unknown>; created_at: string | null;
+}
+export interface QuizGenerationDone {
+  generation_id: number; accepted_ids: number[];
+  rejected: { index: number; reasons: string[] }[];
+  gaps: { type?: string; difficulty?: string; knowledge_point?: string; reason?: string }[];
+}
+
+interface GenerationCallbacks {
+  onProgress?: (chars: number) => void;
+  onDone?: (data: QuizGenerationDone) => void;
+  onError?: (message: string) => void;
+}
+
+/** 发起命题生成：POST SSE，分发 progress / done / error。 */
+export async function streamGeneration(body: Record<string, unknown>, cb: GenerationCallbacks): Promise<void> {
+  const token = useAuthStore.getState().accessToken;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  let res = await fetch("/api/teacher/quiz/generations", {
+    method: "POST", headers, body: JSON.stringify(body), credentials: "include",
+  });
+  if (res.status === 401 && (await refreshAccessToken())) {
+    const t2 = useAuthStore.getState().accessToken;
+    res = await fetch("/api/teacher/quiz/generations", {
+      method: "POST", headers: { ...headers, Authorization: `Bearer ${t2}` }, body: JSON.stringify(body), credentials: "include",
+    });
+  }
+  if (!res.ok || !res.body) {
+    let detail = "生成失败";
+    try { detail = (await res.json()).detail ?? detail; } catch { /* 忽略 */ }
+    cb.onError?.(detail);
+    return;
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let gotDone = false;
+  const dispatch = (raw: string) => {
+    for (const line of raw.split("\n")) {
+      if (!line.startsWith("data:")) continue;
+      const payload = line.slice(5).trim();
+      if (!payload) continue;
+      try {
+        const evt = JSON.parse(payload);
+        if (evt.type === "progress") cb.onProgress?.(evt.chars ?? 0);
+        else if (evt.type === "done") { gotDone = true; cb.onDone?.(evt); }
+        else if (evt.type === "error") cb.onError?.(evt.message ?? "生成失败");
+      } catch { /* 忽略非 JSON */ }
+    }
+  };
+  try {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let idx;
+      while ((idx = buffer.indexOf("\n\n")) !== -1) {
+        dispatch(buffer.slice(0, idx));
+        buffer = buffer.slice(idx + 2);
+      }
+    }
+    if (buffer) dispatch(buffer);
+    if (!gotDone) cb.onError?.("未收到完成事件，生成可能已中断，请重试");
+  } catch {
+    cb.onError?.("网络中断，请重试");
+  }
 }
 
 interface ChatStreamCallbacks {

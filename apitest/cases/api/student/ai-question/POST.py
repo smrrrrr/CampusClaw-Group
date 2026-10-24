@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """POST /api/student/ai-question —— AI 检索提问（校验 citations + ai_question_logs）。
 
-测试学生：20230002（class 102，id=3）。class-102 已有已索引材料，检索应命中它。
+测试学生：20260002（王芳，class 102，id=3；可用 APITEST_STUDENT_ID 覆盖）。class-102 已有已索引材料，检索应命中它。
 """
 
 from conftest import SEED_QUESTION

@@ -2,7 +2,8 @@
 
 全部使用临时数据库 + 虚构模型桩 + 虚构 MCP 客户端，不访问真实 MCP 服务、不调用真实 AI、
 不触碰演示数据。覆盖：管理接口权限、令牌不回传、连接失败/重复连接、引用保存期校验、
-候选集、调用上限、ok/denied/error 三种记录与归属隔离。
+候选集与候选集外拒绝、调用上限（每问/轮次/会话累计）、ok/denied/error 三种记录与归属隔离、
+令牌加解密与密钥轮换、地址白名单校验。
 
 用法（在 backend 目录）：
     .venv/bin/python ../apitest/check_mcp_tools.py
@@ -40,6 +41,8 @@ async def main():
         from mcp_client import DiscoveredTool, McpClientError
         import mcp_orchestrator
         from llm_service import DecisionResult, ToolCall, LLMGenerationError
+        from config import settings
+        from cryptography.fernet import Fernet
 
         Base.metadata.create_all(engine)
 
@@ -117,6 +120,9 @@ async def main():
                 return await client.request(method, path, headers=headers[who], **kw)
 
             # === 管理接口权限 ===
+            for path in ("/api/mcp/servers?class_id=101", "/api/teacher/skills?class_id=101", "/api/mcp/tool-calls?class_id=101"):
+                r = await client.get(path)
+                check(f"未登录访问 {path.split('?')[0]} 401", r.status_code == 401)
             r = await req("GET", "/api/mcp/servers?class_id=101", "S1")
             check("学生访问管理接口 403", r.status_code == 403)
             r = await req("GET", "/api/mcp/servers?class_id=999", "TM")
@@ -160,6 +166,8 @@ async def main():
             check("同伴列表不含他人服务器", r.json()["items"] == [])
             r = await req("GET", "/api/mcp/servers/999999/tools", "TM")
             check("不存在编号 404", r.status_code == 404)
+            r = await req("POST", f"/api/mcp/servers/{sid}/connect", "S1")
+            check("学生连接服务器 403", r.status_code == 403)
 
             # === 技能保存期校验 ===
             ok_src = "名称：公式提示\n适用条件：夹角,公式\n工具：formula_hint@campus-tools\n启用：是\n\n求夹角时给公式与步骤提示，不直接给答案。"
@@ -239,6 +247,23 @@ async def main():
                 errs = db.query(McpToolCall).filter(McpToolCall.conversation_id == cid, McpToolCall.status == "error").all()
                 check("写入 error 审计记录", len(errs) >= 1)
 
+            # === 多轮调用：循环结束后只推送一次 meta ===
+            decisions.clear()
+            decisions.extend(
+                DecisionResult(content="", tool_calls=[ToolCall(id=f"m{i}", name="formula_hint", arguments={"query": f"夹角{i}"})])
+                for i in (1, 2)
+            )
+            FakeClient.last_calls.clear()
+            r = await req("POST", f"/api/student/conversations/{cid}/chat", "S1", json={"question": "夹角多轮"})
+            fr = frames(r)
+            types = [f.get("type") for f in fr]
+            metas = [f for f in fr if f.get("type") == "meta"]
+            tcs = (metas[0] if metas else {}).get("tool_calls") or []
+            # 测试环境未配 Key 时正文走 error 降级帧，故断言 meta 为首帧（先于任何 delta/done/error）
+            check("两轮调用只推送一次 meta 且为首帧", len(metas) == 1 and types[0] == "meta")
+            check("meta.tool_calls 按序含两轮 ok 记录",
+                  [t["status"] for t in tcs] == ["ok", "ok"] and len(FakeClient.last_calls) == 2)
+
             # === 调用记录归属隔离 ===
             r = await req("GET", "/api/mcp/tool-calls?class_id=101", "TM")
             check("教师可见本人记录", len(r.json()["items"]) >= 3)
@@ -255,6 +280,96 @@ async def main():
             r = await req("POST", f"/api/student/conversations/{cid}/chat", "S1", json={"question": "今天天气"})
             fr = frames(r)
             check("未命中技能不发 meta", all(f.get("type") != "meta" for f in fr))
+
+        # === 令牌加解密与密钥轮换（tasks 2.2） ===
+        enc = mcp_crypto.encrypt_token("secret-token")
+        check("令牌密文不含原文且可解回",
+              "secret-token" not in enc and mcp_crypto.decrypt_token(enc) == "secret-token")
+        old_key = settings.mcp_token_key
+        settings.mcp_token_key = Fernet.generate_key().decode()
+        try:
+            mcp_crypto.decrypt_token(enc)
+            check("换密钥后解密失败并提示重新填写令牌", False)
+        except mcp_crypto.TokenDecryptError as exc:
+            check("换密钥后解密失败并提示重新填写令牌", "请重新填写令牌" in str(exc))
+        settings.mcp_token_key = ""
+        try:
+            mcp_crypto.encrypt_token("x")
+            check("未配置 MCP_TOKEN_KEY 拒绝保存令牌", False)
+        except mcp_crypto.TokenKeyNotConfigured:
+            check("未配置 MCP_TOKEN_KEY 拒绝保存令牌", True)
+        settings.mcp_token_key = old_key
+
+        # === 地址白名单校验（不发请求） ===
+        for bad in ("http://localhost:8090", "http://10.0.0.5:8090", "ftp://mcp-tools:8090",
+                    "http://user:pw@mcp-tools:8090", "http://metadata.google.internal", "http://evil.com:8090"):
+            try:
+                mcp_crypto.validate_base_url(bad)
+                check(f"地址校验拒绝 {bad}", False)
+            except ValueError:
+                check(f"地址校验拒绝 {bad}", True)
+        check("白名单地址通过并去掉末尾斜杠",
+              mcp_crypto.validate_base_url("http://mcp-tools:8090/") == "http://mcp-tools:8090")
+
+        # === 调用上限与候选集外（直接驱动 run_tool_loop） ===
+        candidates = [{
+            "ref": "formula_hint@campus-tools", "tool_name": "formula_hint", "server_id": sid,
+            "server_name": "campus-tools", "base_url": "http://mcp-tools:8090", "description": "公式提示",
+            "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+        }]
+
+        def proposal(n, name="formula_hint"):
+            return [ToolCall(id=f"p{i}", name=name, arguments={"query": "夹角"}) for i in range(n)]
+
+        def run_loop(proposals, conversation_id):
+            decisions.clear()
+            decisions.extend(DecisionResult(content="", tool_calls=p) for p in proposals)
+            FakeClient.last_calls.clear()
+            with SessionLocal() as db:
+                events = mcp_orchestrator.run_tool_loop(
+                    db, skill=None, candidates=candidates, denied=[], messages=[],
+                    class_id=101, subject="math", user_id=1, conversation_id=conversation_id,
+                )[0]
+            return events
+
+        per_q = settings.mcp_max_calls_per_question
+        events = run_loop([proposal(per_q + 2)], 9001)
+        check(f"每问上限 {per_q}：只执行 {per_q} 次，其余 denied",
+              len(FakeClient.last_calls) == per_q and [e["status"] for e in events].count("denied") == 2)
+        with SessionLocal() as db:
+            check("超出每问上限的调用写 denied 审计",
+                  db.query(McpToolCall).filter_by(conversation_id=9001, status="denied").count() == 2)
+
+        rounds = settings.mcp_max_rounds
+        run_loop([proposal(1) for _ in range(rounds + 2)], 9002)
+        check(f"决策轮次上限 {rounds}：只执行 {rounds} 次", len(FakeClient.last_calls) == rounds)
+
+        per_conv = settings.mcp_max_calls_per_conversation
+        with SessionLocal() as db:
+            for _ in range(per_conv - 1):
+                db.add(McpToolCall(class_id=101, subject="math", server_id=sid, server_name="campus-tools",
+                                   tool_name="formula_hint", tool_ref="formula_hint@campus-tools", status="ok",
+                                   user_id=1, conversation_id=9003, round=1))
+            db.commit()
+        run_loop([proposal(3)], 9003)
+        check(f"会话累计上限 {per_conv}：已有 {per_conv - 1} 次时只再执行 1 次", len(FakeClient.last_calls) == 1)
+
+        with SessionLocal() as db:
+            before = db.query(McpToolCall).count()
+        events = run_loop([proposal(1, "rm_rf")], 9004)
+        with SessionLocal() as db:
+            after = db.query(McpToolCall).count()
+        check("候选集外工具 denied、不执行、不写审计",
+              not FakeClient.last_calls and events and events[0]["status"] == "denied" and after == before)
+
+        # ---- OpenAPI：403 由路由器级统一声明，路由级不再覆盖成别的文案 ----
+        ops = [(path, method, op) for path, item in app.openapi()["paths"].items()
+               if path.startswith(("/api/mcp", "/api/teacher/skills")) for method, op in item.items()]
+        bad_403 = [f"{m.upper()} {p}" for p, m, op in ops
+                   if op.get("responses", {}).get("403", {}).get("description") != "非教师或非任教班级"]
+        check(f"OpenAPI：MCP/技能 {len(ops)} 个接口的 403 说明统一为路由器级口径", ops and not bad_403)
+        create_op = app.openapi()["paths"]["/api/mcp/servers"]["post"]["responses"]
+        check("OpenAPI：登记服务器仍保留特有的 400 说明", "400" in create_op and "401" in create_op)
 
         print(f"\n结果：{sum(1 for _, ok in checks if ok)}/{len(checks)} 通过")
         failed = [n for n, ok in checks if not ok]

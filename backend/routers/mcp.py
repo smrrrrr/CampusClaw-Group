@@ -36,7 +36,11 @@ from mcp_crypto import (
 from models import Class, McpServer, McpTool, McpToolCall, Role, User
 from services import require_teacher_classes
 
-router = APIRouter(prefix="/api/mcp", tags=["mcp"])
+router = APIRouter(
+    prefix="/api/mcp",
+    tags=["mcp"],
+    responses={401: {"description": "未登录或令牌无效"}, 403: {"description": "非教师或非任教班级"}},
+)
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +188,7 @@ def _token_for(server: McpServer) -> str:
     try:
         return decrypt_token(server.auth_token_enc)
     except TokenDecryptError as exc:
-        # 密钥轮换：置未连接，提示重新填写
+        # 密钥轮换：旧密文无法解开，提示教师重新填写令牌
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except TokenKeyNotConfigured as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -197,7 +201,6 @@ def _token_for(server: McpServer) -> str:
 
 @router.get("/servers", response_model=ServerListResponse,
     summary="列出本人某班 MCP 服务器",
-    responses={403: {"description": "非教师或非任教班级"}, 401: {"description": "未认证"}},
 )
 def list_servers(
     class_id: int = Query(...),
@@ -218,7 +221,7 @@ def list_servers(
 
 @router.post("/servers", response_model=ServerItem, status_code=status.HTTP_201_CREATED,
     summary="登记 MCP 服务器",
-    responses={400: {"description": "名称/地址非法或令牌密钥未配置"}, 403: {"description": "非任教班级"}},
+    responses={400: {"description": "名称/地址非法或令牌密钥未配置"}},
 )
 def create_server(
     body: ServerCreateRequest,
@@ -423,7 +426,6 @@ def list_server_tools(
 
 @router.get("/tool-calls", response_model=ToolCallListResponse,
     summary="查看本人服务器调用记录",
-    responses={403: {"description": "非教师或非任教班级"}},
 )
 def list_tool_calls(
     class_id: int = Query(...),

@@ -4,6 +4,7 @@
     uv run uvicorn main:app --reload
 """
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, HTTPException
@@ -15,9 +16,28 @@ from sqlalchemy.exc import SQLAlchemyError
 import models  # noqa: F401  # 确保模型注册到 Base.metadata
 from config import settings
 from database import Base, SessionLocal, engine, run_simple_migrations
-from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills
+from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills, quiz
 from security import JWTError, TOKEN_TYPE_ACCESS, decode_token
 from services import write_audit_log
+
+# 业务模块日志（如学生稿 LaTeX 修补次数，harden-model-json-escapes design §6）。
+# uvicorn 只配置自己的 logger，根 logger 没有处理器时 INFO 会被丢弃；
+# 这里只给业务模块挂处理器，不放开第三方库（httpx 等）的 INFO 日志。
+APP_LOGGERS = ("lesson_service",)
+
+
+def _configure_app_logging() -> None:
+    for name in APP_LOGGERS:
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.INFO)
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(levelname)s:     %(name)s - %(message)s"))
+            logger.addHandler(handler)
+        logger.propagate = False
+
+
+_configure_app_logging()
 
 
 @asynccontextmanager
@@ -58,6 +78,7 @@ app.include_router(research_materials.router)
 app.include_router(lesson_plans.router)
 app.include_router(mcp.router)
 app.include_router(skills.router)
+app.include_router(quiz.router)
 
 
 # ---------------------------------------------------------------------------

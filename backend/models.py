@@ -553,3 +553,151 @@ class McpToolCall(Base):
         Index("ix_mcp_call_server_created", "server_id", "created_at"),
         Index("ix_mcp_call_conversation", "conversation_id"),
     )
+
+
+# ---------------------------------------------------------------------------
+# 智能命题（add-smart-question-generation）
+# 六张新表由启动时 create_all 创建，不改动旧表结构。
+# ---------------------------------------------------------------------------
+
+
+class QuestionGeneration(Base):
+    """一次命题任务。流结束时写入一行；失败也留记录，便于审计。"""
+
+    __tablename__ = "question_generations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    request_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    resources_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="succeeded", nullable=False)  # succeeded / failed
+    accepted_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    rejected_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    gaps_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+
+    __table_args__ = (Index("ix_qgen_teacher_created", "teacher_id", "created_at"),)
+
+
+class QuestionItem(Base):
+    """候选题与题库题共用一张表，由 status 区分（pending/approved/rejected）。"""
+
+    __tablename__ = "question_items"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    generation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("question_generations.id"), nullable=True)
+    derived_from_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    type: Mapped[str] = mapped_column(String(24), nullable=False)
+    difficulty: Mapped[str] = mapped_column(String(12), nullable=False)
+    knowledge_points_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    stem: Mapped[str] = mapped_column(Text, nullable=False)
+    options_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    answer_json: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    explanation: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    origin: Mapped[str] = mapped_column(String(16), default="new", nullable=False)
+    sources_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    assets_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="pending", nullable=False)
+    archived: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    stem_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    content_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    modified_in_review: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    reviewed_by: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    reject_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    revision: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("ix_qitem_scope", "subject", "status", "archived", "type", "difficulty"),
+        Index("ix_qitem_author", "author_id"),
+        Index("ix_qitem_stemkey", "subject", "stem_key"),
+    )
+
+
+class QuestionPaper(Base):
+    """试卷，仅作者可见。"""
+
+    __tablename__ = "question_papers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    blueprint_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    status: Mapped[str] = mapped_column(String(12), default="draft", nullable=False)  # draft / final
+    revision: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    copied_from_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    finalized_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    __table_args__ = (Index("ix_qpaper_teacher", "teacher_id", "created_at"),)
+
+
+class QuestionPaperItem(Base):
+    """试卷中的一道题：保存加入试卷时的完整题目与出处快照。"""
+
+    __tablename__ = "question_paper_items"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    paper_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("question_papers.id", ondelete="CASCADE"), nullable=False
+    )
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    question_item_id: Mapped[int] = mapped_column(Integer, ForeignKey("question_items.id"), nullable=False)
+    score: Mapped[float] = mapped_column(nullable=False)
+    snapshot_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("paper_id", "question_item_id", name="uq_paper_item"),
+        Index("ix_qpaper_item_paper", "paper_id", "position"),
+    )
+
+
+class QuizPublication(Base):
+    """试卷分班发布记录。相同内容重复发布时复用。"""
+
+    __tablename__ = "quiz_publications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    paper_id: Mapped[int] = mapped_column(Integer, ForeignKey("question_papers.id"), nullable=False)
+    class_id: Mapped[int] = mapped_column(Integer, ForeignKey("classes.id"), nullable=False)
+    material_id: Mapped[int] = mapped_column(Integer, ForeignKey("materials.id"), unique=True, nullable=False)
+    content_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("paper_id", "class_id", "content_sha256", name="uq_quiz_pub_content"),
+        Index("ix_quiz_pub_paper", "paper_id"),
+    )
+
+
+class QuestionEvent(Base):
+    """命题审计事件。删除题目/试卷后事件仍保留。"""
+
+    __tablename__ = "question_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    actor_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    subject: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    target_type: Mapped[str] = mapped_column(String(16), nullable=False)  # generation / item / paper
+    target_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    detail_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+
+    __table_args__ = (
+        Index("ix_qevent_target", "target_type", "target_id"),
+        Index("ix_qevent_actor", "actor_id", "created_at"),
+    )

@@ -43,3 +43,67 @@
 - 已把 delta 合入主规约：新建 `specs/mcp-tool-integration/spec.md`（10 条 Requirement）；`specs/agent-assistant/spec.md` 由 14 条变为 16 条（新增“教师技能文件”“学生提问的技能路由”“助手技能与 MCP 配置界面”，删除“高级助手控件的预览边界”，SSE 流式回答替换为新版）。
 - 归档到 `changes/archive/2026-10-23-add-mcp-tool-integration/`。
 - **已知遗留问题**：`harden-citation-provenance` 与 `harden-foundation-and-align-specs` 两个历史变更早已完成但从未归档，它们的 `agent-assistant` delta 基于旧主规约（引用已删除的“高级助手控件的预览边界”和旧版 SSE 场景）。主规约更新后，`openspec validate --all` 会对这两个**未归档**变更报 delta 不一致。这是既有归档债务，非本变更引入；已按使用者决定暂不处理，后续应由负责组员按时间顺序归档这两个旧变更并解决其 delta 差异。
+  - 已解决（2026-10-23）：两个旧变更中过时的「SSE 流式回答」MODIFIED 块已删除。这两块内容与 MCP 之前的主规约一致，按原样归档会冲掉 MCP 新增的 `meta` / `tool_calls` 要求；两个变更的其余增量未改动。SSE 中「`meta` 推送时机」的规约与实现差异，另由变更 `align-sse-meta-single-push` 改为「工具调用循环结束后只发送一次」，并已正常归档写入主规约。`harden-citation-provenance` 的其余增量已全部同步到主规约，按 `--skip-specs` 归档，主规约未改动。「高级助手控件的预览边界」不在这两个变更里，仍由 `subject-teacher-assistants`、`align-teacher-student-workspaces` 引用，校验只给出 INFO，不影响通过，留待这两个变更归档时处理。处理后 `openspec validate --all --strict --no-interactive` 结果为 22 passed、0 failed。
+
+## 归档后核查与补测（2026-10-23）
+
+归档后对照 tasks.md 逐项核查。本节只记录实际跑过的内容；没有改动规约、tasks.md 勾选和接口行为。
+
+### 核查时实测
+
+| 项 | 方式 | 结果 |
+| --- | --- | --- |
+| 隔离检查与回归 | `check_mcp_tools`、`check_formula_retrieval`、两个 `.cjs` | 39/39、11/11、两个 `.cjs` 均通过 |
+| 真实工具服务 | 在 backend 容器内用真实 `McpClient` 连接 `mcp-tools:8090` | 发现 2 个工具；`formula_hint` 只返回提示，不给数值答案；无令牌 401；错令牌、参数不合、未知工具均被拒绝 |
+| 文档入口 | 经 8081 | `/docs`、`/openapi.json` 均 404（`ENABLE_DOCS=false`） |
+| 令牌泄露 | 前端构建产物、镜像历史、容器日志、git 跟踪文件中搜索令牌 | 均为 0 处；backend 与 mcp-tools 两侧令牌一致（只比较，不输出） |
+
+### 发现的缺口
+
+| 任务 | 缺口 |
+| --- | --- |
+| 8.3 | `openspec/README.md` 的 MCP 链接仍指向归档前的路径，均为断链 |
+| 8.2 | OpenAPI 只给部分接口写了 401/403，多数接口缺少这两项说明 |
+| 9.1 | 调用上限（每问 4 次、决策 3 轮、会话累计 20 次）、候选集外工具、令牌加解密与密钥轮换、地址白名单没有对应用例；原「调用上限分支」只覆盖到参数校验 |
+| 9.2 | HTTP 用例没有「连接 → 技能 → 学生提问 → meta → 审计」链路；连接用例在 502 时跳过，连接失败会被当成通过 |
+| 9.3 | `.cjs` 回归在上文没有运行记录 |
+| 9.6 | 四项交叉复核只有口述记录，没有请求与响应证据 |
+| 9.7 | `openspec validate --all` 为 27 通过、2 失败，失败项是上文已记录的两个未归档旧变更 |
+
+另有两处小问题：编排在令牌解不开时以空令牌发起调用，审计记为「无法连接」，而不是「令牌需重新填写」；`routers/mcp.py` 中 `_token_for` 的注释写「置未连接」，代码实际只返回 400。
+
+### 本轮补测与修正
+
+| # | 内容 | 验证 |
+| --- | --- | --- |
+| 1 | README 的 MCP 提案、设计、任务链接改为归档路径，并新增验收记录链接 | 链接扫描：MCP 相关链接均可达。剩余 1 处断链是 `specs/smart-question-generation/spec.md`，该变更尚未归档，属预期 |
+| 2 | `routers/mcp.py`、`routers/skills.py` 在路由器级补 401（未登录或令牌无效）与 403（非教师或非任教班级），路由级已有的 403 说明保留；`_token_for` 注释改为与代码一致 | `app.openapi()`：12 个 `/api/mcp/*`、`/api/teacher/skills*` 操作全部含 401 与 403 |
+| 3 | `check_mcp_tools.py` 新增 19 条：未登录 401 三条、学生连接服务器 403、令牌加解密三条（密文不含原文且可解回、换密钥后提示重新填写令牌、未配置密钥拒绝保存）、地址校验七条（拒绝 localhost、内网、非 http、带用户名密码、元数据域名、白名单外主机；白名单地址通过）、上限与候选集五条（每问超出 2 次记 denied 并写审计、轮次上限 3、会话已有 19 次时只再执行 1 次、候选集外工具 denied 且不执行不写审计） | **58/58 通过** |
+| 4 | 新增 `apitest/cases/api/mcp/CHAIN.py`：班级 102 登记服务器 → 连接真实 `mcp-tools` → 保存引用 `formula_hint` 的技能 → 学生提问 → 断言 `meta` 帧带技能名且先于 `delta` → AI 可用时断言 `meta.tool_calls` 为 ok 且调用记录可查。`GET.py` 的连接用例改为：令牌从 `APITEST_MCP_TOKEN` 传入，未提供时跳过并写明原因，连接失败按失败处理。`conftest.py` 的测试账号允许用环境变量覆盖 | 见下 |
+
+链路用例的运行方式：在 scratch 目录新建空测试库，只含自建的两个测试班和两个测试账号，不复制演示数据；用本轮镜像 `docker compose run --no-deps -p 127.0.0.1:8001:8000` 起临时后端，接入 compose 网络以访问 `mcp-tools:8090`。演示库没有参与。
+
+| 运行 | 结果 |
+| --- | --- |
+| `pytest cases/api/mcp`（令牌正确） | 7 通过、1 跳过。跳过的是 ok 审计一条：容器内 `DEEPSEEK_API_KEY` 为空，聊天返回「AI 生成服务未配置 API Key」 |
+| 同上（令牌故意写错） | 连接用例与链路用例均失败，报 502「MCP 服务拒绝了令牌（401）」，不再被跳过 |
+| 用例结束后 | 临时库中服务器、技能均为 0（用例自行清理） |
+
+其余运行：
+
+| 命令 | 结果 |
+| --- | --- |
+| `check_formula_retrieval`、`check_question_bank`、`check_lesson_prep`、`check_research_materials`、`check_sqlite_storage`、`check_lessons_2_5` | 11/11、68/68、112/112、54/54、16/16、122/122 |
+| `node apitest/check_markdown_images.cjs`、`node apitest/check_recent_history.cjs` | 均通过 |
+| `openspec validate --all` | 27 通过、2 失败（仍是 `harden-citation-provenance`、`harden-foundation-and-align-specs` 的 `SSE 流式回答` delta 缺两条新场景），与归档记录一致 |
+| `docker compose up -d --build backend` | healthy；容器内为本轮代码 |
+| 8081 冒烟 | `/api/health` 200；三个 MCP 与技能列表接口未登录均 401；`/docs`、`/openapi.json` 404 |
+
+### 仍未覆盖
+
+1. **真实模型提议调用 → ok 审计**：本机 `.env` 的 `DEEPSEEK_API_KEY` 只有 1 个字符，容器内为空。链路用例已写好，配置有效 Key 后重跑 `CHAIN.py` 即可验证这一段；在此之前只有隔离检查中的虚构模型覆盖。
+2. **任务 9.6**：仍只有使用者口述，没有请求与响应证据。四项中的服务器隔离、令牌不回传、断开即 denied、记录只看本人范围，在 `check_mcp_tools.py` 中都有对应断言；但「同伴交叉复核」的本意是由另一位组员在真实栈上复核，建议补一次并留存证据。
+3. ~~**任务 9.7**：两个旧变更的 delta 冲突仍待负责组员处理。~~ 已解决，处理方式见上文「归档记录」中「已知遗留问题」下的后续说明。`openspec validate --all --strict --no-interactive`：22 passed、0 failed。
+4. **令牌解不开时的审计口径**：编排仍以空令牌调用并记为「无法连接」。若要改为提示「令牌需重新填写」，属于行为变更，需先改规约。
+5. **apitest 默认账号**：`conftest.py` 默认学生账号 `20230002` 与当前演示库（`20260002`）不一致。本轮只增加了环境变量覆盖，没有改默认值。
+   - 后续（2026-10-23，智能命题第四轮）：默认值已改为种子表的 `20260002`。`CHAIN.py` 在模型未提议调用工具时改为跳过并写明原因。MCP 与技能接口路由级重复的 403 已删除。详见 `add-smart-question-generation/validation.md` 第四轮。

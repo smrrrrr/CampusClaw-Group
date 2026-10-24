@@ -27,6 +27,6 @@
 
 ## 功能验收证据与限制
 
-此前真实执行的检查详见 [助手验收](changes/add-agent-assistant/validation.md)、[备课验收](changes/add-smart-lesson-prep/validation.md)、[资料验收](changes/add-research-materials/validation.md)、[检索验收](changes/add-rag-search/validation.md)、[工作空间验收](changes/align-teacher-student-workspaces/validation.md) 和 [运行保障验收](changes/harden-runtime-reliability/validation.md)。这些记录是历史证据，本次没有重新运行全部业务测试或真实学生登录流程，不把规约校验视为功能回归通过。
+此前真实执行的检查详见 [助手验收](changes/add-agent-assistant/validation.md)、[备课验收](changes/add-smart-lesson-prep/validation.md)、[资料验收](changes/archive/2026-10-23-add-research-materials/validation.md)、[检索验收](changes/archive/2026-10-23-add-rag-search/validation.md)、[工作空间验收](changes/align-teacher-student-workspaces/validation.md) 和 [运行保障验收](changes/harden-runtime-reliability/validation.md)。这些记录是历史证据，本次没有重新运行全部业务测试或真实学生登录流程，不把规约校验视为功能回归通过。
 
 仍待完成：真实作业批改/错题技能、MCP 和技能注册、真实学情诊断、教师版 Word/PDF 自动解析、服务端 PDF/Word 导出、429 超限审计，以及完整真实学生浏览器端到端验收。现有变更保留这些待办，不因本次整理自动标为完成。

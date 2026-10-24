@@ -57,30 +57,6 @@
 - **WHEN** 学生尝试读取或追问一个不属于本人，或属于其他班级的会话
 - **THEN** 非本人或不存在时返回 404；本人会话班级不一致时返回 403 并记录审计日志
 
-### Requirement: SSE 流式回答
-
-学生提问后，系统 MUST 以 SSE（`text/event-stream`）返回增量文本和最终结果。生成中增量尚未完成引用核对，前端 MUST 明示此状态；正常 done 事件 MUST 含已校验引用编号的最终答案、实际使用的 citations 和 remaining，并替换临时显示内容。异常 error 事件 MUST 包含最终 message、citations 和 remaining，不承诺额外 done。模型中断后的部分文本 MUST 同样核对编号；完全失败或未配置 Key 时 MUST 展示服务器生成的检索段落及其实际来源。反向代理 MUST 关闭 `/api/` 响应缓冲。
-
-#### Scenario: 流式逐字输出
-
-- **WHEN** 学生在会话内提问且 DeepSeek 正常
-- **THEN** 前端显示生成中引用待核对提示，逐字渲染增量，最后用 done 中的最终答案和实际使用的有效来源替换临时内容
-
-#### Scenario: 多轮会话检索无命中时延续历史
-
-- **WHEN** 本班没有相关分块被召回
-- **THEN** 多轮会话仍调用模型，传入最近历史及本轮无新资料说明，可延续已有题目；不存在资料时如实说明，引用列表为空。旧单次 ai-question 接口仍直接返回无资料提示
-
-#### Scenario: DeepSeek 失败时降级为检索段落
-
-- **WHEN** 有相关分块但 DeepSeek 调用失败或未配置 API Key
-- **THEN** error 事件包含降级 message、段落对应的结构化 citations 和 remaining；前端立即显示与保存到历史一致的最终内容及来源
-
-#### Scenario: 流式结束写回会话
-
-- **WHEN** 流式完成（无论成功或降级）
-- **THEN** 系统把 user 消息和完成引用编号核对的 assistant 消息写回会话，sources 仅保存最终答案实际使用的来源，降级段落保存实际展示来源
-
 ### Requirement: 消息与会话持久化
 
 系统 MUST 将消息持久化到 `messages`，assistant 消息 MUST 保存经过编号核对的最终内容及实际使用的 sources（JSON 数组），含原 reference_id 和 file_sha256。历史 MUST 按时间正序回显并保留原来源；作为新一轮模型上下文时 MUST 仅取有限轮次，并去除旧 assistant 正文数字来源编号，避免沿用旧编号。旧无版本来源 MUST 明示未记录版本并禁止直接打开原文。

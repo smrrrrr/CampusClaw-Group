@@ -6,6 +6,7 @@ import rehypeKatex from "rehype-katex";
 import { useMemo } from "react";
 import { AuthenticatedImage } from "./authenticated-image";
 import { normalizeMarkdownImagePaths } from "@/lib/markdown-images";
+import { protectFillBlanks } from "@/lib/markdown-blanks";
 
 /**
  * 常用 LaTeX 命令表。部分讲义源文件命令未写反斜杠（如 `$vec{a}$` 而非 `$\vec{a}$`），
@@ -75,7 +76,7 @@ export default function MarkdownAnswer({ text, imageUrl }: { text: string; image
   return (
     <div className="markdown-body" style={{ lineHeight: 1.8, fontSize: 14 }}>
       <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
-        {normalizeLatex(imageUrl ? normalizeMarkdownImagePaths(text) : text)}
+        {normalizeLatex(protectFillBlanks(imageUrl ? normalizeMarkdownImagePaths(text) : text))}
       </ReactMarkdown>
     </div>
   );

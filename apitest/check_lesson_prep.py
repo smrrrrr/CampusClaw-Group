@@ -3,6 +3,7 @@ import asyncio
 import base64
 import io
 import json
+import logging
 import os
 import tempfile
 import zipfile
@@ -197,6 +198,60 @@ async def main():
             output = '{broken json'
             check('broken student response gives error', events(await req('POST', path + '/student-drafts', json=rev()))[-1]['type'] == 'error')
             check('failed regeneration preserves existing students', (await req('GET', path)).json()['student_handout'] == encoded_handout)
+            # harden-model-json-escapes 4.3：学生稿用同一修补规则，单反斜杠公式仍能保存
+            BS, DBS = '\\', '\\\\'
+            latex_lesson = (f'# 线面角学生教案\n\n## 学习目标\n理解 ${DBS}vec{{a}}$ 与 ${BS}overrightarrow{{AB}}$ 的关系。\n\n'
+                            f'## 课堂活动\n计算 ${BS}frac{{1}}{{2}}$，并比较 ${BS}cos{BS}theta$ 与已知 ${BS}sqrt{{2}}$。\n')
+            latex_handout = (f'# 线面角学生讲义\n\n### EX01\n求 ${BS}vec{{a}}{BS}cdot{DBS}vec{{b}}$ 的夹角。\n\n'
+                             f'由题意得 ${BS}tan{DBS}alpha=1$\\n第二步用 ${BS}neq$ 判断。\n\n________________\n')
+            # 模型真实输出的形态：手写 JSON 原文，单反斜杠不转义
+            output = ('{"student_lesson": "' + latex_lesson.replace('\n', DBS + 'n') + '", '
+                      '"student_handout": "' + latex_handout.replace('\n', DBS + 'n') + '"}')
+            # 修补次数要真正写进服务端日志（design §6），且不带学生稿正文
+            lesson_logger = logging.getLogger('lesson_service')
+            repair_records = []
+            capture = logging.Handler()
+            capture.emit = repair_records.append
+            lesson_logger.addHandler(capture)
+            try:
+                check('单反斜杠学生稿：重新生成成功并保存', events(await req('POST', path + '/student-drafts', json=rev()))[-1]['type'] == 'done')
+            finally:
+                lesson_logger.removeHandler(capture)
+            repair_messages = [r.getMessage() for r in repair_records if '修补' in r.getMessage()]
+            check('单反斜杠学生稿：修补次数写入服务端日志且不含正文',
+                  lesson_logger.isEnabledFor(logging.INFO)
+                  and any(h is not capture for h in lesson_logger.handlers)
+                  and len(repair_messages) == 1
+                  and isinstance(repair_records[0].args[0], int) and repair_records[0].args[0] > 0
+                  and '线面角' not in repair_messages[0] and 'vec' not in repair_messages[0])
+            saved_pair = (await req('GET', path)).json()
+            # 学生稿每次保存都会推进教案修订号，后续请求用最新修订号
+            current_rev = saved_pair['revision']
+            check('单反斜杠学生稿：公式还原为 LaTeX 命令',
+                  all(cmd in saved_pair.get('student_handout', '') for cmd in
+                      (BS + 'vec{a}', BS + 'cdot', BS + 'tan', BS + 'alpha', BS + 'neq'))
+                  and BS + 'overrightarrow{AB}' in saved_pair.get('student_lesson', '')
+                  and BS + 'frac{1}{2}' in saved_pair.get('student_lesson', ''))
+            check('单反斜杠学生稿：合法换行保留、不含控制字符',
+                  '第二步用' in saved_pair.get('student_handout', '')
+                  and '\f' not in saved_pair.get('student_handout', '')
+                  and '\b' not in saved_pair.get('student_lesson', ''))
+            good_lesson, good_handout = saved_pair['student_lesson'], saved_pair['student_handout']
+            # 漏网控制字符：学生稿含换页（U+000C）时拒绝保存，旧稿保持不变
+            control_lesson = '# 线面角\n\n含换页' + chr(12) + '残留公式\n'
+            output = json.dumps({**pair, 'student_lesson': control_lesson}, ensure_ascii=False)
+            check('学生稿含 U+000C：返回 error',
+                  events(await req('POST', path + '/student-drafts', json={'revision': current_rev}))[-1]['type'] == 'error')
+            after_control = (await req('GET', path)).json()
+            check('学生稿含 U+000C：旧稿保持不变',
+                  after_control['student_lesson'] == good_lesson and after_control['student_handout'] == good_handout)
+            check('学生稿含 U+000C：手工编辑同样拒绝保存',
+                  (await req('PUT', path + '/student-drafts',
+                             json={'revision': after_control['revision'], **pair,
+                                   'student_lesson': control_lesson})).status_code == 400)
+            # 学生稿保存推进了修订号：刷新 p，后续用例继续用最新修订号
+            p = (await req('GET', path)).json()
+            output = json.dumps(pair, ensure_ascii=False)
             output = json.dumps({**pair, 'student_lesson': '**答案**：PRIVATE_SOLUTION'})
             check('AI answer marker rejected before saving', events(await req('POST', path + '/student-drafts', json=rev()))[-1]['type'] == 'error')
             check('manual teacher solution rejected', (await req('PUT', path + '/student-drafts', json={**rev(), **pair, 'student_handout': teacher})).status_code == 400)

@@ -1,6 +1,8 @@
 """apitest 共享 fixtures：BASE_URL 客户端、数据库连接、教师/学生登录头、class-102 已索引材料 id。
 
-- 测试学生账号：20230002 / Test@2023（学生，class_id=102，id=3）。
+- 默认账号与开发种子一致（见 openspec/specs/login-and-account-system 种子表）：
+  教师 TEA001，学生 20260002（王芳，class_id=102，id=3）。演示库改过密码时用
+  APITEST_TEACHER_ID / APITEST_TEACHER_PASSWORD / APITEST_STUDENT_ID / APITEST_STUDENT_PASSWORD 覆盖。
   class-102 已存在已索引材料（materials id=1），检索类用例直接对其命中即可，
   无需额外的种子/复制逻辑。
 - 每个用例同时做「HTTP 响应内容」与「SQLite 数据库一致性」两层断言。
@@ -14,9 +16,15 @@ import requests
 
 BASE_URL = os.environ.get("APITEST_BASE_URL", "http://localhost:8001")
 
-TEACHER = {"identifier": "TEA001", "password": "Teach@2026"}
-# 用户指定的学生测试账号：20230002 / Test@2023（class 102，id=3）
-STUDENT = {"identifier": "20230002", "password": "Test@2023"}
+TEACHER = {
+    "identifier": os.environ.get("APITEST_TEACHER_ID", "TEA001"),
+    "password": os.environ.get("APITEST_TEACHER_PASSWORD", "Teach@2026"),
+}
+# 学生默认取开发种子的王芳（20260002，class 102，id=3）与种子初始密码；可用环境变量覆盖
+STUDENT = {
+    "identifier": os.environ.get("APITEST_STUDENT_ID", "20260002"),
+    "password": os.environ.get("APITEST_STUDENT_PASSWORD", "thu260002"),
+}
 
 # 检索用问题：必须与 class-102 材料词元高度重叠，确保命中（chunk_min_keyword_hits=3）
 SEED_QUESTION = "如何用空间向量法求二面角的平面角？"

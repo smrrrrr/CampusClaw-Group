@@ -26,6 +26,7 @@ function TeacherHome() {
   const requestedView = nav.requestedView ?? (isHomeroom ? "home" : "lesson-prep");
   useEffect(() => {
     if (requestedView === "lesson-prep") router.replace("/teacher/lesson-prep");
+    if (requestedView === "lesson-quiz") router.replace("/teacher/quiz");
   }, [requestedView, router]);
   const view = findTeacherNavItem(navItems, requestedView)?.to?.startsWith("/teacher?")
     ? requestedView : "lesson-prep";

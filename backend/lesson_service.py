@@ -1,9 +1,16 @@
 """智能备课：完整章节片段、原文行号及版本指纹，教师稿与学生稿分开。"""
 import json
+import logging
 import re
 from urllib.parse import quote
 
+from model_json import ModelJSONError, has_control_chars, load_model_json
 from research_service import IMAGE, safe_name, validate_student_text
+
+logger = logging.getLogger(__name__)
+
+# 学生稿的控制字符兜底原因（design §4）
+CONTROL_CHAR_REASON = '学生稿含不可见控制字符，疑似公式转义错误'
 
 TEACHER_PROMPT = r"""你是一位高中学科备课教师。根据教学要求和提供的教师资料生成可直接编辑的中文 Markdown 教案。
 必须包含：教学目标、教学重难点、课前准备、教学过程（各环节分钟数合计等于指定课时）、例题及教师解答、课堂练习、课后任务、板书设计。
@@ -22,7 +29,8 @@ STUDENT_PROMPT = r"""依据教师最终定稿和所选原始教师资料，制�
 教师稿未选用的题目不要引入。原题条件/题号要准确，题干图片只使用给定路径，保留 %20 等编码，不解码成空格；不使用仅属于答案的坐标标注/辅助线图。不能判断是否泄露解答的图片宁可省略，留待老师核对。
 原题已有选项可以保留，但不能把原题答案改写成新判断题中的提示，或在后续练习中透露同题的数值结论。
 作答空间使用多条空白横线，不使用 \\vspace、\\newpage 等 Markdown 不支持的 LaTeX 排版命令。
-允许 Markdown、LaTeX 数学公式及本次提供的配图，不要 HTML。所有反斜杠必须正确进行 JSON 转义。
+允许 Markdown、LaTeX 数学公式及本次提供的配图，不要 HTML。所有反斜杠必须正确进行 JSON 转义：
+JSON 字符串里每个 LaTeX 反斜杠都写成两个，例如 "$\\frac{1}{2}$"、 "$\\vec{a}$"。
 """
 
 
@@ -123,17 +131,18 @@ def validate_student(content, resources):
     validate_links(content, resources)
     if re.search(r'\[S\d+\]', content):
         raise ValueError('学生稿不能包含教师资料的私有引用编号。')
+    # 控制字符兜底：修补后仍有退格或换页，说明公式被单个反斜杠解码坏了（design §4）
+    if has_control_chars(content):
+        raise ValueError(CONTROL_CHAR_REASON)
     # 显式标记兜底，语义和图片内容仍由教师核对。
     if re.search(r'(?m)^\s*(?:#{1,6}\s*|\*\*|【)?(?:参考答案|答案|解答|解析|详解|教师提示|教学提示|教师备注|解题过程)(?:[：:\s】*]|$)', content):
         raise ValueError('学生稿包含答案或教师提示标记，请删除后再保存。')
 
 
 def parse_student_output(raw, resources):
-    raw = raw.strip()
-    if raw.startswith('```') and raw.endswith('```'):
-        raw = raw.split('\n', 1)[1].rsplit('```', 1)[0].strip()
+    """与智能命题同一解析规则：剥围栏 → 修补 LaTeX 反斜杠 → 解析（design §1）。"""
     try:
-        result = json.loads(raw)
+        result, repairs = load_model_json(raw)
         if not isinstance(result, dict) or set(result) != {'student_lesson', 'student_handout'}:
             raise ValueError()
         for key in ('student_lesson', 'student_handout'):
@@ -142,6 +151,9 @@ def parse_student_output(raw, resources):
             result[key] = re.sub(r'\\vspace\*?\{[^{}]*\}', '\n\n' + '\n\n'.join(['______________________________'] * 3) + '\n\n', result[key])
             result[key] = normalize_image_links(result[key])
             validate_student(result[key], resources)
+        # 修补次数只写服务端日志，不含正文（design §6）
+        if repairs:
+            logger.info('学生稿 LaTeX 反斜杠修补 %d 处', repairs)
         return result
-    except (ValueError, TypeError) as exc:
+    except (ModelJSONError, ValueError, TypeError) as exc:
         raise ValueError('学生稿格式或去答案检查未通过，请重新生成或调整教师稿。') from exc

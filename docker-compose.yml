@@ -50,6 +50,9 @@ services:
       FRONTEND_ORIGINS: http://localhost:${CAMPUSCLAW_PORT:-8080},http://127.0.0.1:${CAMPUSCLAW_PORT:-8080}
       # AI 解题助手 DeepSeek Key（从根目录 .env 读取，不硬编码）
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      # 可切换到 openai 兼容网关（如课程网关）；留空沿用后端默认的 DeepSeek 官方地址与模型
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com/v1}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-chat}
       # MCP：与 mcp-tools 共享的令牌 + 加密教师令牌用的服务端密钥 + SSRF 允许清单
       MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:-}
       MCP_TOKEN_KEY: ${MCP_TOKEN_KEY:-}

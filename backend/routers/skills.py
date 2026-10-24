@@ -21,7 +21,11 @@ from models import AssistantSkill, McpServer, McpTool
 from services import require_teacher_classes
 from skill_service import ParsedSkill, SkillParseError, parse_skill_file
 
-router = APIRouter(prefix="/api/teacher/skills", tags=["skills"])
+router = APIRouter(
+    prefix="/api/teacher/skills",
+    tags=["skills"],
+    responses={401: {"description": "未登录或令牌无效"}, 403: {"description": "非教师或非任教班级"}},
+)
 
 
 class SkillRequest(BaseModel):
@@ -140,7 +144,6 @@ def _parse_or_400(source: str, subject: str) -> ParsedSkill:
 
 @router.get("", response_model=dict,
     summary="列出本人某班技能",
-    responses={403: {"description": "非教师或非任教班级"}},
 )
 def list_skills(
     class_id: int = Query(...),
