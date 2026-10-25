@@ -70,10 +70,10 @@
 
 ## 10. 支持 MD/TXT 格式
 
-- [ ] 10.1 后端允许 md/markdown/txt 扩展名（_EXT_TO_MIME + config.allowed_extensions + .env.example），MD/TXT 无 magic number，用「UTF-8 可解码且无 NUL 字节」校验真实性（looks_like_utf8_text），拦截二进制伪装文本；验证 validate_upload_file 对合法 .md/.txt 放行、对含 NUL 的伪装 .txt 返回 400
-- [ ] 10.2 parse_material_text 增加 text/markdown 与 text/plain 分支直接读取 UTF-8 文本（兼容 BOM），支持含 LaTeX 公式的 Markdown 进入 AI 检索；验证解析结果正确
-- [ ] 10.3 前端 accept 增加 .md/.txt，material-preview 识别 text/markdown、text/plain，按纯文本拉取并用 MarkdownAnswer（react-markdown + KaTeX）渲染，使含公式的讲义以数学符号预览；验证 MD/TXT 在线预览公式与排版正常
+- [x] 10.1 后端允许 md/markdown/txt 扩展名（_EXT_TO_MIME + config.allowed_extensions + .env.example），MD/TXT 无 magic number，用「UTF-8 可解码且无 NUL 字节」校验真实性（looks_like_utf8_text），拦截二进制伪装文本；验证 validate_upload_file 对合法 .md/.txt 放行、对含 NUL 的伪装 .txt 返回 400（2026-10-25 核对：`material_service.validate_upload_file` / `looks_like_utf8_text` 与 `.env.example` 已实现；离线验证合法 .md/.txt 放行、含 NUL 的伪装 .txt 抛 ValueError，路由转 400。）
+- [x] 10.2 parse_material_text 增加 text/markdown 与 text/plain 分支直接读取 UTF-8 文本（兼容 BOM），支持含 LaTeX 公式的 Markdown 进入 AI 检索；验证解析结果正确（2026-10-25 核对：`parse_material_text` 已有 text/markdown、text/plain 分支；离线验证带 BOM 的 MD 去 BOM 且保留 `\vec` 等 LaTeX，TXT 原样读出。）
+- [x] 10.3 前端 accept 增加 .md/.txt，material-preview 识别 text/markdown、text/plain，按纯文本拉取并用 MarkdownAnswer（react-markdown + KaTeX）渲染，使含公式的讲义以数学符号预览；验证 MD/TXT 在线预览公式与排版正常（2026-10-25 核对：上传页 accept 含 .md/.txt，`material-preview` 对两种类型走同一 `MarkdownAnswer` 分支；浏览器中教师与学生预览 .md 试卷资料，KaTeX 正常、0 个渲染错误，见 fix-quiz-markdown-rendering/validation.md。.txt 只做了代码核对，没有在浏览器里实测。）
 
 ## 11. PDF 公式降级策略
 
-- [ ] 11.1 明确 PDF 公式解析定位为「降级」：不引入重依赖。PDF 仅尽力抽取可选文字；当整份 PDF 可提取文字少于阈值（PDF_MIN_TEXT_CHARS）时判定为公式/扫描图片为主的 PDF，标记 is_indexed=false 并提示「建议改传含公式的 Markdown(.md) 或纯文本(.txt)」，避免近空文本入库导致 AI 检索无依据；验证混合型 PDF 提取可用文字入库、纯图片 PDF 返回友好提示
+- [x] 11.1 明确 PDF 公式解析定位为「降级」：不引入重依赖。PDF 仅尽力抽取可选文字；当整份 PDF 可提取文字少于阈值（PDF_MIN_TEXT_CHARS）时判定为公式/扫描图片为主的 PDF，标记 is_indexed=false 并提示「建议改传含公式的 Markdown(.md) 或纯文本(.txt)」，避免近空文本入库导致 AI 检索无依据；验证混合型 PDF 提取可用文字入库、纯图片 PDF 返回友好提示（2026-10-25 核对：`PDF_MIN_TEXT_CHARS = 50`，文字不足时返回改传 .md/.txt 的提示，`run_indexing` 失败分支置 `is_indexed=false`；离线用 PyMuPDF 生成 PDF，验证混合型 PDF 文字提取成功、纯图片 PDF 返回该提示。）

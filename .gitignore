@@ -31,6 +31,7 @@ node_modules/
 out/
 dist/
 build/
+*.tsbuildinfo
 
 # ---- Python ----
 __pycache__/
@@ -39,6 +40,7 @@ __pycache__/
 .venv/
 venv/
 .uv/
+.uv-cache/
 .pytest_cache/
 
 # ---- 自动化测试报告（不入库）----

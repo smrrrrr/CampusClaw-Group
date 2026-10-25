@@ -1,6 +1,6 @@
 # CampusClaw 小组项目规约索引
 
-更新时间：2026-10-20。本文是最近已实现功能的交接入口；具体行为以 `specs/` 主规约为准，`changes/` 保存变更动机、设计、任务和验收依据。现有未完成变更不在本次同步中自动归档。
+更新时间：2026-10-20（2026-10-25 补充 MCP、智能命题行）。本文是最近已实现功能的交接入口；具体行为以 `specs/` 主规约为准，`changes/` 保存变更动机、设计、任务和验收依据。现有未完成变更不在本次同步中自动归档。
 
 ## 最近功能与规约
 
@@ -17,7 +17,7 @@
 | 页面与导航     | 班主任模块按身份常驻、单科资料入口、助手配置独立菜单、学生资料切科布局稳定             | [teacher-workspace](specs/teacher-workspace/spec.md)、[student-workspace](specs/student-workspace/spec.md)                                                    | [工作空间变更](changes/align-teacher-student-workspaces/proposal.md)、[单科资料变更](changes/archive/2026-10-23-add-subject-materials-navigation/proposal.md)                                                                                    |
 | 运行可靠性     | Windows Docker SQLite 日志模式、数据库读健康检查、异常 503、业务数据保留 | [runtime-reliability](specs/runtime-reliability/spec.md)                                                                                                     | [提案](changes/harden-runtime-reliability/proposal.md)、[设计](changes/harden-runtime-reliability/design.md)、[任务](changes/harden-runtime-reliability/tasks.md)、[验收](changes/harden-runtime-reliability/validation.md) |
 | MCP 工具集成   | 自建 MCP 工具服务、教师登记/连接/发现/断开、技能文件 `工具名@服务器名`、服务端鉴权调用、`meta` 事件与调用审计 | [mcp-tool-integration](specs/mcp-tool-integration/spec.md)、[agent-assistant](specs/agent-assistant/spec.md) | [提案](changes/archive/2026-10-23-add-mcp-tool-integration/proposal.md)、[设计](changes/archive/2026-10-23-add-mcp-tool-integration/design.md)、[任务](changes/archive/2026-10-23-add-mcp-tool-integration/tasks.md)、[验收](changes/archive/2026-10-23-add-mcp-tool-integration/validation.md) |
-| 智能命题      | 按知识点×题型×难度生成结构化题目、逐题人工复核、学科题库、按配比组卷、去答案学生卷分班发布 | [smart-question-generation（变更中）](changes/add-smart-question-generation/specs/smart-question-generation/spec.md)、[teacher-workspace](specs/teacher-workspace/spec.md) | [提案](changes/add-smart-question-generation/proposal.md)、[设计](changes/add-smart-question-generation/design.md)、[任务](changes/add-smart-question-generation/tasks.md) |
+| 智能命题      | 按知识点×题型×难度生成结构化题目、逐题人工复核、学科题库、按配比组卷、去答案学生卷分班发布 | [smart-question-generation](specs/smart-question-generation/spec.md)、[teacher-workspace](specs/teacher-workspace/spec.md) | [提案](changes/archive/2026-10-25-add-smart-question-generation/proposal.md)、[设计](changes/archive/2026-10-25-add-smart-question-generation/design.md)、[任务](changes/archive/2026-10-25-add-smart-question-generation/tasks.md)、[验收](changes/archive/2026-10-25-add-smart-question-generation/validation.md)；JSON 反斜杠修补见 [harden-model-json-escapes](changes/archive/2026-10-25-harden-model-json-escapes/validation.md)；公式校验与选项排版见 [fix-quiz-latex-and-option-layout](changes/archive/2026-10-25-fix-quiz-latex-and-option-layout/validation.md) |
 
 认证、初始密码限制、刷新恢复、学生导入和班主任权限另见 [登录规约](specs/login-and-account-system/spec.md)、[身份权限](specs/teacher-identity-and-permissions/spec.md)、[角色权限](specs/rbac-role-permissions/spec.md)、[班级隔离](specs/class-data-isolation/spec.md)。
 

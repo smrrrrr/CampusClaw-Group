@@ -1,122 +1,139 @@
-# Docker 本地部署
+# 部署说明
 
-项目通过 Docker Compose 启动 Nginx、Next.js 前端和 FastAPI 后端。统一入口为
-**http://localhost:8080/login**（默认），接口健康检查为
-**http://localhost:8080/api/health**。可用 `.env` 中的 `CAMPUSCLAW_PORT` 调整端口。
-本地开发时的 3000 端口不属于此入口。
+项目通过 Docker Compose 运行四个服务：Nginx（唯一对外入口）、Next.js 前端、FastAPI 后端，以及自建 MCP 工具服务 `mcp-tools`。浏览器入口为 `http://localhost:<CAMPUSCLAW_PORT>/login`，健康检查为 `/api/health`。端口默认 8080，组内数据包恢复后为 8081。
 
-## 启动
+前端、后端和 `mcp-tools` 只在 Docker 内网暴露端口。浏览器的 `/api/` 请求由 Nginx 转发给后端，SSE 流式响应已关闭缓冲。Nginx 会等前后端健康检查通过后才启动。
 
-先启动 Docker Desktop，使用 Linux 容器引擎。所有命令在项目根目录执行。
+## 首次部署
 
-```powershell
-docker version
+先启动 Docker Desktop（Linux 容器引擎），然后按需要的数据二选一。下面的命令都在项目根目录执行，macOS、Linux 和 Windows 通用。
+
+### 方式一：使用组内数据包（推荐）
+
+数据包由组内私下传递，里面有数据库、资料文件和恢复脚本，具体步骤见随数据包一起传递的交接说明。恢复脚本会：
+
+- 把数据库放到 `data/current/`，把资料放到 `backend/uploads/`；
+- 生成 `.env`，其中 `CAMPUSCLAW_DATA_DIR=./data/current`，`CAMPUSCLAW_PORT=8081`。
+
+恢复后在 `.env` 填好模型 Key，即可启动。数据包需要恢复到一个新克隆里，不要运行 `dev_seed.py`。
+
+### 方式二：空库初始化
+
+1. 参考 `.env.example` 创建 `.env`，至少填写 `JWT_SECRET_KEY`。
+2. 启动服务（命令见下文）。后端启动时会自动建表。
+3. 只在第一次运行种子脚本，创建演示账号和班级：
+   ```bash
+   docker compose exec backend /app/.venv/bin/python dev_seed.py
+   ```
+
+### 启动
+
+```bash
 docker compose config --quiet
 docker compose up -d --build
 docker compose ps
 ```
 
-Nginx 等待前后端健康检查通过后启动。前后端仅在 Docker 内网暴露端口，浏览器的
-`/api/` 请求由 Nginx 转发至后端，SSE 流式响应关闭缓冲。
+四个服务都显示 healthy 后，打开登录页。
 
 ## 环境变量
 
-首次部署时参考根目录 `.env.example` 创建 `.env`：
+根目录 `.env` 由 Compose 读取后注入容器。它已被 Git 忽略，也不会打进镜像。模板见 `.env.example`。
 
-- `JWT_SECRET_KEY`：设置随机、持久保存的会话签名密钥。
-- `DEEPSEEK_API_KEY`：使用已有服务端密钥；留空时使用现有问答降级行为。
-- `CAMPUSCLAW_DATA_DIR`：SQLite 数据目录，默认 `./data`。
-- `CAMPUSCLAW_PORT`：浏览器入口端口，默认 `8080`。
-- `MCP_AUTH_TOKEN`：自建 MCP 工具服务的共享令牌，同时注入 `mcp-tools` 与后端，两边必须一致；留空时 `mcp-tools` 拒绝所有 `/mcp` 请求。生成：`openssl rand -hex 32`。
-- `MCP_TOKEN_KEY`：加密教师登记令牌的 Fernet 密钥，只放服务端。**请与 `.env` 一并妥善保管**：丢失或轮换后，已登记服务器需重新填写令牌。生成：`python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"`。
-- `MCP_ALLOWED_HOSTS`：允许服务端连接的 MCP 主机清单（`host[:port]`，逗号分隔），默认 `mcp-tools:8090`，用于防 SSRF；回环、链路本地与云元数据地址一律拒绝。
-- `ENABLE_DOCS`：是否开放 Swagger（`/docs`、`/openapi.json`），默认 `false`；仅本地调试临时置 `true`。
+| 变量                                   | 说明                                                                                                                                             |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `JWT_SECRET_KEY`                     | 会话签名密钥，必填，随机生成并长期保存。更换后所有人需要重新登录                                                                                                               |
+| `DEEPSEEK_API_KEY`                   | 模型 Key。留空时 AI 功能走降级逻辑，只能浏览已有内容                                                                                                                 |
+| `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL` | OpenAI 兼容接口地址与模型名，默认是 DeepSeek 官方。课程网关为 `https://ai-gateway.devops.hello1023.com/v1` 和 `course-chat`：用学号登录获取 Key，每人每天 100000 tokens，北京时间 0 点重置 |
+| `CAMPUSCLAW_DATA_DIR`                | SQLite 数据目录，挂载到容器 `/app/data`，默认 `./data`                                                                                                      |
+| `CAMPUSCLAW_PORT`                    | 浏览器入口端口，默认 `8080`                                                                                                                              |
+| `SQLITE_JOURNAL_MODE`                | 默认 `DELETE`，适用于 Windows/macOS 的 Docker 共享目录。原生 Linux 磁盘可改为 `WAL`                                                                               |
+| `MCP_AUTH_TOKEN`                     | `mcp-tools` 与后端共享的访问令牌，两边自动一致。留空时工具服务拒绝所有请求。生成：`openssl rand -hex 32`                                                                          |
+| `MCP_TOKEN_KEY`                      | 加密教师登记令牌的 Fernet 密钥，要和 `.env` 一起妥善保管。丢失或更换后，已登记的服务器要重新填写令牌。生成：`openssl rand -base64 32 \| tr '+/' '-_'`（或用 Python 的 `Fernet.generate_key()`）   |
+| `MCP_ALLOWED_HOSTS`                  | 允许后端连接的 MCP 主机清单（`host[:port]`，逗号分隔），用于防 SSRF，默认 `mcp-tools:8090`。即使写进清单，`localhost`、云元数据地址，以及回环、链路本地、内网和保留 IP 也一律拒绝                           |
+| `ENABLE_DOCS`                        | 是否开放 Swagger（`/docs`、`/openapi.json`），默认 `false`，只在本地调试时临时打开                                                                                   |
 
-真实 `.env` 已被 Git 忽略，也不会复制进前后端镜像。前端构建时固定容器内后端地址为
-`http://backend:8000`，运行镜像包含 standalone 与匹配的静态资源。
+## 数据与备份
 
-## MCP 工具服务（add-mcp-tool-integration）
+| 数据      | 宿主机位置                                                                        | 容器内位置                     |
+| ------- | ---------------------------------------------------------------------------- | ------------------------- |
+| 数据库     | `${CAMPUSCLAW_DATA_DIR}/campusclaw.db`（数据包恢复后为 `data/current/campusclaw.db`） | `/app/data/campusclaw.db` |
+| 资料正文与配图 | `backend/uploads/`                                                           | `/app/uploads`            |
 
-- `mcp-server/` 与主应用同仓构建，Compose 服务名 `mcp-tools`，仅 `expose: 8090`，不映射宿主机端口，宿主机无法直连。
-- 后端不 `depends_on` 它：工具服务不可用时主应用照常启动，学生未命中工具技能的提问不受影响。
-- 教师登记服务器时填写的 Base URL 必须命中 `MCP_ALLOWED_HOSTS`（默认只有内网的 `mcp-tools:8090`），因此不能填 `127.0.0.1`、`backend:8000` 或元数据地址。
-- 令牌只以密文落库，接口与日志不返回；断网或令牌不一致时「连接」返回 502 并保持未连接。
-- **数据交接**：交接包须清空 `mcp_servers.auth_token_enc`（令牌列）与 `mcp_tool_calls`（学生调用记录）；`MCP_TOKEN_KEY` 不随包分发，换机恢复后已登记服务器需重新填写令牌。
+- 重建容器不会覆盖数据。数据库、上传文件和 `.env` 都不进 Git。
+- 组员之间用数据包交接数据，每次注明配套的代码提交号，**不要用 Git 合并 SQLite**。
+- 打包前要脱敏：
+  - 清空个人对话与消息、AI 提问日志、审计日志、验证码和登录记录；
+  - 清空 `mcp_servers.auth_token_enc`、`mcp_tool_calls` 和 `mcp_tools`；
+  - 只打包被数据库引用的资料文件。
+- **备份**：要用 SQLite backup API，不能直接复制运行中的 `.db` 文件。可以在容器里执行（备份写到数据目录下）：
+  ```bash
+  docker compose exec backend /app/.venv/bin/python -c "import sqlite3; sqlite3.connect('/app/data/campusclaw.db').backup(sqlite3.connect('/app/data/before-变更名-日期.db'))"
+  ```
+- **改表结构前先备份。** 项目没有迁移工具：
+  - 新表在后端启动时由 `create_all` 自动创建；
+  - 给已有表加列，要在 `backend/database.py` 的 `run_simple_migrations()` 里手写 `ALTER TABLE`。
 
-## 本次数据目录
+## 账号
 
-2026-10-18 部署准备时，发现旧 Docker 库与当前开发库属于不同数据版本。
-本次根目录 `.env` 选择 `CAMPUSCLAW_DATA_DIR=./data/current`，通过 SQLite backup
-API 从 `backend/campusclaw.db` 创建一致性副本，并通过完整性检查。
-本机 `8080` 已被另一个目录的旧 `campusclaw` 部署占用，因此当前项目使用独立的
-Compose 项目名 `campusclaw-group` 和 `CAMPUSCLAW_PORT=8081`，本次实际入口为
-**http://localhost:8081/login**，健康检查为 **http://localhost:8081/api/health**。
+- **数据包恢复的库**：演示账号和密码见数据包说明，不写在仓库里。
+- **空库运行种子脚本后**：教师 `TEA001`（张老师，数学）和 `TEA002`（李老师，物理）的密码为 `Teach@2026`。学生 `20260001`（李明）和 `20260002`（王芳）的初始密码为 `thu` 加学号后 6 位，首次登录必须改密。
 
-- 当前 Docker 库：`data/current/campusclaw.db`。
-- 原 Docker 库仍保留：`data/campusclaw.db`，包含旧账号与历史对话。
-- 本地开发库仍保留：`backend/campusclaw.db`。
-- 资料文件沿用：`backend/uploads/`，映射至容器 `/app/uploads`。
+**不要对已有数据的库运行 `dev_seed.py`。** 它会重置种子学生的密码，并删除清单外的学生，部署和更新代码都不需要它。
 
-容器重建不覆盖上述数据库。后续 Docker 与本地开发数据库各自独立，修改不会自动同步。
-运行中的 SQLite 应通过 backup API 备份，不能只复制可能仍有日志的主 `.db` 文件。Windows Docker 共享目录当前使用 DELETE 日志，原生本地开发可使用 WAL。
+## MCP 工具服务
 
-## 开发账号
-
-| 姓名 | 账号 | 种子初始密码 |
-| --- | --- | --- |
-| 张老师 | TEA001 | Teach@2026 |
-| 李老师 | TEA002 | Teach@2026 |
-| 李明 | 20260001 | thu260001 |
-| 王芳 | 20260002 | thu260002 |
-
-学生首次使用初始密码登录后要求改密。已修改密码的账号使用其当前密码。
-本次检查确认：张老师可使用表中密码；李明已经改密，`thu260001` 不再是其当前密码；
-王芳仍可使用 `thu260002`，登录后需要改密。
-部署不会自动重跑 `dev_seed.py`；该脚本会重置种子学生密码并清理清单外学生，
-仅在明确需要初始化空的开发数据库时使用：
-
-```powershell
-docker compose exec backend /app/.venv/bin/python dev_seed.py
-```
+- 服务代码在 `mcp-server/`，和主应用一起构建，Compose 服务名为 `mcp-tools`。它只在内网暴露 8090 端口，宿主机连不上。
+- 后端不依赖它启动：工具服务挂了，主应用照常运行，没用到工具的提问不受影响。
+- 教师在页面登记服务器时，地址必须在 `MCP_ALLOWED_HOSTS` 里，通常填 `http://mcp-tools:8090`。不能填 `127.0.0.1`、`backend:8000` 或云元数据地址。
+- 令牌只以密文存进数据库，接口和日志都不返回。令牌不一致或网络不通时，“连接”会返回 502，服务器保持未连接。
+- 数据包里的令牌已清空，恢复后要重新登记服务器。页面目前没有编辑入口：先删除原服务器，再用同一个名称重新登记，令牌填 `MCP_AUTH_TOKEN` 的值。技能是按 `工具名@服务器名` 引用工具的，所以名称不能变。
 
 ## 日常操作
 
-```powershell
-# 查看状态、日志
+```bash
 docker compose ps
-docker compose logs --tail 100 backend frontend nginx
-
-# 代码更新后重新构建并启动
-docker compose up -d --build
-
-# 停止项目
-docker compose stop
+docker compose logs --tail 100 backend frontend nginx mcp-tools
+docker compose up -d --build   # 代码更新后重新构建并启动
+docker compose stop            # 停止
 ```
 
-部署只负责运行当前代码。智能备课等仍标记为未接入的业务，不会因 Docker 启动而自动实现。
+## 本地开发（不用 Docker）
 
-## Docker Desktop 启动异常
+- **后端**：在 `backend/` 下执行 `uv sync`，参考 `backend/.env.example` 创建 `backend/.env`，然后执行：
+  ```bash
+  .venv/bin/uvicorn main:app --reload --port 8000
+  ```
+  后端默认使用 `backend/campusclaw.db` 和 `backend/uploads/`。数据库和 Docker 用的不是同一个，资料目录则是同一个。
+- **前端**：在 `frontend/` 下执行 `npm install`，再执行 `npm run dev`，打开 `http://localhost:3000`。`/api` 请求会被代理到 `http://localhost:8000`。
+- **测试**：`apitest/check_*.py` 是隔离回归脚本，使用临时数据库和假模型，不需要启动服务。在项目根目录运行：
+  ```bash
+  PYTHONPATH=backend backend/.venv/bin/python apitest/check_question_bank.py
+  ```
+  `apitest/run_all.py` 则需要先在 8001 端口启动后端。
 
-本次自动化启动 Docker Desktop 曾在 `sailor-ingest.sock` 处报系统无法访问文件，
-改为通过 Windows 桌面启动后恢复。若再次遇到同样错误，关闭失败的 Docker Desktop，
-从 Windows 开始菜单打开 Docker Desktop，待 `docker version` 能显示 Server 后再启动项目。
-相同现象可参考 [公开问题记录](https://github.com/openai/codex/issues/52698)。
+## 常见问题
 
-后端镜像使用 `uv sync --locked --no-dev` 校验并安装生产依赖。若改动
-`backend/pyproject.toml`，应同时同步 `backend/uv.lock`，确保 `httpx` 等运行依赖
-不只存在于开发依赖组。
+- **端口被占用**：在 `.env` 修改 `CAMPUSCLAW_PORT`。Compose 项目名固定为 `campusclaw-group`，本机已有同名部署时，先停掉旧的那套。
+- **改了后端依赖**：后端镜像用 `uv sync --locked --no-dev` 安装依赖。改 `backend/pyproject.toml` 后要同步更新 `backend/uv.lock`，运行时依赖也不能只放在开发依赖组里。
+- **Windows 上 Docker Desktop 启动失败**：曾出现过 `sailor-ingest.sock` 无法访问的报错。关掉 Docker Desktop，从开始菜单重新打开，等 `docker version` 能显示 Server 信息后再启动项目。
+- **AI 生成失败或报额度不足**：先确认 `.env` 里的 Key、地址和模型名，再查网关当天的剩余额度。
 
-## 本次部署验证（2026-10-18）
+## 附录：历史部署记录（2026-10-18 至 10-20）
+
+以下是前任维护者在其 Windows 开发机上的部署与验收记录，原样保留供追溯，其中引用的验收依据仍有效。文中的 8080 端口占用、`.review/` 证据目录、备份文件名和账号状态都是当时那台机器的情况，不代表现在的部署方式；现行做法以本文正文为准。
+
+### 本次部署验证（2026-10-18）
 
 - 当前项目的 backend、frontend 健康检查均通过，Nginx 在 8081 提供入口。
 - `/api/health`、`/login`、页面引用的两份 CSS 与 JavaScript 资源返回 200；CSS 包含当前学生工作空间样式。
 - 张老师登录、当前高二两个班级列表、李明学生名单、Refresh Cookie 和认证登出检查通过。
 - 王芳学生登录及强制初始改密标记检查通过，未修改任何账号密码。
 - 另一个目录的 `campusclaw` 服务继续在 8080 运行。
-- 复制的原开发库曾有一条 `lesson.pdf` 记录，其 `101/1790307595_lesson.pdf` 原文件已缺失；
+- 复制的原开发库曾有一条 `lesson.pdf` 记录，其 `101/1790307595_lesson.pdf` 原文件已缺失；  
   2026-10-18 按用户要求已从当前小组服务删除此旧记录及索引，其他数据库和上传文件保留。
 
-## 第 2—5 课修复后验证（2026-10-18）
+### 第 2—5 课修复后验证（2026-10-18）
 
 - CSV 学生导入同时验证原班级与目标班级，越权整批回滚。
 - 未改初始密码时，后端统一拒绝业务访问；密码重置后旧令牌立即受限。
@@ -127,13 +144,13 @@ docker compose stop
 
 用户确认后，已将旧库中的“第一章 空间立体几何.md”通过正常上传接口同步到当前 8081 服务，保留高二（2）班归属，重新生成 24 个检索分块。预览、下载及本班检索通过，原讲义与旧数据库保留。同步前备份为 `data/current/before-lecture-sync-20261018T042203190895.db`；没有迁移旧账号或对话。
 
-## 学科教师助手（2026-10-18）
+### 学科教师助手（2026-10-18）
 
 TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改动。教师在助手配置页选择班级后保存本人科目的配置，各教师互不覆盖。学生在助手对话页点击科目，加载本班该科教师、真实引导状态和分科历史。尚无配置时使用默认助手；作业批改、错题讲解技能仍未接入。
 
 数据库结构自动升级为按班级、科目、教师保存配置；旧数学会话保留。升级前备份为 `data/current/before-subject-assistants-20261018T133651186657.db`。已经登录的李老师刷新或重新登录后显示物理身份。
 
-## 引用来源核对（2026-10-18）
+### 引用来源核对（2026-10-18）
 
 索引新增 `Material.source_sha256`，记录解析时原文件的 SHA-256；旧库自动追加该字段，历史资料、会话和密码不变。升级前备份为 `data/current/before-citation-checks-20261018T143309919914.db`。旧资料需要教师重新索引后才进入可引用上下文，原文件发生变化同样需要重新索引。
 
@@ -143,7 +160,7 @@ TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改
 
 这些校验保证来源记录、摘录及文件版本对应，不代表每条模型推理已通过语义证明。页码、高亮定位和独立语义核验未实现；重要结论仍需对照原文。
 
-## 教研组教师资料与学生讲义（2026-10-19）
+### 教研组教师资料与学生讲义（2026-10-19）
 
 入口为 `http://localhost:8081/teacher/library`，导航位于教研中心的“教研组资料”。按当前教师学科共享教师版，不绑定班级。无配图可导入 UTF-8 MD；有配图请导入一份 MD、PNG/JPG 配图及可选来源 JSON 组成的 ZIP。当前不支持在该入口直接解析 Word/PDF 或任意跨学科课题小组。
 
@@ -157,7 +174,7 @@ TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改
 
 2026-10-19 标签更新：用户已将学生版发布至 101/102 班（Material ID 4/3）。自动发布标签现在包含有章节依据的知识点，当前两份学生版已补为“数学、立体几何、学生版”，后续发布自动应用。54 项资料流程检查及真实班级列表接口验证通过，仅更新标签元数据，不改文件或索引。备份为 `data/current/before-knowledge-tags-20261019T104909742755.db`。
 
-### 2026-10-19 讲义打印与另存 PDF
+#### 2026-10-19 讲义打印与另存 PDF
 
 - 本班 MD/TXT 预览、学生端复用预览以及教研组学生版预览增加“打印／另存为 PDF”。
 - 只复制当前渲染讲义至独立打印框架，等待鉴权图片、图片解码、样式和公式字体，缺图或超时提示重试；不新增后端接口或改变材料权限。
@@ -166,7 +183,7 @@ TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改
 
 2026-10-19 资料入口简化：教师资料表格与学生资料卡统一为“预览与下载”，移除列表独立下载按钮。Markdown 在窗口内下载图文包，其余格式下载原文件；不支持在线预览的文件也保留入口，打印／另存 PDF 功能保留。
 
-### 2026-10-19 智能备课上线
+#### 2026-10-19 智能备课上线
 
 - 页面：`http://localhost:8081/teacher/lesson-prep`，刷新后从教师侧栏“智能备课”进入。
 - 选择组内教师资料、课题、班级与课时，生成教师教案；支持保存/单章节重写/审阅/定稿/定稿历史和新修订。
@@ -177,28 +194,29 @@ TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改
 
 2026-10-19 配图路径修复：中文目录空格现以 URL 编码处理，旧教案刷新即可显示原图，无需重新生成。生成/保存/学生稿/发布均规范化地址，源图文件名、指纹及鉴权保持。79 项备课回归、14 项真实 Markdown 解析断言和生产构建通过；8081 已更新并核对现有教案三棱锥原图。
 
-### 2026-10-19 教师定稿可选发布到教研组
+#### 2026-10-19 教师定稿可选发布到教研组
 
 智能备课 → 教师教案 → 教研组共享（可选），完成审阅并定稿后可点击“发布当前定稿到教研组”。默认私有，不会随生成/定稿自动共享。教研组资料可筛选“共享教案”，同科教师查看完整稿、原图与出处、打印或下载教师图文包，也可选为新的备课素材。学生不可访问完整教师稿；学生文稿仍走原有生成核对与分班发布流程。
 
 共享是独立定稿副本，同一定稿重复点击不重复创建，私人后续修订不改变已共享内容。新定稿需再次主动共享；删除私人教案保留组内副本。LessonGroupPublication 自动建表。112 项备课/共享与 54 项原资料回归通过、生产构建通过，8081 已更新。上线前备份 `data/current/before-lesson-group-share-20261019T215926.db`，本轮没有共享实际教案或调用 AI。规约已同步至 smart-lesson-prep 与 research-materials 主规约和对应增量。
 
-### 2026-10-20 助手参考资料界面简化
+#### 2026-10-20 助手参考资料界面简化
 
 - 移除教师助手页的示例 API Key、显示按钮与无用样式，运行密钥继续使用服务端环境配置；不新增密钥读取/编辑/状态接口。
 - 将静态“绑定知识库/已绑定”资料清单替换为“助手参考资料（当前学科）”，说明自动检索当前班级已发布且完成索引的本科目学生资料；教研组教师原稿不直接进入学生问答。
 - “查看本班资料”携带 workspace=teaching 和当前选择的班级，沿用已有单科资料列表；无任教班级不显示跳转链接。智能备课仍独立选择组内教师素材。
 - 前端生产构建、类型检查与空白检查通过；浏览器验证 101/102 班入口更新及实际进入 102 班单科资料，旧密钥区域不存在，控制台无错误。截图 `.review/assistant-reference-ui/page.png`。
-- 已更新 8081 前端并重载代理，前后端健康。没有修改密钥、提示词、技能保存值或数据库，没有调用 AI。主规约及对应工作空间/学科助手增量已同步。
-2026-10-20 提示词编辑框加高：默认 18 行、最小高度 420px，保留纵向拖动调整。前端生产构建及类型检查通过，8081 已更新；浏览器实测约 421px，控制台无错误，未修改提示词内容。
+- 已更新 8081 前端并重载代理，前后端健康。没有修改密钥、提示词、技能保存值或数据库，没有调用 AI。主规约及对应工作空间/学科助手增量已同步。  
+  2026-10-20 提示词编辑框加高：默认 18 行、最小高度 420px，保留纵向拖动调整。前端生产构建及类型检查通过，8081 已更新；浏览器实测约 421px，控制台无错误，未修改提示词内容。
 
-### 2026-10-20 解题引导规则与追问衔接
+#### 2026-10-20 解题引导规则与追问衔接
 
 已完善固定解题引导：按学生进度回应、概念先解释、接受公式、逐级提示、已正确完成则总结结束。开启时仍忽略教师自定义提示词，已保存内容和开关不变。多轮明确短追问结合最近用户题目重新检索，仍按本班本科目过滤并校验本轮来源；不是沿用旧引用。普通模式不改。
 
 122 项隔离检查全部通过，虚构小题真实 DeepSeek 试跑覆盖新题、卡住、概念、数值续答与完成收尾；未发送真实资料或对话。有限样例不代表模型行为的绝对保证。后端已更新到 8081，保存配置指纹一致；规约与验收见 `openspec/changes/add-agent-assistant/validation.md`。
 
-### 2026-10-20 学生会话请求失败修复
+#### 2026-10-20 学生会话请求失败修复
+
 
 后端实际报 sqlite3.OperationalError: disk I/O error，学生会话接口返回 500；此前 /api/health 仅确认进程存活，不能识别存储异常。当前 Windows Docker 共享目录改为 SQLITE_JOURNAL_MODE=DELETE、synchronous=FULL，原生磁盘仍可显式使用 WAL。15 秒锁等待，未关闭事务日志或降低同步保护。
 
@@ -208,17 +226,17 @@ TEA001 张老师任教数学，TEA002 李老师已改为物理，密码均未改
 
 本轮无 AI 调用。浏览器现有会话属于教师，未为复查而登出用户或改学生密码；学生可刷新原页面重新发送。参考 SQLite 官方 WAL 说明 https://sqlite.org/wal.html ：WAL 需要共享内存，不适用于缺少该能力的文件系统。本次依据实际共享目录故障和切换后并发复核选择 DELETE，不宣称所有 Docker 挂载都不能使用 WAL。
 
-### 2026-10-20 夹角公式引用修复
+#### 2026-10-20 夹角公式引用修复
 
 已降低数值坐标题的检索噪声，公式分块可继承真实章节标题用于排序，引用仍取原始片段和指纹。提示词要求使用有本轮依据的公式时标注对应来源，计算结果不冒挂引用。133 项检查通过，虚构片段真实模型试跑正确标注 [1]；本班只读复查正确公式块排首位。8081 后端已更新，无需重新索引；历史回答不自动补引用，刷新后重新提问使用新规则。
 
-### 2026-10-20 讲义页切换科目布局修复
+#### 2026-10-20 讲义页切换科目布局修复
 
 根因：.app-content 原先通过 :has(.student-material-grid) 才扩宽到 1420px，空科目没有卡片网格，容器回退 1180px，造成位置变化。改为稳定的 student-materials-page 页面标识，科目标题始终保留，列表区最小 300px，保留滚动条位置。资料筛选、权限和教师列表宽度保留。
 
 前端生产构建和类型检查通过，8081 已更新。当前浏览器会话为教师，未改用户登录状态；使用当前生产样式及虚构资料搭建临时学生布局样例，宽屏有资料/空科目容器宽均为 1420px，搜索栏、科目按钮、结果标题的 x/y/宽度完全相同，普通窗口也一致。几何记录 `.review/materials-layout-fix/geometry.json`，空态样例截图 `.review/materials-layout-fix/empty.png`。临时浏览器尺寸已恢复。没有改真实账号或资料，未调用 AI。
 
-### 2026-10-20 学生搜索与提问历史
+#### 2026-10-20 学生搜索与提问历史
 
 讲义页搜索框下的固定关键词已替换为真实搜索历史；学生助手输入区增加提问历史。按学生 ID、班级、功能及科目隔离，每个范围最近 10 条，去重置顶，刷新保留。使用当前浏览器 localStorage，不同步其他设备；清空只清当前范围快捷记录，不删除后端会话。提问历史只回填并聚焦，须确认发送；生成/加载期间不可回填。损坏存储安全忽略，存储不可写时退回页面内存。
 

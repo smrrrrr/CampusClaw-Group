@@ -418,6 +418,13 @@ async def main():
             check("预览 200 markdown", r.status_code == 200)
             check("学生卷不含答案/解析/S编号",
                   "答案" not in md and "[S1]" not in md and "解析" not in md)
+            option_lines = re.findall(r"^ {3,4}([A-D])\. .*$", md, re.MULTILINE)
+            tenth = re.search(r"^10\. .*\n\n((?: {4}.*\n?)+)", md, re.MULTILINE)
+            check("学生卷选择题：A–D 每项一行且行尾硬换行",
+                  option_lines[:40] == list("ABCD") * 10
+                  and len(re.findall(r"^ {3,4}[A-D]\. .*\\$", md, re.MULTILINE)) == 30)
+            check("学生卷第 10 题：选项缩进 4 格",
+                  tenth is not None and all(line.startswith("    ") for line in tenth.group(1).splitlines()))
 
             # === 定稿 ===
             p = (await req("GET", f"/papers/{paper['id']}")).json()
@@ -484,6 +491,66 @@ async def main():
                 r = await req("POST", "/generations", json={"research_material_ids": [img_rm_id],
                         "knowledge_points": ["立体几何"], "type_counts": type_counts, "difficulty_counts": diff_counts})
                 return next((f for f in frames(r) if f["type"] == "done"), None)
+
+            # === 公式结构校验（fix-quiz-latex-and-option-layout 1.1–1.3）===
+            from question_service import check_formula_structure
+            formula_cases = [
+                (r"$\vec{a}$", []),
+                ("$$\\begin{cases}x\\\\y\\end{cases}$$", []),
+                (r"$\{x\mid x>0\}$", []),
+                (r"$\left\{ a \right.$", []),
+                (r"价格 \$5，$x$", []),
+                ("解析中 $$x$$ 与 $y$ 混用", []),
+                ("集合{1,2}", []),
+                (r"$a}{b$", ["公式花括号不配对"]),
+                (r"$\frac{1}{2}", ["公式定界符 $ 不成对"]),
+            ]
+            check("公式结构：转义、cases 与定界符正反用例",
+                  all(check_formula_structure(text) == expected for text, expected in formula_cases))
+            check("提示词要求公式花括号成对并写完整命令",
+                  "公式中的花括号必须成对" in _QP and r"\frac{1}{2}" in _QP)
+
+            bad_option = r"$-\frac{1}{2}\vec{a}+\frac{2}{3}\vec{b}+\frac{1}{2}\vec{c$"
+            fake_output["value"] = json.dumps({"questions": [
+                q(stem="#15 原样选项校验", options=[{"label": l, "text": bad_option} for l in "ABCD"])
+            ], "gaps": []}, ensure_ascii=False)
+            r = await req("POST", "/generations", json={"research_material_ids": [math_rm_id],
+                    "knowledge_points": ["立体几何"], "type_counts": {"single_choice": 1},
+                    "difficulty_counts": {"medium": 1}})
+            done = next((f for f in frames(r) if f["type"] == "done"), None)
+            check("#15 原样选项：生成时未通过且原因含字段名",
+                  done is not None and not done["accepted_ids"] and done["rejected"]
+                  and any("选项 D 公式花括号不配对" in reason
+                          for reason in done["rejected"][0]["reasons"]))
+
+            fake_output["value"] = json.dumps({"questions": [q(stem="公式修改与复核测试")], "gaps": []}, ensure_ascii=False)
+            r = await req("POST", "/generations", json={"research_material_ids": [math_rm_id],
+                    "knowledge_points": ["立体几何"], "type_counts": {"single_choice": 1},
+                    "difficulty_counts": {"medium": 1}})
+            done = next((f for f in frames(r) if f["type"] == "done"), None)
+            formula_id = done["accepted_ids"][0] if done and done["accepted_ids"] else 0
+            fi = (await req("GET", f"/items/{formula_id}")).json()
+            formula_body = {"stem": fi["stem"], "options": fi["options"], "answer": fi["answer"],
+                            "explanation": fi["explanation"], "knowledge_points": fi["knowledge_points"],
+                            "source_refs": [s["ref"] for s in fi["sources"]]}
+            broken_options = [dict(o) for o in fi["options"]]
+            broken_options[0]["text"] = r"$\vec{a$"
+            r = await req("PUT", f"/items/{formula_id}",
+                          json={**formula_body, "revision": fi["revision"], "options": broken_options})
+            unchanged = (await req("GET", f"/items/{formula_id}")).json()
+            check("修改引入不配对括号：400 且题目与 revision 不变",
+                  r.status_code == 400 and "选项 A 公式花括号不配对" in r.json()["detail"]
+                  and unchanged["revision"] == fi["revision"] and unchanged["options"] == fi["options"])
+            fixed_options = [dict(o) for o in fi["options"]]
+            fixed_options[0]["text"] = r"$\vec{a}$"
+            r = await req("PUT", f"/items/{formula_id}",
+                          json={**formula_body, "revision": fi["revision"], "options": fixed_options})
+            saved_revision = r.json().get("revision") if r.status_code == 200 else fi["revision"]
+            rr = await req("POST", f"/items/{formula_id}/approve",
+                           json={"revision": saved_revision, "confirmed": True})
+            check("补齐括号后保存并通过：进入题库且标记已修改",
+                  r.status_code == 200 and rr.status_code == 200
+                  and rr.json()["status"] == "approved" and rr.json()["modified_in_review"] is True)
 
             done = await generate_one([q(stem="配图资料的纯文字题")], {"single_choice": 1}, {"medium": 1})
             check("配图资料、题目不含图片：生成成功", done is not None and len(done["accepted_ids"]) == 1)

@@ -44,6 +44,7 @@ BLANK_RUN = re.compile(r"_{4,}")
 REF_RE = re.compile(r"\[S(\d+)\]")
 # 逐题校验的控制字符兜底原因（design §4）
 CONTROL_CHAR_REASON = "含不可见控制字符，疑似公式转义错误"
+FORMULA_RE = re.compile(r"\$\$(.*?)\$\$|\$(.*?)\$", re.DOTALL)
 
 
 # ---------------------------------------------------------------------------
@@ -95,7 +96,7 @@ QUESTION_PROMPT = r"""你是一位高中学科命题教师。依据提供的教�
 3. 每道题至少引用一个真实存在的 S 编号，不得编造编号。
 4. 填空题在题干中用连续 4 个及以上下划线“____”标出空位，答案数组长度必须与空位数一致。
 5. 题干、选项、答案、解析都不得出现“答案/解析/解答/教师提示”等字样，也不要在题干或选项里泄露答案。
-6. 公式用 $...$ 或 $$...$$；JSON 字符串里每个 LaTeX 反斜杠都写成两个，例如 "$\\frac{1}{2}$"、 "$\\vec{a}$"；配图只能原样复制资料中给定的相对路径，保留 %20 等编码。
+6. 公式用 $...$ 或 $$...$$；JSON 字符串里每个 LaTeX 反斜杠都写成两个，例如 "$\\frac{1}{2}$"、 "$\\vec{a}$"；配图只能原样复制资料中给定的相对路径，保留 %20 等编码。公式中的花括号必须成对；资料里 \vec a、\frac12 这类省略括号的写法，改写时写成完整的 \vec{a}、\frac{1}{2}，不要漏掉右括号。
 7. 资料不足以支撑的题，不要编造，写进 gaps：{"type","difficulty","knowledge_point","reason"}。
 8. 严格按要求的题型数量与难度数量出题，不要超出配额。
 9. 每道题的 knowledge_points 一律原样复制「考查知识点」里的标签原文，即使资料正文用的是更细的术语。题目考的是资料的细分内容，也仍然填那个标签。
@@ -150,6 +151,41 @@ def _string_list(value: Any) -> list[str] | None:
     if not isinstance(value, list):
         return None
     return value if all(isinstance(v, str) for v in value) else None
+
+
+def check_formula_structure(text: str) -> list[str]:
+    """检查 `$` 定界符及公式内未转义花括号的配对情况。"""
+    text = text.replace(r"\$", "")
+    formulas: list[str] = []
+
+    def collect(match: re.Match) -> str:
+        formulas.append(match.group(1) if match.group(1) is not None else match.group(2))
+        return ""
+
+    remainder = FORMULA_RE.sub(collect, text)
+    reasons = []
+    if "$" in remainder:
+        reasons.append("公式定界符 $ 不成对")
+    for formula in formulas:
+        depth = 0
+        unbalanced = False
+        i = 0
+        while i < len(formula):
+            if formula[i] == "\\":
+                i += 2
+                continue
+            if formula[i] == "{":
+                depth += 1
+            elif formula[i] == "}":
+                depth -= 1
+                if depth < 0:
+                    unbalanced = True
+                    break
+            i += 1
+        if unbalanced or depth != 0:
+            reasons.append("公式花括号不配对")
+            break
+    return reasons
 
 
 def validate_question(q: Any, ctx: dict) -> tuple[dict | None, list[str]]:
@@ -294,6 +330,20 @@ def validate_question(q: Any, ctx: dict) -> tuple[dict | None, list[str]]:
     if any(has_control_chars(text) for text in [stem_text, explanation_text, *option_texts, *answer_texts]):
         reasons.append(CONTROL_CHAR_REASON)
 
+    # 公式结构：逐字段报告定界符与花括号错误，不自动修补模型输出
+    formula_fields = [("题干", stem_text), ("解析", explanation_text)]
+    if isinstance(options, list):
+        formula_fields.extend(
+            (f"选项 {opt.get('label')}", opt["text"])
+            for opt in options
+            if isinstance(opt, dict) and isinstance(opt.get("text"), str)
+        )
+    if qtype in ("fill_blank", "short_answer"):
+        formula_fields.extend(("答案", text) for text in answer_texts)
+    for field, text in formula_fields:
+        separator = " " if field.startswith("选项 ") else ""
+        reasons.extend(f"{field}{separator}{reason}" for reason in check_formula_structure(text))
+
     # 链接与配图：所有文本字段
     all_text = "\n".join([
         stem_text,
@@ -420,13 +470,24 @@ def render_student_paper(paper: dict, items: list[dict]) -> str:
         for it in group:
             number += 1
             snap = it["snapshot"]
-            stem = snap["stem"]
+            indent = " " * len(f"{number}. ")
+
+            def indent_continuation(text: str) -> str:
+                first, *rest = text.split("\n")
+                return "\n".join([first, *(indent + line if line else "" for line in rest)])
+
+            stem = indent_continuation(snap["stem"])
             if per_item_note:
                 stem = f"{stem}（{float(it['score']):g} 分）"
             lines.append(f"{number}. {stem}")
             if qtype in ("single_choice", "multiple_choice"):
-                opts = "　".join(f"{o['label']}. {o['text']}" for o in snap["options"])
-                lines.append(f"   {opts}")
+                options = [f"{indent}{o['label']}. {indent_continuation(o['text'])}" for o in
+                           sorted(snap["options"], key=lambda option: OPTION_LABELS.index(option["label"]))]
+                lines.append("")
+                if any("\n" in o["text"] for o in snap["options"]):
+                    lines.append("\n\n".join(options))
+                else:
+                    lines.append("\\\n".join(options))
             elif qtype == "fill_blank":
                 pass  # 空位由题干中的下划线呈现
             elif qtype == "short_answer":
