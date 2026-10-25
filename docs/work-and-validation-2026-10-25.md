@@ -13,8 +13,7 @@
 | `99f476e` | 10-23 | MCP 工具集成（`add-mcp-tool-integration`） |
 | `13c1cd2` | 10-25 | 智能命题、模型 JSON 反斜杠修补、题目渲染修复；一并提交 10-23 的旧变更归档 |
 | `2ae00f6` | 10-25 | 同步 `align-teacher-student-workspaces` 中 teacher-workspace 的两个 MODIFIED 块 |
-
-工作区里另有未提交的交接整理：`.gitignore`、`.env.example`、`DEPLOYMENT.md`、`openspec/README.md`，`add-material-upload` 的归档，以及 `harden-foundation-and-align-specs` 任务 2.7 的勾选。
+| `a6a7c56` | 10-25 | 命题公式结构校验、学生卷选项分行（`fix-quiz-latex-and-option-layout`）；归档 `add-material-upload`；交接文档整理（README、DEPLOYMENT.md、本文、`.env.example`、`.gitignore`） |
 
 ### 1.2 功能变更
 
