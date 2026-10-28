@@ -1,6 +1,6 @@
 # 部署说明
 
-项目通过 Docker Compose 运行四个服务：Nginx（唯一对外入口）、Next.js 前端、FastAPI 后端，以及自建 MCP 工具服务 `mcp-tools`。浏览器入口为 `http://localhost:<CAMPUSCLAW_PORT>/login`，健康检查为 `/api/health`。端口默认 8080，组内数据包恢复后为 8081。
+项目通过 Docker Compose 运行四个服务：Nginx（唯一对外入口）、Next.js 前端、FastAPI 后端，以及自建 MCP 工具服务 `mcp-tools`。浏览器入口为 `http://localhost:<CAMPUSCLAW_PORT>/login`，健康检查为 `/health`（Nginx 转发到后端 `/api/health`，免登录，返回版本与依赖状态）。端口默认 8080，组内数据包恢复后为 8081。
 
 前端、后端和 `mcp-tools` 只在 Docker 内网暴露端口。浏览器的 `/api/` 请求由 Nginx 转发给后端，SSE 流式响应已关闭缓冲。Nginx 会等前后端健康检查通过后才启动。
 
@@ -19,7 +19,7 @@
 
 ### 方式二：空库初始化
 
-1. 参考 `.env.example` 创建 `.env`，至少填写 `JWT_SECRET_KEY`。
+1. 参考 `.env.example` 创建 `.env`，至少填写 `JWT_SECRET_KEY`（至少 32 字符，缺失或过短时后端拒绝启动）。
 2. 启动服务（命令见下文）。后端启动时会自动建表。
 3. 只在第一次运行种子脚本，创建演示账号和班级：
    ```bash
@@ -42,7 +42,7 @@ docker compose ps
 
 | 变量                                   | 说明                                                                                                                                             |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET_KEY`                     | 会话签名密钥，必填，随机生成并长期保存。更换后所有人需要重新登录                                                                                                               |
+| `JWT_SECRET_KEY`                     | 会话签名密钥，必填且至少 32 字符（`openssl rand -base64 32`），随机生成并长期保存。更换后所有人需要重新登录                                                                                                               |
 | `DEEPSEEK_API_KEY`                   | 模型 Key。留空时 AI 功能走降级逻辑，只能浏览已有内容                                                                                                                 |
 | `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL` | OpenAI 兼容接口地址与模型名，默认是 DeepSeek 官方。课程网关为 `https://ai-gateway.devops.hello1023.com/v1` 和 `course-chat`：用学号登录获取 Key，每人每天 100000 tokens，北京时间 0 点重置 |
 | `CAMPUSCLAW_DATA_DIR`                | SQLite 数据目录，挂载到容器 `/app/data`，默认 `./data`                                                                                                      |

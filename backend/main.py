@@ -4,9 +4,10 @@
     uv run uvicorn main:app --reload
 """
 
-import logging
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 
+import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
@@ -16,28 +17,17 @@ from sqlalchemy.exc import SQLAlchemyError
 import models  # noqa: F401  # 确保模型注册到 Base.metadata
 from config import settings
 from database import Base, SessionLocal, engine, run_simple_migrations
+from logging_setup import RequestContextMiddleware, configure_logging
 from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills, quiz
 from security import JWTError, TOKEN_TYPE_ACCESS, decode_token
 from services import write_audit_log
+from version import APP_VERSION
 
-# 业务模块日志（如学生稿 LaTeX 修补次数，harden-model-json-escapes design §6）。
-# uvicorn 只配置自己的 logger，根 logger 没有处理器时 INFO 会被丢弃；
-# 这里只给业务模块挂处理器，不放开第三方库（httpx 等）的 INFO 日志。
-APP_LOGGERS = ("lesson_service",)
+# 根 logger 与 uvicorn 日志统一为单行 JSON 并带 request_id（engineering-baseline）。
+# uvicorn 先配置日志再导入本模块，所以在导入时覆盖即可生效。
+configure_logging()
 
-
-def _configure_app_logging() -> None:
-    for name in APP_LOGGERS:
-        logger = logging.getLogger(name)
-        logger.setLevel(logging.INFO)
-        if not logger.handlers:
-            handler = logging.StreamHandler()
-            handler.setFormatter(logging.Formatter("%(levelname)s:     %(name)s - %(message)s"))
-            logger.addHandler(handler)
-        logger.propagate = False
-
-
-_configure_app_logging()
+MCP_HEALTH_TIMEOUT = 2.0  # 秒，见 runtime-reliability「数据库可读性纳入健康检查」
 
 
 @asynccontextmanager
@@ -54,7 +44,7 @@ _docs_enabled = settings.enable_docs
 
 app = FastAPI(
     title="CampusClaw API",
-    version="0.1.0",
+    version=APP_VERSION,
     lifespan=lifespan,
     docs_url="/docs" if _docs_enabled else None,
     redoc_url="/redoc" if _docs_enabled else None,
@@ -128,11 +118,37 @@ async def audit_403_middleware(request: Request, call_next):
     return response
 
 
+# 最后注册即位于最外层：403 审计、CORS 与路由内的日志都能取到同一个 request_id
+app.add_middleware(RequestContextMiddleware)
+
+
+def _mcp_tools_status() -> str:
+    url = settings.mcp_tools_health_url.strip()
+    if not url:
+        return "not_configured"
+    try:
+        response = httpx.get(url, timeout=MCP_HEALTH_TIMEOUT)
+    except httpx.HTTPError:
+        return "unreachable"
+    return "ok" if response.is_success else "unreachable"
+
+
 @app.get("/api/health", tags=["health"])
 def health_check():
+    """免认证；只返回状态枚举，不返回地址、键名或异常原文。"""
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT id FROM users LIMIT 1")).first()
     except SQLAlchemyError as exc:
         raise HTTPException(status_code=503, detail="数据库暂不可用，请稍后重试") from exc
-    return {"status": "ok", "database": "ok"}
+    mcp_tools = _mcp_tools_status()
+    return {
+        "status": "degraded" if mcp_tools == "unreachable" else "ok",
+        "version": APP_VERSION,
+        "time": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "dependencies": {
+            "database": "ok",
+            "mcp_tools": mcp_tools,
+            "model": "configured" if settings.deepseek_api_key.strip() else "not_configured",
+        },
+    }

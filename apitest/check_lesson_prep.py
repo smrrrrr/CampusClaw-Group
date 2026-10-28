@@ -218,9 +218,11 @@ async def main():
             finally:
                 lesson_logger.removeHandler(capture)
             repair_messages = [r.getMessage() for r in repair_records if '修补' in r.getMessage()]
+            # 日志由根 logger 统一输出为 JSON（engineering-baseline），这里判断“确实有处理器会写出”，不再要求模块自挂处理器
+            output_handlers = list(lesson_logger.handlers) + (logging.getLogger().handlers if lesson_logger.propagate else [])
             check('单反斜杠学生稿：修补次数写入服务端日志且不含正文',
                   lesson_logger.isEnabledFor(logging.INFO)
-                  and any(h is not capture for h in lesson_logger.handlers)
+                  and any(h is not capture for h in output_handlers)
                   and len(repair_messages) == 1
                   and isinstance(repair_records[0].args[0], int) and repair_records[0].args[0] > 0
                   and '线面角' not in repair_messages[0] and 'vec' not in repair_messages[0])

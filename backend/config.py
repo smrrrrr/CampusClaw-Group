@@ -3,6 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import Field, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,8 +15,8 @@ class Settings(BaseSettings):
     # Windows Docker 共享目录使用 DELETE；原生本地磁盘可使用 WAL。
     sqlite_journal_mode: Literal["WAL", "DELETE"] = "WAL"
 
-    # JWT
-    jwt_secret_key: str = "campusclaw-dev-secret"
+    # JWT：必填且至少 32 字符，缺失即启动失败（engineering-baseline），不提供默认值
+    jwt_secret_key: str = Field(min_length=32)
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 120  # 2 小时
     refresh_token_expire_days: int = 7
@@ -72,6 +73,8 @@ class Settings(BaseSettings):
     mcp_max_calls_per_question: int = 4       # 每次提问最多工具调用
     mcp_max_calls_per_conversation: int = 20  # 单会话累计调用上限
     mcp_call_timeout: float = 10              # 单次 tools/call 超时（秒）
+    # 健康检查探测的自建工具服务地址；为空时 /api/health 报 not_configured
+    mcp_tools_health_url: str = ""
 
     @property
     def frontend_origin_list(self) -> list[str]:
@@ -85,7 +88,12 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    try:
+        return Settings()
+    except ValidationError as exc:
+        # pydantic 原始报错带 input_value（即配置原文），只输出键名
+        names = sorted({str(err["loc"][0]).upper() for err in exc.errors() if err.get("loc")})
+        raise SystemExit(f"配置缺失或不合法：{', '.join(names)}（见 .env.example）") from None
 
 
 settings = get_settings()

@@ -2,7 +2,7 @@
 
 面向中学教师和学生的 AI 教学平台。教师用它导入教研资料、生成教案和学生讲义、出题组卷；学生在本班资料范围内向学科助手提问，回答附带可核对的出处。
 
-当前版本：**v1.1**（2026-10-25），见文末[版本记录](#版本记录)。
+当前版本：**v1.2.0**（2026-10-28），见文末[版本记录](#版本记录)。
 
 ## 功能
 
@@ -51,11 +51,19 @@
 ```bash
 git clone https://github.com/smrrrrr/CampusClaw-Group.git
 cd CampusClaw-Group
-cp .env.example .env    # 至少填写 JWT_SECRET_KEY；需要 AI 生成时再填模型 Key
+cp .env.example .env    # 必填 JWT_SECRET_KEY（至少 32 字符：openssl rand -base64 32）；需要 AI 生成时再填模型 Key
 docker compose up -d --build
 ```
 
-打开 <http://localhost:8080/login>。端口可以在 `.env` 的 `CAMPUSCLAW_PORT` 里修改。
+确认启动成功（免登录）：
+
+```bash
+curl -s http://localhost:8080/health
+```
+
+返回 `{"status":"ok","version":"1.2.0","time":"…","dependencies":{"database":"ok","mcp_tools":"ok","model":"…"}}` 即为成功；`model` 未填 Key 时为 `not_configured`，`status` 为 `degraded` 表示 MCP 工具服务不可达。`JWT_SECRET_KEY` 缺失或过短时后端拒绝启动，`docker compose logs backend` 会提示缺少的键名。
+
+然后打开 <http://localhost:8080/login>。端口可以在 `.env` 的 `CAMPUSCLAW_PORT` 里修改。
 
 新库启动时会自动建表，但没有任何账号。有两种初始化方式：
 
@@ -72,25 +80,57 @@ frontend/       Next.js 前端：app/ 是页面，lib/api.ts 是接口封装
 mcp-server/     自建 MCP 工具服务
 deploy/         Nginx 配置
 apitest/        回归测试脚本与接口用例
+scripts/        门禁脚本：check.py（一键门禁）、分层检查、密钥扫描
 openspec/       规约：specs/ 是现行主规约，changes/ 是变更提案、设计、任务和验收记录
-docs/           验收与工作记录
+docs/           工程规范（standards/）、验收与工作记录
 ```
 
 ## 开发
 
-项目采用规约驱动开发：任何行为变更，先在 `openspec/changes/<变更名>/` 写好 proposal、design、spec 和 tasks，评审后再实现。验收以主规约中的 Scenario 为准。规则全文见 [CLAUDE.md](CLAUDE.md)。
+项目采用规约驱动开发：任何行为变更，先在 `openspec/changes/YYYY-MM-DD-<短横小写英文名>/` 写好 proposal、design、spec 和 tasks，评审后再实现。验收以 Scenario 为准。常驻规则见 [AGENTS.md](AGENTS.md)（`CLAUDE.md` 引入同一份），八份工程规范见 [docs/standards/](docs/standards/)。
+
+### 一键门禁
+
+合并前必须通过。先安装一次依赖（`cd backend && uv sync`，`cd frontend && npm ci`，并安装 openspec CLI），然后在项目根目录运行：
 
 ```bash
-openspec validate --all --strict --no-interactive
+make check
 ```
 
-回归测试使用临时数据库和假模型，不访问真实数据，也不花模型额度。先在 `backend/` 下执行 `uv sync`，然后在项目根目录运行：
+Windows 没有 make 时运行 `backend\.venv\Scripts\python.exe scripts\check.py`。门禁依次执行 openspec 严格校验、分层检查、密钥扫描、前端类型检查和 `apitest/` 下全部离线回归，任一项失败即整体失败。回归使用临时数据库和假模型，即使本机 `.env` 填了真实 Key 也不会联网或消耗额度。每个脚本的覆盖范围见 [openspec/README.md](openspec/README.md#检查与交接)。
 
-```bash
-PYTHONPATH=backend backend/.venv/bin/python apitest/check_question_bank.py
-```
+## 协作约定
 
-每个脚本的覆盖范围见 [openspec/README.md](openspec/README.md#检查与交接)。
+- **主干唯一**：`main` 是唯一基线，开启保护规则，禁止直接推送，只通过 PR 合并；`main` 上任一提交都应能按本 README 启动。
+- **每次改动一条变更**：变更目录以 `YYYY-MM-DD-短横小写英文名` 命名（如 `2026-10-28-engineering-baseline`），在 `change/<变更名>` 分支上实现，验收通过后归档到 `openspec/changes/archive/`。
+- **提交信息写依据**：第一行写改了什么，末尾三行写依据，值必须查得到：
+
+  ```
+  Change: 2026-10-28-engineering-baseline
+  Verify: make check
+  Evidence: docs/lesson-07/verification.md
+  ```
+
+  不写 `update`、`fix` 这类无信息的提交信息。
+- **每人跑通一次**：新成员克隆后按本 README 从零启动并通过 `make check`，卡在哪一步就改 README 哪一步（技能 `fresh-start`）。
+- **评审**：每条变更指定一名评审人，一个工作日内响应；完成定义见 [08-评审与完成定义规范](docs/standards/08-评审与完成定义规范.md)。
+
+## 许可证
+
+未选择开源许可证：仓库只用于课程小组协作，含有教学素材相关的规约与样例，暂不对外授权复用。需要公开演示或开源时由组长另行确定。
+
+## 密钥泄露处置
+
+一旦发现 `.env` 中的任何值出现在提交、PR、截图、问题单或聊天记录里（`make check` 的密钥扫描失败也算）：
+
+1. 发现人立即告知组长，不在公开渠道转述密钥。
+2. 组长**轮换**泄露的密钥——删除文件或重写历史都不够，拿到过的人仍然持有：
+   - `JWT_SECRET_KEY`：重新生成（`openssl rand -base64 32`）写入部署机 `.env`，重启后端；所有人需要重新登录。
+   - `DEEPSEEK_API_KEY`：在网关或服务商处作废旧 Key 并申请新 Key。
+   - `MCP_AUTH_TOKEN`：重新生成，重启 `mcp-tools` 与后端，教师在 MCP 设置里更新令牌。
+   - `MCP_TOKEN_KEY`：重新生成后，已登记的 MCP 服务器令牌无法解密，需要教师重新填写。
+3. 补齐 `.gitignore` 或流程漏洞，再重写历史清除残留（可选）。
+4. 在 `docs/` 记录发生了什么、何时轮换、谁执行。
 
 **不进 Git 的内容**：
 
@@ -108,6 +148,16 @@ PYTHONPATH=backend backend/.venv/bin/python apitest/check_question_bank.py
 - [docs/lesson-2-5-acceptance-2026-10-18.md](docs/lesson-2-5-acceptance-2026-10-18.md)：第 2—5 课功能验收记录
 
 ## 版本记录
+
+### v1.2.0（2026-10-28）
+
+工程基线（变更 `2026-10-28-engineering-baseline`），不改业务功能：
+
+- **健康检查**：`/health`（Nginx）与 `/api/health` 返回版本、时间与数据库、MCP 工具服务、模型三项依赖状态；MCP 不可达时为 `degraded`。
+- **日志**：后端日志改为单行 JSON，每个请求带 `request_id`，响应头 `X-Request-ID`；不记录查询串、令牌与 Cookie。
+- **配置**：`JWT_SECRET_KEY` 取消代码默认值，缺失或少于 32 字符时拒绝启动。
+- **门禁**：`make check` 一条命令跑规约校验、分层检查、密钥扫描、前端类型检查与全部离线回归。
+- **规范**：`docs/standards/` 八份工程规范，`AGENTS.md` 常驻规则，`.claude/skills/` 七个技能。
 
 ### v1.1（2026-10-25）
 

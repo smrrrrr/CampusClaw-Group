@@ -57,6 +57,8 @@ services:
       MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:-}
       MCP_TOKEN_KEY: ${MCP_TOKEN_KEY:-}
       MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-mcp-tools:8090}
+      # /api/health 探测自建工具服务连通性（2 秒超时，只报 ok/unreachable，不回显地址）
+      MCP_TOOLS_HEALTH_URL: http://mcp-tools:8090/health
     volumes:
       # 材料文件本体持久化（与本地开发 backend/uploads 同源）
       - ./backend/uploads:/app/uploads
