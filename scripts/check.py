@@ -31,8 +31,9 @@ ISOLATED_ENV = {
 
 def steps() -> list[tuple[str, list[str], dict | None]]:
     py = str(BACKEND_PYTHON)
+    openspec_cmd = shutil.which("openspec") or "openspec"
     items = [
-        ("openspec-validate", ["openspec", "validate", "--all", "--strict", "--no-interactive"], None),
+        ("openspec-validate", [openspec_cmd, "validate", "--all", "--strict", "--no-interactive"], None),
         ("layering", [py, "scripts/check_layering.py"], None),
         ("secret-scan", [py, "scripts/secret_scan.py"], None),
         ("fe-typecheck", [str(TSC), "--noEmit", "-p", "frontend/tsconfig.json"], None),

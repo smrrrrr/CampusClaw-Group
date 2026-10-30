@@ -16,6 +16,11 @@ import {
   type AssistantSubject,
   type StudentAssistantConfigDTO,
   type ChatMetaData,
+  type StudentHomeworkDTO,
+  type MistakeDTO,
+  type StudentOverviewDTO,
+  type StudentMasteryDTO,
+  type StudentPortraitDTO,
 } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
 import { getStudentNavItem, STUDENT_NAV_ITEMS } from "@/components/student-navigation";
@@ -24,11 +29,6 @@ import { historyKey } from "@/lib/recent-history";
 import { useRecentHistory } from "@/lib/use-recent-history";
 
 type StudentView = "home" | "assistant" | "assignments" | "mistakes" | "analytics";
-
-const DEMO_ASSIGNMENTS = [
-  { title: "一元二次方程练习", detail: "解方程 x²−5x+6=0，并说明所用方法与判别式。", due: "2026-09-10 23:59", status: "已批改", score: 95, feedback: "很好，过程完整，加 3 分鼓励。" },
-  { title: "函数单调性判断", detail: "判断 f(x)=x²−4x 在（2，+∞）上的单调性并给出理由。", due: "2026-09-11 23:59", status: "错题", score: 60, feedback: "结论有误。二次函数在对称轴右侧为增函数。" },
-];
 
 const DEMO_SUBJECTS = ["数学", "语文", "英语", "物理", "化学"];
 const ASSISTANT_SUBJECTS: { id: AssistantSubject; name: string; icon: string }[] = [
@@ -41,16 +41,22 @@ function StudentDashboard({
   name,
   className,
   onNavigate,
+  ongoingHomework,
+  pendingSubmit,
+  mistakeCount,
 }: {
   name: string;
   className: string;
   onNavigate: (view: string) => void;
+  ongoingHomework: number;
+  pendingSubmit: number;
+  mistakeCount: number;
 }) {
   const stats = [
     { value: "10", label: "本班讲义", tone: "red" },
-    { value: "10", label: "进行中作业", tone: "blue" },
-    { value: "8", label: "待提交", tone: "gold" },
-    { value: "1", label: "我的错题", tone: "red" },
+    { value: String(ongoingHomework), label: "进行中作业", tone: "blue" },
+    { value: String(pendingSubmit), label: "待提交", tone: "gold" },
+    { value: String(mistakeCount), label: "我的错题", tone: "red" },
   ];
   const shortcuts = [
     { icon: "💬", title: "向助手提问", detail: "解题引导 · 流式回答 · 引用讲义来源", view: "assistant" },
@@ -85,51 +91,307 @@ function StudentDashboard({
 }
 
 function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void }) {
+  const [homeworks, setHomeworks] = useState<StudentHomeworkDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [submitting, setSubmitting] = useState<number | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+
+  const loadHomeworks = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const list = await api.listStudentHomeworks();
+      setHomeworks(list);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "加载作业失败");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { loadHomeworks(); }, [loadHomeworks]);
+
+  const subjectTabs = [{ id: "", name: "全部" }, ...ASSISTANT_SUBJECTS];
+  const filteredHomeworks = selectedSubject
+    ? homeworks.filter((h) => h.subject === selectedSubject)
+    : homeworks;
+
+  const handleSubmit = async (hw: StudentHomeworkDTO) => {
+    const text = answers[hw.id] ?? "";
+    if (!text.trim()) return;
+    setSubmitting(hw.id);
+    try {
+      await api.submitHomework(hw.id, text);
+      await loadHomeworks();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "提交失败");
+    } finally {
+      setSubmitting(null);
+    }
+  };
+
+  const isOverdue = (dueAt: string | null) => {
+    if (!dueAt) return false;
+    return new Date(dueAt).getTime() < Date.now();
+  };
+
   return <div className="student-page">
     <div className="page-title"><h2>交作业</h2><p>提交后作业会进入批改队列；处理完成后可查看分数和评语。</p></div>
-    <div className="student-subject-tabs">{DEMO_SUBJECTS.map((subject, index) => <button className={index === 0 ? "active" : ""} key={subject}>{subject}</button>)}</div>
-    <div className="student-demo-note">演示提示：「函数单调性判断」的示例答案故意留有一个常见错误，提交后会判断并进入「错题」。</div>
-    <div className="student-assignment-list">
-      {DEMO_ASSIGNMENTS.map((item) => <article className="student-assignment-card" key={item.title}>
-        <div className="student-assignment-top"><div><h3>{item.title}</h3><p>{item.detail}</p><span className="hint">截止：{item.due}</span></div><span className={`student-status ${item.status === "错题" ? "wrong" : "done"}`}>{item.status}</span></div>
-        <div className="student-answer-label">我的作答</div>
-        <div className="student-answer-box">{item.title === "一元二次方程练习" ? "x²−5x+6=0，用十字相乘得 (x−2)(x−3)=0，所以 x=2 或 x=3。判别式 Δ=1>0。" : "f(x)=x²−4x 在 (2,+∞) 上是减函数，因为开口向上。"}</div>
-        <div className="student-grade-row"><strong className={item.status === "错题" ? "wrong" : ""}>{item.score}</strong><div><b>教师终评</b><span>{item.status === "错题" ? "本题判错，已进入错题" : "本题正确"}</span></div></div>
-        <div className="student-feedback">{item.feedback}<small>依据《一元二次方程与求根公式》例题 1、第 2 页。</small></div>
-        {item.status === "错题" && <button className="btn" style={{ width: "auto", marginTop: 12 }} onClick={() => onNavigate("mistakes")}>查看错题讲解</button>}
-      </article>)}
-    </div>
+    <div className="student-subject-tabs">{subjectTabs.map((s) => <button className={selectedSubject === s.id ? "active" : ""} key={s.id} onClick={() => setSelectedSubject(s.id)}>{s.name}</button>)}</div>
+    {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
+    {loading ? (
+      <p className="hint">加载中…</p>
+    ) : filteredHomeworks.length === 0 ? (
+      <div className="student-empty panel"><h2>暂无作业</h2><p>本班该学科目前没有待完成的作业。</p></div>
+    ) : (
+      <div className="student-assignment-list">
+        {filteredHomeworks.map((hw) => {
+          const submitted = hw.status !== "not_submitted";
+          const overdue = isOverdue(hw.due_at);
+          const statusLabel = submitted ? (hw.graded ? "已批改" : "待批改") : (overdue ? "已截止" : "未提交");
+          return (
+            <article className="student-assignment-card" key={hw.id}>
+              <div className="student-assignment-top">
+                <div>
+                  <h3>{hw.title}</h3>
+                  <p>{hw.content?.stem ?? hw.title}</p>
+                  <span className="hint">截止：{hw.due_at ?? "无"}</span>
+                </div>
+                <span className={`student-status ${hw.graded && (hw.final_score ?? 0) < 60 ? "wrong" : submitted ? "done" : ""}`}>{statusLabel}</span>
+              </div>
+              {submitted && hw.submission_id && (
+                <>
+                  <div className="student-grade-row">
+                    <strong className={(hw.final_score ?? 0) < 60 ? "wrong" : ""}>{hw.graded ? hw.final_score : "—"}</strong>
+                    <div><b>教师终评</b><span>{hw.graded ? "已批改" : "待教师批改"}</span></div>
+                  </div>
+                  {hw.feedback && <div className="student-feedback">{hw.feedback}</div>}
+                  {hw.graded && (hw.final_score ?? 0) < 60 && (
+                    <button className="btn" style={{ width: "auto", marginTop: 12 }} onClick={() => onNavigate("mistakes")}>查看错题讲解</button>
+                  )}
+                </>
+              )}
+              {!overdue && (
+                <>
+                  <div className="student-answer-label">我的作答</div>
+                  <textarea
+                    className="input"
+                    style={{ width: "100%", minHeight: 80, resize: "vertical" }}
+                    placeholder={submitted ? "可修改后重新提交" : "请输入你的答案…"}
+                    value={answers[hw.id] ?? ""}
+                    onChange={(e) => setAnswers((prev) => ({ ...prev, [hw.id]: e.target.value }))}
+                  />
+                  <button
+                    className="btn"
+                    style={{ width: "auto", marginTop: 8 }}
+                    onClick={() => handleSubmit(hw)}
+                    disabled={submitting === hw.id || !(answers[hw.id] ?? "").trim()}
+                  >
+                    {submitting === hw.id ? "提交中…" : submitted ? "重新提交" : "提交作业"}
+                  </button>
+                </>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    )}
   </div>;
 }
 
 function StudentMistakes({ onNavigate }: { onNavigate: (view: string) => void }) {
-  return <div className="student-page">
-    <div className="page-title"><h2>错题</h2><p>判错的题目会进入这里，可请「错题讲解」技能分析错因。</p></div>
-    <div className="student-mistake-card">
-      <span className="student-status wrong">❕ 函数单调性判断</span>
-      <div className="student-answer-label">题目</div>
-      <p>判断 f(x)=x²−4x 在（2，+∞）上的单调性并给出理由。</p>
-      <div className="student-answer-label">我的作答</div>
-      <div className="student-answer-box">f(x)=x²−4x 在（2,+∞）上是减函数，因为开口向上。</div>
-      <div className="student-answer-label">错因</div>
-      <p>把对称轴右侧误判为减函数；未用作差法或导数验证。</p>
-      <button className="btn" style={{ width: "auto", marginTop: 8 }} onClick={() => onNavigate("assistant")}>请助手讲解</button>
+  const [mistakes, setMistakes] = useState<MistakeDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [subject, setSubject] = useState<string>("");
+  const [onlyUnmastered, setOnlyUnmastered] = useState(false);
+  const [explainingId, setExplainingId] = useState<number | null>(null);
+  const [explanations, setExplanations] = useState<Record<number, string>>({});
+
+  const loadMistakes = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const list = await api.listStudentMistakes(subject || undefined, onlyUnmastered);
+      setMistakes(list);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "加载错题失败");
+    } finally {
+      setLoading(false);
+    }
+  }, [subject, onlyUnmastered]);
+
+  useEffect(() => { loadMistakes(); }, [loadMistakes]);
+
+  const handleToggleMastered = async (m: MistakeDTO) => {
+    try {
+      const updated = await api.toggleMistakeMastered(m.id, !m.mastered);
+      setMistakes((prev) => prev.map((x) => (x.id === m.id ? updated : x)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "操作失败");
+    }
+  };
+
+  const handleExplain = async (m: MistakeDTO) => {
+    setExplainingId(m.id);
+    try {
+      const res = await api.explainMistake(m.id);
+      const text = res.available && res.explanation ? res.explanation : "AI 讲解暂未配置，请联系教师。";
+      setExplanations((prev) => ({ ...prev, [m.id]: text }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "讲解失败");
+    } finally {
+      setExplainingId(null);
+    }
+  };
+
+  const subjectOptions: { value: string; label: string }[] = [
+    { value: "", label: "全部学科" },
+    { value: "math", label: "数学" },
+    { value: "chinese", label: "语文" },
+    { value: "english", label: "英语" },
+    { value: "physics", label: "物理" },
+    { value: "chemistry", label: "化学" },
+  ];
+
+  return (
+    <div className="student-page">
+      <div className="page-title">
+        <h2>错题</h2>
+        <p>判错的题目会进入这里，可按学科筛选、标记已掌握，或请 AI 分析错因。</p>
+      </div>
+      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
+        <select className="input" style={{ width: "auto" }} value={subject} onChange={(e) => setSubject(e.target.value)}>
+          {subjectOptions.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+        <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+          <input type="checkbox" checked={onlyUnmastered} onChange={(e) => setOnlyUnmastered(e.target.checked)} />
+          仅未掌握
+        </label>
+      </div>
+      {error && <div className="student-demo-note" style={{ color: "#dc2626" }}>{error}</div>}
+      {loading ? (
+        <div className="student-demo-note">加载中…</div>
+      ) : mistakes.length === 0 ? (
+        <div className="student-demo-note">暂无错题记录。</div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {mistakes.map((m) => (
+            <div className="student-mistake-card" key={m.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span className={`student-status ${m.mastered ? "done" : "wrong"}`}>
+                  {m.mastered ? "✓ 已掌握" : "❕ 未掌握"} · {m.subject}
+                </span>
+                {m.homework_title && <span style={{ fontSize: 12, color: "#6b7280" }}>来源：{m.homework_title}</span>}
+              </div>
+              <div className="student-answer-label">题目</div>
+              <p>{m.question_stem}</p>
+              {m.student_answer && (
+                <>
+                  <div className="student-answer-label">我的作答</div>
+                  <div className="student-answer-box">{m.student_answer}</div>
+                </>
+              )}
+              {m.reason && (
+                <>
+                  <div className="student-answer-label">错因</div>
+                  <p>{m.reason}</p>
+                </>
+              )}
+              {explanations[m.id] && (
+                <>
+                  <div className="student-answer-label">AI 讲解</div>
+                  <div style={{ whiteSpace: "pre-wrap", background: "#f9fafb", padding: 12, borderRadius: 8, fontSize: 14 }}>
+                    {explanations[m.id]}
+                  </div>
+                </>
+              )}
+              <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                <button className="btn" style={{ width: "auto" }} onClick={() => handleToggleMastered(m)}>
+                  {m.mastered ? "取消掌握" : "标记已掌握"}
+                </button>
+                <button
+                  className="btn"
+                  style={{ width: "auto" }}
+                  onClick={() => handleExplain(m)}
+                  disabled={explainingId === m.id}
+                >
+                  {explainingId === m.id ? "讲解中…" : "AI 讲解"}
+                </button>
+                <button className="btn" style={{ width: "auto" }} onClick={() => onNavigate("assistant")}>
+                  请助手讲解
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  </div>;
+  );
 }
 
+const RADAR_SUBJECTS = [
+  { id: "math", name: "数学", angle: -Math.PI / 2 },
+  { id: "chinese", name: "语文", angle: -Math.PI / 10 },
+  { id: "english", name: "英语", angle: (3 * Math.PI) / 10 },
+  { id: "physics", name: "物理", angle: (7 * Math.PI) / 10 },
+  { id: "chemistry", name: "化学", angle: (11 * Math.PI) / 10 },
+];
+
 function StudentAnalytics({ name }: { name: string }) {
-  const bars = [{ name: "数学", score: 65 }, { name: "语文", score: 61 }, { name: "英语", score: 59 }, { name: "物理", score: 64 }, { name: "化学", score: 65 }];
+  const [overview, setOverview] = useState<StudentOverviewDTO | null>(null);
+  const [mastery, setMastery] = useState<StudentMasteryDTO | null>(null);
+  const [portrait, setPortrait] = useState<StudentPortraitDTO | null>(null);
+  const [portraitAvailable, setPortraitAvailable] = useState(true);
+
+  useEffect(() => {
+    api.getStudentAnalyticsOverview().then(setOverview).catch(() => {});
+    api.getStudentAnalyticsMastery().then(setMastery).catch(() => {});
+    api.getStudentAnalyticsPortrait().then((r) => {
+      setPortrait(r.portrait);
+      setPortraitAvailable(r.available);
+    }).catch(() => setPortraitAvailable(false));
+  }, []);
+
+  // 雷达图：5 个学科固定轴，掌握度映射到半径
+  const masteryMap = new Map(mastery?.subjects.map((s) => [s.subject, s.mastery]) ?? []);
+  const radarPoints = RADAR_SUBJECTS.map((sub) => {
+    const m = masteryMap.get(sub.id);
+    const r = m != null ? (105 * m) / 100 : 0;
+    return { x: 140 + r * Math.cos(sub.angle), y: 128 + r * Math.sin(sub.angle) };
+  });
+  const radarPoly = radarPoints.map((p) => `${p.x},${p.y}`).join(" ");
+  const overallText = mastery?.overall != null ? `${mastery.overall}%` : "—";
+
+  // 趋势折线
+  const trend = mastery?.trend ?? [];
+  const trendPoints = trend.map((t, i) => {
+    const x = trend.length > 1 ? 15 + (i / (trend.length - 1)) * 450 : 240;
+    const y = 150 - (t.score / 100) * 120;
+    return { x, y, score: t.score, title: t.title };
+  });
+  const trendPoly = trendPoints.map((p) => `${p.x},${p.y}`).join(" ");
+  const trendArea = trend.length > 1 ? `${trendPoly} ${trendPoints[trendPoints.length - 1].x},150 ${trendPoints[0].x},150` : "";
+
+  const stats = [
+    { value: String(overview?.questions ?? 0), label: "累计提问", tone: "red" },
+    { value: String(overview?.submissions ?? 0), label: "作业提交", tone: "blue" },
+    { value: overview?.accuracy != null ? `${overview.accuracy}%` : "暂无", label: "作业正确率", tone: "green" },
+    { value: String(overview?.mistakes ?? 0), label: "错题累计", tone: "red" },
+  ];
+
   return <div className="student-page">
-    <div className="page-title"><h2>学情分析 · {name}</h2><p>覆盖本班开设的各学科，由 AI 依据提问、作业与错题生成个性化学习画像（演示数据）。</p></div>
+    <div className="page-title"><h2>学情分析 · {name}</h2><p>覆盖本班开设的各学科，由 AI 依据提问、作业与错题生成个性化学习画像。</p></div>
     <div className="student-stat-grid">
-      {[{ value: "0", label: "累计提问", tone: "red" }, { value: "2", label: "作业提交", tone: "blue" }, { value: "50%", label: "作业正确率", tone: "green" }, { value: "1", label: "错题累计", tone: "red" }].map((stat) => <div className="student-stat-card" key={stat.label}><strong className={stat.tone}>{stat.value}</strong><span>{stat.label}</span></div>)}
+      {stats.map((stat) => <div className="student-stat-card" key={stat.label}><strong className={stat.tone}>{stat.value}</strong><span>{stat.label}</span></div>)}
     </div>
     <div className="student-analysis-grid">
-      <section className="student-panel"><div className="student-section-title"><span />各学科掌握度</div><div className="student-radar-wrap"><svg viewBox="0 0 280 260" role="img" aria-label="各学科掌握度雷达图"><g transform="translate(140 128)" fill="none" stroke="#e4e7ec">{[30,55,80,105].map((r) => <polygon key={r} points={`0,-${r} ${r * .95},-${r * .31} ${r * .59},${r * .81} -${r * .59},${r * .81} -${r * .95},-${r * .31}`} />)}<path d="M0-105V105M-100-32l200 64M-59 85l118-170M59 85L-59-85M100-32l-200 64" /></g><polygon points="140,74 202,108 165,176 108,180 83,110" fill="rgba(139,21,56,.2)" stroke="#a30b0b" strokeWidth="2.5" />{[[140,74],[202,108],[165,176],[108,180],[83,110]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="3.5" fill="#a30b0b" />)}<text x="140" y="15" textAnchor="middle">数学</text><text x="265" y="112" textAnchor="middle">语文</text><text x="200" y="250" textAnchor="middle">英语</text><text x="80" y="250" textAnchor="middle">物理</text><text x="15" y="112" textAnchor="middle">化学</text></svg><div className="student-score-ring"><strong>63%</strong><span>综合掌握</span></div></div></section>
-      <section className="student-panel"><div className="student-section-title"><span />近期成绩趋势</div><svg className="student-trend-chart" viewBox="0 0 500 160" role="img" aria-label="近期成绩趋势"><path d="M15 110 L90 100 L165 103 L240 85 L315 89 L390 65 L465 103 L465 150 L15 150Z" fill="rgba(163,11,11,.1)"/><polyline points="15,110 90,100 165,103 240,85 315,89 390,65 465,103" fill="none" stroke="#a30b0b" strokeWidth="3" />{[[15,110],[90,100],[165,103],[240,85],[315,89],[390,65],[465,103]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="4" fill="#fff" stroke="#a30b0b" strokeWidth="2" />)}</svg><div className="student-section-title"><span />各学科掌握热力</div>{bars.map((bar) => <div className="student-progress-row" key={bar.name}><span>{bar.name}</span><div><i style={{ width: `${bar.score}%` }} /></div><b>{bar.score}</b></div>)}</section>
+      <section className="student-panel"><div className="student-section-title"><span />各学科掌握度</div><div className="student-radar-wrap"><svg viewBox="0 0 280 260" role="img" aria-label="各学科掌握度雷达图"><g transform="translate(140 128)" fill="none" stroke="#e4e7ec">{[30,55,80,105].map((r) => <polygon key={r} points={`0,-${r} ${r * .95},-${r * .31} ${r * .59},${r * .81} -${r * .59},${r * .81} -${r * .95},-${r * .31}`} />)}<path d="M0-105V105M-100-32l200 64M-59 85l118-170M59 85L-59-85M100-32l-200 64" /></g>{mastery && mastery.subjects.length > 0 && <polygon points={radarPoly} fill="rgba(139,21,56,.2)" stroke="#a30b0b" strokeWidth="2.5" />}{radarPoints.map((p, i) => masteryMap.get(RADAR_SUBJECTS[i].id) != null && <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#a30b0b" />)}<text x="140" y="15" textAnchor="middle">数学</text><text x="265" y="112" textAnchor="middle">语文</text><text x="200" y="250" textAnchor="middle">英语</text><text x="80" y="250" textAnchor="middle">物理</text><text x="15" y="112" textAnchor="middle">化学</text></svg><div className="student-score-ring"><strong>{overallText}</strong><span>综合掌握</span></div></div></section>
+      <section className="student-panel"><div className="student-section-title"><span />近期成绩趋势</div>{trend.length > 0 ? <svg className="student-trend-chart" viewBox="0 0 500 160" role="img" aria-label="近期成绩趋势">{trendArea && <path d={`M${trendArea}Z`} fill="rgba(163,11,11,.1)" />}<polyline points={trendPoly} fill="none" stroke="#a30b0b" strokeWidth="3" />{trendPoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#a30b0b" strokeWidth="2" />)}</svg> : <p style={{ padding: "16px", color: "#888" }}>暂无成绩趋势</p>}<div className="student-section-title"><span />各学科掌握热力</div>{RADAR_SUBJECTS.map((sub) => { const m = masteryMap.get(sub.id); const score = m ?? 0; return <div className="student-progress-row" key={sub.id}><span>{sub.name}</span><div><i style={{ width: `${m != null ? score : 0}%` }} /></div><b>{m != null ? score : "—"}</b></div>; })}</section>
     </div>
-    <section className="student-profile-panel"><div className="student-section-title"><span />🧠 AI 学习画像</div><div className="student-profile-body"><div><p>学习风格：<b>归纳总结型</b></p><div className="student-tag-row"><span>归纳总结型</span><span>强科·数学</span><span>待提升·英语</span></div><article><b>💡 学习建议</b><p>建议优先巩固「英语」，围绕本学科讲义要点多做基础题；同时保持「数学」的学习手感，形成跨学科的正向迁移。</p></article></div><div className="student-strength-box"><b>优势知识点</b><p>✅ 数学</p><p>✅ 化学</p><hr/><b className="warn">待提升知识点</b><p>⚠️ 语文</p><p>⚠️ 英语</p></div></div></section>
+    <section className="student-profile-panel"><div className="student-section-title"><span />🧠 AI 学习画像</div>{portraitAvailable && portrait ? <div className="student-profile-body"><div><p>学习风格：<b>{portrait.style || "—"}</b></p><div className="student-tag-row">{portrait.strengths.map((s) => <span key={`s-${s}`}>强科·{s}</span>)}{portrait.weaknesses.map((s) => <span key={`w-${s}`}>待提升·{s}</span>)}</div><article><b>💡 学习建议</b><p>{portrait.suggestion || "暂无"}</p></article></div><div className="student-strength-box"><b>优势知识点</b>{portrait.strengths.length > 0 ? portrait.strengths.map((s) => <p key={`ss-${s}`}>✅ {s}</p>) : <p>暂无</p>}<hr/><b className="warn">待提升知识点</b>{portrait.weaknesses.length > 0 ? portrait.weaknesses.map((s) => <p key={`ws-${s}`}>⚠️ {s}</p>) : <p>暂无</p>}</div></div> : <p style={{ padding: "16px", color: "#888" }}>AI 学习画像暂未配置，请联系教师。</p>}</section>
   </div>;
 }
 
@@ -153,6 +415,24 @@ function StudentHome() {
 
   // 班级数据隔离：未分配班级时展示空状态，不发 API 请求
   const hasClass = currentStudent?.class_id != null;
+
+  // 首页作业统计：进行中作业数、待提交数
+  const [ongoingHomework, setOngoingHomework] = useState(0);
+  const [pendingSubmit, setPendingSubmit] = useState(0);
+  const [mistakeCount, setMistakeCount] = useState(0);
+  useEffect(() => {
+    if (!hasClass) return;
+    api.listStudentHomeworks().then((list) => {
+      const now = Date.now();
+      const ongoing = list.filter((h) => h.due_at ? new Date(h.due_at).getTime() >= now : true).length;
+      const pending = list.filter((h) => h.status === "not_submitted" && (h.due_at ? new Date(h.due_at).getTime() >= now : true)).length;
+      setOngoingHomework(ongoing);
+      setPendingSubmit(pending);
+    }).catch(() => { /* 统计加载失败不阻塞 */ });
+    api.listStudentMistakes(undefined, true).then((list) => {
+      setMistakeCount(list.length);
+    }).catch(() => { /* 统计加载失败不阻塞 */ });
+  }, [hasClass, currentStudent?.id]);
 
   // 打开/下载命中的原始文件（标注出处，可回溯原文）
   const openOriginal = (c: AnswerCitation) => {
@@ -387,7 +667,7 @@ function StudentHome() {
           <div className="student-empty panel"><h2>暂无班级</h2><p>你还未被分配到班级，请联系教师或管理员处理。</p></div>
         </div>
       ) : view === "home" ? (
-        <StudentDashboard name={studentName} className={className} onNavigate={navigate} />
+        <StudentDashboard name={studentName} className={className} onNavigate={navigate} ongoingHomework={ongoingHomework} pendingSubmit={pendingSubmit} mistakeCount={mistakeCount} />
       ) : view === "assignments" ? (
         <StudentAssignments onNavigate={navigate} />
       ) : view === "mistakes" ? (

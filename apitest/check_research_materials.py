@@ -12,7 +12,7 @@ import httpx
 
 
 async def main():
-    with tempfile.TemporaryDirectory(prefix='research-audit-') as temp:
+    with tempfile.TemporaryDirectory(prefix='research-audit-', ignore_cleanup_errors=True) as temp:
         os.environ['DATABASE_URL'] = f'sqlite:///{temp}/audit.db'
         os.environ['UPLOAD_DIR'] = f'{temp}/uploads'
         from database import Base, SessionLocal, engine

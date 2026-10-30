@@ -18,7 +18,7 @@ import httpx
 
 
 async def main():
-    with tempfile.TemporaryDirectory(prefix="mcp-test-") as temp:
+    with tempfile.TemporaryDirectory(prefix="mcp-test-", ignore_cleanup_errors=True) as temp:
         os.environ["DATABASE_URL"] = f"sqlite:///{temp}/test.db"
         os.environ["MCP_TOKEN_KEY"] = "3rSG9u0lJ_zU2C8pQc2F0bYQ0iZc1m1b2c3d4e5f6g8="
         os.environ["MCP_ALLOWED_HOSTS"] = "mcp-tools:8090"

@@ -106,6 +106,69 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE conversations ADD COLUMN teacher_id INTEGER REFERENCES users(id)"))
             conn.commit()
 
+        # homeworks 骨架表增列（add-homework-grading）
+        hw_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(homeworks)"))}
+        if hw_cols:
+            if "subject" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN subject VARCHAR(32) NOT NULL DEFAULT 'math'"))
+            if "teacher_id" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN teacher_id INTEGER REFERENCES users(id)"))
+            if "title" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN title VARCHAR(200) NOT NULL DEFAULT ''"))
+            if "content_json" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN content_json TEXT NOT NULL DEFAULT ''"))
+            if "due_at" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN due_at DATETIME"))
+            if "status" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'draft'"))
+            if "updated_at" not in hw_cols:
+                conn.execute(text("ALTER TABLE homeworks ADD COLUMN updated_at DATETIME"))
+            conn.commit()
+
+        # homework_submissions 骨架表增列
+        hws_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(homework_submissions)"))}
+        if hws_cols:
+            if "homework_id" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN homework_id INTEGER REFERENCES homeworks(id)"))
+            if "answer_text" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN answer_text TEXT NOT NULL DEFAULT ''"))
+            if "submitted_at" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN submitted_at DATETIME"))
+            if "ai_score" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_score INTEGER"))
+            if "ai_feedback" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_feedback TEXT"))
+            if "ai_graded_at" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_graded_at DATETIME"))
+            if "teacher_score" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_score INTEGER"))
+            if "teacher_feedback" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_feedback TEXT"))
+            if "teacher_graded_at" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_graded_at DATETIME"))
+            if "status" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'"))
+            conn.commit()
+
+        # mistake_notes 骨架表增列
+        mn_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(mistake_notes)"))}
+        if mn_cols:
+            if "subject" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN subject VARCHAR(32) NOT NULL DEFAULT 'math'"))
+            if "homework_id" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN homework_id INTEGER REFERENCES homeworks(id)"))
+            if "question_stem" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN question_stem TEXT NOT NULL DEFAULT ''"))
+            if "student_answer" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN student_answer TEXT"))
+            if "reason" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN reason TEXT"))
+            if "mastered" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN mastered INTEGER NOT NULL DEFAULT 0"))
+            if "mastered_at" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN mastered_at DATETIME"))
+            conn.commit()
+
 
 @event.listens_for(engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):

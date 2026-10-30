@@ -13,7 +13,7 @@ import httpx
 
 
 async def main():
-    with tempfile.TemporaryDirectory(prefix='lesson-prep-test-') as temp:
+    with tempfile.TemporaryDirectory(prefix='lesson-prep-test-', ignore_cleanup_errors=True) as temp:
         os.environ['DATABASE_URL'] = f'sqlite:///{temp}/test.db'
         os.environ['UPLOAD_DIR'] = f'{temp}/uploads'
         from database import Base, SessionLocal, engine

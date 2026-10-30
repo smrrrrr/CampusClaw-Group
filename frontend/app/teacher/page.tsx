@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { AuthGate } from "@/components/auth-guard";
 import { AppShell } from "@/components/app-layout";
-import { findTeacherNavItem, useTeacherNavigation } from "@/components/teacher-navigation";
+import { findTeacherNavItem, useTeacherNavigation, SUBJECT_NAMES } from "@/components/teacher-navigation";
 import { ClassSelector } from "@/components/class-selector";
 import { LogoutButton } from "@/components/logout-button";
-import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO } from "@/lib/api";
+import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO, type ClassAnalyticsDTO } from "@/lib/api";
 
 interface StudentRow {
   id: number;
@@ -22,7 +22,7 @@ interface StudentRow {
 function TeacherHome() {
   const router = useRouter();
   const nav = useTeacherNavigation();
-  const { navItems, classId, isHomeroom, subjectName } = nav;
+  const { navItems, classId, isHomeroom, subjectName, subject } = nav;
   const requestedView = nav.requestedView ?? (isHomeroom ? "home" : "lesson-prep");
   useEffect(() => {
     if (requestedView === "lesson-prep") router.replace("/teacher/lesson-prep");
@@ -38,6 +38,37 @@ function TeacherHome() {
   const [auditLoading, setAuditLoading] = useState(false);
   const [auditError, setAuditError] = useState("");
 
+  // 作业批改
+  const [hwList, setHwList] = useState<Awaited<ReturnType<typeof api.listTeacherHomeworks>>>([]);
+  const [hwLoading, setHwLoading] = useState(false);
+  const [hwError, setHwError] = useState("");
+  const [hwForm, setHwForm] = useState({ title: "", stem: "", dueAt: "" });
+  const [hwSubmitting, setHwSubmitting] = useState(false);
+  const [hwSubmissions, setHwSubmissions] = useState<Awaited<ReturnType<typeof api.listHomeworkSubmissions>>>([]);
+  const [hwSubLoading, setHwSubLoading] = useState(false);
+  const [hwSelectedId, setHwSelectedId] = useState<number | null>(null);
+  const [hwAiGrading, setHwAiGrading] = useState<number | null>(null);
+  const [hwGradeForm, setHwGradeForm] = useState<Record<number, { score: string; feedback: string }>>({});
+  const [hwGradingId, setHwGradingId] = useState<number | null>(null);
+
+  // 班级学情
+  const [classAnalytics, setClassAnalytics] = useState<ClassAnalyticsDTO | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState("");
+
+  useEffect(() => {
+    if ((view !== "class-analysis" && view !== "subject-analysis" && view !== "class-homework") || classId === null) return;
+    let cancelled = false;
+    setAnalyticsLoading(true);
+    setAnalyticsError("");
+    const targetSubject = view === "subject-analysis" ? subject ?? undefined : undefined;
+    api.getTeacherClassAnalytics(classId, targetSubject)
+      .then((data) => { if (!cancelled) setClassAnalytics(data); })
+      .catch((e) => { if (!cancelled) setAnalyticsError(e instanceof ApiError ? e.message : "学情加载失败"); })
+      .finally(() => { if (!cancelled) setAnalyticsLoading(false); });
+    return () => { cancelled = true; };
+  }, [view, classId, subject]);
+
   useEffect(() => {
     if (view !== "audit" || classId === null) return;
     let cancelled = false;
@@ -50,6 +81,93 @@ function TeacherHome() {
       .finally(() => { if (!cancelled) setAuditLoading(false); });
     return () => { cancelled = true; };
   }, [view, classId]);
+
+  // 作业列表加载
+  const loadHwList = async () => {
+    if (classId === null) return;
+    setHwLoading(true);
+    setHwError("");
+    try {
+      const list = await api.listTeacherHomeworks(classId);
+      setHwList(list);
+    } catch (e) {
+      setHwError(e instanceof ApiError ? e.message : "加载作业失败");
+    } finally {
+      setHwLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (view !== "tools") return;
+    loadHwList();
+  }, [view, classId]);
+
+  const handleCreateHomework = async () => {
+    if (!hwForm.title.trim() || !hwForm.stem.trim() || !hwForm.dueAt) return;
+    setHwSubmitting(true);
+    try {
+      const dueAt = new Date(hwForm.dueAt).toISOString();
+      const content = JSON.stringify({ stem: hwForm.stem });
+      await api.createHomework({ class_id: classId!, title: hwForm.title, content, due_at: dueAt });
+      setHwForm({ title: "", stem: "", dueAt: "" });
+      await loadHwList();
+    } catch (e) {
+      setHwError(e instanceof ApiError ? e.message : "创建作业失败");
+    } finally {
+      setHwSubmitting(false);
+    }
+  };
+
+  const handlePublishHw = async (id: number) => {
+    try { await api.publishHomework(id); await loadHwList(); }
+    catch (e) { setHwError(e instanceof ApiError ? e.message : "发布失败"); }
+  };
+  const handleCloseHw = async (id: number) => {
+    try { await api.closeHomework(id); await loadHwList(); }
+    catch (e) { setHwError(e instanceof ApiError ? e.message : "关闭失败"); }
+  };
+
+  const loadSubmissions = async (hwId: number) => {
+    setHwSelectedId(hwId);
+    setHwSubLoading(true);
+    try {
+      const subs = await api.listHomeworkSubmissions(hwId);
+      setHwSubmissions(subs);
+    } catch (e) {
+      setHwError(e instanceof ApiError ? e.message : "加载提交失败");
+    } finally {
+      setHwSubLoading(false);
+    }
+  };
+
+  const handleAiGrade = async (hwId: number) => {
+    setHwAiGrading(hwId);
+    try {
+      const res = await api.aiGradeHomework(hwId);
+      if (hwSelectedId === hwId) await loadSubmissions(hwId);
+      await loadHwList();
+      setHwError(`AI 已批改 ${res.graded_count} 份`);
+    } catch (e) {
+      setHwError(e instanceof ApiError ? e.message : "AI 批改失败");
+    } finally {
+      setHwAiGrading(null);
+    }
+  };
+
+  const handleGradeSub = async (subId: number) => {
+    const form = hwGradeForm[subId];
+    if (!form) return;
+    const score = parseInt(form.score, 10);
+    if (isNaN(score) || score < 0 || score > 100) return;
+    setHwGradingId(subId);
+    try {
+      await api.gradeSubmission(subId, score, form.feedback || null);
+      if (hwSelectedId !== null) await loadSubmissions(hwSelectedId);
+    } catch (e) {
+      setHwError(e instanceof ApiError ? e.message : "改分失败");
+    } finally {
+      setHwGradingId(null);
+    }
+  };
 
   const hasClasses = classId !== null;
 
@@ -551,6 +669,166 @@ function TeacherHome() {
                   {!audit?.items.length && <p className="hint" style={{ padding: 24, textAlign: "center" }}>暂无本班审计记录</p>}
                 </>}
               </div>
+            </>
+          ) : view === "tools" ? (
+            <>
+              <div className="page-title"><h2>作业与改分</h2><p>布置本科目作业、查看提交、AI 初批与教师改分。</p></div>
+              {hwError && <div className="error" role="alert" style={{ marginBottom: 12 }}>{hwError}</div>}
+              <div className="panel" style={{ marginBottom: 16 }}>
+                <h3 style={{ marginBottom: 12 }}>布置新作业</h3>
+                <div style={{ display: "grid", gap: 8 }}>
+                  <input className="input" placeholder="作业标题" value={hwForm.title} onChange={(e) => setHwForm({ ...hwForm, title: e.target.value })} />
+                  <textarea className="input" placeholder="题目内容" style={{ minHeight: 60 }} value={hwForm.stem} onChange={(e) => setHwForm({ ...hwForm, stem: e.target.value })} />
+                  <input className="input" type="datetime-local" value={hwForm.dueAt} onChange={(e) => setHwForm({ ...hwForm, dueAt: e.target.value })} />
+                  <button className="btn" style={{ width: "auto" }} onClick={handleCreateHomework} disabled={hwSubmitting || !hwForm.title.trim() || !hwForm.stem.trim() || !hwForm.dueAt}>
+                    {hwSubmitting ? "创建中…" : "创建草稿"}
+                  </button>
+                </div>
+              </div>
+              <div className="panel">
+                <h3 style={{ marginBottom: 12 }}>本班本科目作业</h3>
+                {hwLoading ? <p className="hint">加载中…</p> : hwList.length === 0 ? (
+                  <p className="hint" style={{ padding: 24, textAlign: "center" }}>暂无作业</p>
+                ) : (
+                  <div style={{ display: "grid", gap: 12 }}>
+                    {hwList.map((hw) => (
+                      <div key={hw.id} className="panel" style={{ padding: 12, border: "1px solid #f3f4f6" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                          <div>
+                            <strong>{hw.title}</strong>
+                            <div className="hint">截止：{hw.due_at ?? "无"} · 提交 {hw.submitted_count}/{hw.total_count} · 状态：{hw.status}</div>
+                          </div>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            {hw.status === "draft" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handlePublishHw(hw.id)}>发布</button>}
+                            {hw.status === "published" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handleCloseHw(hw.id)}>关闭</button>}
+                            <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => loadSubmissions(hw.id)}>查看提交</button>
+                            {hw.status === "published" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handleAiGrade(hw.id)} disabled={hwAiGrading === hw.id}>{hwAiGrading === hw.id ? "批改中…" : "AI 初批"}</button>}
+                          </div>
+                        </div>
+                        {hwSelectedId === hw.id && (
+                          <div style={{ marginTop: 12, borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+                            {hwSubLoading ? <p className="hint">加载中…</p> : hwSubmissions.length === 0 ? (
+                              <p className="hint">暂无学生提交</p>
+                            ) : hwSubmissions.map((sub) => (
+                              <div key={sub.id} style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}>
+                                <div className="hint">学生 #{sub.student_id} · {sub.status}</div>
+                                <div style={{ margin: "6px 0", whiteSpace: "pre-wrap" }}>{sub.answer_text}</div>
+                                {sub.ai_score !== null && <div className="hint">AI 评分：{sub.ai_score} · {sub.ai_feedback}</div>}
+                                {sub.teacher_score !== null && <div style={{ fontWeight: 700 }}>教师评分：{sub.teacher_score} · {sub.teacher_feedback}</div>}
+                                <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+                                  <input className="input" type="number" min={0} max={100} placeholder="分数" style={{ width: 80 }}
+                                    value={hwGradeForm[sub.id]?.score ?? sub.ai_score ?? ""}
+                                    onChange={(e) => setHwGradeForm((p) => ({ ...p, [sub.id]: { score: e.target.value, feedback: p[sub.id]?.feedback ?? sub.ai_feedback ?? "" } }))} />
+                                  <input className="input" placeholder="评语" style={{ flex: 1 }}
+                                    value={hwGradeForm[sub.id]?.feedback ?? ""}
+                                    onChange={(e) => setHwGradeForm((p) => ({ ...p, [sub.id]: { score: p[sub.id]?.score ?? "", feedback: e.target.value } }))} />
+                                  <button className="btn" style={{ width: "auto", padding: "4px 12px" }} onClick={() => handleGradeSub(sub.id)} disabled={hwGradingId === sub.id}>
+                                    {hwGradingId === sub.id ? "…" : "改分"}
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : view === "class-homework" ? (
+            <>
+              <div className="page-title"><h2>本班作业（总览）</h2><p>全科作业提交率与平均分统计（只读）。</p></div>
+              {analyticsLoading ? (
+                <div className="panel" style={{ textAlign: "center", padding: 24 }}>加载中…</div>
+              ) : analyticsError ? (
+                <div className="panel" style={{ textAlign: "center", padding: 24, color: "#c62828" }}>{analyticsError}</div>
+              ) : classAnalytics ? (
+                <div className="panel" style={{ padding: 24 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>作业提交率</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.submission_rate}%</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>班级平均分</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.class_average != null ? `${classAnalytics.class_average}分` : "暂无"}</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>错题率</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.mistake_rate}%</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>学生人数</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.total_students}</div></div>
+                  </div>
+                  {Object.keys(classAnalytics.subject_averages).length > 0 ? (
+                    <div>
+                      <div className="student-section-title" style={{ marginBottom: 8 }}><span />各学科作业平均分</div>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead><tr style={{ borderBottom: "1px solid #eee" }}><th style={{ textAlign: "left", padding: "8px 4px" }}>学科</th><th style={{ textAlign: "left", padding: "8px 4px" }}>平均分</th></tr></thead>
+                        <tbody>
+                          {Object.entries(classAnalytics.subject_averages).map(([subj, avg]) => (
+                            <tr key={subj} style={{ borderBottom: "1px solid #f5f5f5" }}>
+                              <td style={{ padding: "8px 4px" }}>{SUBJECT_NAMES[subj] ?? subj}</td>
+                              <td style={{ padding: "8px 4px" }}><b>{avg}分</b></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="hint" style={{ padding: 24, textAlign: "center" }}>暂无各科作业成绩数据</p>
+                  )}
+                </div>
+              ) : (
+                <div className="panel" style={{ textAlign: "center", padding: 24 }}>暂无作业统计数据</div>
+              )}
+            </>
+          ) : view === "class-analysis" || view === "subject-analysis" ? (
+            <>
+              <div className="page-title"><h2>{view === "class-analysis" ? "本班学情（全科）" : `学情分析（单科·${subjectName}）`}</h2><p>{view === "class-analysis" ? "本班各学科平均分、分数段分布与学生掌握度排行。" : `当前任教班级${subjectName}掌握度与分数分布。`}</p></div>
+              {analyticsLoading ? (
+                <div className="panel" style={{ textAlign: "center", padding: 24 }}>加载中…</div>
+              ) : analyticsError ? (
+                <div className="panel" style={{ textAlign: "center", padding: 24, color: "#c62828" }}>{analyticsError}</div>
+              ) : classAnalytics ? (
+                <div className="panel" style={{ padding: 24 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>班级平均分</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.class_average != null ? `${classAnalytics.class_average}分` : "暂无"}</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>提交率</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.submission_rate}%</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>错题率</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.mistake_rate}%</div></div>
+                    <div style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}><div style={{ fontSize: 12, color: "#888" }}>学生人数</div><div style={{ fontSize: 24, fontWeight: 700 }}>{classAnalytics.total_students}</div></div>
+                  </div>
+                  {view === "class-analysis" && Object.keys(classAnalytics.subject_averages).length > 0 && (
+                    <div style={{ marginBottom: 24 }}>
+                      <div className="student-section-title" style={{ marginBottom: 8 }}><span />各学科平均分</div>
+                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                        {Object.entries(classAnalytics.subject_averages).map(([subj, avg]) => (
+                          <div key={subj} style={{ background: "#fafafa", padding: "8px 16px", borderRadius: 8 }}>
+                            <span style={{ marginRight: 8 }}>{SUBJECT_NAMES[subj] ?? subj}</span>
+                            <b>{avg}分</b>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ marginBottom: 24 }}>
+                    <div className="student-section-title" style={{ marginBottom: 8 }}><span />分数段分布</div>
+                    <div style={{ display: "flex", gap: 12 }}>
+                      <div style={{ flex: 1, background: "#ffebee", padding: 12, borderRadius: 8, textAlign: "center" }}><div style={{ fontSize: 12, color: "#888" }}>{`< 60`}</div><div style={{ fontSize: 20, fontWeight: 700 }}>{classAnalytics.score_distribution.lt60}</div></div>
+                      <div style={{ flex: 1, background: "#fff3e0", padding: 12, borderRadius: 8, textAlign: "center" }}><div style={{ fontSize: 12, color: "#888" }}>60-79</div><div style={{ fontSize: 20, fontWeight: 700 }}>{classAnalytics.score_distribution["60_79"]}</div></div>
+                      <div style={{ flex: 1, background: "#e8f5e9", padding: 12, borderRadius: 8, textAlign: "center" }}><div style={{ fontSize: 12, color: "#888" }}>80-100</div><div style={{ fontSize: 20, fontWeight: 700 }}>{classAnalytics.score_distribution["80_100"]}</div></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="student-section-title" style={{ marginBottom: 8 }}><span />学生掌握度排行</div>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead><tr style={{ borderBottom: "1px solid #eee" }}><th style={{ textAlign: "left", padding: "8px 4px" }}>姓名</th><th style={{ textAlign: "left", padding: "8px 4px" }}>综合掌握度</th><th style={{ textAlign: "left", padding: "8px 4px" }}>薄弱学科</th></tr></thead>
+                      <tbody>
+                        {classAnalytics.student_ranking.map((r, i) => (
+                          <tr key={i} style={{ borderBottom: "1px solid #f5f5f5" }}>
+                            <td style={{ padding: "8px 4px" }}>{r.name}</td>
+                            <td style={{ padding: "8px 4px" }}>{r.overall != null ? `${r.overall}分` : "暂无"}</td>
+                            <td style={{ padding: "8px 4px" }}>{r.weak_subjects.length > 0 ? r.weak_subjects.join("、") : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="panel" style={{ textAlign: "center", padding: 24 }}>暂无学情数据</div>
+              )}
             </>
           ) : (
             <div className="panel" style={{ textAlign: "center", padding: "56px 32px" }}>

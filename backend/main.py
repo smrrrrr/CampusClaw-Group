@@ -18,7 +18,7 @@ import models  # noqa: F401  # 确保模型注册到 Base.metadata
 from config import settings
 from database import Base, SessionLocal, engine, run_simple_migrations
 from logging_setup import RequestContextMiddleware, configure_logging
-from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills, quiz
+from routers import auth, materials, student, teacher, research_materials, lesson_plans, mcp, skills, quiz, homework, mistake, analytics
 from security import JWTError, TOKEN_TYPE_ACCESS, decode_token
 from services import write_audit_log
 from version import APP_VERSION
@@ -69,6 +69,9 @@ app.include_router(lesson_plans.router)
 app.include_router(mcp.router)
 app.include_router(skills.router)
 app.include_router(quiz.router)
+app.include_router(homework.router)
+app.include_router(mistake.router)
+app.include_router(analytics.router)
 
 
 # ---------------------------------------------------------------------------

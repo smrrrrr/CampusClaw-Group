@@ -367,6 +367,65 @@ export const api = {
   quizPaperPreviewUrl: (id: number) => `/api/teacher/quiz/papers/${id}/preview`,
   quizPaperAnswerKeyUrl: (id: number) => `/api/teacher/quiz/papers/${id}/answer-key`,
   listQuizEvents: () => apiRequest<{ items: QuizEventDTO[] }>("/api/teacher/quiz/events"),
+
+  // --- 作业批改（教师）---
+  listTeacherHomeworks: (classId: number) =>
+    apiRequest<TeacherHomeworkDTO[]>(`/api/teacher/homeworks?class_id=${classId}`),
+  createHomework: (body: { class_id: number; title: string; content: string; due_at: string }) =>
+    apiRequest<{ id: number; title: string; status: string; class_id: number; subject: string; due_at: string }>(
+      "/api/teacher/homeworks", { method: "POST", body }),
+  publishHomework: (id: number) =>
+    apiRequest<{ id: number; status: string }>(`/api/teacher/homeworks/${id}/publish`, { method: "PUT" }),
+  closeHomework: (id: number) =>
+    apiRequest<{ id: number; status: string }>(`/api/teacher/homeworks/${id}/close`, { method: "PUT" }),
+  listHomeworkSubmissions: (homeworkId: number) =>
+    apiRequest<HomeworkSubmissionDTO[]>(`/api/teacher/homeworks/${homeworkId}/submissions`),
+  aiGradeHomework: (homeworkId: number) =>
+    apiRequest<{ graded_count: number }>(`/api/teacher/homeworks/${homeworkId}/ai-grade`, { method: "POST" }),
+  gradeSubmission: (submissionId: number, score: number, feedback: string | null) =>
+    apiRequest<{ id: number; teacher_score: number; teacher_feedback: string; status: string }>(
+      `/api/teacher/submissions/${submissionId}/grade`, { method: "PUT", body: { score, feedback } }),
+
+  // --- 作业批改（学生）---
+  listStudentHomeworks: () =>
+    apiRequest<StudentHomeworkDTO[]>("/api/student/homeworks"),
+  submitHomework: (homeworkId: number, answerText: string) =>
+    apiRequest<{ id: number; status: string; submitted_at: string | null }>(
+      `/api/student/homeworks/${homeworkId}/submit`, { method: "POST", body: { answer_text: answerText } }),
+  getSubmission: (submissionId: number) =>
+    apiRequest<{ id: number; answer_text: string; submitted_at: string | null; final_score: number | null; feedback: string | null; status: string }>(
+      `/api/student/submissions/${submissionId}`),
+
+  // --- 错题本（学生）---
+  listStudentMistakes: (subject?: string, onlyUnmastered?: boolean) => {
+    const params = new URLSearchParams();
+    if (subject) params.set("subject", subject);
+    if (onlyUnmastered) params.set("only_unmastered", "true");
+    const qs = params.toString();
+    return apiRequest<MistakeDTO[]>(`/api/student/mistakes${qs ? `?${qs}` : ""}`);
+  },
+  getMistake: (mistakeId: number) =>
+    apiRequest<MistakeDTO>(`/api/student/mistakes/${mistakeId}`),
+  toggleMistakeMastered: (mistakeId: number, mastered: boolean) =>
+    apiRequest<MistakeDTO>(`/api/student/mistakes/${mistakeId}/mastered`, { method: "PUT", body: { mastered } }),
+  explainMistake: (mistakeId: number) =>
+    apiRequest<{ explanation: string | null; available: boolean }>(`/api/student/mistakes/${mistakeId}/explain`, { method: "POST" }),
+
+  // --- 学情诊断（学生）---
+  getStudentAnalyticsOverview: () =>
+    apiRequest<StudentOverviewDTO>(`/api/student/analytics/overview`),
+  getStudentAnalyticsMastery: () =>
+    apiRequest<StudentMasteryDTO>(`/api/student/analytics/mastery`),
+  getStudentAnalyticsPortrait: () =>
+    apiRequest<{ portrait: StudentPortraitDTO | null; available: boolean }>(`/api/student/analytics/portrait`, { method: "POST" }),
+
+  // --- 学情诊断（教师）---
+  getTeacherClassAnalytics: (classId: number, subject?: string) => {
+    const params = new URLSearchParams();
+    params.set("class_id", String(classId));
+    if (subject) params.set("subject", subject);
+    return apiRequest<ClassAnalyticsDTO>(`/api/teacher/analytics/class?${params.toString()}`);
+  },
 };
 
 export interface ResearchMaterialDTO {
@@ -378,6 +437,109 @@ export interface ResearchMaterialDetailDTO extends ResearchMaterialDTO {
   content: string;
   lesson_sources: { ref: string; filename: string; heading: string; start_line: number; end_line: number; file_sha256: string; excerpt: string }[];
   publications: { material_id: number; class_id: number; class_name: string; created_at: string }[];
+}
+
+export interface TeacherHomeworkDTO {
+  id: number;
+  title: string;
+  due_at: string | null;
+  status: string;
+  submitted_count: number;
+  total_count: number;
+  created_at: string;
+}
+
+export interface HomeworkSubmissionDTO {
+  id: number;
+  student_id: number;
+  answer_text: string;
+  submitted_at: string | null;
+  ai_score: number | null;
+  ai_feedback: string | null;
+  teacher_score: number | null;
+  teacher_feedback: string | null;
+  status: string;
+}
+
+export interface StudentHomeworkDTO {
+  id: number;
+  title: string;
+  subject: string;
+  content: { stem?: string; [k: string]: unknown };
+  due_at: string | null;
+  status: string;
+  submission_id: number | null;
+  final_score: number | null;
+  feedback: string | null;
+  graded: boolean;
+}
+
+export interface MistakeDTO {
+  id: number;
+  subject: string;
+  question_stem: string;
+  student_answer: string | null;
+  reason: string | null;
+  homework_id: number | null;
+  homework_title: string | null;
+  mastered: boolean;
+  mastered_at: string | null;
+  created_at: string | null;
+}
+
+export interface StudentOverviewDTO {
+  questions: number;
+  submissions: number;
+  accuracy: number | null;
+  mistakes: number;
+}
+
+export interface SubjectMasteryDTO {
+  subject: string;
+  subject_name: string;
+  mastery: number;
+  homework_count: number;
+  mistake_count: number;
+  unmastered_count: number;
+}
+
+export interface TrendItemDTO {
+  title: string;
+  score: number;
+  subject: string;
+  subject_name: string;
+  graded_at: string | null;
+}
+
+export interface StudentMasteryDTO {
+  subjects: SubjectMasteryDTO[];
+  overall: number | null;
+  trend: TrendItemDTO[];
+}
+
+export interface StudentPortraitDTO {
+  style: string;
+  strengths: string[];
+  weaknesses: string[];
+  suggestion: string;
+}
+
+export interface StudentRankingDTO {
+  name: string;
+  overall: number | null;
+  weak_subjects: string[];
+}
+
+export interface ClassAnalyticsDTO {
+  class_id: number;
+  subject: string | null;
+  total_students: number;
+  class_average: number | null;
+  subject_averages: Record<string, number>;
+  score_distribution: { lt60: number; "60_79": number; "80_100": number };
+  submission_rate: number;
+  mistake_rate: number;
+  student_ranking: StudentRankingDTO[];
 }
 
 /** 原文件、图文包与配图通过同一鉴权流程，不把令牌拼进图片 URL。 */

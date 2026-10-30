@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 
 
-with tempfile.TemporaryDirectory(prefix='formula-retrieval-') as temp:
+with tempfile.TemporaryDirectory(prefix='formula-retrieval-', ignore_cleanup_errors=True) as temp:
     os.environ['DATABASE_URL'] = f'sqlite:///{temp}/test.db'
     os.environ['UPLOAD_DIR'] = temp+'/uploads'
     from database import Base, engine, SessionLocal
@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory(prefix='formula-retrieval-') as temp:
                     User(id=2,identifier='T2',name='Synthetic physics',role=Role.teacher,subject='physics',password_hash='unused')])
         db.flush()
         for mid,cid,teacher in [(1,101,1),(2,102,1),(3,101,2)]:
-            path=f'{cid}/formula-{mid}.md'; physical=resolve_abs_path(path);physical.parent.mkdir(parents=True,exist_ok=True);physical.write_text(content,encoding='utf8')
+            path=f'{cid}/formula-{mid}.md'; physical=resolve_abs_path(path);physical.parent.mkdir(parents=True,exist_ok=True);physical.write_bytes(content.encode('utf8'))
             db.add(Material(id=mid,class_id=cid,uploader_id=teacher,filename='空间向量.md',file_path=path,file_type='text/markdown',file_size=len(content.encode()),is_indexed=True,source_sha256=hashlib.sha256(content.encode()).hexdigest()))
             for index,piece in enumerate(pieces,1):
                 db.add(MaterialChunk(material_id=mid,class_id=cid,chunk_index=index,content=piece,embedding=serialize_vector(embed_text(piece))))

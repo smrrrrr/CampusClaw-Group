@@ -402,7 +402,7 @@ class MaterialChunk(Base):
 
 
 class Homework(Base):
-    """作业布置表（骨架）。业务字段由后续作业规约扩展。"""
+    """作业布置表。"""
 
     __tablename__ = "homeworks"
 
@@ -410,13 +410,27 @@ class Homework(Base):
     class_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("classes.id"), nullable=False
     )
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    content_json: Mapped[str] = mapped_column(Text, nullable=False)
+    due_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="draft")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow, nullable=False
+    )
 
-    __table_args__ = (Index("ix_homework_class_id", "class_id"),)
+    __table_args__ = (
+        Index("ix_homework_class_id", "class_id"),
+        Index("ix_homework_class_subject", "class_id", "subject"),
+    )
 
 
 class HomeworkSubmission(Base):
-    """作业提交记录表（骨架）。业务字段由后续作业规约扩展。"""
+    """作业提交记录表。"""
 
     __tablename__ = "homework_submissions"
 
@@ -427,13 +441,29 @@ class HomeworkSubmission(Base):
     student_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False
     )
+    homework_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("homeworks.id"), nullable=False
+    )
+    answer_text: Mapped[str] = mapped_column(Text, nullable=False)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    ai_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ai_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ai_graded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    teacher_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    teacher_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
+    teacher_graded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
-    __table_args__ = (Index("ix_homework_submission_class_id", "class_id"),)
+    __table_args__ = (
+        Index("ix_homework_submission_class_id", "class_id"),
+        Index("ix_homework_submission_homework_id", "homework_id"),
+        UniqueConstraint("homework_id", "student_id", name="uq_homework_student"),
+    )
 
 
 class MistakeNote(Base):
-    """错题本表（骨架）。业务字段由后续错题本规约扩展。"""
+    """错题本表。"""
 
     __tablename__ = "mistake_notes"
 
@@ -444,6 +474,17 @@ class MistakeNote(Base):
     student_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False
     )
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    homework_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("homeworks.id"), nullable=True
+    )
+    question_stem: Mapped[str] = mapped_column(Text, nullable=False)
+    student_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    mastered: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default="0"
+    )
+    mastered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (Index("ix_mistake_note_class_id", "class_id"),)

@@ -17,7 +17,7 @@ import time
 
 
 async def main():
-    with tempfile.TemporaryDirectory(prefix="quiz-test-") as temp:
+    with tempfile.TemporaryDirectory(prefix="quiz-test-", ignore_cleanup_errors=True) as temp:
         os.environ["DATABASE_URL"] = f"sqlite:///{temp}/test.db"
         os.environ["UPLOAD_DIR"] = f"{temp}/uploads"
         os.environ["DEEPSEEK_API_KEY"] = "test-key"  # 让 503 检查仅在显式清空时触发

@@ -98,7 +98,7 @@ export function useTeacherNavigation() {
 
   return {
     navItems, navHeader, classId, teachingClassId, isHomeroom, isHeadTeacher, homeroomClassId,
-    subjectName, href, materialHref, uploadHref, selectTeachingClass,
+    subject, subjectName, href, materialHref, uploadHref, selectTeachingClass,
     onNavigate: (key: string) => {
       const item = findTeacherNavItem(navItems, key);
       if (item?.to) router.push(item.to);
