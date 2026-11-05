@@ -147,6 +147,8 @@ Windows 没有 make 时运行 `backend\.venv\Scripts\python.exe scripts\check.py
 - [docs/work-and-validation-2026-10-25.md](docs/work-and-validation-2026-10-25.md)：v1.1 的代码工作、验证结果和未完成的检测
 - [docs/lesson-2-5-acceptance-2026-10-18.md](docs/lesson-2-5-acceptance-2026-10-18.md)：第 2—5 课功能验收记录
 
+第7课规范与当前证据见 [课程交付入口](docs/lesson-07/README.md)，八类规范及具体检查见 [规范索引](docs/standards/README.md)。本轮只整理文档与静态评测用例，未改变业务功能。
+
 ## 版本记录
 
 ### v1.2.0（2026-10-28）
