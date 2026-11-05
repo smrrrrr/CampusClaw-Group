@@ -541,7 +541,7 @@ function TeacherHome() {
     ? "仅限带班班级的审计与统计。"
     : view.startsWith("class-") || view === "home"
       ? "班主任工作台 · 仅限我的带班。"
-      : ["lesson-prep", "lesson-quiz", "research-qa", "case-analysis"].includes(view)
+      : ["lesson-prep", "lesson-quiz"].includes(view)
         ? `${subjectName}教研组 · 仅限本学科组资料。`
         : `${subjectName} · 仅限当前任教班级的本科目数据。`;
 
