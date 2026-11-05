@@ -10,19 +10,21 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 
 from database import get_db
 from deps import CurrentUser, get_current_student, get_current_teacher
 from homework_service import (
     HomeworkServiceError,
     UserContext,
-    ai_grade_homework,
     close_homework,
     create_homework,
     get_student_submission,
+    get_teacher_homework,
+    get_homework_asset,
     list_homework_submissions,
     list_student_homeworks,
     list_teacher_homeworks,
@@ -30,6 +32,8 @@ from homework_service import (
     submit_homework,
     teacher_grade_submission,
 )
+from grading_service import enqueue_homework, list_tasks, authorized_task, retry_task, serialize
+from logging_setup import request_id_var
 
 router = APIRouter(prefix="/api", tags=["homework"])
 
@@ -73,8 +77,66 @@ class SubmitHomeworkRequest(BaseModel):
 
 
 class GradeSubmissionRequest(BaseModel):
-    score: int = Field(..., ge=0, le=100)
+    score: int = Field(..., ge=0, le=100, strict=True)
     feedback: str | None = None
+
+
+class HomeworkContent(BaseModel):
+    stem: str = ""
+    format: str = "text"
+    original_total: float | None = None
+
+
+class TeacherHomeworkDetail(BaseModel):
+    id: int
+    class_id: int
+    subject: str
+    title: str
+    source_type: str
+    status: str
+    due_at: str | None
+    content: HomeworkContent
+    grading: dict | None
+
+
+class StudentHomeworkItem(BaseModel):
+    id: int
+    title: str
+    subject: str
+    source_type: str
+    content: HomeworkContent
+    due_at: str | None
+    status: str
+    homework_status: str
+    answer_text: str | None
+    submitted_at: str | None
+    submission_id: int | None
+    final_score: int | None
+    feedback: str | None
+    graded: bool
+
+
+class AiGradeResult(BaseModel):
+    task_ids: list[int]
+    created_count: int
+    existing_count: int
+    skipped_count: int
+
+
+class GradeTaskResult(BaseModel):
+    id: int
+    homework_id: int
+    submission_id: int
+    status: str
+    attempts: int
+    execution_count: int
+    max_attempts: int
+    error: str | None
+    created_at: str
+    updated_at: str
+    started_at: str | None
+    finished_at: str | None
+    next_attempt_at: str
 
 
 # ---------------------------------------------------------------------------
@@ -154,17 +216,83 @@ def api_list_submissions(
         _raise(e)
 
 
-@router.post("/teacher/homeworks/{homework_id}/ai-grade")
+@router.get("/teacher/homeworks/{homework_id}", response_model=TeacherHomeworkDetail,
+            summary="查看有权作业题面和教师评分依据",
+            responses={401: {"description": "未登录"}, 403: {"description": "班级或学科不符"},
+                       404: {"description": "作业不存在"}})
+def api_teacher_homework(homework_id: int, current: CurrentUser = Depends(get_current_teacher),
+                         db: Session = Depends(get_db)):
+    try:
+        return get_teacher_homework(db, _teacher_ctx(current), homework_id)
+    except HomeworkServiceError as e:
+        _raise(e)
+
+
+@router.get("/teacher/homeworks/{homework_id}/assets", summary="读取有权作业的原图副本",
+            response_class=Response,
+            responses={400: {"description": "名称非法"}, 401: {"description": "未登录"},
+                       403: {"description": "班级或学科不符"}, 404: {"description": "配图不存在"},
+                       409: {"description": "配图缺失或指纹变化"}})
+def api_teacher_homework_asset(homework_id: int, name: str = Query(min_length=1, max_length=500),
+                              current: CurrentUser = Depends(get_current_teacher), db: Session = Depends(get_db)):
+    try:
+        content, mime = get_homework_asset(db, _teacher_ctx(current), homework_id, name)
+        return Response(content=content, media_type=mime, headers={"X-Content-Type-Options": "nosniff"})
+    except HomeworkServiceError as e:
+        _raise(e)
+
+
+@router.post("/teacher/homeworks/{homework_id}/ai-grade", response_model=AiGradeResult,
+             status_code=202, summary="提交后台初批任务，教师终评不覆盖",
+             responses={401: {"description": "未登录"}, 403: {"description": "无权初批"},
+                        404: {"description": "作业不存在"}})
 def api_ai_grade(
     homework_id: int,
     current: CurrentUser = Depends(get_current_teacher),
     db: Session = Depends(get_db),
 ):
     try:
-        count = ai_grade_homework(db, _teacher_ctx(current), homework_id)
+        return enqueue_homework(db, _teacher_ctx(current), homework_id, request_id_var.get() or "grading-request")
     except HomeworkServiceError as e:
         _raise(e)
-    return {"graded_count": count}
+    except SQLAlchemyError:
+        raise HTTPException(503, detail="批改任务暂时无法保存，请稍后重试") from None
+
+
+@router.get("/teacher/homeworks/{homework_id}/grade-tasks", response_model=list[GradeTaskResult],
+            summary="只读查询作业初批任务，最新200条",
+            responses={401: {"description": "未登录"}, 403: {"description": "无权查询"}, 404: {"description": "作业不存在"}})
+def api_grade_tasks(homework_id: int, current: CurrentUser = Depends(get_current_teacher), db: Session = Depends(get_db)):
+    try:
+        return list_tasks(db, _teacher_ctx(current), homework_id)
+    except HomeworkServiceError as e:
+        _raise(e)
+    except SQLAlchemyError:
+        raise HTTPException(503, detail="批改任务暂时无法查询，请稍后重试") from None
+
+
+@router.get("/teacher/grade-tasks/{task_id}", response_model=GradeTaskResult, summary="只读查询初批任务详情",
+            responses={401: {"description": "未登录"}, 403: {"description": "无权查询"}, 404: {"description": "任务不存在"}})
+def api_grade_task(task_id: int = Path(gt=0), current: CurrentUser = Depends(get_current_teacher), db: Session = Depends(get_db)):
+    try:
+        return serialize(authorized_task(db, _teacher_ctx(current), task_id))
+    except HomeworkServiceError as e:
+        _raise(e)
+    except SQLAlchemyError:
+        raise HTTPException(503, detail="批改任务暂时无法查询，请稍后重试") from None
+
+
+@router.post("/teacher/grade-tasks/{task_id}/retry", response_model=GradeTaskResult, status_code=202,
+             summary="最终失败任务由教师重新排队",
+             responses={401: {"description": "未登录"}, 403: {"description": "无权重试"},
+                        404: {"description": "任务不存在"}, 409: {"description": "不是最终失败状态"}})
+def api_retry_grade_task(task_id: int = Path(gt=0), current: CurrentUser = Depends(get_current_teacher), db: Session = Depends(get_db)):
+    try:
+        return retry_task(db, _teacher_ctx(current), task_id)
+    except HomeworkServiceError as e:
+        _raise(e)
+    except SQLAlchemyError:
+        raise HTTPException(503, detail="批改任务暂时无法重新排队，请稍后重试") from None
 
 
 @router.put("/teacher/submissions/{submission_id}/grade")
@@ -180,6 +308,9 @@ def api_grade_submission(
         )
     except HomeworkServiceError as e:
         _raise(e)
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(503, detail="评分暂时无法保存，请稍后重试") from None
     return {
         "id": sub.id,
         "teacher_score": sub.teacher_score,
@@ -193,13 +324,29 @@ def api_grade_submission(
 # ---------------------------------------------------------------------------
 
 
-@router.get("/student/homeworks")
+@router.get("/student/homeworks", response_model=list[StudentHomeworkItem], summary="本人班级作业与本人已提交历史")
 def api_list_student_homeworks(
     current: CurrentUser = Depends(get_current_student),
     db: Session = Depends(get_db),
 ):
     try:
         return list_student_homeworks(db, _student_ctx(current))
+    except HomeworkServiceError as e:
+        _raise(e)
+    except SQLAlchemyError:
+        raise HTTPException(503, detail="作业历史暂时无法查询，请稍后重试") from None
+
+
+@router.get("/student/homeworks/{homework_id}/assets", summary="读取本班已发布作业或本人已提交历史配图",
+            response_class=Response,
+            responses={400: {"description": "名称非法"}, 401: {"description": "未登录"},
+                       403: {"description": "非本班或未发布"}, 404: {"description": "配图不存在"},
+                       409: {"description": "配图缺失或指纹变化"}})
+def api_student_homework_asset(homework_id: int, name: str = Query(min_length=1, max_length=500),
+                              current: CurrentUser = Depends(get_current_student), db: Session = Depends(get_db)):
+    try:
+        content, mime = get_homework_asset(db, _student_ctx(current), homework_id, name)
+        return Response(content=content, media_type=mime, headers={"X-Content-Type-Options": "nosniff"})
     except HomeworkServiceError as e:
         _raise(e)
 

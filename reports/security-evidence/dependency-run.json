@@ -1,0 +1,57 @@
+{
+  "source": "npm registry security audit API; pip-audit default PyPI vulnerability service",
+  "time": "2026-11-05T01:33:38.332901+00:00",
+  "commands": [
+    {
+      "name": "npm",
+      "command": [
+        "C:\\Users\\17424\\AppData\\Roaming\\TRAE SOLO CN\\ModularData\\ai-agent\\vm\\tools\\node\\npm.cmd",
+        "audit",
+        "--omit=dev",
+        "--json",
+        "--registry=https://registry.npmjs.org"
+      ],
+      "exit": 1,
+      "seconds": 10.468
+    },
+    {
+      "name": "backend-export",
+      "exit": 0,
+      "seconds": 0.047
+    },
+    {
+      "name": "backend",
+      "exit": 1,
+      "seconds": 11.25
+    },
+    {
+      "name": "mcp-export",
+      "exit": 0,
+      "seconds": 0.031
+    },
+    {
+      "name": "mcp",
+      "exit": 0,
+      "seconds": 3.531
+    }
+  ],
+  "locks": {
+    "frontend/package-lock.json": "01f170c4d781ed6fe0cf9f0ea4bc35f856037f5bf1c28816db8f6eaa06e18d0d",
+    "backend/uv.lock": "4d37d325b499ff5d0d6bbdb0fa4563f0ba065c637dbd352f34ccd52970cc609f",
+    "mcp-server/uv.lock": "2e20350d0b69ec84d6a60a6fdcd58136acdad911a34a21888e4aff179f44fdc6"
+  },
+  "versions": {
+    "npm": {
+      "exit": 0,
+      "version": "10.9.4"
+    },
+    "uv": {
+      "exit": 0,
+      "version": "uv 0.12.18 (01cb90c1a 2026-09-22 x86_64-pc-windows-msvc)"
+    },
+    "pip-audit": {
+      "exit": 0,
+      "version": "pip-audit 2.10.1"
+    }
+  }
+}

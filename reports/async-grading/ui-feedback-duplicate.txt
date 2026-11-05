@@ -1,0 +1,80 @@
+Browser tab: 13, Title: "CampusClaw 校园助手", URL: "http://localhost:3009/teacher?workspace=teaching&view=tools&class_id=101".
+0 AXWebArea CampusClaw 校园助手, URL: localhost:3009/teacher?workspace=teaching&view=tools&class_id=101
+	1 container
+		2 text T
+		3 heading CampusClaw, Value: 1
+			4 text CampusClaw
+		5 text 智能教学平台 · 教师端
+		6 container 主导航
+			7 container
+				8 text 数学 教研组 ·  任课教师视角
+			9 text 班主任工作台
+			10 button 本班首页
+			11 button 本班学生, Help: 管理带班班级的学生名单、考勤等
+			12 button 本班资料（全科）, Help: 查看本班所有学科的讲义，其他学科资料只读
+			13 button 本班学情（全科）, Help: 本班各科掌握度与总分分布
+			14 button 本班作业（总览）, Help: 查看各科提交率和平均分，只读、不批改
+			15 button 班级通知/公告, Help: 发布班级事务
+			16 text 任课教学
+			17 button 任课管理
+			18 pop up button (collapsed, settable) Description: 选择任教班级, Value: 验收一班, Secondary Actions: Expand
+				19 menu
+					20 (selected) 验收一班
+					21 验收二班
+			22 button 班级学生, Help: 任教班级学生名单，仅限本科目视角
+			23 button 本班资料（单科）, Help: 查看当前任教班级已发布的数学资料
+			24 button 学情分析（单科）, Help: 仅展示数学掌握度，不包含其他学科
+			25 button 作业与改分, Help: 布置、批改本学科作业，查看本学科统计
+			26 button 单科资料发布, Help: 发布本学科讲义到对应任教班级
+			27 text 教研中心
+			28 button 教研组资料, Help: 组内教师版素材、学生版预览与分班发布
+			29 button 智能备课, Help: 选择组内资料生成教案，定稿后发布学生教案与讲义
+			30 button 智能命题, Help: 命题生成、逐题复核、学科题库与组卷发布
+			31 button 教研问答, Help: 仅限本学科组共享问答
+			32 button 课例分析, Help: 仅限本学科组课例批注
+			33 text 系统与统计
+			34 button 助手配置, Help: 选择任教班级，配置 AI 提示词与技能
+			35 button 审计与统计, Help: 仅查看带班班级的审计与统计
+		36 text CampusClaw · 教师工作空间
+	37 container
+		38 text 数学 教研组 班级 101 师 教师
+		39 button 登 出
+	40 container
+		41 heading 作业与改分, Value: 2
+			42 text 作业与改分
+		43 text 布置本科目作业、查看提交、AI 初批与教师改分。
+		44 heading 布置新作业, Value: 3
+			45 text 布置新作业
+		46 text field (settable)
+		47 text entry area (settable)
+		48 date field (settable)
+			49 container
+				50 stepper
+				51 stepper
+				52 stepper
+				53 stepper
+				54 stepper
+			55 pop up button 显示当地日期和时间选择器
+		56 button (disabled) 创建草稿
+		57 heading 本班本科目作业, Value: 3
+			58 text 本班本科目作业
+		59 text 异步批改验收作业  ·  手工布置 截止： 2026/11/6 01:37:35  · 提交  1 / 1  · 状态： published
+		60 button 关闭
+		61 button 查看提交
+		62 button AI 初批
+		63 text 没有新建任务。已复用任务 #1（已有 1 个）。可稍后查看进度，AI 建议仍需教师确认。
+		64 container 后台批改进度
+			65 heading 后台批改进度 · 最近200条, Value: 4
+				66 text 后台批改进度 · 最近200条
+			77 container
+				78 text 最近200条任务：已完成  0 ，未完成  1 ，已跳过  0 。
+			79 container
+				80 text 任务 # 1  · 提交 # 1  ·  排队中  · 已处理  0  次
+		71 heading 作业题目, Value: 4
+			72 text 作业题目
+		73 text 计算2+2 学生 # 2  ·  pending 4
+		74 stepper (settable)
+		75 text field (settable)
+		76 button 改分
+
+The focused UI element is 0 AXWebArea CampusClaw 校园助手, URL: localhost:3009/teacher?workspace=teaching&view=tools&class_id=101

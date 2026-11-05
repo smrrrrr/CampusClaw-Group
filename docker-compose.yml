@@ -39,7 +39,7 @@ services:
     # 仅 Docker 内网可达，宿主机/外网无法直连 8000
     expose:
       - "8000"
-    environment:
+    environment: &backend-env
       # SQLite 落在挂载卷内，容器重建数据不丢
       DATABASE_URL: sqlite:////app/data/campusclaw.db
       # Windows 主机共享目录不使用 WAL 的共享内存；Linux 原生存储可显式改为 WAL。
@@ -59,7 +59,14 @@ services:
       MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-mcp-tools:8090}
       # /api/health 探测自建工具服务连通性（2 秒超时，只报 ok/unreachable，不回显地址）
       MCP_TOOLS_HEALTH_URL: http://mcp-tools:8090/health
-    volumes:
+      GRADING_BROKER_HOST: rabbitmq
+      GRADING_BROKER_USER: ${GRADING_BROKER_USER:-campusclaw}
+      GRADING_BROKER_PASSWORD: ${GRADING_BROKER_PASSWORD:?请在根目录 .env 设置队列密码}
+      GRADING_MAX_ATTEMPTS: ${GRADING_MAX_ATTEMPTS:-3}
+      GRADING_RETRY_BASE_SECONDS: ${GRADING_RETRY_BASE_SECONDS:-5}
+      GRADING_LEASE_SECONDS: ${GRADING_LEASE_SECONDS:-180}
+      GRADING_POLL_SECONDS: ${GRADING_POLL_SECONDS:-1}
+    volumes: &backend-volumes
       # 材料文件本体持久化（与本地开发 backend/uploads 同源）
       - ./backend/uploads:/app/uploads
       # SQLite 数据文件持久化
@@ -73,6 +80,41 @@ services:
       retries: 6
       start_period: 15s
     restart: unless-stopped
+
+  # 仅内部访问；队列和消息持久化，不映射管理界面到宿主机。
+  rabbitmq:
+    image: rabbitmq:4.2-management@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa
+    hostname: grading-broker
+    environment:
+      RABBITMQ_DEFAULT_USER: ${GRADING_BROKER_USER:-campusclaw}
+      RABBITMQ_DEFAULT_PASS: ${GRADING_BROKER_PASSWORD:?请在根目录 .env 设置队列密码}
+    volumes:
+      - grading-broker:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "gosu", "rabbitmq", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  grading-worker: &grading-worker
+    build:
+      context: ./backend
+    environment: *backend-env
+    volumes: *backend-volumes
+    command: ["/app/.venv/bin/python", "grading_worker.py", "--mode", "consume"]
+    depends_on:
+      backend:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    stop_grace_period: 90s
+    restart: unless-stopped
+
+  grading-dispatcher:
+    <<: *grading-worker
+    command: ["/app/.venv/bin/python", "grading_worker.py", "--mode", "dispatch"]
 
   frontend:
     build:
@@ -96,3 +138,6 @@ services:
       retries: 6
       start_period: 15s
     restart: unless-stopped
+
+volumes:
+  grading-broker:

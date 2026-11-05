@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { AuthGate } from "@/components/auth-guard";
 import { AppShell } from "@/components/app-layout";
 import { LogoutButton } from "@/components/logout-button";
@@ -284,6 +285,7 @@ function formatAnswer(a: unknown): string {
 
 // ---------------- 组卷与发布 ----------------
 function PapersTab({ classes, setError, setMessage }: { classes: { id: number; name: string }[]; setError: (s: string) => void; setMessage: (s: string) => void }) {
+  const nav = useTeacherNavigation();
   const [papers, setPapers] = useState<QuizPaperDTO[]>([]);
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState(90);
@@ -295,6 +297,8 @@ function PapersTab({ classes, setError, setMessage }: { classes: { id: number; n
   const [detail, setDetail] = useState<QuizPaperDTO | null>(null);
   const [preview, setPreview] = useState("");
   const [targets, setTargets] = useState<number[]>([]);
+  const [dueAt, setDueAt] = useState("");
+  const [published, setPublished] = useState<{ class_id: number; homework_id: number }[]>([]);
   const [reviewed, setReviewed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [draftDirty, setDraftDirty] = useState(false);
@@ -322,7 +326,7 @@ function PapersTab({ classes, setError, setMessage }: { classes: { id: number; n
   };
 
   const openPaper = async (id: number) => {
-    try { const p = await api.getQuizPaper(id); setDetail(p); setPreview(""); setReviewed(false); setTargets([]); }
+    try { const p = await api.getQuizPaper(id); setDetail(p); setPreview(""); setReviewed(false); setTargets([]); setDueAt(""); setPublished([]); }
     catch (e) { setError(e instanceof ApiError ? e.message : "加载试卷失败"); }
   };
 
@@ -406,10 +410,20 @@ function PapersTab({ classes, setError, setMessage }: { classes: { id: number; n
         </div>
         {preview && <div className="quiz-preview"><h4>学生卷预览</h4><MarkdownAnswer text={preview} imageUrl={quizImageUrl} /></div>}
         {detail.status === "final" && <div className="research-publish">
-          <h4>发布到任教班级</h4>
+          <h4>发布为作业</h4>
+          <p className="hint">发布后，学生在「交作业」提交，教师在「作业与改分」查看和评分。</p>
           <div className="research-class-options">{classes.map(c => <label key={c.id}><input type="checkbox" checked={targets.includes(c.id)} onChange={e => setTargets(t => e.target.checked ? [...t, c.id] : t.filter(x => x !== c.id))} />{c.name}</label>)}</div>
+          <label className="quiz-label" htmlFor="quiz-homework-deadline">作业截止时间</label>
+          <input id="quiz-homework-deadline" className="input" type="datetime-local" value={dueAt} onChange={e => setDueAt(e.target.value)} />
           <label className="research-review"><input type="checkbox" checked={reviewed} onChange={e => setReviewed(e.target.checked)} />我已核对当前学生卷不含答案、解析与出处</label>
-          <button className="btn-pill" disabled={busy || !reviewed || targets.length === 0} onClick={() => run(() => api.publishQuizPaper(detail.id, detail.revision, targets), "试卷已发布到所选班级。")}>发布试卷</button>
+          <button className="btn-pill" disabled={busy || !reviewed || targets.length === 0 || !dueAt || new Date(dueAt).getTime() <= Date.now()} onClick={() => run(async () => {
+            const result = await api.publishQuizPaper(detail.id, detail.revision, targets, new Date(dueAt).toISOString());
+            setPublished(result.assignments);
+          }, "已发布为作业，学生可前往「交作业」作答。")}>{busy ? "发布中…" : "发布为作业"}</button>
+          {published.length > 0 && <div role="status">{published.map(item => <p key={item.class_id}>
+            {classes.find(c => c.id === item.class_id)?.name ?? `班级 ${item.class_id}`} · 作业 #{item.homework_id}　
+            <Link className="btn-pill ghost sm" href={nav.href("tools", "teaching", item.class_id)}>前往作业与改分</Link>
+          </p>)}</div>}
         </div>}
       </section>}
     </div>

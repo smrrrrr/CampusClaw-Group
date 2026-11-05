@@ -133,7 +133,9 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
 
             # ---------- S6 AI 初批 ----------
             r = client.post(f"/api/teacher/homeworks/{hw_id}/ai-grade", headers=th)
-            check("S4 正常：AI 初批返回批改数", r.status_code == 200 and r.json()["graded_count"] == 1)
+            from grading_driver import complete_tasks
+            result = complete_tasks(client, r, th)
+            check("S4 正常：异步初批202且消费后批改数正确", r.status_code == 202 and result["graded_count"] == 1)
 
             r = client.get(f"/api/teacher/homeworks/{hw_id}/submissions", headers=th)
             subs = r.json()
@@ -207,6 +209,7 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
             client.put(f"/api/teacher/homeworks/{fail_hw_id}/publish", headers=th)
             client.post(f"/api/student/homeworks/{fail_hw_id}/submit", headers=sh, json={"answer_text": "ans"})
             r = client.post(f"/api/teacher/homeworks/{fail_hw_id}/ai-grade", headers=th)
+            complete_tasks(client, r, th)
             subs = client.get(f"/api/teacher/homeworks/{fail_hw_id}/submissions", headers=th).json()
             check("S4 失败：AI 返回无效 JSON 不写入分数", subs[0]["ai_score"] is None and subs[0]["status"] == "pending")
 

@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-11-04T13:31:56.856424+00:00",
+  "url": "http://localhost:8083",
+  "health": "ok",
+  "running_services": 7,
+  "backup": ".review\\history-predeploy-20261104-212300",
+  "changed_tables": [
+    "mistake_notes"
+  ],
+  "other_tables_unchanged": 34,
+  "upload_files_unchanged": 31,
+  "resolved_mistakes_remaining": 0,
+  "task_metadata_preserved": [
+    [
+      1,
+      "succeeded",
+      43,
+      1
+    ]
+  ],
+  "integrity": "ok"
+}

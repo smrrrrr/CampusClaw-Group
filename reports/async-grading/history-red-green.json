@@ -1,0 +1,20 @@
+{
+  "isolated_copy_only": true,
+  "records": [
+    {
+      "mutation": "隔离副本中禁止及格后的旧错题清理",
+      "exit_code": 1,
+      "failed_check": "M2 边界：改为60分后错题0条"
+    },
+    {
+      "mutation": "隔离副本中恢复旧30秒周期重投逻辑",
+      "exit_code": 1,
+      "failed_check": "Q1 边界：确认后跨越30分钟不积攒副本"
+    }
+  ],
+  "working_source_unchanged": true,
+  "source_sha256": {
+    "homework_service.py": "cce4af742c330ad977d633d6b6abf8441481dea3e3f8a3837a44ea622d018537",
+    "grading_service.py": "c8e1ac3e064badaa04bd83a584b8a3bfb90f0adf0de73b09de537bfa2df13ecf"
+  }
+}

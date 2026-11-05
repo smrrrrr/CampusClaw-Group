@@ -10,17 +10,15 @@ from __future__ import annotations
 
 import asyncio
 import json
-import mimetypes
 import re
 import threading
 import time
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import PlainTextResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import AwareDatetime, BaseModel, Field
 from sqlalchemy.orm import Session
 
 from agent_service import SUBJECT_NAMES
@@ -29,20 +27,19 @@ from database import get_db
 from deps import CurrentUser, get_current_teacher
 from lesson_service import build_resources, context_text
 from llm_service import LLMGenerationError, stream_chat
-from material_service import resolve_abs_path, write_physical_file
+from material_service import resolve_abs_path
 from models import (
-    Material,
-    MaterialAsset,
     QuestionEvent,
     QuestionGeneration,
     QuestionItem,
     QuestionPaper,
     QuestionPaperItem,
-    QuizPublication,
     ResearchMaterial,
     Role,
     User,
 )
+from homework_service import HomeworkServiceError, UserContext
+from quiz_homework_service import publish_quiz_homework
 from question_service import (
     DIFFICULTIES,
     QUESTION_PROMPT,
@@ -58,7 +55,6 @@ from question_service import (
     subject_knowledge_points,
     validate_batch,
     validate_question,
-    validate_student_paper,
 )
 
 router = APIRouter(prefix="/api/teacher/quiz", tags=["quiz"])
@@ -534,6 +530,8 @@ def _insert_items(db: Session, teacher: User, generation_id: int, accepted: list
         db.add(item)
         db.flush()
         ids.append(item.id)
+        record_event(db, actor_id=teacher.id, subject=teacher.subject, target_type="item",
+                     target_id=item.id, action="generate", detail={"generation_id": generation_id})
     return ids
 
 
@@ -1103,122 +1101,35 @@ def preview_paper(paper_id: int, current: CurrentUser = Depends(get_current_teac
 class PublishRequest(RevisionRequest):
     reviewed: bool = False
     class_ids: list[int] = Field(min_length=1, max_length=30)
+    due_at: AwareDatetime
 
 
-@router.post("/papers/{paper_id}/publish", summary="分班发布试卷",
-             responses={400: {"description": "未确认核对"}, 403: {"description": "非任教班级"}, 404: {"description": "不存在"},
-                        409: {"description": "非定稿、指纹变化或版本冲突"}})
+class HomeworkAssignment(BaseModel):
+    class_id: int
+    homework_id: int
+
+
+class PublishHomeworkResponse(BaseModel):
+    message: str
+    class_ids: list[int]
+    homework_ids: list[int]
+    assignments: list[HomeworkAssignment]
+
+
+@router.post("/papers/{paper_id}/publish", response_model=PublishHomeworkResponse, summary="分班发布为作业",
+             responses={400: {"description": "未核对或截止时间已过"}, 403: {"description": "非任教班级"},
+                        404: {"description": "试卷不存在"}, 409: {"description": "状态、版本或发布冲突"},
+                        422: {"description": "截止时间或目标格式不合法"}, 500: {"description": "发布失败已回滚"}})
 def publish_paper(paper_id: int, body: PublishRequest,
                   current: CurrentUser = Depends(get_current_teacher), db: Session = Depends(get_db)):
     teacher = current_teacher(db, current)
-    paper = owned_paper(db, paper_id, teacher)
-    if paper.status != "final":
-        raise HTTPException(status_code=409, detail="请先定稿试卷再发布")
-    if not body.reviewed:
-        raise HTTPException(status_code=400, detail="请确认学生卷不含答案后再发布")
-    allowed = set(json.loads(teacher.teaching_classes or "[]"))
-    classes = list(dict.fromkeys(body.class_ids))
-    if any(cid not in allowed for cid in classes):
-        raise HTTPException(status_code=403, detail="只能发布到本人任教班级")
-
-    paper_dict = {"title": paper.title, "duration": paper.duration}
-    items = _paper_items(db, paper)
-    markdown = render_student_paper(paper_dict, items)
-    # 收集正文实际引用的配图
-    from question_service import IMAGE, safe_name
-    used_names = {safe_name(m.group(2).strip()) for m in IMAGE.finditer(markdown)}
-    assets = _collect_assets(db, items, used_names)
+    ctx = UserContext(user_id=teacher.id, role="teacher", subject=teacher.subject,
+                      teaching_classes=json.loads(teacher.teaching_classes or "[]"))
     try:
-        validate_student_paper(markdown, [a["name"] for a in assets])
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-    content = markdown.encode("utf-8")
-    fingerprint = content_sha256(markdown)
-    label = "试卷"
-    filename = re.sub(r'[\\/:*?"<>|\x00-\x1f]', "_", paper.title)[:140] + "（试卷）.md"
-    kps = []
-    for it in items:
-        for kp in it["snapshot"].get("knowledge_points", []):
-            if kp not in kps:
-                kps.append(kp)
-    tags = [SUBJECT_NAMES[teacher.subject], *kps[:3], label, "学生版"]
-
-    before = paper.revision
-    # 乐观锁 + 逐班创建
-    count = db.query(QuestionPaper).filter_by(id=paper.id, revision=body.revision, status="final").update(
-        {"revision": body.revision + 1, "updated_at": datetime.now(timezone.utc)}, synchronize_session=False)
-    if count != 1:
-        db.rollback()
-        raise HTTPException(status_code=409, detail="试卷已更新，请重新加载")
-
-    paths, material_ids = [], []
-    try:
-        for cid in classes:
-            previous = db.query(QuizPublication).filter_by(paper_id=paper.id, class_id=cid,
-                                                          content_sha256=fingerprint).one_or_none()
-            if previous is not None:
-                material_ids.append(previous.material_id)
-                continue
-            directory = f"{cid}/quiz-{uuid.uuid4().hex}"
-            paths.append(directory)
-            path = f"{directory}/paper.md"
-            write_physical_file(content, path)
-            material = Material(class_id=cid, uploader_id=teacher.id, filename=filename, file_path=path,
-                                file_type="text/markdown", file_size=len(content),
-                                description=f"{SUBJECT_NAMES[teacher.subject]} · {label}",
-                                tags=json.dumps(tags, ensure_ascii=False), is_indexed=False)
-            db.add(material)
-            db.flush()
-            material_ids.append(material.id)
-            for index, asset in enumerate(sorted(assets, key=lambda a: a["name"])):
-                asset_path = f"{directory}/assets/{index}{asset['suffix']}"
-                write_physical_file(asset["binary"], asset_path)
-                db.add(MaterialAsset(material_id=material.id, name=asset["name"], file_path=asset_path,
-                                     sha256=asset["sha256"], file_type=asset["mime"]))
-            db.add(QuizPublication(paper_id=paper.id, class_id=cid, material_id=material.id,
-                                   content_sha256=fingerprint))
-        record_event(db, actor_id=teacher.id, subject=teacher.subject, target_type="paper",
-                     target_id=paper.id, action="publish",
-                     detail={"classes": classes, "material_ids": material_ids})
-        db.commit()
-    except Exception:
-        db.rollback()
-        from routers.research_materials import clean_created_directory
-        for directory in paths:
-            clean_created_directory(directory)
-        raise HTTPException(status_code=500, detail="发布失败，已清理")
-    return {"message": "试卷已发布", "material_ids": material_ids, "class_ids": classes}
-
-
-def _collect_assets(db: Session, items: list[dict], used_names: set[str]) -> list[dict]:
-    """从题目快照的 assets 清单里取出正文实际使用的原图，并核对指纹。"""
-    from citation_service import file_sha256
-    result = []
-    seen = set()
-    for it in items:
-        for asset in it["snapshot"].get("assets", []):
-            name = asset.get("name")
-            if name not in used_names or name in seen:
-                continue
-            seen.add(name)
-            stored, mime = asset.get("path"), asset.get("mime")
-            if not stored:
-                # 早期题目快照没有存储路径：回到原资料的配图清单查找
-                source = db.get(ResearchMaterial, asset.get("source_id"))
-                original = next((a for a in json.loads(source.assets_json or "[]")
-                                 if a["name"] == asset.get("source_name")), None) if source else None
-                if original is None:
-                    raise HTTPException(status_code=409, detail=f"配图 {name} 缺失或已变化")
-                stored, mime = original["path"], original.get("mime")
-            path = resolve_abs_path(stored)
-            if not path.is_file() or file_sha256(path) != asset["sha256"]:
-                raise HTTPException(status_code=409, detail=f"配图 {name} 缺失或指纹不一致")
-            suffix = Path(name).suffix.lower()
-            result.append({"name": name, "binary": path.read_bytes(), "sha256": asset["sha256"],
-                           "mime": mime or mimetypes.guess_type(name)[0] or "application/octet-stream",
-                           "suffix": suffix})
-    return result
+        return publish_quiz_homework(db, ctx, paper_id, body.revision,
+                                     body.reviewed, body.class_ids, body.due_at)
+    except HomeworkServiceError as error:
+        raise HTTPException(status_code=error.status_code, detail=error.detail) from None
 
 
 @router.get("/papers/{paper_id}/answer-key", summary="下载答案卷", responses={404: {"description": "不存在"}})

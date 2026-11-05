@@ -2,6 +2,10 @@
 
 本文件每次会话都会被读到。`CLAUDE.md` 通过 `@AGENTS.md` 引入本文件，`.trae/rules/project_rules.md` 指向本文件；只改这里，不要在别处另写一份。
 
+规范总索引、检查方式及工具入口见 [docs/standards/README.md](docs/standards/README.md)；第 7 课当前核查与待验项见 [docs/lesson-07/README.md](docs/lesson-07/README.md)。常驻约束维护在本文件及其索引的规范，按场景执行的步骤维护在既有技能，不复制成多套规则。
+
+新增或修改条款必须写明：适用范围、具体约束、检查步骤、通过/失败信号和证据位置。区分“要求”“当前实现”“本次验证”；没有运行记录不得写 PASS。纯文档整理可在 OpenSpec 明确 `skip_specs: true`，不得为了文件数量编造业务能力；任何功能行为变化仍先写业务规约。
+
 ## 规约优先
 
 1. **无规约不写代码**：任何行为变更，先在 `openspec/changes/YYYY-MM-DD-<短横小写英文名>/` 中写好并评审 proposal / design / specs / tasks，再实现。

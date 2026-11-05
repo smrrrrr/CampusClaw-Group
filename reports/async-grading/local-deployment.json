@@ -1,0 +1,63 @@
+{
+  "checked_at": "2026-11-04T09:58:42.160030+00:00",
+  "project": "campusclaw-groupv3",
+  "url": "http://localhost:8083",
+  "health": {
+    "status": "ok",
+    "version": "1.2.0",
+    "time": "2026-11-04T10:05:46Z",
+    "dependencies": {
+      "database": "ok",
+      "mcp_tools": "ok",
+      "model": "configured"
+    }
+  },
+  "integrity": "ok",
+  "existing_tables_unchanged": 34,
+  "upload_files_unchanged": 31,
+  "new_grade_tasks": 0,
+  "backup_dir": ".review\\async-predeploy-20261104-175655",
+  "real_model_calls": 0,
+  "queue": {
+    "ready": 0,
+    "dead": 0
+  },
+  "services": [
+    {
+      "service": "backend",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "frontend",
+      "state": "running",
+      "health": "starting"
+    },
+    {
+      "service": "grading-dispatcher",
+      "state": "running",
+      "health": ""
+    },
+    {
+      "service": "grading-worker",
+      "state": "running",
+      "health": ""
+    },
+    {
+      "service": "mcp-tools",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "nginx",
+      "state": "running",
+      "health": ""
+    },
+    {
+      "service": "rabbitmq",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "final_checked_at": "2026-11-04T10:05:47.557612+00:00"
+}

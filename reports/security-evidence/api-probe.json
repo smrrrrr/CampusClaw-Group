@@ -1,0 +1,249 @@
+{
+  "time": "2026-11-05T01:33:36.877869+00:00",
+  "scope": "temporary SQLite + fake LLM/MCP; no production writes",
+  "mutation": false,
+  "checks": [
+    {
+      "case": "PRE 登录 TEA001",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 TEA002",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 20260001",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 20260002",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/materials",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/student/homeworks",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/students?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/agent-config?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/skills?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/mcp/servers?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/mcp/tool-calls?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-02 本班资料正例",
+      "expected": "200且含A班正文",
+      "actual": {
+        "http": 200,
+        "own_body": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 跨班资料项目合同",
+      "expected": "403、无B班正文、有审计",
+      "actual": {
+        "http": 403,
+        "body_leaked": false,
+        "audited": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 跨班资料课程口径",
+      "expected": 404,
+      "actual": 403,
+      "passed": false
+    },
+    {
+      "case": "SEC-02 检索 20260001",
+      "expected": "本班1命中，他班2为空",
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          1
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 检索 20260002",
+      "expected": "本班2命中，他班1为空",
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          2
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 A班独有知识 20260001",
+      "expected": [
+        1
+      ],
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          1
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 A班独有知识 20260002",
+      "expected": [],
+      "actual": {
+        "http": 200,
+        "material_ids": []
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 PUT /api/teacher/agent-config",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 POST /api/teacher/skills",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 PUT /api/teacher/skills/1",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 POST /api/mcp/servers",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-04 PUT /api/teacher/submissions/1/grade",
+      "expected": "403、分数和任务不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-04 POST /api/teacher/homeworks/1/ai-grade",
+      "expected": "403、分数和任务不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-07 实际合成技能执行",
+      "expected": "执行一次且日志actor/status正确",
+      "actual": {
+        "calls": 1,
+        "meta_skill": {
+          "name": "合成公式提示"
+        },
+        "log_count": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-07 持久日志字段",
+      "expected": "actor、skill、status、duration、usage齐全",
+      "actual": {
+        "persisted_rows": 1,
+        "response_fields": [
+          "conversation_id",
+          "created_at",
+          "detail",
+          "id",
+          "round",
+          "server_name",
+          "status",
+          "tool_ref",
+          "user_id"
+        ],
+        "model_fields": [
+          "id",
+          "class_id",
+          "subject",
+          "server_id",
+          "server_name",
+          "tool_name",
+          "tool_ref",
+          "status",
+          "user_id",
+          "conversation_id",
+          "round",
+          "detail",
+          "created_at"
+        ],
+        "missing": [
+          "skill_identifier",
+          "duration",
+          "usage"
+        ]
+      },
+      "passed": false
+    }
+  ],
+  "passed": 24,
+  "failed": 2
+}

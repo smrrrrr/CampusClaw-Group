@@ -1,0 +1,50 @@
+{
+  "npm": {
+    "info": 0,
+    "low": 0,
+    "moderate": 1,
+    "high": 2,
+    "critical": 1,
+    "total": 4
+  },
+  "backend": {
+    "vulnerable_packages": 5,
+    "advisories": 48,
+    "unique_ids": 46,
+    "severity": "pip-audit响应不提供严重度，未判级，不能填high/critical=0",
+    "packages": [
+      {
+        "name": "certifi",
+        "version": "2026.7.22",
+        "advisories": 2
+      },
+      {
+        "name": "ecdsa",
+        "version": "0.19.2",
+        "advisories": 2
+      },
+      {
+        "name": "pillow",
+        "version": "12.3.0",
+        "advisories": 39
+      },
+      {
+        "name": "pyasn1",
+        "version": "0.6.4",
+        "advisories": 4
+      },
+      {
+        "name": "python-jose",
+        "version": "3.5.0",
+        "advisories": 1
+      }
+    ]
+  },
+  "mcp": {
+    "vulnerable_packages": 0,
+    "advisories": 0,
+    "unique_ids": 0,
+    "severity": "pip-audit响应不提供严重度，未判级，不能填high/critical=0",
+    "packages": []
+  }
+}

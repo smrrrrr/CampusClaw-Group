@@ -86,8 +86,6 @@ export function useTeacherNavigation() {
     { key: "research-materials", label: "教研组资料", icon: "books", section: "教研中心", to: "/teacher/library", description: "组内教师版素材、学生版预览与分班发布" },
     { key: "lesson-prep", label: "智能备课", icon: "robot", section: "教研中心", to: "/teacher/lesson-prep", description: "选择组内资料生成教案，定稿后发布学生教案与讲义" },
     { key: "lesson-quiz", label: "智能命题", icon: "edit", section: "教研中心", to: "/teacher/quiz", description: "命题生成、逐题复核、学科题库与组卷发布" },
-    { key: "research-qa", label: "教研问答", icon: "chat", section: "教研中心", to: href("research-qa"), description: "仅限本学科组共享问答" },
-    { key: "case-analysis", label: "课例分析", icon: "search", section: "教研中心", to: href("case-analysis"), description: "仅限本学科组课例批注" },
     { key: "agent", label: "助手配置", icon: "robot", section: "系统与统计", to: teachingHref("agent"), description: "选择任教班级，配置 AI 提示词与技能" },
     ...(isHeadTeacher ? [{ key: "audit", label: "审计与统计", icon: "audit", section: "系统与统计", to: homeroomHref("audit"), description: "仅查看带班班级的审计与统计" }] : []),
   ];
@@ -103,6 +101,8 @@ export function useTeacherNavigation() {
       const item = findTeacherNavItem(navItems, key);
       if (item?.to) router.push(item.to);
     },
-    requestedView: params.get("view"),
+    // 退役入口沿用教师页既有的智能备课跳转，不再挂载旧占位。
+    requestedView: ["research-qa", "case-analysis"].includes(params.get("view") ?? "")
+      ? "lesson-prep" : params.get("view"),
   };
 }

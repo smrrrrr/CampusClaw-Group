@@ -125,6 +125,21 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE homeworks ADD COLUMN updated_at DATETIME"))
             conn.commit()
 
+        # 命题作业：旧作业保留 manual 默认来源；列与索引均可重复迁移。
+        if hw_cols:
+            for column, definition in {
+                "source_type": "VARCHAR(16) NOT NULL DEFAULT 'manual'",
+                "source_paper_id": "INTEGER REFERENCES question_papers(id)",
+                "source_paper_revision": "INTEGER",
+                "source_fingerprint": "VARCHAR(64)",
+                "grading_snapshot_json": "TEXT",
+            }.items():
+                if column not in hw_cols:
+                    conn.execute(text(f"ALTER TABLE homeworks ADD COLUMN {column} {definition}"))
+            conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS uq_homework_paper_class_snapshot "
+                              "ON homeworks(source_paper_id, class_id, source_fingerprint)"))
+            conn.commit()
+
         # homework_submissions 骨架表增列
         hws_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(homework_submissions)"))}
         if hws_cols:

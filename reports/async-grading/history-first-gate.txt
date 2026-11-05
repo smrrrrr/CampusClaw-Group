@@ -1,0 +1,43 @@
+[PASS] openspec-validate  (1.7s)
+[PASS] layering  (0.2s)
+[PASS] secret-scan  (1.3s)
+[PASS] fe-typecheck  (1.3s)
+[PASS] check_analytics  (2.6s)
+[PASS] check_analytics_units  (1.0s)
+[PASS] check_apitest_harness  (0.5s)
+[FAIL] check_assignment_history  (2.8s)
+        {"ts": "2026-11-04T13:01:07.239Z", "level": "info", "module": "access", "request_id": "2bd2cab146a34b389c942c6ad281c528", "method": "PUT", "path": "/api/teacher/submissions/2/grade", "status": 200, "duration_ms": 6.5}
+        {"ts": "2026-11-04T13:01:07.249Z", "level": "info", "module": "access", "request_id": "c6052a519cb04739b09bb0928ae3dd44", "method": "POST", "path": "/api/student/homeworks/5/submit", "status": 200, "duration_ms": 6.3}
+        Traceback (most recent call last):
+          File "C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\apitest\check_assignment_history.py", line 150, in <module>
+            preview = repair()
+                      ^^^^^^^^
+          File "C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\apitest\check_assignment_history.py", line 148, in repair
+            assert result.returncode == 0, result.stderr
+                   ^^^^^^^^^^^^^^^^^^^^^^
+        AssertionError: Traceback (most recent call last):
+          File "C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\scripts\repair_resolved_mistakes.py", line 46, in <module>
+            main()
+          File "C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\scripts\repair_resolved_mistakes.py", line 23, in main
+            from homework_service import begin_write, resolved_homework_mistakes
+        ImportError: cannot import name 'begin_write' from 'homework_service' (C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\backend\homework_service.py)
+[PASS] check_async_grading  (3.7s)
+[PASS] check_baseline  (6.6s)
+[PASS] check_formula_retrieval  (1.4s)
+[PASS] check_homework  (2.6s)
+[PASS] check_lesson_prep  (6.2s)
+[PASS] check_lessons_2_5  (13.8s)
+[PASS] check_mcp_tools  (5.5s)
+[PASS] check_mistake  (2.3s)
+[PASS] check_model_json  (0.1s)
+[PASS] check_question_bank  (6.5s)
+[PASS] check_quiz_homework  (2.6s)
+[PASS] check_research_materials  (4.6s)
+[PASS] check_sqlite_storage  (1.7s)
+[PASS] check_assignment_history_ui  (0.3s)
+[PASS] check_grading_feedback  (0.3s)
+[PASS] check_markdown_images  (0.4s)
+[PASS] check_recent_history  (0.3s)
+[PASS] check_route_guard  (0.3s)
+
+门禁未通过：check_assignment_history

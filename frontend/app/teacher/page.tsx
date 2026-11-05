@@ -7,7 +7,9 @@ import { AuthGate } from "@/components/auth-guard";
 import { AppShell } from "@/components/app-layout";
 import { findTeacherNavItem, useTeacherNavigation, SUBJECT_NAMES } from "@/components/teacher-navigation";
 import { ClassSelector } from "@/components/class-selector";
+import MarkdownAnswer from "@/components/markdown-answer";
 import { LogoutButton } from "@/components/logout-button";
+import { formatGradeReceipt, formatGradingAttempts, syncSubmissionCount } from "@/lib/grading-feedback";
 import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO, type ClassAnalyticsDTO } from "@/lib/api";
 
 interface StudentRow {
@@ -48,8 +50,29 @@ function TeacherHome() {
   const [hwSubLoading, setHwSubLoading] = useState(false);
   const [hwSelectedId, setHwSelectedId] = useState<number | null>(null);
   const [hwAiGrading, setHwAiGrading] = useState<number | null>(null);
+  const [hwTasks, setHwTasks] = useState<Awaited<ReturnType<typeof api.listGradeTasks>>>([]);
+  const [hwTaskError, setHwTaskError] = useState("");
+  const [hwTaskLoading, setHwTaskLoading] = useState(false);
+  const [hwTaskRefresh, setHwTaskRefresh] = useState(0);
+  const [hwNotices, setHwNotices] = useState<Record<number, { text: string; error: boolean }>>({});
+  const [hwRetrying, setHwRetrying] = useState<number | null>(null);
+  const hwDirtyForms = useRef(new Set<number>());
   const [hwGradeForm, setHwGradeForm] = useState<Record<number, { score: string; feedback: string }>>({});
   const [hwGradingId, setHwGradingId] = useState<number | null>(null);
+  const [hwDetails, setHwDetails] = useState<Record<number, Awaited<ReturnType<typeof api.getTeacherHomework>>>>({});
+  const hwListVersion = useRef(0);
+  const hwContextVersion = useRef(0);
+  const selectedHomework = useRef<number | null>(null);
+  useEffect(() => {
+    hwContextVersion.current += 1;
+    hwListVersion.current += 1;
+    selectedHomework.current = null;
+    setHwList([]); setHwSelectedId(null); setHwSubmissions([]); setHwDetails({}); setHwGradeForm({});
+    setHwForm({ title: "", stem: "", dueAt: "" }); setHwError("");
+    setHwTasks([]); setHwTaskError(""); setHwNotices({}); setHwRetrying(null); hwDirtyForms.current.clear();
+    setHwSubmitting(false); setHwSubLoading(false); setHwAiGrading(null); setHwGradingId(null);
+    return () => { hwContextVersion.current += 1; hwListVersion.current += 1; selectedHomework.current = null; };
+  }, [classId, subject]);
 
   // 班级学情
   const [classAnalytics, setClassAnalytics] = useState<ClassAnalyticsDTO | null>(null);
@@ -85,15 +108,17 @@ function TeacherHome() {
   // 作业列表加载
   const loadHwList = async () => {
     if (classId === null) return;
+    const context = hwContextVersion.current;
+    const version = ++hwListVersion.current;
     setHwLoading(true);
     setHwError("");
     try {
       const list = await api.listTeacherHomeworks(classId);
-      setHwList(list);
+      if (context === hwContextVersion.current && version === hwListVersion.current) setHwList(list);
     } catch (e) {
-      setHwError(e instanceof ApiError ? e.message : "加载作业失败");
+      if (context === hwContextVersion.current && version === hwListVersion.current) setHwError(e instanceof ApiError ? e.message : "加载作业失败");
     } finally {
-      setHwLoading(false);
+      if (context === hwContextVersion.current && version === hwListVersion.current) setHwLoading(false);
     }
   };
   useEffect(() => {
@@ -103,57 +128,133 @@ function TeacherHome() {
 
   const handleCreateHomework = async () => {
     if (!hwForm.title.trim() || !hwForm.stem.trim() || !hwForm.dueAt) return;
+    const context = hwContextVersion.current;
     setHwSubmitting(true);
     try {
       const dueAt = new Date(hwForm.dueAt).toISOString();
       const content = JSON.stringify({ stem: hwForm.stem });
       await api.createHomework({ class_id: classId!, title: hwForm.title, content, due_at: dueAt });
+      if (context !== hwContextVersion.current) return;
       setHwForm({ title: "", stem: "", dueAt: "" });
       await loadHwList();
     } catch (e) {
-      setHwError(e instanceof ApiError ? e.message : "创建作业失败");
+      if (context === hwContextVersion.current) setHwError(e instanceof ApiError ? e.message : "创建作业失败");
     } finally {
-      setHwSubmitting(false);
+      if (context === hwContextVersion.current) setHwSubmitting(false);
     }
   };
 
   const handlePublishHw = async (id: number) => {
-    try { await api.publishHomework(id); await loadHwList(); }
-    catch (e) { setHwError(e instanceof ApiError ? e.message : "发布失败"); }
+    const context = hwContextVersion.current;
+    try { await api.publishHomework(id); if (context === hwContextVersion.current) await loadHwList(); }
+    catch (e) { if (context === hwContextVersion.current) setHwError(e instanceof ApiError ? e.message : "发布失败"); }
   };
   const handleCloseHw = async (id: number) => {
-    try { await api.closeHomework(id); await loadHwList(); }
-    catch (e) { setHwError(e instanceof ApiError ? e.message : "关闭失败"); }
+    const context = hwContextVersion.current;
+    try { await api.closeHomework(id); if (context === hwContextVersion.current) await loadHwList(); }
+    catch (e) { if (context === hwContextVersion.current) setHwError(e instanceof ApiError ? e.message : "关闭失败"); }
   };
 
   const loadSubmissions = async (hwId: number) => {
+    const context = hwContextVersion.current;
+    selectedHomework.current = hwId;
     setHwSelectedId(hwId);
     setHwSubLoading(true);
+    hwDirtyForms.current.clear();
     try {
-      const subs = await api.listHomeworkSubmissions(hwId);
+      const [subs, detail] = await Promise.all([api.listHomeworkSubmissions(hwId), api.getTeacherHomework(hwId)]);
+      if (context !== hwContextVersion.current || selectedHomework.current !== hwId) return;
       setHwSubmissions(subs);
+      setHwList(rows => syncSubmissionCount(rows, hwId, subs.length));
+      setHwDetails(previous => ({ ...previous, [hwId]: detail }));
+      setHwGradeForm(Object.fromEntries(subs.map(sub => [sub.id, {
+        score: sub.teacher_score !== null ? String(sub.teacher_score) : sub.ai_score !== null ? String(sub.ai_score) : "",
+        feedback: sub.teacher_feedback ?? sub.ai_feedback ?? "",
+      }])));
     } catch (e) {
-      setHwError(e instanceof ApiError ? e.message : "加载提交失败");
+      if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwError(e instanceof ApiError ? e.message : "加载提交失败");
     } finally {
-      setHwSubLoading(false);
+      if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwSubLoading(false);
     }
   };
 
   const handleAiGrade = async (hwId: number) => {
+    const context = hwContextVersion.current;
     setHwAiGrading(hwId);
     try {
       const res = await api.aiGradeHomework(hwId);
-      if (hwSelectedId === hwId) await loadSubmissions(hwId);
-      await loadHwList();
-      setHwError(`AI 已批改 ${res.graded_count} 份`);
+      if (context !== hwContextVersion.current) return;
+      setHwNotices(notices => ({ ...notices, [hwId]: { text: formatGradeReceipt(res), error: false } }));
+      if (selectedHomework.current !== hwId) await loadSubmissions(hwId);
+      if (context === hwContextVersion.current) setHwTaskRefresh(value => value + 1);
     } catch (e) {
-      setHwError(e instanceof ApiError ? e.message : "AI 批改失败");
+      if (context === hwContextVersion.current) setHwNotices(notices => ({ ...notices, [hwId]: {
+        text: e instanceof ApiError ? e.message : "AI 初批请求失败，请重试", error: true,
+      } }));
     } finally {
-      setHwAiGrading(null);
+      if (context === hwContextVersion.current) setHwAiGrading(null);
+    }
+  };
+
+  // GET只查询状态；重载后恢复。切班/切作业/卸载均使旧轮询及迟到回包失效。
+  useEffect(() => {
+    setHwTasks([]); setHwTaskError("");
+    if (view !== "tools" || hwSelectedId === null) return;
+    const hwId = hwSelectedId;
+    const context = hwContextVersion.current;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    let previous = "";
+    const current = () => !cancelled && context === hwContextVersion.current && selectedHomework.current === hwId;
+    const poll = async () => {
+      try {
+        setHwTaskLoading(true);
+        const tasks = await api.listGradeTasks(hwId);
+        if (!current()) return;
+        setHwTasks(tasks); setHwTaskError("");
+        const signature = tasks.map(task => `${task.id}:${task.status}:${task.attempts}`).join(",");
+        if (signature !== previous && tasks.some(task => task.status === "succeeded" || task.status === "skipped")) {
+          const subs = await api.listHomeworkSubmissions(hwId);
+          if (!current()) return;
+          setHwSubmissions(subs);
+          setHwList(rows => syncSubmissionCount(rows, hwId, subs.length));
+          setHwGradeForm(forms => Object.fromEntries(subs.map(sub => [sub.id,
+            hwDirtyForms.current.has(sub.id) && forms[sub.id] ? forms[sub.id] : {
+              score: sub.teacher_score !== null ? String(sub.teacher_score) : sub.ai_score !== null ? String(sub.ai_score) : "",
+              feedback: sub.teacher_feedback ?? sub.ai_feedback ?? "",
+            }])));
+        }
+        previous = signature;
+      } catch (e) {
+        if (current()) setHwTaskError(e instanceof ApiError ? e.message : "查询批改进度失败");
+      } finally {
+        if (current()) {
+          setHwTaskLoading(false);
+          timer = setTimeout(poll, 2500);
+        }
+      }
+    };
+    poll();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [view, classId, subject, hwSelectedId, hwTaskRefresh]);
+
+  const handleRetryTask = async (id: number) => {
+    const context = hwContextVersion.current;
+    const hwId = selectedHomework.current;
+    setHwRetrying(id);
+    try {
+      await api.retryGradeTask(id);
+      if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwTaskRefresh(value => value + 1);
+    } catch (e) {
+      if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwTaskError(e instanceof ApiError ? e.message : "重新排队失败");
+    } finally {
+      if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwRetrying(null);
     }
   };
 
   const handleGradeSub = async (subId: number) => {
+    const context = hwContextVersion.current;
+    const homeworkId = selectedHomework.current;
     const form = hwGradeForm[subId];
     if (!form) return;
     const score = parseInt(form.score, 10);
@@ -161,11 +262,11 @@ function TeacherHome() {
     setHwGradingId(subId);
     try {
       await api.gradeSubmission(subId, score, form.feedback || null);
-      if (hwSelectedId !== null) await loadSubmissions(hwSelectedId);
+      if (context === hwContextVersion.current && homeworkId !== null && selectedHomework.current === homeworkId) await loadSubmissions(homeworkId);
     } catch (e) {
-      setHwError(e instanceof ApiError ? e.message : "改分失败");
+      if (context === hwContextVersion.current) setHwError(e instanceof ApiError ? e.message : "改分失败");
     } finally {
-      setHwGradingId(null);
+      if (context === hwContextVersion.current) setHwGradingId(null);
     }
   };
 
@@ -440,7 +541,7 @@ function TeacherHome() {
     ? "仅限带班班级的审计与统计。"
     : view.startsWith("class-") || view === "home"
       ? "班主任工作台 · 仅限我的带班。"
-      : ["lesson-prep", "lesson-quiz", "research-qa", "case-analysis"].includes(view)
+      : ["lesson-prep", "lesson-quiz"].includes(view)
         ? `${subjectName}教研组 · 仅限本学科组资料。`
         : `${subjectName} · 仅限当前任教班级的本科目数据。`;
 
@@ -693,20 +794,47 @@ function TeacherHome() {
                   <div style={{ display: "grid", gap: 12 }}>
                     {hwList.map((hw) => (
                       <div key={hw.id} className="panel" style={{ padding: 12, border: "1px solid #f3f4f6" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                          <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+                          <div style={{ flex: "1 1 220px", minWidth: 0 }}>
                             <strong>{hw.title}</strong>
-                            <div className="hint">截止：{hw.due_at ?? "无"} · 提交 {hw.submitted_count}/{hw.total_count} · 状态：{hw.status}</div>
+                            <span className="hint"> · {hw.source_type === "quiz" ? "智能命题" : "手工布置"}</span>
+                            <div className="hint">截止：{hw.due_at ? new Date(hw.due_at).toLocaleString("zh-CN", { hour12: false }) : "无"} · 提交 {hw.submitted_count}/{hw.total_count} · 状态：{hw.status}</div>
                           </div>
-                          <div style={{ display: "flex", gap: 6 }}>
+                          <div className="homework-actions">
                             {hw.status === "draft" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handlePublishHw(hw.id)}>发布</button>}
                             {hw.status === "published" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handleCloseHw(hw.id)}>关闭</button>}
                             <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => loadSubmissions(hw.id)}>查看提交</button>
-                            {hw.status === "published" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handleAiGrade(hw.id)} disabled={hwAiGrading === hw.id}>{hwAiGrading === hw.id ? "批改中…" : "AI 初批"}</button>}
+                            {hw.status === "published" && <button className="btn" style={{ width: "auto", padding: "4px 10px" }} onClick={() => handleAiGrade(hw.id)} disabled={hwAiGrading === hw.id}>{hwAiGrading === hw.id ? "提交中…" : "AI 初批"}</button>}
                           </div>
                         </div>
+                        {hwNotices[hw.id] && <div className="homework-grade-feedback" data-testid={`homework-grade-feedback-${hw.id}`} role={hwNotices[hw.id].error ? "alert" : "status"}>
+                          {hwNotices[hw.id].text}
+                        </div>}
                         {hwSelectedId === hw.id && (
                           <div style={{ marginTop: 12, borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+                            <div aria-label="后台批改进度" style={{ marginBottom: 12 }}>
+                              <h4>后台批改进度 · 最近200条</h4>
+                              {hwTasks.length > 0 && <p className="hint" role="status">最近200条任务：已完成 {hwTasks.filter(task => task.status === "succeeded").length}，未完成 {hwTasks.filter(task => ["pending", "running", "retrying", "dead"].includes(task.status)).length}，已跳过 {hwTasks.filter(task => task.status === "skipped").length}。</p>}
+                              {hwTaskError && <div role="alert">加载失败：{hwTaskError} <button className="btn" style={{ width: "auto" }} onClick={() => setHwTaskRefresh(value => value + 1)}>重试查询</button></div>}
+                              {hwTaskLoading && hwTasks.length === 0 ? <p className="hint">加载批改进度中…</p> : !hwTaskError && hwTasks.length === 0 ? <p className="hint">暂无批改任务，点击“AI 初批”开始。</p> : null}
+                              {hwTasks.map(task => <div key={task.id} style={{ marginTop: 8 }}>
+                                <span>任务 #{task.id} · 提交 #{task.submission_id} · {{ pending: "排队中", running: "批改中", retrying: "等待重试", succeeded: "初批完成", skipped: "已跳过", dead: "最终失败（死信）" }[task.status]} · {formatGradingAttempts(task)}</span>
+                                {task.error && <span className="hint"> · {task.error}</span>}
+                                {task.status === "dead" && <button className="btn" style={{ width: "auto", marginLeft: 8 }} disabled={hwRetrying === task.id} onClick={() => handleRetryTask(task.id)}>{hwRetrying === task.id ? "提交中…" : "重新排队"}</button>}
+                              </div>)}
+                            </div>
+                            {hwDetails[hw.id] && <div>
+                              <h4>作业题目</h4>
+                              <MarkdownAnswer text={hwDetails[hw.id].content.stem ?? hw.title} imageUrl={src => api.homeworkAssetUrl(hw.id, src, "teacher")} />
+                              {hwDetails[hw.id].grading && <details>
+                                <summary>教师评分依据 · 原卷 {hwDetails[hw.id].grading!.total_score} 分，成绩按百分制</summary>
+                                {hwDetails[hw.id].grading!.questions.map(question => <div key={question.number}>
+                                  <strong>第 {question.number} 题 · {question.score} 分</strong>
+                                  <MarkdownAnswer text={`参考答案：${Array.isArray(question.answer) ? question.answer.join("、") : typeof question.answer === "boolean" ? question.answer ? "正确" : "错误" : String(question.answer ?? "")}`} />
+                                  <MarkdownAnswer text={question.explanation} />
+                                </div>)}
+                              </details>}
+                            </div>}
                             {hwSubLoading ? <p className="hint">加载中…</p> : hwSubmissions.length === 0 ? (
                               <p className="hint">暂无学生提交</p>
                             ) : hwSubmissions.map((sub) => (
@@ -718,10 +846,10 @@ function TeacherHome() {
                                 <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
                                   <input className="input" type="number" min={0} max={100} placeholder="分数" style={{ width: 80 }}
                                     value={hwGradeForm[sub.id]?.score ?? sub.ai_score ?? ""}
-                                    onChange={(e) => setHwGradeForm((p) => ({ ...p, [sub.id]: { score: e.target.value, feedback: p[sub.id]?.feedback ?? sub.ai_feedback ?? "" } }))} />
+                                    onChange={(e) => { hwDirtyForms.current.add(sub.id); setHwGradeForm((p) => ({ ...p, [sub.id]: { score: e.target.value, feedback: p[sub.id]?.feedback ?? sub.ai_feedback ?? "" } })); }} />
                                   <input className="input" placeholder="评语" style={{ flex: 1 }}
                                     value={hwGradeForm[sub.id]?.feedback ?? ""}
-                                    onChange={(e) => setHwGradeForm((p) => ({ ...p, [sub.id]: { score: p[sub.id]?.score ?? "", feedback: e.target.value } }))} />
+                                    onChange={(e) => { hwDirtyForms.current.add(sub.id); setHwGradeForm((p) => ({ ...p, [sub.id]: { score: p[sub.id]?.score ?? "", feedback: e.target.value } })); }} />
                                   <button className="btn" style={{ width: "auto", padding: "4px 12px" }} onClick={() => handleGradeSub(sub.id)} disabled={hwGradingId === sub.id}>
                                     {hwGradingId === sub.id ? "…" : "改分"}
                                   </button>

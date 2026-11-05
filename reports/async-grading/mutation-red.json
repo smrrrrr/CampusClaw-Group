@@ -1,0 +1,9 @@
+{
+  "time": "2026-11-04T09:36:07.210190+00:00",
+  "mutation": "临时移除写回时提交必须pending的保护，未改任何断言",
+  "expected_failure": "C2 边界：旧结果跳过teacher",
+  "exit_code": 1,
+  "failure_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\17424\\Desktop\\CampusClawv3\\CampusClaw-Group\\apitest\\check_async_grading.py\", line 205, in <module>\n    check(\"C2 边界：旧结果跳过\" + changed, gs.process_task(tid) == \"skipped\")\n  File \"C:\\Users\\17424\\Desktop\\CampusClawv3\\CampusClaw-Group\\apitest\\check_async_grading.py\", line 21, in check\n    assert passed, name\n           ^^^^^^\nAssertionError: C2 边界：旧结果跳过teacher",
+  "original_sha256": "80ab4623c27b5669b45137936ec99e5408c336fb79fc49fbf2969b8c50cde9dd",
+  "restored_sha256": "80ab4623c27b5669b45137936ec99e5408c336fb79fc49fbf2969b8c50cde9dd"
+}

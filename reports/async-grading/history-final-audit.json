@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-11-04T13:43:31.854033+00:00",
+  "mutation_source_fingerprints_match": true,
+  "changed_existing_source_files_since_task_start": [
+    "backend/config.py",
+    "backend/grading_service.py",
+    "backend/grading_worker.py",
+    "backend/homework_service.py",
+    "backend/routers/homework.py",
+    "frontend/lib/api.ts",
+    "frontend/lib/grading-feedback.ts",
+    "frontend/app/student/page.tsx",
+    "frontend/app/teacher/page.tsx",
+    "scripts/reproduce_async_grading.py",
+    "apitest/check_async_grading.py"
+  ],
+  "screenshot_exists": true,
+  "qa_processes_stopped": [
+    15504,
+    14552
+  ],
+  "health_8083": "ok",
+  "final_openspec_strict": {
+    "passed": 32,
+    "failed": 0
+  },
+  "final_secret_scan": "exit 0; no findings",
+  "final_git_diff_check": "exit 0; existing uv.lock line-ending warning",
+  "missing_document_links": []
+}
