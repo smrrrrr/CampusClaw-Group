@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-11-04T11:24:19.837764+00:00",
+  "gate_groups": 24,
+  "new_frontend_checks": 8,
+  "scenarios": "E3,E4",
+  "links_checked": 15,
+  "source_sha256": {
+    "frontend/app/teacher/page.tsx": "4130f84924f0c327c404223bfff79491d5f939e96a0caa80e8236cd3cbb61175",
+    "frontend/app/globals.css": "86655955858f6ec766182a8357f8bcc0f777ef7203c8c1cd46e948a97d59195c",
+    "frontend/lib/grading-feedback.ts": "312982158a5fb80d56b561010e3821445e1f9441dbcc53f636d6817a45350023",
+    "apitest/check_grading_feedback.cjs": "e3334abf1eff6e0835a84382d8e648097b292a049b5125b74d9328e50de659c5"
+  },
+  "deployment": "ui-feedback-deployment.json",
+  "real_user_task_not_executed": true
+}

@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, ValidationError
+from pydantic import Field, ValidationError, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -60,6 +60,23 @@ class Settings(BaseSettings):
     deepseek_model: str = "deepseek-chat"
     deepseek_timeout: float = 60             # 单次请求超时（秒）
     deepseek_temperature: float = 0.3        # 偏低以贴合资料、减少编造
+
+    # 作业异步初批：仅后台进程连接代理；HTTP接收任务只依赖数据库。
+    grading_broker_host: str = "rabbitmq"
+    grading_broker_port: int = Field(default=5672, ge=1, le=65535)
+    grading_broker_user: str = "campusclaw"
+    grading_broker_password: str = Field(default="", repr=False)
+    grading_queue: str = "campusclaw.grading"
+    grading_max_attempts: int = Field(default=3, ge=1, le=10)
+    grading_retry_base_seconds: float = Field(default=5, gt=0, le=3600)
+    grading_lease_seconds: float = Field(default=180, ge=1, le=3600)
+    grading_poll_seconds: float = Field(default=1, gt=0, le=30)
+
+    @model_validator(mode="after")
+    def grading_lease_has_margin(self):
+        if self.grading_lease_seconds <= self.deepseek_timeout + 5:
+            raise ValueError("批改运行租约必须比模型超时至少多5秒")
+        return self
 
     # MCP 工具集成（add-mcp-tool-integration）
     # 与 mcp-tools 服务共享的访问令牌；仅用于宿主侧调用远端时携带

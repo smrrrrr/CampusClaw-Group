@@ -156,8 +156,12 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
               <div className="student-assignment-top">
                 <div>
                   <h3>{hw.title}</h3>
-                  <p>{hw.content?.stem ?? hw.title}</p>
-                  <span className="hint">截止：{hw.due_at ?? "无"}</span>
+                  <span className="hint">{hw.source_type === "quiz" ? "智能命题" : "手工布置"}</span>
+                  {hw.source_type === "quiz"
+                    ? <MarkdownAnswer text={hw.content?.stem ?? hw.title} imageUrl={src => api.homeworkAssetUrl(hw.id, src, "student")} />
+                    : <p>{hw.content?.stem ?? hw.title}</p>}
+                  {hw.source_type === "quiz" && <p className="hint">原卷总分 {hw.content.original_total} 分，教师终评按百分制。请按题号填写整份答案。</p>}
+                  <span className="hint">截止：{hw.due_at ? new Date(hw.due_at).toLocaleString("zh-CN", { hour12: false }) : "无"}</span>
                 </div>
                 <span className={`student-status ${hw.graded && (hw.final_score ?? 0) < 60 ? "wrong" : submitted ? "done" : ""}`}>{statusLabel}</span>
               </div>

@@ -1,0 +1,24 @@
+{
+  "source_files_changed_from_task_start": [
+    "backend/config.py",
+    "backend/homework_service.py",
+    "backend/models.py",
+    "backend/pyproject.toml",
+    "backend/uv.lock",
+    "backend/routers/homework.py",
+    "frontend/lib/api.ts",
+    "frontend/app/teacher/page.tsx",
+    "scripts/check_layering.py",
+    "apitest/check_homework.py",
+    "apitest/check_quiz_homework.py"
+  ],
+  "existing_implementation_files_untouched": 116,
+  "real_broker_source_fingerprints_match": true,
+  "document_links_checked": 118,
+  "broken_links": [],
+  "scenarios": 14,
+  "offline_checks": 52,
+  "real_broker_checks": 13,
+  "gate_groups": 23,
+  "existing_teacher_data_unchanged": true
+}

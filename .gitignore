@@ -46,7 +46,15 @@ venv/
 # ---- 自动化测试报告（不入库）----
 apitest/reports/
 apitest/**/report.html
-reports/
+# 根reports保留脱敏课程证据；运行时私有数据仍放.review或apitest/reports。
+reports/*
+!reports/*.md
+!reports/async-grading/
+reports/async-grading/*
+!reports/async-grading/*.md
+!reports/async-grading/*.json
+!reports/async-grading/*.txt
+!reports/async-grading/*.png
 
 # ---- 日志与本地临时文件 ----
 .review/

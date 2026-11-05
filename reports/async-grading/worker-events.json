@@ -1,0 +1,2095 @@
+[
+  {
+    "ts": "2026-11-04T09:52:34.224Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:34.556Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:34.825Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:35.092Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:35.371Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:35.642Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:35.930Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:36.200Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:36.473Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:36.749Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:37.013Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:37.271Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:37.556Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:37.821Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:38.086Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:38.356Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:38.620Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:38.900Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.165Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.438Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.468Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.497Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.530Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.562Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.594Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.622Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.652Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.679Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.701Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.721Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.739Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.759Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.779Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.805Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.832Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.858Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.879Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.899Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.918Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.940Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.962Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:39.982Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.000Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.020Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.045Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.062Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.081Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:40.100Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.072Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.094Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.115Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.136Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.156Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.174Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.194Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.216Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.240Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.261Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.278Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.296Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.315Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.335Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.355Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.377Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.402Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.425Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.446Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.472Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.493Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.512Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.531Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.553Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.575Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.595Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.615Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.634Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.652Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.672Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.695Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.718Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.744Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.765Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.789Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.811Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.828Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.846Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.864Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.883Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.903Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.921Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.938Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.956Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.973Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:42.993Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.011Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.027Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.043Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.063Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.088Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.108Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.154Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.175Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.194Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.215Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.245Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.276Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.307Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.332Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.360Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.389Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.414Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.436Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.458Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.478Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.501Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.525Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.546Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.565Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.587Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.605Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.626Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.645Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.664Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.686Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.711Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.737Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.760Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.794Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.819Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.839Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.859Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.879Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.900Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.922Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.945Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.967Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:43.987Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.006Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.025Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.047Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.069Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.090Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.110Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.158Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.177Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.200Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.218Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.239Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.262Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.288Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.316Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "9cfe6c7ebb774108a22eeedd3e2f43d0",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.617Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "4b1a2d127c9d4fb5812d4eafd61ae47d",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.648Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "4b1a2d127c9d4fb5812d4eafd61ae47d",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.674Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "4b1a2d127c9d4fb5812d4eafd61ae47d",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:44.703Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "4b1a2d127c9d4fb5812d4eafd61ae47d",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:45.137Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "4b1a2d127c9d4fb5812d4eafd61ae47d",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:46.831Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "d708719b6d1a4c3694ef61fe59927fa5",
+    "msg": "批改任务消息处理完成",
+    "task_id": 22,
+    "status": "deferred"
+  },
+  {
+    "ts": "2026-11-04T09:52:56.613Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "d708719b6d1a4c3694ef61fe59927fa5",
+    "msg": "批改任务消息处理完成",
+    "task_id": 22,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.018Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "_AsyncBaseTransport._produce() failed, aborting connection: error=ConnectionResetError(104, 'Connection reset by peer'); sock=<socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 41602)>; Caller's stack:\nTraceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 1103, in _on_socket_writable\n    self._produce()\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 819, in _produce\n    num_bytes_sent = self._sigint_safe_send(self._sock,\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 79, in retry_sigint_wrap\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 861, in _sigint_safe_send\n    return sock.send(data)\n           ^^^^^^^^^^^^^^^\nConnectionResetError: [Errno 104] Connection reset by peer\n",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 1103, in _on_socket_writable\n    self._produce()\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 819, in _produce\n    num_bytes_sent = self._sigint_safe_send(self._sock,\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 79, in retry_sigint_wrap\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 861, in _sigint_safe_send\n    return sock.send(data)\n           ^^^^^^^^^^^^^^^\nConnectionResetError: [Errno 104] Connection reset by peer"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.018Z",
+    "level": "error",
+    "module": "pika.adapters.base_connection",
+    "request_id": null,
+    "msg": "connection_lost: StreamLostError: (\"Stream connection lost: ConnectionResetError(104, 'Connection reset by peer')\",)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.018Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Unexpected connection close detected: StreamLostError: (\"Stream connection lost: ConnectionResetError(104, 'Connection reset by peer')\",)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.019Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.120Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33020)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.121Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33022)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.223Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.224Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.224Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.325Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33028)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.325Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.326Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33030)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.428Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33036)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.531Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33046)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.633Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33062)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.735Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.736Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.837Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33078)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.837Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.837Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.838Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.838Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.838Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.838Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.838Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33082)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:57.940Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.22.0.6', 33084)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.22.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.042Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\n    raise self._reap_last_connection_workflow_error(error)\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-04T09:52:58.043Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-04T09:53:02.938Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "117594b28b864381a9ba6a8b3f23b20a",
+    "msg": "批改任务消息处理完成",
+    "task_id": 23,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-04T09:53:03.518Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-04T09:53:03.518Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-04T09:53:04.007Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-04T09:53:04.007Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-04T09:53:04.777Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "dead"
+  },
+  {
+    "ts": "2026-11-04T09:53:04.777Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "dead"
+  },
+  {
+    "ts": "2026-11-04T09:53:06.310Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "ead161d3460b45c1adc9a39cc862cdbb",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "succeeded"
+  }
+]

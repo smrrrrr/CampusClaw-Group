@@ -1,6 +1,10 @@
 # CampusClaw 小组项目规约索引
 
-更新时间：2026-10-20（2026-10-25 补充 MCP、智能命题行）。本文是最近已实现功能的交接入口；具体行为以 `specs/` 主规约为准，`changes/` 保存变更动机、设计、任务和验收依据。现有未完成变更不在本次同步中自动归档。
+更新时间：2026-11-04。本文是最近已实现功能的交接入口；具体行为以 `specs/` 主规约为准，`changes/` 保存变更动机、设计、任务和验收依据。现有未完成变更不在本次同步中自动归档。
+
+## 作业异步初批
+
+新增[主规约](specs/async-homework-grading/spec.md)、[变更设计](changes/2026-11-04-add-async-homework-grading/design.md)与[复现证据](../reports/async-grading/README.md)。原初批接口改202+任务编号；独立队列/消费者处理，教师终评优先。此变更未自动归档，任务勾选及人工评审按项目授权边界保留。
 
 ## 最近功能与规约
 
@@ -21,7 +25,11 @@
 
 认证、初始密码限制、刷新恢复、学生导入和班主任权限另见 [登录规约](specs/login-and-account-system/spec.md)、[身份权限](specs/teacher-identity-and-permissions/spec.md)、[角色权限](specs/rbac-role-permissions/spec.md)、[班级隔离](specs/class-data-isolation/spec.md)。
 
+命题作业已接通：定稿试卷选择班级和截止时间后「发布为作业」，学生在「交作业」提交，教师在「作业与改分」初批或终评。手工布置与历史资料保留，当前只支持整份文字答案与百分制总评。主规约见 [quiz-homework-publication](specs/quiz-homework-publication/spec.md)，本次证据见 [验收记录](changes/2026-11-04-publish-quiz-as-homework/validation.md)。
+
 ## 业务链路与数据边界
+
+单科切班的页面角色判定使用当前标签页已恢复的会话，辅助角色 Cookie 不作为准入依据；错误角色仍进入 403，接口继续执行 JWT 与逐资源权限校验。见 [切班修复记录](changes/2026-11-04-fix-teacher-class-switch-guard/validation.md)。
 
 1. 教师在 `/teacher/library` 导入本科目教师版 MD 或图文 ZIP。教师原稿及答案只在同科教研组使用。
 2. 在 `/teacher/lesson-prep` 选组内素材、任教班级、课题与课时，生成教师教案，编辑/审阅后定稿。完整教案默认本人私有，可主动共享当前定稿到教研组。
@@ -36,7 +44,7 @@
 - 快捷搜索/提问历史仅在当前浏览器保存，与后端真实会话独立，不跨设备同步。助手历史点击不自动调用 AI。
 - 教研组直接导入目前支持 MD/图文 ZIP。班级直传支持更多文件格式，不代表教师版 Word/PDF 已能自动生成备课资料或可靠去除答案。
 - 配图使用已导入原图，当前没有自动绘制新几何图；浏览器另存 PDF 不等于后端 PDF 转换服务。
-- 作业批改、错题收录/讲解、真实学情诊断仍是演示或待接入；技能注册与 MCP 连接已接入真实接口，但不作为自动语义证明。MCP 句式检查只是软防线，不能宣称完整防提示词注入。
+- 作业提交、初批、教师改分、整份低分作业收录和成绩统计已接入。分数为整份百分制，未实现逐题作答、逐题改分或自动证明语义正确。技能注册与 MCP 连接已接入；MCP 句式检查只是软防线。
 - AI 生成受模型遵循程度影响。学生稿正文、配图答案、公式和引用仍须教师核对。
 
 ## 检查与交接
@@ -59,8 +67,9 @@ openspec validate --all --strict --no-interactive
 | `check_markdown_images.cjs`   | 中文空格配图真实 Markdown 解析 |
 | `check_recent_history.cjs`    | 快捷历史持久化、隔离、清空及异常存储   |
 | `check_mcp_tools.py`          | MCP 管理权限、令牌不回传、连接失败/重复连接、技能引用校验、候选集、调用上限、ok/denied/error 记录与归属隔离 |
+| `check_quiz_homework.py`     | 双入口作业、发布唯一、私有评分、配图授权、初批竞态、历史资料及迁移 |
 | `check_question_bank.py`      | 命题配额与校验、复核状态机、查重、组卷算法、学生卷去答案、范围隔离与审计 |
 
-真实 AI 试跑使用 `probe_tutor_guidance.py --real-llm`，会访问模型服务并产生费用；已有验收使用虚构题目/片段，不能将其表述为对真实学生数据的全面验证。本次规约同步不重新调用 AI、不修改业务数据、不提交 Git。
+真实 AI 试跑使用 `probe_tutor_guidance.py --real-llm`，会访问模型服务并产生费用；已有验收使用虚构题目/片段，不能将其表述为对真实学生数据的全面验证。命题作业的 5 条合成评分抽查见 [2026-11-04 评测记录](../docs/eval/2026-11-04-publish-quiz-as-homework.md)，不代表真实学生作答的全面评测。
 
 部署、数据目录及备份说明见项目根目录 [DEPLOYMENT.md](../DEPLOYMENT.md)。交接时将源码、`openspec/` 和验证脚本一起纳入团队版本管理；密钥、真实数据库、上传资料及 `.review/` 本地证据不随源码公开。
