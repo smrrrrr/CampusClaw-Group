@@ -1,0 +1,617 @@
+{
+  "started_at": "2026-11-04T13:02:54.874595+00:00",
+  "project": "cc-async-check-1a1e2a39eb",
+  "image": "campusclaw-async-backend:local",
+  "model": "local synthetic HTTP model; no real provider calls",
+  "database": "new empty temporary SQLite",
+  "commands": [
+    "docker run --rm campusclaw-async-backend:local /app/.venv/bin/python -c import hashlib,json;from pathlib import Path;print(json.dumps({n:hashlib.sha256(Path(n).read_bytes()).hexdigest() for n in ['grading_service.py', 'grading_worker.py', 'grading_queue.py', 'homework_service.py', 'models.py', 'config.py', 'routers/homework.py']}))",
+    "docker image inspect campusclaw-async-backend:local --format {{.Id}}",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> up -d broker model",
+    "docker image inspect rabbitmq:4.2-management@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa --format {{json .RepoDigests}}",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec --user rabbitmq -T broker rabbitmq-diagnostics -q ping",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec --user rabbitmq -T broker rabbitmq-diagnostics -q ping",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> run --rm --no-deps api /app/.venv/bin/python /fixtures/async_fixture.py",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> up -d api dispatcher",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> port api 8000",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> port model 9000",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> up -d --force-recreate broker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> up -d worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> stop worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> start worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c from grading_queue import GradingQueue;q=GradingQueue();q.publish(21);q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> kill -s SIGKILL worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> start worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> stop broker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> start broker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> exec -T api /app/.venv/bin/python -c import json;from grading_queue import GradingQueue;q=GradingQueue();print(json.dumps(q.counts()));q.close()",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> logs --no-color --no-log-prefix worker",
+    "docker compose -p cc-async-check-1a1e2a39eb -f <private-generated-compose> down --volumes --remove-orphans"
+  ],
+  "checks": [
+    {
+      "name": "A1 请求不等待执行",
+      "passed": true,
+      "observed": {
+        "requests": 20,
+        "p95": 0.052077599917538464,
+        "fake_model": 0.24382279999554157
+      }
+    },
+    {
+      "name": "B1 消费者停止期间任务保留",
+      "passed": true,
+      "observed": {
+        "pending": 20
+      }
+    },
+    {
+      "name": "Q1 停止32秒队列长度不增长",
+      "passed": true,
+      "observed": {
+        "paused_seconds": 32,
+        "before": {
+          "ready": 20,
+          "dead": 0
+        },
+        "after": {
+          "ready": 20,
+          "dead": 0
+        }
+      }
+    },
+    {
+      "name": "B1 代理容器重建后持久消息仍在",
+      "passed": true,
+      "observed": {
+        "ready": 20,
+        "dead": 0
+      }
+    },
+    {
+      "name": "B1 启动消费者无需重交自动完成",
+      "passed": true,
+      "observed": {
+        "succeeded": 20
+      }
+    },
+    {
+      "name": "C1 同一提交20并发只创建一个任务",
+      "passed": true,
+      "observed": {
+        "requests": 20,
+        "task_id": 21
+      }
+    },
+    {
+      "name": "C1 重复投递不重复生效",
+      "passed": true,
+      "observed": {
+        "attempts_before": 1,
+        "attempts_after": 2,
+        "score": 70
+      }
+    },
+    {
+      "name": "B4 杀进程后任务仍在",
+      "passed": true,
+      "observed": {
+        "task_id": 22
+      }
+    },
+    {
+      "name": "B4 租约到期后自动重投恢复",
+      "passed": true,
+      "observed": {
+        "attempts": 2,
+        "execution_count": 2
+      }
+    },
+    {
+      "name": "B2 代理停止仍持久接收",
+      "passed": true,
+      "observed": {
+        "task_id": 23
+      }
+    },
+    {
+      "name": "B2 代理恢复后自动补投",
+      "passed": true,
+      "observed": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "name": "D1 三次失败进入持久死信",
+      "passed": true,
+      "observed": {
+        "attempts": 3,
+        "execution_count": 3,
+        "error": "模型调用失败或评分格式无效，请检查模型配置后重试"
+      }
+    },
+    {
+      "name": "D2 人工重新排队后恢复",
+      "passed": true,
+      "observed": {
+        "attempts": 4,
+        "execution_count": 1
+      }
+    },
+    {
+      "name": "F1 任务日志为JSON且关联原请求",
+      "passed": true,
+      "observed": {
+        "task_events": 32,
+        "secret_or_answer_leak": false
+      }
+    }
+  ],
+  "metrics": {
+    "submission_seconds": [
+      0.052077599917538464,
+      0.012660000007599592,
+      0.026771600008942187,
+      0.6055920999497175,
+      0.013434400083497167,
+      0.01394449989311397,
+      0.013017800054512918,
+      0.01332389994058758,
+      0.014920399989932775,
+      0.012570600025355816,
+      0.012361900066025555,
+      0.013439000002108514,
+      0.01209170010406524,
+      0.013677100068889558,
+      0.013541299966163933,
+      0.013166200020350516,
+      0.012316999956965446,
+      0.012391800060868263,
+      0.012167199980467558,
+      0.010683599975891411
+    ],
+    "p95_seconds": 0.052077599917538464,
+    "synthetic_execution_seconds": 0.24382279999554157,
+    "queue_before_consumer": {
+      "ready": 20,
+      "dead": 0
+    },
+    "queue_with_dead_letter": {
+      "ready": 0,
+      "dead": 1
+    },
+    "tasks": [
+      {
+        "id": 1,
+        "homework_id": 1,
+        "submission_id": 1,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.184910Z",
+        "updated_at": "2026-11-04T13:03:54.426987Z",
+        "started_at": "2026-11-04T13:03:54.100814Z",
+        "finished_at": "2026-11-04T13:03:54.426984Z",
+        "next_attempt_at": "2026-11-04T13:03:08.184907Z"
+      },
+      {
+        "id": 2,
+        "homework_id": 1,
+        "submission_id": 2,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.197793Z",
+        "updated_at": "2026-11-04T13:03:54.696132Z",
+        "started_at": "2026-11-04T13:03:54.462532Z",
+        "finished_at": "2026-11-04T13:03:54.696130Z",
+        "next_attempt_at": "2026-11-04T13:03:08.197790Z"
+      },
+      {
+        "id": 3,
+        "homework_id": 1,
+        "submission_id": 3,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.198099Z",
+        "updated_at": "2026-11-04T13:03:54.957355Z",
+        "started_at": "2026-11-04T13:03:54.721849Z",
+        "finished_at": "2026-11-04T13:03:54.957353Z",
+        "next_attempt_at": "2026-11-04T13:03:08.198098Z"
+      },
+      {
+        "id": 4,
+        "homework_id": 1,
+        "submission_id": 4,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.198296Z",
+        "updated_at": "2026-11-04T13:03:55.229820Z",
+        "started_at": "2026-11-04T13:03:54.991278Z",
+        "finished_at": "2026-11-04T13:03:55.229818Z",
+        "next_attempt_at": "2026-11-04T13:03:08.198295Z"
+      },
+      {
+        "id": 5,
+        "homework_id": 1,
+        "submission_id": 5,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.198476Z",
+        "updated_at": "2026-11-04T13:03:55.509003Z",
+        "started_at": "2026-11-04T13:03:55.270993Z",
+        "finished_at": "2026-11-04T13:03:55.509001Z",
+        "next_attempt_at": "2026-11-04T13:03:08.198475Z"
+      },
+      {
+        "id": 6,
+        "homework_id": 1,
+        "submission_id": 6,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.198637Z",
+        "updated_at": "2026-11-04T13:03:55.771201Z",
+        "started_at": "2026-11-04T13:03:55.539024Z",
+        "finished_at": "2026-11-04T13:03:55.771199Z",
+        "next_attempt_at": "2026-11-04T13:03:08.198636Z"
+      },
+      {
+        "id": 7,
+        "homework_id": 1,
+        "submission_id": 7,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.198922Z",
+        "updated_at": "2026-11-04T13:03:56.044600Z",
+        "started_at": "2026-11-04T13:03:55.806393Z",
+        "finished_at": "2026-11-04T13:03:56.044596Z",
+        "next_attempt_at": "2026-11-04T13:03:08.198920Z"
+      },
+      {
+        "id": 8,
+        "homework_id": 1,
+        "submission_id": 8,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.199171Z",
+        "updated_at": "2026-11-04T13:03:56.323105Z",
+        "started_at": "2026-11-04T13:03:56.087720Z",
+        "finished_at": "2026-11-04T13:03:56.323103Z",
+        "next_attempt_at": "2026-11-04T13:03:08.199170Z"
+      },
+      {
+        "id": 9,
+        "homework_id": 1,
+        "submission_id": 9,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.199369Z",
+        "updated_at": "2026-11-04T13:03:56.609618Z",
+        "started_at": "2026-11-04T13:03:56.359920Z",
+        "finished_at": "2026-11-04T13:03:56.609616Z",
+        "next_attempt_at": "2026-11-04T13:03:08.199368Z"
+      },
+      {
+        "id": 10,
+        "homework_id": 1,
+        "submission_id": 10,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.199538Z",
+        "updated_at": "2026-11-04T13:03:56.884545Z",
+        "started_at": "2026-11-04T13:03:56.646789Z",
+        "finished_at": "2026-11-04T13:03:56.884543Z",
+        "next_attempt_at": "2026-11-04T13:03:08.199538Z"
+      },
+      {
+        "id": 11,
+        "homework_id": 1,
+        "submission_id": 11,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.199700Z",
+        "updated_at": "2026-11-04T13:03:57.151181Z",
+        "started_at": "2026-11-04T13:03:56.916656Z",
+        "finished_at": "2026-11-04T13:03:57.151179Z",
+        "next_attempt_at": "2026-11-04T13:03:08.199699Z"
+      },
+      {
+        "id": 12,
+        "homework_id": 1,
+        "submission_id": 12,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.199863Z",
+        "updated_at": "2026-11-04T13:03:57.418391Z",
+        "started_at": "2026-11-04T13:03:57.182903Z",
+        "finished_at": "2026-11-04T13:03:57.418389Z",
+        "next_attempt_at": "2026-11-04T13:03:08.199862Z"
+      },
+      {
+        "id": 13,
+        "homework_id": 1,
+        "submission_id": 13,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.200034Z",
+        "updated_at": "2026-11-04T13:03:57.689065Z",
+        "started_at": "2026-11-04T13:03:57.452408Z",
+        "finished_at": "2026-11-04T13:03:57.689063Z",
+        "next_attempt_at": "2026-11-04T13:03:08.200033Z"
+      },
+      {
+        "id": 14,
+        "homework_id": 1,
+        "submission_id": 14,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.203291Z",
+        "updated_at": "2026-11-04T13:03:57.968845Z",
+        "started_at": "2026-11-04T13:03:57.722903Z",
+        "finished_at": "2026-11-04T13:03:57.968843Z",
+        "next_attempt_at": "2026-11-04T13:03:08.203289Z"
+      },
+      {
+        "id": 15,
+        "homework_id": 1,
+        "submission_id": 15,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.203482Z",
+        "updated_at": "2026-11-04T13:03:58.242599Z",
+        "started_at": "2026-11-04T13:03:58.006793Z",
+        "finished_at": "2026-11-04T13:03:58.242597Z",
+        "next_attempt_at": "2026-11-04T13:03:08.203481Z"
+      },
+      {
+        "id": 16,
+        "homework_id": 1,
+        "submission_id": 16,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.203644Z",
+        "updated_at": "2026-11-04T13:03:58.511454Z",
+        "started_at": "2026-11-04T13:03:58.277418Z",
+        "finished_at": "2026-11-04T13:03:58.511453Z",
+        "next_attempt_at": "2026-11-04T13:03:08.203643Z"
+      },
+      {
+        "id": 17,
+        "homework_id": 1,
+        "submission_id": 17,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.203793Z",
+        "updated_at": "2026-11-04T13:03:58.766547Z",
+        "started_at": "2026-11-04T13:03:58.539587Z",
+        "finished_at": "2026-11-04T13:03:58.766545Z",
+        "next_attempt_at": "2026-11-04T13:03:08.203792Z"
+      },
+      {
+        "id": 18,
+        "homework_id": 1,
+        "submission_id": 18,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.203936Z",
+        "updated_at": "2026-11-04T13:03:59.031933Z",
+        "started_at": "2026-11-04T13:03:58.800740Z",
+        "finished_at": "2026-11-04T13:03:59.031931Z",
+        "next_attempt_at": "2026-11-04T13:03:08.203936Z"
+      },
+      {
+        "id": 19,
+        "homework_id": 1,
+        "submission_id": 19,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.204073Z",
+        "updated_at": "2026-11-04T13:03:59.293446Z",
+        "started_at": "2026-11-04T13:03:59.063174Z",
+        "finished_at": "2026-11-04T13:03:59.293445Z",
+        "next_attempt_at": "2026-11-04T13:03:08.204072Z"
+      },
+      {
+        "id": 20,
+        "homework_id": 1,
+        "submission_id": 20,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:03:08.204207Z",
+        "updated_at": "2026-11-04T13:03:59.568442Z",
+        "started_at": "2026-11-04T13:03:59.327745Z",
+        "finished_at": "2026-11-04T13:03:59.568440Z",
+        "next_attempt_at": "2026-11-04T13:03:08.204206Z"
+      },
+      {
+        "id": 21,
+        "homework_id": 2,
+        "submission_id": 21,
+        "status": "succeeded",
+        "attempts": 2,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:04:00.659261Z",
+        "updated_at": "2026-11-04T13:04:02.691091Z",
+        "started_at": "2026-11-04T13:04:01.881553Z",
+        "finished_at": "2026-11-04T13:04:02.153907Z",
+        "next_attempt_at": "2026-11-04T13:04:00.659257Z"
+      },
+      {
+        "id": 22,
+        "homework_id": 3,
+        "submission_id": 22,
+        "status": "succeeded",
+        "attempts": 2,
+        "execution_count": 2,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:04:02.969281Z",
+        "updated_at": "2026-11-04T13:04:14.290636Z",
+        "started_at": "2026-11-04T13:04:12.225664Z",
+        "finished_at": "2026-11-04T13:04:14.290633Z",
+        "next_attempt_at": "2026-11-04T13:04:02.969277Z"
+      },
+      {
+        "id": 23,
+        "homework_id": 5,
+        "submission_id": 24,
+        "status": "succeeded",
+        "attempts": 1,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:04:15.988113Z",
+        "updated_at": "2026-11-04T13:04:20.485305Z",
+        "started_at": "2026-11-04T13:04:20.241121Z",
+        "finished_at": "2026-11-04T13:04:20.485302Z",
+        "next_attempt_at": "2026-11-04T13:04:15.988109Z"
+      },
+      {
+        "id": 24,
+        "homework_id": 4,
+        "submission_id": 23,
+        "status": "succeeded",
+        "attempts": 4,
+        "execution_count": 1,
+        "max_attempts": 3,
+        "error": null,
+        "created_at": "2026-11-04T13:04:20.600467Z",
+        "updated_at": "2026-11-04T13:04:23.894310Z",
+        "started_at": "2026-11-04T13:04:23.655906Z",
+        "finished_at": "2026-11-04T13:04:23.894308Z",
+        "next_attempt_at": "2026-11-04T13:04:23.576122Z"
+      }
+    ],
+    "consumption_seconds": [
+      0.32617,
+      0.233598,
+      0.235504,
+      0.23854,
+      0.238008,
+      0.232175,
+      0.238203,
+      0.235383,
+      0.249696,
+      0.237754,
+      0.234523,
+      0.235486,
+      0.236655,
+      0.24594,
+      0.235804,
+      0.234035,
+      0.226958,
+      0.231191,
+      0.230271,
+      0.240695,
+      0.272354,
+      2.064969,
+      0.244181,
+      0.238402
+    ],
+    "queue_final": {
+      "ready": 0,
+      "dead": 1
+    },
+    "synthetic_model_calls": 29
+  },
+  "verified_image_source_sha256": {
+    "grading_service.py": "c8e1ac3e064badaa04bd83a584b8a3bfb90f0adf0de73b09de537bfa2df13ecf",
+    "grading_worker.py": "88d057fe1c8cefe8df023930cd13c474bff806e06ce6efc1ca7f13bb4844807b",
+    "grading_queue.py": "17df565b5f3af023161ef3e56c8861c8257ce6218174b069a8a629e1b4ca59c2",
+    "homework_service.py": "cce4af742c330ad977d633d6b6abf8441481dea3e3f8a3837a44ea622d018537",
+    "models.py": "41293181259e044a7cec74819394401eabe254f9eebf00c2a5312475ffea512b",
+    "config.py": "3c81955d422af0de57f26463dd8b6c782e34299f1cab7f6876db8ffc3f433b8d",
+    "routers/homework.py": "9f86474b69f508bf60b0c4b66ce6153ccd3a2fbdf4da7fd3f4b27a05dfc6ea13"
+  },
+  "image_id": "sha256:c704191051fe4e2d0691bda006706f06a16c85848cf2165bb46d930b2f2da142",
+  "broker_digest": "[\"rabbitmq@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa\"]",
+  "status": "PASS",
+  "finished_at": "2026-11-04T13:04:25.486911+00:00",
+  "source_sha256": {
+    "backend\\grading_service.py": "c8e1ac3e064badaa04bd83a584b8a3bfb90f0adf0de73b09de537bfa2df13ecf",
+    "backend\\grading_worker.py": "88d057fe1c8cefe8df023930cd13c474bff806e06ce6efc1ca7f13bb4844807b",
+    "backend\\grading_queue.py": "17df565b5f3af023161ef3e56c8861c8257ce6218174b069a8a629e1b4ca59c2",
+    "backend\\homework_service.py": "cce4af742c330ad977d633d6b6abf8441481dea3e3f8a3837a44ea622d018537",
+    "backend\\models.py": "41293181259e044a7cec74819394401eabe254f9eebf00c2a5312475ffea512b",
+    "backend\\config.py": "3c81955d422af0de57f26463dd8b6c782e34299f1cab7f6876db8ffc3f433b8d",
+    "backend\\routers\\homework.py": "9f86474b69f508bf60b0c4b66ce6153ccd3a2fbdf4da7fd3f4b27a05dfc6ea13",
+    "scripts\\reproduce_async_grading.py": "7975aadc8a4da20613e5d8522d589a54d28d19cd50b217082746f02570d82886",
+    "apitest\\async_fixture.py": "68fa94e51125e8cd5669e52dd969f2cd31a13839bebe04d50be7dfa2013d6a39",
+    "apitest\\async_fake_model.py": "5a54e2f444c18e76c46d6ba8a7833f04236301b07129df39e74714058ffe4afd"
+  },
+  "cleanup": "only generated isolated project removed"
+}

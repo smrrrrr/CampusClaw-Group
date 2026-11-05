@@ -107,6 +107,9 @@ class StudentHomeworkItem(BaseModel):
     content: HomeworkContent
     due_at: str | None
     status: str
+    homework_status: str
+    answer_text: str | None
+    submitted_at: str | None
     submission_id: int | None
     final_score: int | None
     feedback: str | None
@@ -321,7 +324,7 @@ def api_grade_submission(
 # ---------------------------------------------------------------------------
 
 
-@router.get("/student/homeworks", response_model=list[StudentHomeworkItem], summary="本人班级已发布作业")
+@router.get("/student/homeworks", response_model=list[StudentHomeworkItem], summary="本人班级作业与本人已提交历史")
 def api_list_student_homeworks(
     current: CurrentUser = Depends(get_current_student),
     db: Session = Depends(get_db),
@@ -334,7 +337,7 @@ def api_list_student_homeworks(
         raise HTTPException(503, detail="作业历史暂时无法查询，请稍后重试") from None
 
 
-@router.get("/student/homeworks/{homework_id}/assets", summary="读取本班已发布作业配图",
+@router.get("/student/homeworks/{homework_id}/assets", summary="读取本班已发布作业或本人已提交历史配图",
             response_class=Response,
             responses={400: {"description": "名称非法"}, 401: {"description": "未登录"},
                        403: {"description": "非本班或未发布"}, 404: {"description": "配图不存在"},

@@ -213,7 +213,7 @@ def list_student_homeworks(db: Session, ctx: UserContext) -> list[dict]:
                                            HomeworkSubmission.student_id == ctx.user_id))
         .filter(
             Homework.class_id == ctx.class_id,
-            Homework.status == "published",
+            or_(Homework.status == "published", and_(Homework.status == "closed", HomeworkSubmission.id.isnot(None))),
         )
         .order_by(Homework.due_at.asc(), Homework.id.asc())
         .all()
@@ -241,6 +241,9 @@ def list_student_homeworks(db: Session, ctx: UserContext) -> list[dict]:
                 "content": content,
                 "due_at": _iso_utc(hw.due_at),
                 "status": sub.status if sub else "not_submitted",
+                "homework_status": hw.status,
+                "answer_text": sub.answer_text if sub else None,
+                "submitted_at": _iso_utc(sub.submitted_at) if sub else None,
                 "submission_id": sub.id if sub else None,
                 "final_score": final_score,
                 "feedback": feedback,
@@ -264,7 +267,9 @@ def get_homework_asset(db: Session, ctx: UserContext, homework_id: int, name: st
     if ctx.role == "teacher":
         _assert_teacher_can_access_homework(ctx, hw)
     elif ctx.role == "student":
-        if hw.class_id != ctx.class_id or hw.status != "published":
+        has_history = hw.status == "closed" and db.query(HomeworkSubmission.id).filter_by(
+            homework_id=hw.id, student_id=ctx.user_id).first() is not None
+        if hw.class_id != ctx.class_id or (hw.status != "published" and not has_history):
             raise HomeworkServiceError(403, "无权查看该作业配图")
     else:
         raise HomeworkServiceError(403, "无权查看该作业配图")
@@ -514,7 +519,24 @@ def teacher_grade_submission(
                 reason=feedback or "",
             )
             db.add(note)
+    else:
+        # 成绩与派生错题同事务更新，改分到及格后不能保留旧的整份作业错题。
+        db.query(MistakeNote).filter_by(homework_id=hw.id, student_id=sub.student_id,
+                                       class_id=hw.class_id, subject=hw.subject).delete(synchronize_session=False)
 
     db.commit()
     db.refresh(sub)
     return sub
+
+
+def resolved_homework_mistakes(db: Session) -> list[MistakeNote]:
+    """仅匹配实际教师终评及格、学生/作业/班级/学科一致的旧自动错题。"""
+    return (db.query(MistakeNote).join(HomeworkSubmission, and_(
+        HomeworkSubmission.homework_id == MistakeNote.homework_id,
+        HomeworkSubmission.student_id == MistakeNote.student_id,
+        HomeworkSubmission.class_id == MistakeNote.class_id))
+        .join(Homework, and_(Homework.id == MistakeNote.homework_id,
+                            Homework.class_id == MistakeNote.class_id,
+                            Homework.subject == MistakeNote.subject))
+        .filter(HomeworkSubmission.status == "teacher_graded", HomeworkSubmission.teacher_score >= 60)
+        .order_by(MistakeNote.id).all())

@@ -4,6 +4,8 @@
 
 ## 作业异步初批
 
+2026-11-04 后续修正：取消已确认消息的定时重复投递，教师展示实际批改尝试；学生保留最新提交历史，教师及格终评同步清理对应错题。见[变更设计](changes/2026-11-04-refine-grading-and-assignment-history/design.md)、[场景验收](changes/2026-11-04-refine-grading-and-assignment-history/validation.md)和[用户验证步骤](../reports/assignment-history-2026-11-04.md)。
+
 新增[主规约](specs/async-homework-grading/spec.md)、[变更设计](changes/2026-11-04-add-async-homework-grading/design.md)与[复现证据](../reports/async-grading/README.md)。原初批接口改202+任务编号；独立队列/消费者处理，教师终评优先。此变更未自动归档，任务勾选及人工评审按项目授权边界保留。
 
 ## 最近功能与规约

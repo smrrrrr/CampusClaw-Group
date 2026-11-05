@@ -1,4 +1,5 @@
 "use client";
+import { canSubmitAssignment, isAssignmentHistory } from "@/lib/assignment-history";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -91,44 +92,56 @@ function StudentDashboard({
 }
 
 function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void }) {
+  const studentId = useAuthStore(s => s.currentStudent?.id);
+  const studentClassId = useAuthStore(s => s.currentStudent?.class_id);
+  const loadVersion = useRef(0);
+  const contextVersion = useRef(0);
   const [homeworks, setHomeworks] = useState<StudentHomeworkDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState<number | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [assignmentTab, setAssignmentTab] = useState<"pending" | "history">("pending");
 
   const loadHomeworks = useCallback(async () => {
+    const version = ++loadVersion.current;
     setLoading(true);
     setError("");
     try {
       const list = await api.listStudentHomeworks();
-      setHomeworks(list);
+      if (version === loadVersion.current) setHomeworks(list);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "加载作业失败");
+      if (version === loadVersion.current) setError(`加载失败：${e instanceof Error ? e.message : "请重试"}`);
     } finally {
-      setLoading(false);
+      if (version === loadVersion.current) setLoading(false);
     }
-  }, []);
+  }, [studentId, studentClassId]);
 
-  useEffect(() => { loadHomeworks(); }, [loadHomeworks]);
+  useEffect(() => {
+    contextVersion.current += 1;
+    setHomeworks([]); setAnswers({}); setSubmitting(null); setAssignmentTab("pending"); loadHomeworks();
+    return () => { contextVersion.current += 1; loadVersion.current += 1; };
+  }, [loadHomeworks]);
 
   const subjectTabs = [{ id: "", name: "全部" }, ...ASSISTANT_SUBJECTS];
-  const filteredHomeworks = selectedSubject
+  const subjectHomeworks = selectedSubject
     ? homeworks.filter((h) => h.subject === selectedSubject)
     : homeworks;
+  const filteredHomeworks = subjectHomeworks.filter(hw => isAssignmentHistory(hw) === (assignmentTab === "history"));
 
   const handleSubmit = async (hw: StudentHomeworkDTO) => {
+    const context = contextVersion.current;
     const text = answers[hw.id] ?? "";
     if (!text.trim()) return;
     setSubmitting(hw.id);
     try {
       await api.submitHomework(hw.id, text);
-      await loadHomeworks();
+      if (context === contextVersion.current) { setAssignmentTab("history"); await loadHomeworks(); }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "提交失败");
+      if (context === contextVersion.current) setError(e instanceof Error ? e.message : "提交失败");
     } finally {
-      setSubmitting(null);
+      if (context === contextVersion.current) setSubmitting(null);
     }
   };
 
@@ -138,13 +151,18 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
   };
 
   return <div className="student-page">
-    <div className="page-title"><h2>交作业</h2><p>提交后作业会进入批改队列；处理完成后可查看分数和评语。</p></div>
+    <div className="page-title"><h2>交作业</h2><p>提交后可在作业历史中查看记录，等待教师发起初批或直接评分。</p></div>
+    <div className="student-subject-tabs" aria-label="作业范围">
+      <button className={assignmentTab === "pending" ? "active" : ""} onClick={() => setAssignmentTab("pending")}>待完成（{subjectHomeworks.filter(hw => !isAssignmentHistory(hw)).length}）</button>
+      <button className={assignmentTab === "history" ? "active" : ""} onClick={() => setAssignmentTab("history")}>作业历史（{subjectHomeworks.filter(hw => isAssignmentHistory(hw)).length}）</button>
+      <button onClick={loadHomeworks}>刷新作业</button>
+    </div>
     <div className="student-subject-tabs">{subjectTabs.map((s) => <button className={selectedSubject === s.id ? "active" : ""} key={s.id} onClick={() => setSelectedSubject(s.id)}>{s.name}</button>)}</div>
-    {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
+    {error && <div className="error" style={{ marginBottom: 12 }}>{error} <button className="btn" style={{ width: "auto", marginLeft: 8 }} onClick={loadHomeworks}>重试</button></div>}
     {loading ? (
       <p className="hint">加载中…</p>
-    ) : filteredHomeworks.length === 0 ? (
-      <div className="student-empty panel"><h2>暂无作业</h2><p>本班该学科目前没有待完成的作业。</p></div>
+    ) : error && homeworks.length === 0 ? null : filteredHomeworks.length === 0 ? (
+      <div className="student-empty panel"><h2>{assignmentTab === "history" ? "暂无作业历史" : "暂无待完成作业"}</h2><p>{assignmentTab === "history" ? "提交后的记录会保留在这里，老师关闭作业后仍可查看。" : "本班该学科目前没有待完成的作业。"}</p></div>
     ) : (
       <div className="student-assignment-list">
         {filteredHomeworks.map((hw) => {
@@ -162,11 +180,13 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
                     : <p>{hw.content?.stem ?? hw.title}</p>}
                   {hw.source_type === "quiz" && <p className="hint">原卷总分 {hw.content.original_total} 分，教师终评按百分制。请按题号填写整份答案。</p>}
                   <span className="hint">截止：{hw.due_at ? new Date(hw.due_at).toLocaleString("zh-CN", { hour12: false }) : "无"}</span>
+                  {hw.homework_status === "closed" && <p className="hint">作业已关闭，历史记录保留，只可查看。</p>}
                 </div>
                 <span className={`student-status ${hw.graded && (hw.final_score ?? 0) < 60 ? "wrong" : submitted ? "done" : ""}`}>{statusLabel}</span>
               </div>
               {submitted && hw.submission_id && (
                 <>
+                  <div className="student-feedback"><b>我的已提交作答</b><p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{hw.answer_text}</p>{hw.submitted_at && <small>提交于 {new Date(hw.submitted_at).toLocaleString("zh-CN", { hour12: false })}</small>}</div>
                   <div className="student-grade-row">
                     <strong className={(hw.final_score ?? 0) < 60 ? "wrong" : ""}>{hw.graded ? hw.final_score : "—"}</strong>
                     <div><b>教师终评</b><span>{hw.graded ? "已批改" : "待教师批改"}</span></div>
@@ -177,7 +197,7 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
                   )}
                 </>
               )}
-              {!overdue && (
+              {canSubmitAssignment(hw) && (
                 <>
                   <div className="student-answer-label">我的作答</div>
                   <textarea
@@ -428,8 +448,8 @@ function StudentHome() {
     if (!hasClass) return;
     api.listStudentHomeworks().then((list) => {
       const now = Date.now();
-      const ongoing = list.filter((h) => h.due_at ? new Date(h.due_at).getTime() >= now : true).length;
-      const pending = list.filter((h) => h.status === "not_submitted" && (h.due_at ? new Date(h.due_at).getTime() >= now : true)).length;
+      const ongoing = list.filter((h) => !isAssignmentHistory(h, now)).length;
+      const pending = list.filter((h) => h.status === "not_submitted" && canSubmitAssignment(h, now)).length;
       setOngoingHomework(ongoing);
       setPendingSubmit(pending);
     }).catch(() => { /* 统计加载失败不阻塞 */ });

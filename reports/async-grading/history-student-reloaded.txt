@@ -1,0 +1,55 @@
+Browser tab: 14, Title: "CampusClaw 校园助手", URL: "http://127.0.0.1:3009/student?view=assignments".
+1 AXWebArea CampusClaw 校园助手, URL: 127.0.0.1:3009/student?view=assignments
+	2 container
+		3 text S
+		4 heading CampusClaw, Value: 1
+			5 text CampusClaw
+		6 text 学习平台 · 学生端
+		7 container 主导航
+			8 text 学生端
+			9 button 本班首页
+			10 button 讲义与检索
+			11 button 助手对话
+			12 button 交作业
+			13 button 错题
+			14 button 学情分析
+		15 text 学习空间 · 学习数据仅本人可见
+	16 container
+		17 text 高二（1）班 生 合成学生
+		18 button 登 出
+	19 container
+		20 heading 交作业, Value: 2
+			21 text 交作业
+		22 text 提交后可在作业历史中查看记录，等待教师发起初批或直接评分。
+		23 container 作业范围
+			24 button 待完成（1）
+				25 text 待完成（
+				26 text 1
+				27 text ）
+			28 button 作业历史（1）
+				29 text 作业历史（
+				30 text 1
+				31 text ）
+			32 button 刷新作业
+		33 button 全部
+		34 button 数学
+		35 button 语文
+		36 button 英语
+		37 button 物理
+		38 button 化学
+		39 heading 已完成作业历史验收, Value: 3
+			40 text 已完成作业历史验收
+		41 text 手工布置
+		42 text 计算2+2
+		43 text 截止： 2026/11/6 01:37:35
+		44 text 作业已关闭，历史记录保留，只可查看。
+		45 text 已批改 我的已提交作答
+		46 text 4
+		47 container
+			48 text 提交于  2026/11/5 03:21:34
+		49 text 100
+		50 text 教师终评
+		51 text 已批改
+		52 text 全部正确，保留历史
+
+The focused UI element is 28 button 作业历史（1）

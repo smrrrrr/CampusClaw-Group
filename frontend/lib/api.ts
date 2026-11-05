@@ -494,6 +494,7 @@ export interface HomeworkSubmissionDTO {
   id: number;
   student_id: number;
   answer_text: string;
+  submitted_at: string | null;
   ai_score: number | null;
   ai_feedback: string | null;
   teacher_score: number | null;
@@ -509,6 +510,9 @@ export interface StudentHomeworkDTO {
   content: HomeworkContentDTO;
   due_at: string | null;
   status: string;
+  homework_status: string;
+  answer_text: string | null;
+  submitted_at: string | null;
   submission_id: number | null;
   final_score: number | null;
   feedback: string | null;
