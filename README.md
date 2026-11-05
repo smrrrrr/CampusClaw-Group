@@ -119,6 +119,8 @@ make check
 
 Windows 没有 make 时运行 `backend\.venv\Scripts\python.exe scripts\check.py`。门禁依次执行 openspec 严格校验、分层检查、密钥扫描、前端类型检查和 `apitest/` 下全部离线回归，任一项失败即整体失败。回归使用临时数据库和假模型，即使本机 `.env` 填了真实 Key 也不会联网或消耗额度。每个脚本的覆盖范围见 [openspec/README.md](openspec/README.md#检查与交接)。
 
+安全专项另运行 `make check-security`；Windows 用 `backend\.venv\Scripts\python.exe scripts\security_precheck.py`。需要 Git、uv/uvx、npm、联网访问 PyPI/npm 漏洞库；扫描运行日志与前端产物还需要本项目 Docker 容器正在运行。它只读现有账号，写入验证使用临时库、假模型和假 MCP，不重置账号、不消耗真实 AI 额度，也不自动升级依赖。证据保存在 [reports/security-evidence](reports/security-evidence)，汇总见 [安全自查](reports/security-precheck.md)。退出码 0=所测项通过，1=发现红项，2=检查未完成；红项与未完成可同时存在，应同时看 run.json 的 has_blocked_scope。默认重新联网审计；`--reuse-dependency-evidence` 只复查旧依赖结果，会明确标记复用，不能视为本次重扫。证据目录保存最近一次结果，提交课程材料前应另行保留该次归档。另一名成员复现步骤见 [人工评审清单](docs/security-review-checklist.md)。
+
 ## 协作约定
 
 - **主干唯一**：`main` 是唯一基线，开启保护规则，禁止直接推送，只通过 PR 合并；`main` 上任一提交都应能按本 README 启动。

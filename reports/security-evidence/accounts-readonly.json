@@ -1,0 +1,37 @@
+{
+  "mode": "SQLite mode=ro; no passwords or hashes queried",
+  "identities": [
+    {
+      "identifier": "20260001",
+      "role": "student",
+      "class_id": 101,
+      "subject": null,
+      "teaching_classes": null,
+      "must_change_password": 0
+    },
+    {
+      "identifier": "20260002",
+      "role": "student",
+      "class_id": 102,
+      "subject": null,
+      "teaching_classes": null,
+      "must_change_password": 0
+    },
+    {
+      "identifier": "TEA001",
+      "role": "teacher",
+      "class_id": null,
+      "subject": "math",
+      "teaching_classes": "[101, 102]",
+      "must_change_password": 0
+    },
+    {
+      "identifier": "TEA002",
+      "role": "teacher",
+      "class_id": null,
+      "subject": "physics",
+      "teaching_classes": "[101, 102]",
+      "must_change_password": 0
+    }
+  ]
+}

@@ -49,6 +49,10 @@ apitest/**/report.html
 # 根reports保留脱敏课程证据；运行时私有数据仍放.review或apitest/reports。
 reports/*
 !reports/*.md
+!reports/security-evidence/
+reports/security-evidence/*
+!reports/security-evidence/*.json
+!reports/security-evidence/*.txt
 !reports/async-grading/
 reports/async-grading/*
 !reports/async-grading/*.md
