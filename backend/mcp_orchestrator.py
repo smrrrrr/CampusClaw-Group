@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 
 from sqlalchemy.orm import Session
 
@@ -107,6 +108,7 @@ def resolve_candidates(db: Session, skill, teacher_id: int | None, class_id: int
                 "base_url": server.base_url,
                 "description": tool.description,
                 "input_schema": json.loads(tool.input_schema or "{}"),
+                "writable": bool(getattr(tool, "writable", False)),
             }
         )
     return candidates, denied
@@ -168,6 +170,9 @@ def record_call(
     conversation_id: int | None,
     round_no: int | None,
     detail: str | None,
+    skill_id: str | None = None,
+    duration_ms: int | None = None,
+    tokens: int | None = None,
 ) -> None:
     """独立会话写一条调用记录；失败只忽略，不影响回答。"""
     db = SessionLocal()
@@ -185,6 +190,9 @@ def record_call(
                 conversation_id=conversation_id,
                 round=round_no,
                 detail=(detail or "")[:DETAIL_MAX] or None,
+                skill_id=skill_id,
+                duration_ms=duration_ms,
+                tokens=tokens,
             )
         )
         db.commit()
@@ -233,6 +241,7 @@ def run_tool_loop(
     ``messages`` 会被就地追加 tool 消息，供后续流式作答复用。
     """
     tool_events = [dict(d) for d in denied]
+    skill_id = str(getattr(skill, "id", "")) or None
     # 初始 denied（服务器存在但未连接/工具不可用）也要写审计；服务器不存在无法归属则不写
     for d in denied:
         if d.get("server_id") is not None:
@@ -241,6 +250,7 @@ def run_tool_loop(
                 server_name=d.get("server_name", ""), tool_name=str(d.get("ref", "")).split("@")[0],
                 tool_ref=d.get("ref", ""), status="denied", user_id=user_id,
                 conversation_id=conversation_id, round_no=0, detail=d.get("reason"),
+                skill_id=skill_id,
             )
     tool_declarations = [
         {
@@ -300,6 +310,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="denied", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail="超出调用上限",
+                    skill_id=skill_id,
                 )
                 messages.append(
                     {
@@ -321,6 +332,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=f"参数不合结构：{problem}",
+                    skill_id=skill_id,
                 )
                 messages.append(
                     {
@@ -328,6 +340,29 @@ def run_tool_loop(
                         "tool_call_id": call.id,
                         "name": call.name,
                         "content": f"工具调用失败：参数不符合要求（{problem}）。",
+                    }
+                )
+                continue
+
+            # SEC-08：写入类工具授权校验——学生无权执行写入操作
+            if candidate.get("writable") and getattr(ctx, "role", None) != "teacher":
+                reason = "学生无权执行写入类工具"
+                tool_events.append(
+                    {"ref": candidate["ref"], "status": "denied", "reason": reason}
+                )
+                record_call(
+                    class_id=class_id, subject=subject, server_id=candidate["server_id"],
+                    server_name=candidate["server_name"], tool_name=candidate["tool_name"],
+                    tool_ref=candidate["ref"], status="denied", user_id=user_id,
+                    conversation_id=conversation_id, round_no=round_no, detail=reason,
+                    skill_id=skill_id,
+                )
+                messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": call.id,
+                        "name": call.name,
+                        "content": "无权执行该工具。",
                     }
                 )
                 continue
@@ -346,9 +381,11 @@ def run_tool_loop(
             question_calls += 1
             conversation_used += 1
             client = McpClient(candidate["base_url"], token, timeout=settings.mcp_call_timeout)
+            call_started = time.monotonic()
             try:
                 text, is_error = client.call_tool(candidate["tool_name"], call.arguments)
             except McpClientError as exc:
+                duration_ms = int((time.monotonic() - call_started) * 1000)
                 tool_events.append(
                     {"ref": candidate["ref"], "status": "error", "reason": str(exc)}
                 )
@@ -357,6 +394,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=str(exc),
+                    skill_id=skill_id, duration_ms=duration_ms,
                 )
                 messages.append(
                     {
@@ -368,6 +406,7 @@ def run_tool_loop(
                 )
                 continue
 
+            duration_ms = int((time.monotonic() - call_started) * 1000)
             # 信任边界：截断 + 句式检查
             truncated = text[:TRUNCATE_CHARS]
             if looks_like_injection(truncated) or is_error:
@@ -380,6 +419,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=reason,
+                    skill_id=skill_id, duration_ms=duration_ms,
                 )
                 messages.append(
                     {
@@ -399,6 +439,7 @@ def run_tool_loop(
                 server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                 tool_ref=candidate["ref"], status="ok", user_id=user_id,
                 conversation_id=conversation_id, round_no=round_no, detail=_summarize(truncated),
+                skill_id=skill_id, duration_ms=duration_ms,
             )
             marker = f"[工具 {candidate['tool_name']}@{candidate['server_name']} 返回的数据]"
             results_for_answer.append(f"{marker}\n{truncated}")

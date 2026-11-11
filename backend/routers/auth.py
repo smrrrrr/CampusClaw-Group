@@ -59,8 +59,11 @@ def _parse_teaching_classes(raw: str | None) -> list[int] | None:
         return None
 
 
-def _issue_tokens(response: Response, user: User) -> str:
-    """签发 Access Token（返回）+ Refresh Token（写入 HttpOnly Cookie）。"""
+def _issue_tokens(response: Response, user: User) -> tuple[str, str]:
+    """签发 Access Token（返回）+ Refresh Token（写入 HttpOnly Cookie）。
+    返回 (access_token, csrf_token)。"""
+    import secrets
+
     tc = _parse_teaching_classes(user.teaching_classes)
     access_token = create_access_token(
         user_id=user.id,
@@ -87,7 +90,17 @@ def _issue_tokens(response: Response, user: User) -> str:
         samesite=settings.cookie_samesite,
         path="/api/auth",
     )
-    return access_token
+    csrf_token = secrets.token_urlsafe(32)
+    response.set_cookie(
+        key="csrf_token",
+        value=csrf_token,
+        max_age=_REFRESH_COOKIE_MAX_AGE,
+        httponly=False,
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
+        path="/",
+    )
+    return access_token, csrf_token
 
 
 # ---------------------------------------------------------------------------
@@ -123,12 +136,13 @@ def login(body: LoginRequest, response: Response, db: Session = Depends(get_db))
         )
 
     reset_failures(db, identifier)
-    access_token = _issue_tokens(response, matched)
+    access_token, csrf_token = _issue_tokens(response, matched)
     return TokenResponse(
         access_token=access_token,
         must_change_password=matched.must_change_password,
         role=matched.role.value,
         user=_user_info(matched),
+        csrf_token=csrf_token,
     )
 
 
@@ -224,12 +238,13 @@ def change_password(
     db.commit()
     db.refresh(user)
 
-    access_token = _issue_tokens(response, user)
+    access_token, csrf_token = _issue_tokens(response, user)
     return TokenResponse(
         access_token=access_token,
         must_change_password=False,
         role=user.role.value,
         user=_user_info(user),
+        csrf_token=csrf_token,
     )
 
 
@@ -247,6 +262,12 @@ def logout(
         key=REFRESH_COOKIE_NAME,
         path="/api/auth",
         httponly=True,
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
+    )
+    response.delete_cookie(
+        key="csrf_token",
+        path="/",
         secure=settings.cookie_secure,
         samesite=settings.cookie_samesite,
     )

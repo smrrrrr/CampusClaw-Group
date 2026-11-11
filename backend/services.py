@@ -84,6 +84,11 @@ def write_audit_log(
     ip_address: str | None = None,
     subject: str | None = None,
     class_id: int | None = None,
+    action: str | None = None,
+    object_id: str | None = None,
+    skill_id: str | None = None,
+    duration_ms: int | None = None,
+    tokens: int | None = None,
 ) -> None:
     """同步写入审计日志（由 BackgroundTasks 调用，异常仅打印日志）。"""
     try:
@@ -96,6 +101,11 @@ def write_audit_log(
             method=method,
             status_code=status_code,
             ip_address=ip_address,
+            action=action,
+            object_id=object_id,
+            skill_id=skill_id,
+            duration_ms=duration_ms,
+            tokens=tokens,
         )
         db.add(log)
         db.commit()

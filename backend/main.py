@@ -75,15 +75,37 @@ app.include_router(analytics.router)
 
 
 # ---------------------------------------------------------------------------
-# 403 审计日志中间件：拦截 403 响应，异步写入 AuditLog
+# 安全审计日志中间件：拦截 403/404 响应，异步写入 AuditLog。
+# 403：参数篡改、角色越权；404：fetch-then-check 跨班取数（不泄露存在性但仍需审计）。
 # ---------------------------------------------------------------------------
 
 
 @app.middleware("http")
-async def audit_403_middleware(request: Request, call_next):
+async def csrf_protection_middleware(request: Request, call_next):
+    """状态变更请求校验 CSRF 令牌；带 Authorization 头的 JWT 请求豁免（头部令牌不受 CSRF 影响）。
+    仅当请求携带 csrf_token Cookie（已登录）时才校验，未登录请求交由鉴权依赖返回 401。"""
+    if request.method in ("POST", "PUT", "DELETE", "PATCH"):
+        auth = request.headers.get("Authorization", "")
+        path = request.url.path
+        is_auth_endpoint = path.startswith("/api/auth/")
+        cookie_token = request.cookies.get("csrf_token", "")
+        if cookie_token and not auth.startswith("Bearer ") and not is_auth_endpoint:
+            header_token = request.headers.get("X-CSRF-Token", "")
+            if cookie_token != header_token:
+                from fastapi.responses import JSONResponse
+
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "CSRF 令牌校验失败"},
+                )
+    return await call_next(request)
+
+
+@app.middleware("http")
+async def audit_security_middleware(request: Request, call_next):
     response = await call_next(request)
 
-    if response.status_code == 403:
+    if response.status_code in (403, 404):
         # 从 Authorization 头解析用户信息（可选，无 Token 则 user_id/role 为 None）
         user_id = None
         role = None
@@ -112,7 +134,7 @@ async def audit_403_middleware(request: Request, call_next):
                 class_id=class_id,
                 request_path=request.url.path,
                 method=request.method,
-                status_code=403,
+                status_code=response.status_code,
                 ip_address=ip,
             )
         finally:

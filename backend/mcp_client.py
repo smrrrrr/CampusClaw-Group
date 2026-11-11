@@ -30,8 +30,8 @@ INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(the\s+)?(previous|above|prior)\s+(instructions?|prompts?|rules?)", re.I),
     re.compile(r"(你现在是|从现在开始你(是|将)|扮演|你的新角色)", re.I),
     re.compile(r"(system\s*prompt|系统提示词|系统提示|初始指令)", re.I),
-    re.compile(r"(输出|泄露|打印|告诉我?)(你的)?(提示词|密钥|api\s*key|token)", re.I),
-    re.compile(r"(reveal|print|output|show)\s+(your\s+)?(system\s+prompt|api\s*key|secret|token)", re.I),
+    re.compile(r"(输出|泄露|打印|告诉我?)(你的)?(提示词|密钥|api[_\s]*key|token)", re.I),
+    re.compile(r"(reveal|print|output|show)\s+(your\s+)?(system\s+prompt|api[_\s]*key|secret|token)", re.I),
 ]
 
 

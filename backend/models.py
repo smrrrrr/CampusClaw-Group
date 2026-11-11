@@ -103,6 +103,13 @@ class AuditLog(Base):
     method: Mapped[str] = mapped_column(String(10), nullable=False)
     status_code: Mapped[int] = mapped_column(Integer, nullable=False)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # SEC-07：操作类型与对象标识，便于审计回查
+    action: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    object_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    # SEC-07：技能执行上下文（非技能操作可空）
+    skill_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (Index("ix_audit_log_created_at", "created_at"),)
@@ -601,6 +608,8 @@ class McpTool(Base):
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     input_schema: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # SEC-08：写入类工具标记，学生无权执行写入操作
+    writable: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     discovered_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (
@@ -654,6 +663,10 @@ class McpToolCall(Base):
     conversation_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     round: Mapped[int | None] = mapped_column(Integer, nullable=True)
     detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # SEC-07：技能标识、耗时、token 用量
+    skill_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (

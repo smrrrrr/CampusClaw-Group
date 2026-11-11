@@ -73,11 +73,55 @@ def run_simple_migrations() -> None:
         ainfo = conn.execute(text("PRAGMA table_info(audit_logs)")).fetchall()
         if ainfo:
             acols = {row[1] for row in ainfo}
+            audit_changed = False
             if "subject" not in acols:
                 conn.execute(text("ALTER TABLE audit_logs ADD COLUMN subject VARCHAR(32)"))
+                audit_changed = True
             if "class_id" not in acols:
                 conn.execute(text("ALTER TABLE audit_logs ADD COLUMN class_id INTEGER"))
-            if "subject" not in acols or "class_id" not in acols:
+                audit_changed = True
+            # SEC-07：操作类型、对象标识、技能上下文
+            if "action" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN action VARCHAR(64)"))
+                audit_changed = True
+            if "object_id" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN object_id VARCHAR(128)"))
+                audit_changed = True
+            if "skill_id" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN skill_id VARCHAR(64)"))
+                audit_changed = True
+            if "duration_ms" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN duration_ms INTEGER"))
+                audit_changed = True
+            if "tokens" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN tokens INTEGER"))
+                audit_changed = True
+            if audit_changed:
+                conn.commit()
+
+        # mcp_tool_calls 表增列：SEC-07 技能标识、耗时、token 用量
+        minfo = conn.execute(text("PRAGMA table_info(mcp_tool_calls)")).fetchall()
+        if minfo:
+            mcols = {row[1] for row in minfo}
+            mcp_changed = False
+            if "skill_id" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN skill_id VARCHAR(64)"))
+                mcp_changed = True
+            if "duration_ms" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN duration_ms INTEGER"))
+                mcp_changed = True
+            if "tokens" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN tokens INTEGER"))
+                mcp_changed = True
+            if mcp_changed:
+                conn.commit()
+
+        # mcp_tools 表增列：SEC-08 写入类工具标记
+        tinfo = conn.execute(text("PRAGMA table_info(mcp_tools)")).fetchall()
+        if tinfo:
+            tcols = {row[1] for row in tinfo}
+            if "writable" not in tcols:
+                conn.execute(text("ALTER TABLE mcp_tools ADD COLUMN writable BOOLEAN DEFAULT 0 NOT NULL"))
                 conn.commit()
 
         # 保留旧配置，解除 class_id 单列唯一，改为每班/学科/教师独立。

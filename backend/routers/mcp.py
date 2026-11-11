@@ -103,6 +103,9 @@ class ToolCallItem(BaseModel):
     conversation_id: int | None = None
     round: int | None = None
     detail: str | None = None
+    skill_id: str | None = None
+    duration_ms: int | None = None
+    tokens: int | None = None
     created_at: str
 
 
@@ -461,6 +464,9 @@ def list_tool_calls(
                 conversation_id=r.conversation_id,
                 round=r.round,
                 detail=r.detail,
+                skill_id=r.skill_id,
+                duration_ms=r.duration_ms,
+                tokens=r.tokens,
                 created_at=r.created_at.isoformat() if r.created_at else "",
             )
             for r in rows
