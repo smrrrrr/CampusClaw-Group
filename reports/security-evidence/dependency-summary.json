@@ -9,8 +9,8 @@
   },
   "backend": {
     "vulnerable_packages": 5,
-    "advisories": 48,
-    "unique_ids": 46,
+    "advisories": 10,
+    "unique_ids": 10,
     "severity": "pip-audit响应不提供严重度，未判级，不能填high/critical=0",
     "packages": [
       {
@@ -26,7 +26,7 @@
       {
         "name": "pillow",
         "version": "12.3.0",
-        "advisories": 39
+        "advisories": 1
       },
       {
         "name": "pyasn1",

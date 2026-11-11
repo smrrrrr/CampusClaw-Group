@@ -616,7 +616,7 @@
       ],
       "fixAvailable": {
         "name": "next",
-        "version": "16.4.5",
+        "version": "16.4.6",
         "isSemVerMajor": true
       }
     },
@@ -701,7 +701,7 @@
       ],
       "fixAvailable": {
         "name": "next",
-        "version": "16.4.5",
+        "version": "16.4.6",
         "isSemVerMajor": true
       }
     },

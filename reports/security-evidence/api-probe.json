@@ -1,5 +1,5 @@
 {
-  "time": "2026-11-05T01:33:36.877869+00:00",
+  "time": "2026-11-11T06:40:26.922420+00:00",
   "scope": "temporary SQLite + fake LLM/MCP; no production writes",
   "mutation": false,
   "checks": [
@@ -80,9 +80,9 @@
     },
     {
       "case": "SEC-02 跨班资料项目合同",
-      "expected": "403、无B班正文、有审计",
+      "expected": "404、无B班正文、有审计",
       "actual": {
-        "http": 403,
+        "http": 404,
         "body_leaked": false,
         "audited": true
       },
@@ -91,8 +91,8 @@
     {
       "case": "SEC-02 跨班资料课程口径",
       "expected": 404,
-      "actual": 403,
-      "passed": false
+      "actual": 404,
+      "passed": true
     },
     {
       "case": "SEC-02 检索 20260001",
@@ -213,10 +213,13 @@
           "conversation_id",
           "created_at",
           "detail",
+          "duration_ms",
           "id",
           "round",
           "server_name",
+          "skill_id",
           "status",
+          "tokens",
           "tool_ref",
           "user_id"
         ],
@@ -233,17 +236,16 @@
           "conversation_id",
           "round",
           "detail",
+          "skill_id",
+          "duration_ms",
+          "tokens",
           "created_at"
         ],
-        "missing": [
-          "skill_identifier",
-          "duration",
-          "usage"
-        ]
+        "missing": []
       },
-      "passed": false
+      "passed": true
     }
   ],
-  "passed": 24,
-  "failed": 2
+  "passed": 26,
+  "failed": 0
 }
