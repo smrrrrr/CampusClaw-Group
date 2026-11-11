@@ -3,6 +3,7 @@
 import asyncio
 import json
 from datetime import datetime, timezone
+from html import escape as _html_escape
 
 from fastapi import (
     APIRouter,
@@ -270,7 +271,11 @@ class ChatRequest(BaseModel):
 
 
 def _coerce_conversation(db: Session, conversation_id: int, current: CurrentUser) -> Conversation:
-    """校验会话归属当前学生、且班级与 JWT 一致（隔离），返回该会话。"""
+    """校验会话归属当前学生、且班级与 JWT 一致（隔离），返回该会话。
+
+    fetch-then-check：会话不存在 OR 不属于本人 OR 班级不匹配 → 一律 404，
+    不区分"不存在"与"无权访问"，避免泄露会话存在性。
+    """
     convo = db.get(Conversation, conversation_id)
     if convo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="会话不存在")
@@ -279,8 +284,8 @@ def _coerce_conversation(db: Session, conversation_id: int, current: CurrentUser
     class_id = require_student_class_id(current.class_id)
     if convo.class_id != class_id:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权访问其他班级的会话",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="会话不存在",
         )
     return convo
 
@@ -396,7 +401,7 @@ def list_conversations(
         ConversationItem(
             id=c.id,
             subject=c.subject,
-            title=c.title,
+            title=_html_escape(c.title),
             updated_at=c.updated_at.isoformat() if c.updated_at else "",
         )
         for c in rows
@@ -421,7 +426,7 @@ def conversation_messages(
         MessageItem(
             id=m.id,
             role=m.role,
-            content=m.content,
+            content=_html_escape(m.content),
             sources=[
                 Citation(**item)
                 for item in (json.loads(m.sources) if m.sources else [])

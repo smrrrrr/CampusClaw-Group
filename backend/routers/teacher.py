@@ -251,10 +251,11 @@ def reset_password(
         )
 
     # 重置密码属于班级管理权限，任课身份本身不授予此权限。
+    # fetch-then-check：学生不属于本人带班 → 404，不泄露学生存在性
     if student.class_id is None or student.class_id != current.homeroom_class_id:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="仅该班班主任可重置学生密码",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="学生账号不存在",
         )
 
     initial_password = generate_initial_password(student.identifier)

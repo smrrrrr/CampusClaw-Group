@@ -11,6 +11,7 @@
 
 import json
 from datetime import datetime
+from html import escape as _html_escape
 from pathlib import Path
 
 from fastapi import (
@@ -109,7 +110,10 @@ def _check_material_access(material: Material | None, current: CurrentUser) -> N
 
     学生：material.class_id == current.class_id
     教师：material.class_id IN current.teaching_classes
-    不匹配 → 403（由全局中间件记录审计日志）
+
+    fetch-then-check 模式：先按 ID 取行再校验归属。
+    材料不存在 OR 不属于当前用户范围 → 一律返回 404，
+    不区分"不存在"与"无权访问"，避免通过状态码泄露资源存在性。
     """
     if material is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="材料不存在")
@@ -117,15 +121,15 @@ def _check_material_access(material: Material | None, current: CurrentUser) -> N
     if current.role == "student":
         if current.class_id is None or material.class_id != current.class_id:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权访问非本班材料",
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="材料不存在",
             )
     elif current.role == "teacher":
         tc = current.teaching_classes or []
         if material.class_id not in tc:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权访问非任教班级材料",
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="材料不存在",
             )
 
 
@@ -328,7 +332,7 @@ def list_materials(
                 filename=m.filename,
                 file_type=m.file_type,
                 file_size=m.file_size,
-                description=m.description,
+                description=_html_escape(m.description) if m.description else None,
                 tags=_load_tags(m.tags),
                 is_indexed=m.is_indexed,
                 created_at=m.created_at,
@@ -421,8 +425,8 @@ def reindex_material(
     tc = current.teaching_classes or []
     if material.class_id not in tc:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权操作非任教班级材料",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="材料不存在",
         )
 
     run_indexing(db, material_id)
@@ -485,11 +489,12 @@ def delete_material(
     material = _get_material_or_404(db, material_id)
 
     # 班级隔离：仅能删除自己任教班级的材料
+    # fetch-then-check：跨班一律 404，不泄露存在性
     tc = current.teaching_classes or []
     if material.class_id not in tc:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权删除非任教班级材料",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="材料不存在",
         )
 
     relative_path = material.file_path

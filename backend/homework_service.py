@@ -90,10 +90,11 @@ def _get_submission_or_404(db: Session, submission_id: int) -> HomeworkSubmissio
 
 def _assert_teacher_can_access_homework(ctx: UserContext, hw: Homework) -> None:
     teaching = ctx.teaching_classes or []
+    # fetch-then-check：非任教班级 OR 非本学科 → 一律 404，不泄露存在性
     if hw.class_id not in teaching:
-        raise HomeworkServiceError(403, "无权操作非任教班级的作业")
+        raise HomeworkServiceError(404, "作业不存在")
     if hw.subject != ctx.subject:
-        raise HomeworkServiceError(403, "无权操作非本人学科的作业")
+        raise HomeworkServiceError(404, "作业不存在")
 
 
 # ---------------------------------------------------------------------------
@@ -138,7 +139,7 @@ def publish_homework(db: Session, ctx: UserContext, homework_id: int) -> Homewor
     hw = _get_homework_or_404(db, homework_id)
     _assert_teacher_can_access_homework(ctx, hw)
     if hw.teacher_id != ctx.user_id:
-        raise HomeworkServiceError(403, "仅作业作者可发布")
+        raise HomeworkServiceError(404, "作业不存在")
     if hw.status != "draft":
         raise HomeworkServiceError(400, "只有草稿状态的作业可发布")
     hw.status = "published"
@@ -152,7 +153,7 @@ def close_homework(db: Session, ctx: UserContext, homework_id: int) -> Homework:
     hw = _get_homework_or_404(db, homework_id)
     _assert_teacher_can_access_homework(ctx, hw)
     if hw.teacher_id != ctx.user_id:
-        raise HomeworkServiceError(403, "仅作业作者可关闭")
+        raise HomeworkServiceError(404, "作业不存在")
     if hw.status != "published":
         raise HomeworkServiceError(400, "只有已发布的作业可关闭")
     hw.status = "closed"
@@ -270,7 +271,7 @@ def get_homework_asset(db: Session, ctx: UserContext, homework_id: int, name: st
         has_history = hw.status == "closed" and db.query(HomeworkSubmission.id).filter_by(
             homework_id=hw.id, student_id=ctx.user_id).first() is not None
         if hw.class_id != ctx.class_id or (hw.status != "published" and not has_history):
-            raise HomeworkServiceError(403, "无权查看该作业配图")
+            raise HomeworkServiceError(404, "作业配图不存在")
     else:
         raise HomeworkServiceError(403, "无权查看该作业配图")
     try:
@@ -319,8 +320,9 @@ def submit_homework(
     if ctx.class_id is None:
         raise HomeworkServiceError(403, "您尚未分配班级")
     hw = _get_homework_or_404(db, homework_id)
+    # fetch-then-check：跨班作业 → 404，不泄露存在性
     if hw.class_id != ctx.class_id:
-        raise HomeworkServiceError(403, "无权提交其他班级的作业")
+        raise HomeworkServiceError(404, "作业不存在")
     if hw.status != "published":
         raise HomeworkServiceError(400, "作业未发布或已关闭，无法提交")
     due = hw.due_at
@@ -369,11 +371,12 @@ def get_student_submission(
     db: Session, ctx: UserContext, submission_id: int
 ) -> HomeworkSubmission:
     sub = _get_submission_or_404(db, submission_id)
+    # fetch-then-check：非本人提交 → 404，不泄露存在性
     if sub.student_id != ctx.user_id:
-        raise HomeworkServiceError(403, "无权查看他人的提交")
+        raise HomeworkServiceError(404, "提交记录不存在")
     hw = _get_homework_or_404(db, sub.homework_id)
     if hw.class_id != ctx.class_id:
-        raise HomeworkServiceError(403, "无权查看其他班级的提交")
+        raise HomeworkServiceError(404, "提交记录不存在")
     return sub
 
 
