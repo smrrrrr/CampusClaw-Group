@@ -1,7 +1,7 @@
 # CampusClaw 第9课安全修复 — 队友交接说明
 
 数据包日期：2026-11-05。用途：第9课"安全检查与审计"红项修复的组内复现与PR评审。
-修复分支：`fix/security-lesson09-DuLaolaoDu`，基于提交 `55d18d36d6aec194e549271658e7f7d15d683a0f`。
+修复分支：`fix/security-lesson09-DuLaolaoDu`，HEAD 提交 `70f0048b2a24d50512bd27b183c4e92a28704f9e`（含 7 条安全修复提交，基于基线 `55d18d3`）。
 配套数据包：`CampusClaw-Review-Data-20261105`（已放项目根目录）。
 
 本机已完成第9课安全修复全部代码与归档材料，四项核心门禁全绿。本说明覆盖从克隆代码到最终测试的全流程。**组员只需按第八节做交叉评审。**
@@ -67,7 +67,7 @@ scripts/security_precheck.py              → PASS（密钥0泄漏、范围完�
 
 | 项目 | 要求 |
 | --- | --- |
-| 代码 | 分支 `fix/security-lesson09-DuLaolaoDu`，检出提交 `55d18d3` |
+| 代码 | 分支 `fix/security-lesson09-DuLaolaoDu`，检出 HEAD `70f0048` |
 | 数据 | 项目根目录下 `CampusClaw-Review-Data-20261105(1)\CampusClaw-Review-Data-20261105\`（含 restore.py、manifest.json 等） |
 | 软件 | Git、Python 3.12+、Docker Desktop（Linux 容器引擎已启动）、uv、Node.js；构建时需联网 |
 
@@ -79,11 +79,11 @@ scripts/security_precheck.py              → PASS（密钥0泄漏、范围完�
 git clone https://github.com/smrrrrr/CampusClaw-Group.git CampusClaw-review
 cd CampusClaw-review
 git switch fix/security-lesson09-DuLaolaoDu
-git checkout 55d18d36d6aec194e549271658e7f7d15d683a0f
+git checkout 70f0048b2a24d50512bd27b183c4e92a28704f9e
 $ProjectRoot = (Get-Location).Path
 ```
 
-> 如果远程没有该分支，说明尚未推送；可让提交者推送后再拉取，或基于 `55d18d3` 本地创建同名分支。检出固定提交后 Git 提示 detached HEAD 属正常现象。
+> 分支已推送到远程 `origin/fix/security-lesson09-DuLaolaoDu`。检出固定提交后 Git 提示 detached HEAD 属正常现象。
 
 ### 2. 确认数据包位置并校验
 
