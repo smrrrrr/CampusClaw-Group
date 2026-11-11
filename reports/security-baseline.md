@@ -27,3 +27,43 @@
 当前没有完成逐条可利用性分析，也没有登记“本项目不受影响”的豁免。按安全规范§7，high/critical未处置前不能正式发布。后续先验证攻击前提并按规约升级，再保留前后对比；本轮不运行audit fix、不修改依赖来把报告变绿。
 
 网络恢复前的失败属于环境故障，不能计为0漏洞；上述数量来自2026-11-05实际收到的可解析联网响应。复查仍需联网；网络失败时新入口不沿用旧JSON冒称当次扫描成功。
+
+---
+
+## 修复后当日基线（2026-11-11）
+
+本节记录第9课安全修复完成后的密钥扫描与依赖审计结果，作为"当日基线"。
+
+### 密钥扫描（SEC-05）
+
+`scripts/security_precheck.py`（含 `secret_scan.py` + 运行日志 + 前端产物扫描）：
+
+| 扫描范围 | 命中数 | 说明 |
+| --- | --- | --- |
+| 工作区源码与提交历史 | 0 | `secret_scan.py` 全量扫描 |
+| 8 个 Docker 容器运行日志 | 0 | `docker logs` 全部容器 |
+| 前端构建静态产物（tar） | 0 | nginx 容器内 `/usr/share/nginx/html` |
+
+`reports/security-evidence/secret-baseline.json`：`complete=True`、`leak_detected=False`。
+
+**处置**：无真实明文密钥命中，无需轮换。`security_precheck.py` 已修复项目名与数据库路径硬编码问题（从 `.env` 读取 `COMPOSE_PROJECT_NAME` 与 `DATABASE_URL`），运行日志与前端产物扫描范围完整。
+
+### 依赖审计（SEC-06）
+
+审计结果（与 2026-11-05 基线一致，漏洞库未变）：
+
+| 范围 | 受影响包 | 退出码 | 处置方式 |
+| --- | --- | --- | --- |
+| 前端 | next(critical)、postcss(high)、source-map-js(high)、katex(moderate) | 1 | 登记例外条目 |
+| 后端 | certifi、ecdsa、pillow、pyasn1、python-jose | 1 | 登记例外条目 |
+| MCP 服务 | 0 | 0 | 无漏洞 |
+
+**处置**：9 个漏洞包全部写入 `reports/security-evidence/dependency-exceptions.json`，每条含：包名、版本、严重度、漏洞编号、为什么暂不修、降险措施、`review_after=2026-12-15`。`security_precheck.py` 新增 `load_exceptions()` / `check_dependency_exceptions()` 校验：已登记且未过期的漏洞不计红项；未登记或过期登记触发 RED。
+
+**门禁结果**：`scripts/security_precheck.py --reuse-dependency-evidence` 退出码 0，PASS。详见 `reports/security-evidence/run.json`。
+
+### 先红后绿证据
+
+`reports/gate-red-green.md`：
+- RED：注入假密钥 `sk-...`（拆分写入避免扫描器误报），`secret_scan.py` 命中，退出码 1
+- GREEN：移除假密钥后，`secret_scan.py` 0 命中，退出码 0

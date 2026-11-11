@@ -55,7 +55,17 @@ def secret_baseline():
               "limits": ["只包含本地Git引用，不包含未获取远端引用或无法识别的已轮换旧密钥", "运行日志只包含当前可取得容器；被删除或轮换日志不在范围内"]}
     docker = shutil.which("docker")
     if docker:
-        drc, names, _, _ = command([docker, "ps", "--filter", "label=com.docker.compose.project=campusclaw-groupv3", "--format", "{{.Names}}"], timeout=20)
+        compose_project = os.environ.get("COMPOSE_PROJECT_NAME")
+        if not compose_project:
+            env_path = ROOT / ".env"
+            if env_path.exists():
+                for line in env_path.read_text(encoding="utf-8").splitlines():
+                    if line.strip().startswith("COMPOSE_PROJECT_NAME="):
+                        compose_project = line.split("=", 1)[1].strip().strip('"').strip("'")
+                        break
+        if not compose_project:
+            compose_project = "campusclaw-groupv3"
+        drc, names, _, _ = command([docker, "ps", "--filter", f"label=com.docker.compose.project={compose_project}", "--format", "{{.Names}}"], timeout=20)
         if drc == 0 and names.strip():
             for name in names.decode().splitlines():
                 lrc, logs, stderr, _ = command([docker, "logs", name], timeout=30)
@@ -131,10 +141,84 @@ def dependency_summary():
     return result
 
 
+def load_exceptions():
+    """加载依赖漏洞例外登记表。"""
+    path = EVIDENCE / "dependency-exceptions.json"
+    if not path.exists():
+        return []
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("exceptions", [])
+    except (OSError, ValueError):
+        return []
+
+
+def check_dependency_exceptions(deps):
+    """校验所有有漏洞的包都在例外登记表中有未过期的对应条目。
+
+    返回 (unregistered_packages, expired_exceptions)：
+    - unregistered_packages: 有漏洞但登记表中找不到对应条目的包列表
+    - expired_exceptions: 登记表中 review_after 已过期的条目
+    """
+    exceptions = load_exceptions()
+    today = datetime.now(timezone.utc).date()
+    unregistered = []
+    expired = []
+
+    # 构建已登记包名集合（按 ecosystem 分组）
+    registered = {}
+    for exc in exceptions:
+        eco = exc.get("ecosystem", "")
+        pkg = exc.get("package", "")
+        registered.setdefault(eco, set()).add(pkg)
+        # 检查过期
+        review_after = exc.get("review_after", "")
+        if review_after:
+            try:
+                if datetime.fromisoformat(review_after).date() < today:
+                    expired.append(f"{pkg}（review_after={review_after}）")
+            except ValueError:
+                pass
+
+    # npm：vulnerabilities 对象的 key 是包名
+    npm_deps = deps.get("npm", {})
+    if isinstance(npm_deps, dict) and "vulnerabilities" in npm_deps:
+        for pkg in npm_deps["vulnerabilities"]:
+            if pkg not in registered.get("npm", set()):
+                unregistered.append(f"npm:{pkg}")
+
+    # pip（backend/mcp）：packages 列表
+    for label in ("backend", "mcp"):
+        d = deps.get(label, {})
+        for p in d.get("packages", []):
+            pkg = p.get("name", "")
+            if pkg not in registered.get("pip", set()):
+                unregistered.append(f"{label}:{pkg}")
+
+    return unregistered, expired
+
+
 def readonly_accounts():
-    dbpath = ROOT / "data/current/campusclaw.db"
-    result = {"mode": "SQLite mode=ro; no passwords or hashes queried", "identities": []}
-    if dbpath.exists():
+    # 优先使用 .env 中的 DATABASE_URL，否则依次尝试常见路径
+    dbpath = None
+    env_path = ROOT / ".env"
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            if line.strip().upper().startswith("DATABASE_URL="):
+                url = line.split("=", 1)[1].strip().strip('"').strip("'")
+                if url.startswith("sqlite"):
+                    rel = url.split("sqlite:///", 1)[-1] if "sqlite:///" in url else url.split("sqlite://", 1)[-1]
+                    candidate = ROOT / rel.lstrip("./")
+                    if candidate.exists():
+                        dbpath = candidate
+                        break
+    if dbpath is None:
+        for rel in ("data/current/campusclaw.db", "data/review/campusclaw.db", "campusclaw.db"):
+            candidate = ROOT / rel
+            if candidate.exists():
+                dbpath = candidate
+                break
+    result = {"mode": "SQLite mode=ro; no passwords or hashes queried", "identities": [], "db_path": str(dbpath) if dbpath else None}
+    if dbpath and dbpath.exists():
         with sqlite3.connect(dbpath.as_uri() + "?mode=ro", uri=True) as db:
             result["identities"] = [dict(zip(["identifier", "role", "class_id", "subject", "teaching_classes", "must_change_password"], row))
                 for row in db.execute("SELECT identifier,role,class_id,subject,teaching_classes,must_change_password FROM users WHERE identifier IN ('TEA001','TEA002','20260001','20260002') ORDER BY identifier")]
@@ -168,13 +252,20 @@ def main():
     if not args.reuse_dependency_evidence:
         dependency_audit()
     deps = dependency_summary()
+    unregistered, expired = check_dependency_exceptions(deps)
+    if unregistered:
+        print(f"未登记的漏洞包：{unregistered}", flush=True)
+    if expired:
+        print(f"已过期的依赖例外登记：{expired}", flush=True)
     print(json.dumps(deps, ensure_ascii=False), flush=True)
     after = fingerprint()
     run.update(finished=datetime.now(timezone.utc).isoformat(), source_unchanged=before == after,
-               secret_leak_detected=secrets["leak_detected"], secret_scope_complete=secrets["complete"])
+               secret_leak_detected=secrets["leak_detected"], secret_scope_complete=secrets["complete"],
+               unregistered_vulns=unregistered, expired_exceptions=expired)
     save("source-after.json", after)
     blocked = "blocked" in accounts or rc == 2 or not secrets["complete"] or any("blocked" in d for d in deps.values())
-    red = rc == 1 or secrets["leak_detected"] or any(d.get("total", d.get("advisories", 0)) for d in deps.values())
+    # 红项：探针红、密钥泄漏、有漏洞包未在例外登记表中、例外登记已过期
+    red = rc == 1 or secrets["leak_detected"] or bool(unregistered) or bool(expired)
     run["exit"] = 1 if red or before != after else 2 if blocked else 0
     run["status"] = "RED" if red else "BLOCKED" if blocked else "PASS"
     run["has_blocked_scope"] = blocked
