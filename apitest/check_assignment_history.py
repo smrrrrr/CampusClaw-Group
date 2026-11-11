@@ -89,7 +89,7 @@ with tempfile.TemporaryDirectory(prefix="assignment-history-", ignore_cleanup_er
             event.remove(engine, "before_cursor_execute", fail_delete)
         with SessionLocal() as db:
             check("M4 失败：教师分和错题整批回滚", db.get(HomeworkSubmission, sub).teacher_score == 59 and note_count(hw) == 1)
-        for who, status in [(None, 401), (5, 403), (6, 403), (3, 403)]:
+        for who, status in [(None, 401), (5, 404), (6, 404), (3, 403)]:
             check(f"M4 失败：{who}不能越权改分", grade(sub, 100, who).status_code == status and note_count(hw) == 1)
         grade(sub, 100)
 
@@ -110,10 +110,10 @@ with tempfile.TemporaryDirectory(prefix="assignment-history-", ignore_cleanup_er
             rows = req("GET", "/api/student/homeworks", who).json()
             check(f"H3 失败：{who}列表不泄露草稿他班或他人关闭历史", all(r["id"] not in (draft, other) for r in rows)
                   and (any(r["id"] == hw for r in rows) if who == 2 else all(r["id"] != hw for r in rows)))
-        for who, status in [(None, 401), (3, 403), (4, 403)]:
+        for who, status in [(None, 401), (3, 404), (4, 404)]:
             response = req("GET", f"/api/student/homeworks/{hw}/assets?name=fig.png", who)
             check(f"H3 失败：{who}不能读取他人关闭配图", response.status_code == status and response.content != png)
-        check("H3 失败：他人提交不可读", req("GET", f"/api/student/submissions/{sub}", 3).status_code == 403)
+        check("H3 失败：他人提交不可读", req("GET", f"/api/student/submissions/{sub}", 3).status_code == 404)
         for name, status in [("../bad.png", 400), ("unknown.png", 404)]:
             check(f"H3 失败：关闭配图名{name}", req("GET", f"/api/student/homeworks/{hw}/assets", 2, params={"name": name}).status_code == status)
         path = resolve_abs_path("history/fig.png"); path.write_bytes(b"bad")

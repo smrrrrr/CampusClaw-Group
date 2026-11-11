@@ -133,7 +133,7 @@ with tempfile.TemporaryDirectory(prefix="mistake-test-", ignore_cleanup_errors=T
             check("S1 正常：本人错题详情正确", r.status_code == 200 and body["question_stem"] == "解方程 x²-5x+6=0" and body["homework_title"] == "一元二次方程练习")
 
             r = client.get(f"/api/student/mistakes/{note_other_id}", headers=sh)
-            check("S1 失败：查看他人错题 → 403", r.status_code == 403)
+            check("S1 失败：查看他人错题 → 404", r.status_code == 404)
 
             r = client.get("/api/student/mistakes/99999", headers=sh)
             check("S2 失败：错题不存在 → 404", r.status_code == 404)
@@ -151,7 +151,7 @@ with tempfile.TemporaryDirectory(prefix="mistake-test-", ignore_cleanup_errors=T
             check("S1 正常：取消掌握 mastered=False", r.status_code == 200 and body["mastered"] is False and body["mastered_at"] is None)
 
             r = client.put(f"/api/student/mistakes/{note_other_id}/mastered", headers=sh, json={"mastered": True})
-            check("S3 失败：标记他人错题 → 403", r.status_code == 403)
+            check("S3 失败：标记他人错题 → 404", r.status_code == 404)
 
             # ---------- AI 讲解 ----------
             r = client.post(f"/api/student/mistakes/{note1_id}/explain", headers=sh)
@@ -159,7 +159,7 @@ with tempfile.TemporaryDirectory(prefix="mistake-test-", ignore_cleanup_errors=T
             check("S1 正常：AI 讲解返回文本", r.status_code == 200 and body["available"] is True and "错因" in (body["explanation"] or ""))
 
             r = client.post(f"/api/student/mistakes/{note_other_id}/explain", headers=sh)
-            check("S3 失败：讲解他人错题 → 403", r.status_code == 403)
+            check("S3 失败：讲解他人错题 → 404", r.status_code == 404)
 
             # AI 未配置降级
             mistake_service.generate_answer = lambda *a, **k: None

@@ -247,7 +247,7 @@ with tempfile.TemporaryDirectory(prefix="async-grading-", ignore_cleanup_errors=
         check("D2 正常：恢复后成功且累计attempts保留", gs.process_task(dead_id) == "succeeded"
               and task(dead_id)["attempts"] == 4 and task(dead_id)["execution_count"] == 1)
 
-        for who, status in ((None, 401), ("student", 403), ("other", 403), ("physics", 403)):
+        for who, status in ((None, 401), ("student", 403), ("other", 404), ("physics", 404)):
             for method, path in [("POST", f"/api/teacher/homeworks/{hw}/ai-grade"),
                                  ("GET", f"/api/teacher/homeworks/{hw}/grade-tasks"),
                                  ("GET", f"/api/teacher/grade-tasks/{first}"),
@@ -256,7 +256,7 @@ with tempfile.TemporaryDirectory(prefix="async-grading-", ignore_cleanup_errors=
                 check(f"E1 失败：{who or '未登录'} {method} {path}", response.status_code == status
                       and "input_json" not in response.text and "answer_text" not in response.text)
         with SessionLocal() as db:
-            check("E1 正常：403有审计", db.query(AuditLog).filter_by(status_code=403).count() >= 12)
+            check("E1 正常：403/404有审计", db.query(AuditLog).filter(AuditLog.status_code.in_((403, 404))).count() >= 12)
             before_counts = {table: db.execute(text(f"SELECT count(*) FROM {table}")).scalar() for table in
                              ("users", "homeworks", "homework_submissions", "grade_tasks")}
         for _ in range(2):

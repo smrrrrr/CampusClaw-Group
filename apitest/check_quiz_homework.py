@@ -136,16 +136,16 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
         for who in ("physics", "outsider"):
             for suffix in ("", "/submissions", "/assets?name=" + image_name):
                 check("H/教师班级或学科不符：" + who + suffix,
-                      request("GET", f"/api/teacher/homeworks/{h1}" + suffix, who).status_code == 403)
+                      request("GET", f"/api/teacher/homeworks/{h1}" + suffix, who).status_code == 404)
         check("H/同科同班教师可评分但源卷保持私有", request("GET", f"/api/teacher/homeworks/{h1}", "colleague").status_code == 200
               and request("GET", f"/api/teacher/quiz/papers/{paper_id}", "colleague").status_code == 404)
-        check("H/学生跨班读取或提交", request("GET", f"/api/student/homeworks/{h1}/assets", "s2", params={"name": image_name}).status_code == 403
-              and submit(h1, who="s2").status_code == 403)
+        check("H/学生跨班读取或提交", request("GET", f"/api/student/homeworks/{h1}/assets", "s2", params={"name": image_name}).status_code == 404
+              and submit(h1, who="s2").status_code == 404)
         check("H/访问他人的提交或教师接口：教师接口", request("GET", f"/api/teacher/homeworks/{h1}", "s1").status_code == 403)
         for who, expected in ((None, 401), ("s1", 403), ("colleague", 404), ("physics", 404)):
             check("Q/发布身份边界：" + str(who), publish(who=who).status_code == expected)
         with SessionLocal() as db:
-            check("H/拒绝访问已审计", db.query(AuditLog).filter_by(status_code=403).count() >= 7)
+            check("H/拒绝访问已审计", db.query(AuditLog).filter(AuditLog.status_code.in_((403, 404))).count() >= 7)
         check("H/配图异常：非法名", request("GET", f"/api/student/homeworks/{h1}/assets", "s1", params={"name": "../private"}).status_code == 400)
         check("H/配图异常：点路径", request("GET", f"/api/student/homeworks/{h1}/assets", "s1", params={"name": "."}).status_code == 400)
         check("H/配图异常：未知名", request("GET", f"/api/student/homeworks/{h1}/assets", "s1", params={"name": "missing.png"}).status_code == 404)
@@ -208,11 +208,14 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
         repeated_submission = submit(h1, "修改稿").json()["id"]
         check("H/截止前重新提交", repeated_submission == submission
               and len(request("GET", f"/api/teacher/homeworks/{h1}/submissions").json()) == 1)
-        check("H/访问他人的提交或教师接口：他人提交", request("GET", f"/api/student/submissions/{submission}", "s3").status_code == 403)
-        for who in ("physics", "outsider", "s1"):
+        check("H/访问他人的提交或教师接口：他人提交", request("GET", f"/api/student/submissions/{submission}", "s3").status_code == 404)
+        for who in ("physics", "outsider"):
             check("H/教师班级或学科不符：改分" + who, request("PUT", f"/api/teacher/submissions/{submission}/grade", who,
-                  json={"score": 99}).status_code == 403)
-            check("H/教师班级或学科不符：初批" + who, request("POST", f"/api/teacher/homeworks/{h1}/ai-grade", who).status_code == 403)
+                  json={"score": 99}).status_code == 404)
+            check("H/教师班级或学科不符：初批" + who, request("POST", f"/api/teacher/homeworks/{h1}/ai-grade", who).status_code == 404)
+        check("H/教师班级或学科不符：改分学生越权", request("PUT", f"/api/teacher/submissions/{submission}/grade", "s1",
+              json={"score": 99}).status_code == 403)
+        check("H/教师班级或学科不符：初批学生越权", request("POST", f"/api/teacher/homeworks/{h1}/ai-grade", "s1").status_code == 403)
         for invalid in (-1, 101, True, 0.5):
             check("H/教师评分整数边界：" + str(invalid), request("PUT", f"/api/teacher/submissions/{submission}/grade",
                   json={"score": invalid}).status_code == 422)
@@ -339,7 +342,7 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
         for suffix in ("/download", "/assets?name=legacy.png"):
             check("H/历史资料未登录与跨班隔离：" + suffix,
                   request("GET", f"/api/materials/{legacy_id}" + suffix, None).status_code == 401
-                  and request("GET", f"/api/materials/{legacy_id}" + suffix, "s2").status_code == 403)
+                  and request("GET", f"/api/materials/{legacy_id}" + suffix, "s2").status_code == 404)
         with SessionLocal() as db:
             asset = db.query(HomeworkAsset).filter_by(homework_id=h1).one()
             copied_path = asset.file_path

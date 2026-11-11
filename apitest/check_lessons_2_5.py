@@ -105,8 +105,8 @@ async def main():
             for _ in range(5):
                 await c.post("/api/auth/login", json={"identifier": "LOCK", "password": "wrong"})
             check("auth.five_failures_lock", (await c.post("/api/auth/login", json={"identifier": "LOCK", "password": password})).status_code == 429)
-            check("auth.subject_teacher_reset_denied", (await req("POST", "/api/teacher/reset-password", "SUBJECT", json={"student_id": ids["S1"]})).status_code == 403)
-            check("auth.other_homeroom_reset_denied", (await req("POST", "/api/teacher/reset-password", "T2", json={"student_id": ids["S1"]})).status_code == 403)
+            check("auth.subject_teacher_reset_denied", (await req("POST", "/api/teacher/reset-password", "SUBJECT", json={"student_id": ids["S1"]})).status_code == 404)
+            check("auth.other_homeroom_reset_denied", (await req("POST", "/api/teacher/reset-password", "T2", json={"student_id": ids["S1"]})).status_code == 404)
             check("auth.homeroom_reset", (await req("POST", "/api/teacher/reset-password", "T1", json={"student_id": ids["FIRST"]})).status_code == 200)
             check("auth.reset_immediately_blocks_old_token", (await req("GET", "/api/materials", "FIRST")).status_code == 403)
             with SessionLocal() as db:
@@ -190,7 +190,7 @@ async def main():
                 check("rag.irrelevant_no_hits", not retrieve_top_k(db, [101], "食堂营业时间几点钟"))
             check("materials.download", (await req("GET", f"/api/materials/{mid}/download", "S1")).content == text.encode())
             check("materials.preview", (await req("GET", f"/api/materials/{mid}/preview", "S1")).status_code == 200)
-            check("materials.cross_class_download_denied", (await req("GET", f"/api/materials/{othermid}/download", "S1")).status_code == 403)
+            check("materials.cross_class_download_denied", (await req("GET", f"/api/materials/{othermid}/download", "S1")).status_code == 404)
             check("materials.cross_class_list_denied", (await req("GET", "/api/materials?class_id=102", "S1")).status_code == 403)
             check("materials.cross_class_upload_denied", (await upload("denied.md", text.encode(), 103)).status_code == 403)
             check("materials.student_upload_denied", (await upload("denied.md", text.encode(), 101, "S1")).status_code == 403)

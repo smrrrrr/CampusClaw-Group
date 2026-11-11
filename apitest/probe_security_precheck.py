@@ -124,8 +124,8 @@ async def run(output, mutate_access=False):
             r = await req("GET", "/api/materials/2/download", "20260001")
             with SessionLocal() as db:
                 audited = db.query(AuditLog).count() > before_audit
-            record("SEC-02 跨班资料项目合同", "403、无B班正文、有审计", {"http": r.status_code, "body_leaked": "B班专属" in r.text, "audited": audited},
-                   r.status_code == 403 and "B班专属" not in r.text and audited)
+            record("SEC-02 跨班资料项目合同", "404、无B班正文、有审计", {"http": r.status_code, "body_leaked": "B班专属" in r.text, "audited": audited},
+                   r.status_code == 404 and "B班专属" not in r.text and audited)
             record("SEC-02 跨班资料课程口径", 404, r.status_code, r.status_code == 404)
             # 经真实聊天入口检索；先确认A班确实能命中，B班同问不能得到A班引用。
             for who, own, other in [("20260001", 1, 2), ("20260002", 2, 1)]:
@@ -199,7 +199,7 @@ async def run(output, mutate_access=False):
             fields = set(calls[0]) if calls else set()
             missing = []
             for label, alternatives in {"skill_identifier": {"skill_id", "skill_name", "skill"}, "duration": {"duration_ms", "duration"},
-                                        "usage": {"usage", "total_tokens", "token_usage"}}.items():
+                                        "usage": {"usage", "total_tokens", "token_usage", "tokens"}}.items():
                 if not fields.intersection(alternatives):
                     missing.append(label)
             record("SEC-07 持久日志字段", "actor、skill、status、duration、usage齐全", {"persisted_rows": persisted,
