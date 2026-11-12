@@ -31,6 +31,23 @@
 - **WHEN** 学生在会话中诱导模型调用写入类工具（如改分），服务端校验发起者为学生无权执行
 - **THEN** 服务端拒绝执行该工具调用，记为 denied，写入审计日志，数据库无变化
 
+服务端 MUST 由数据库 User 推导执行角色，MUST NOT 使用请求或模型声明的 role。执行前 MUST 再校验用户、会话、技能、服务器的班级、学科与教师归属及当前连接和工具清单。学生 MUST NOT 执行 writable 或未知工具。
+
+只读分类 MUST 来自宿主审阅过的内置端点 `http://mcp-tools:8090` 的 `formula_hint`/`unit_convert` 清单；远端 writable=true 可收紧权限，readOnlyHint 不得把未知工具变成只读。发现、保存及重连 MUST 保留分类；旧缓存也 MUST 经当前宿主分类重新核对，不能因旧 writable=false 放行未知工具。其他端点默认按可写处理。
+
+#### Scenario: 学生写入拒绝且 SSE 完整
+- **GIVEN** 合法学生、本班本科技能和发现到的写入工具
+- **WHEN** 模型要求调用该工具，即使问题或参数声称 role=teacher
+- **THEN** 工具执行零次，业务快照不变，落 denied 记录，SSE 包含 meta 与正常 done，无 NameError
+
+#### Scenario: 发现重连未知权限默认拒绝
+- **WHEN** 发现或重连清单包含内置只读、写入与伪造 readOnlyHint 的未知工具
+- **THEN** 缓存和执行保留分类，只有已审阅内置只读工具可由学生执行，未知工具不能借重连或旧默认值放行
+
+#### Scenario: 教师与错误归属执行对照
+- **GIVEN** 同一组工具和合成会话
+- **WHEN** 分别以数据库内的合法归属教师、学生、他班教师身份进入执行校验
+- **THEN** 合法教师可执行写入工具；学生被拒；他班教师或失效服务器被拒，均不调用外部工具
 ### Requirement: MCP 工具调用审计
 
 每次能归属到某台服务器的调用（ok、error，以及服务器存在但未连接或工具不可用导致的 denied）MUST 写一条记录，含工具引用、服务器名、状态、触发学生、会话编号、轮次、时间、**skill_id（触发的技能标识）、duration_ms（调用耗时毫秒）、tokens（模型用量，无模型调用时置空并注明原因）**，以及成功结果摘要或失败原因（截断）；参数只记录截断摘要，MUST NOT 记录令牌或模型完整回答。服务器已删除或改名导致无法归属的 denied 只出现在本次应答的 `tool_calls`，不写记录。记录 MUST 为单行 JSON，内容经转义与截断。
@@ -56,3 +73,13 @@
 
 - **WHEN** 模型诱导的写入工具调用被服务端拒绝（denied，原因：未授权）
 - **THEN** 写入一条审计记录，含 actor、action、object、status=denied、skill_id、原因，可按学生加时间窗回查
+
+调用记录 MUST 包含 skill_id 与实际 duration_ms；tokens MUST 保存发起调用的决策轮 usage.total_tokens；同轮多调用共享值，不可直接求和；上游未返回或没有决策调用时为 null，不能伪造为零。成功、错误和拒绝调用 MUST 同时写入 AuditLog（action=skill.invoke，object_id=会话编号，status_code=200/502/403）；两类记录查询 MUST 返回新增字段。审计写失败 MUST 回滚并记录不带异常原文、参数或令牌的单行告警，不中断回答。
+
+#### Scenario: 审计存储失败可观察
+- **WHEN** 临时审计数据库提交被故障注入为失败
+- **THEN** 事务回滚，回答流程继续，并产生 audit_write_failed 告警；日志没有异常原文或凭证
+
+#### Scenario: 决策轮用量可追溯
+- **WHEN** 决策模型响应包含 usage.total_tokens，或省略/返回非法用量
+- **THEN** 合法非负整数原样写入工具与安全审计并可查询；缺失或非法用量为 null，不记录为零

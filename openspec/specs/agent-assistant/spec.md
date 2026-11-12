@@ -131,6 +131,17 @@
 - **WHEN** 会话消息很多、学生继续追问
 - **THEN** 系统只取最近 6 轮、最多 12 条消息，去除 assistant 历史中的数字来源编号后再传给模型；原持久化历史不被改写
 
+历史接口 MUST 原样返回持久化 Markdown，不整体 html.escape；渲染沿用 ReactMarkdown，不启用原始 HTML 执行，危险链接不得执行。
+
+#### Scenario: 历史公式代码与实时回答一致
+- **GIVEN** 本人本班会话保存了含 `a < b` 的数学公式、代码围栏和 HTML 标签的回答
+- **WHEN** 学生重新读取消息并经既有组件渲染
+- **THEN** 接口正文逐字等于持久化值；公式无 katex-error，代码文本保留，script/img 事件属性和 javascript 链接不执行
+
+#### Scenario: 历史消息权限不变
+- **WHEN** 未登录或另一学生读取该会话历史
+- **THEN** 分别返回 401/404，不返回消息正文
+
 ### Requirement: 兼容既有约束
 
 多轮会话与流式提问 MUST 与既有功能共享约束：AI 提问计数 MUST 复用 `AIQuestionLog` 按北京时间自然日统计（每日 40 次上限，超限返回 429；429 审计尚待补齐）；班级数据隔离 MUST 仍经 `require_student_class_id` / JWT `class_id` 强制，检索仍经 `retrieve_top_k` 限定本班（含 `citations` 溯源）；未分配班级的学生进入问答 MUST 被拒绝（403，前端展示"暂无班级"空状态）。

@@ -148,6 +148,24 @@ MCP 管理与审计接口 MUST 只对教师开放，学生或其他角色访问 
 - **WHEN** 远端工具超时或返回 `isError=true`
 - **THEN** 本次调用记为 error 并写明原因，模型获知失败后继续作答，对话不中断
 
+服务端 MUST 由数据库 User 推导执行角色，MUST NOT 使用请求或模型声明的 role。执行前 MUST 再校验用户、会话、技能、服务器的班级、学科与教师归属及当前连接和工具清单。学生 MUST NOT 执行 writable 或未知工具。
+
+只读分类 MUST 来自宿主审阅过的内置端点 `http://mcp-tools:8090` 的 `formula_hint`/`unit_convert` 清单；远端 writable=true 可收紧权限，readOnlyHint 不得把未知工具变成只读。发现、保存及重连 MUST 保留分类；旧缓存也 MUST 经当前宿主分类重新核对，不能因旧 writable=false 放行未知工具。其他端点默认按可写处理。
+
+#### Scenario: 学生写入拒绝且 SSE 完整
+- **GIVEN** 合法学生、本班本科技能和发现到的写入工具
+- **WHEN** 模型要求调用该工具，即使问题或参数声称 role=teacher
+- **THEN** 工具执行零次，业务快照不变，落 denied 记录，SSE 包含 meta 与正常 done，无 NameError
+
+#### Scenario: 发现重连未知权限默认拒绝
+- **WHEN** 发现或重连清单包含内置只读、写入与伪造 readOnlyHint 的未知工具
+- **THEN** 缓存和执行保留分类，只有已审阅内置只读工具可由学生执行，未知工具不能借重连或旧默认值放行
+
+#### Scenario: 教师与错误归属执行对照
+- **GIVEN** 同一组工具和合成会话
+- **WHEN** 分别以数据库内的合法归属教师、学生、他班教师身份进入执行校验
+- **THEN** 合法教师可执行写入工具；学生被拒；他班教师或失效服务器被拒，均不调用外部工具
+
 ### Requirement: 工具内容的信任边界
 
 工具返回与工具说明都 MUST 视为不可信数据。工具返回 MUST 只出现在数据位（工具消息或用户消息中的数据段），并带 `[工具 tool@server 返回的数据]` 来源标注，MUST NOT 拼入系统提示。进入模型前 MUST 截断到上限长度并扫描已知指令式句式（如要求忽略前述指令、改变角色、泄露提示词或密钥）；命中时 MUST 整条丢弃并以固定说明替代，该次调用记为 error（原因：未通过安全检查）。发现阶段说明命中同类句式的工具 MUST NOT 进入缓存，并在连接结果中提示被排除的工具名。
@@ -180,6 +198,16 @@ MCP 管理与审计接口 MUST 只对教师开放，学生或其他角色访问 
 - **WHEN** 同伴教师打开调用记录
 - **THEN** 只看到其本人服务器在其任教班级的调用，看不到我的服务器触发的记录
 
+调用记录 MUST 包含 skill_id 与实际 duration_ms；tokens MUST 保存发起调用的决策轮 usage.total_tokens；同轮多调用共享值，不可直接求和；上游未返回或没有决策调用时为 null，不能伪造为零。成功、错误和拒绝调用 MUST 同时写入 AuditLog（action=skill.invoke，object_id=会话编号，status_code=200/502/403）；两类记录查询 MUST 返回新增字段。审计写失败 MUST 回滚并记录不带异常原文、参数或令牌的单行告警，不中断回答。
+
+#### Scenario: 审计存储失败可观察
+- **WHEN** 临时审计数据库提交被故障注入为失败
+- **THEN** 事务回滚，回答流程继续，并产生 audit_write_failed 告警；日志没有异常原文或凭证
+
+#### Scenario: 决策轮用量可追溯
+- **WHEN** 决策模型响应包含 usage.total_tokens，或省略/返回非法用量
+- **THEN** 合法非负整数原样写入工具与安全审计并可查询；缺失或非法用量为 null，不记录为零
+
 ### Requirement: MCP 与技能接口文档
 
 `/api/mcp/*` 与技能接口 MUST 在 OpenAPI 中声明摘要、请求/响应结构、需要的角色及 400/401/403/404/502 等错误码。本地小组环境 MUST 能通过 `.env` 的 `ENABLE_DOCS=true` 在统一入口打开 Swagger（`/docs`）并试调连接、工具列表、技能保存等主要接口；`ENABLE_DOCS` 缺省 MUST 为关闭，关闭时 `/docs` 与 `/openapi.json` 不可访问。
@@ -193,4 +221,3 @@ MCP 管理与审计接口 MUST 只对教师开放，学生或其他角色访问 
 
 - **WHEN** 未设置 `ENABLE_DOCS`
 - **THEN** `/docs` 与 `/openapi.json` 不返回接口描述
-
