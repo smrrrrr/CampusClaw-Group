@@ -233,6 +233,8 @@ class DecisionResult:
 
     content: str
     tool_calls: list[ToolCall]
+    # 此决策轮总用量；同轮多工具共享，不能按工具直接累加。
+    tokens: int | None = None
 
 
 def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float | None = None) -> DecisionResult:
@@ -265,7 +267,8 @@ def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float
             timeout=timeout or settings.deepseek_timeout,
         )
         resp.raise_for_status()
-        message = resp.json()["choices"][0]["message"]
+        data = resp.json()
+        message = data["choices"][0]["message"]
     except (httpx.HTTPError, KeyError, ValueError, IndexError) as exc:
         raise LLMGenerationError(f"DeepSeek 工具决策调用失败: {exc}") from exc
 
@@ -286,7 +289,11 @@ def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float
         if not isinstance(args, dict):
             args = {}
         calls.append(ToolCall(id=str(item.get("id") or name), name=name, arguments=args))
-    return DecisionResult(content=content, tool_calls=calls)
+    usage = data.get("usage")
+    tokens = usage.get("total_tokens") if isinstance(usage, dict) else None
+    if type(tokens) is not int or tokens < 0:
+        tokens = None
+    return DecisionResult(content=content, tool_calls=calls, tokens=tokens)
 
 
 async def stream_chat(

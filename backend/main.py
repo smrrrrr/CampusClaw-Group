@@ -8,7 +8,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 import httpx
-from fastapi import FastAPI, Request, HTTPException
+import logging
+from fastapi import BackgroundTasks, FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from sqlalchemy import text
@@ -75,8 +76,8 @@ app.include_router(analytics.router)
 
 
 # ---------------------------------------------------------------------------
-# 安全审计日志中间件：拦截 403/404 响应，异步写入 AuditLog。
-# 403：参数篡改、角色越权；404：fetch-then-check 跨班取数（不泄露存在性但仍需审计）。
+# 安全审计日志中间件：拦截 401/403/404 响应，异步写入 AuditLog。
+# 401：未登录/认证失效；403：参数篡改、角色越权；404：fetch-then-check 跨班取数（不泄露存在性但仍需审计）。
 # ---------------------------------------------------------------------------
 
 
@@ -101,45 +102,45 @@ async def csrf_protection_middleware(request: Request, call_next):
     return await call_next(request)
 
 
+def _record_security_denial(auth_header, path, method, status_code, ip, object_id):
+    """响应后台独立会话；只凭有效 access token 与当前数据库身份归属日志。"""
+    try:
+        with SessionLocal() as audit_db:
+            actor = None
+            if auth_header.startswith("Bearer "):
+                try:
+                    payload = decode_token(auth_header[7:])
+                    if payload.get("type") == TOKEN_TYPE_ACCESS:
+                        actor = audit_db.get(models.User, payload.get("user_id"))
+                except JWTError:
+                    pass
+            write_audit_log(
+                audit_db, user_id=actor.id if actor else None,
+                role=actor.role.value if actor else None,
+                class_id=actor.class_id if actor else None,
+                request_path=path[:256], method=method, status_code=status_code,
+                ip_address=ip, action=f"{method} {path}"[:64], object_id=object_id,
+            )
+    except Exception:  # 审计存储不可用不改变业务响应，且不记录异常原文。
+        logging.getLogger(__name__).error("audit_write_failed")
+
+
 @app.middleware("http")
 async def audit_security_middleware(request: Request, call_next):
     response = await call_next(request)
-
-    if response.status_code in (403, 404):
-        # 从 Authorization 头解析用户信息（可选，无 Token 则 user_id/role 为 None）
-        user_id = None
-        role = None
-        class_id = None
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            token = auth_header[7:]
-            try:
-                payload = decode_token(token)
-                if payload.get("type") == TOKEN_TYPE_ACCESS:
-                    user_id = payload.get("user_id")
-                    role = payload.get("role")
-                    if role == "student":
-                        class_id = payload.get("class_id")
-            except JWTError:
-                pass
-
-        ip = request.client.host if request.client else None
-        # 异步写入：用独立 DB session，catch-and-log 不影响主请求
-        try:
-            audit_db = SessionLocal()
-            write_audit_log(
-                audit_db,
-                user_id=user_id,
-                role=role,
-                class_id=class_id,
-                request_path=request.url.path,
-                method=request.method,
-                status_code=response.status_code,
-                ip_address=ip,
-            )
-        finally:
-            audit_db.close()
-
+    if response.status_code in (401, 403, 404):
+        route = request.scope.get("route")
+        path = getattr(route, "path", "/api/{unmatched}")
+        ids = [str(v) for k, v in request.path_params.items() if k.endswith("_id") and isinstance(v, int)]
+        background = BackgroundTasks()
+        if response.background is not None:
+            background.add_task(response.background)
+        background.add_task(
+            _record_security_denial, request.headers.get("Authorization", ""), path,
+            request.method, response.status_code, request.client.host if request.client else None,
+            ids[-1][:128] if ids else None,
+        )
+        response.background = background
     return response
 
 

@@ -608,8 +608,8 @@ class McpTool(Base):
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     input_schema: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
-    # SEC-08：写入类工具标记，学生无权执行写入操作
-    writable: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    # SEC-08：未知权限按可写处理；旧缓存还需通过宿主只读清单复核。
+    writable: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     discovered_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (

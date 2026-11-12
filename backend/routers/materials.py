@@ -363,7 +363,7 @@ def download_material(
     db: Session = Depends(get_db),
     expected_sha256: str | None = Query(None, pattern=r"^[a-f0-9]{64}$"),
 ):
-    """下载材料（attachment）。校验 class_id 匹配，不匹配 403 + 审计日志。"""
+    """下载材料（attachment）。校验 class_id 匹配，不匹配 404 + 审计日志。"""
     material = _get_material_or_404(db, material_id)
     _check_material_access(material, current)
 
@@ -390,7 +390,7 @@ def preview_material(
     current: CurrentUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """在线预览材料（inline）。校验 class_id 匹配，不匹配 403 + 审计日志。"""
+    """在线预览材料（inline）。校验 class_id 匹配，不匹配 404 + 审计日志。"""
     material = _get_material_or_404(db, material_id)
     _check_material_access(material, current)
 

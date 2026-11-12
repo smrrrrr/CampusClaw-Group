@@ -1,6 +1,7 @@
 """业务服务：登录失败锁定、审计日志、AI 提问次数限制。"""
 
 from datetime import datetime, timedelta, timezone
+import logging
 
 from sqlalchemy.orm import Session
 
@@ -8,6 +9,7 @@ from models import AIQuestionLog, AuditLog, LoginAttempt
 
 MAX_LOGIN_FAILURES = 5
 LOCK_MINUTES = 15
+logger = logging.getLogger(__name__)
 
 # 校园场景按中国时区划分自然日
 _CN_TZ = timezone(timedelta(hours=8))
@@ -112,6 +114,7 @@ def write_audit_log(
     except Exception:
         # 审计日志写入失败 MUST NOT 影响主请求
         db.rollback()
+        logger.error("audit_write_failed")
 
 
 # ---------------------------------------------------------------------------

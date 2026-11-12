@@ -1,6 +1,6 @@
 """可重放安全自查。只写脱敏证据，已知红项也必须非零退出；不升级依赖、不改教学库。"""
 import argparse
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import hashlib
 import json
 import os
@@ -122,13 +122,54 @@ def dependency_audit():
     return manifest
 
 
+def summarize_npm_audit(data, lock):
+    """保留原始 via/nodes，并解析锁定版本与传递通告，供精确例外匹配。"""
+    vulnerabilities = data["vulnerabilities"]
+    counts = data["metadata"]["vulnerabilities"]
+    if not isinstance(vulnerabilities, dict) or not isinstance(counts, dict):
+        raise ValueError("npm漏洞响应不完整")
+    if counts.get("total", 0) > 0 and not vulnerabilities:
+        raise ValueError("npm漏洞明细缺失")
+    packages = lock["packages"]
+
+    def advisories(name, seen):
+        if name in seen or name not in vulnerabilities:
+            return set(), False
+        item = vulnerabilities[name]
+        found, complete = set(), True
+        for via in item.get("via", []):
+            if isinstance(via, str):
+                nested, valid = advisories(via, seen | {name})
+                found.update(nested)
+                complete = complete and valid
+            elif isinstance(via, dict):
+                match = re.search(r"GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}", via.get("url", ""), re.I)
+                if match:
+                    found.add(match.group())
+                else:
+                    complete = False
+            else:
+                complete = False
+        return found, complete and bool(found)
+
+    result = {}
+    for name, item in vulnerabilities.items():
+        ids, complete = advisories(name, set())
+        nodes = item.get("nodes", [])
+        versions = {packages.get(node, {}).get("version") for node in nodes}
+        complete = complete and bool(nodes) and all(isinstance(v, str) and v for v in versions)
+        result[name] = {**item, "versions": sorted(v for v in versions if isinstance(v, str)),
+                        "advisory_ids": sorted(ids), "complete": complete}
+    return {**counts, "vulnerabilities": result}
+
+
 def dependency_summary():
     result = {}
     for label in ("npm", "backend", "mcp"):
         try:
             data = json.loads((EVIDENCE / f"{label}-audit.json").read_text(encoding="utf-8-sig"))
             if label == "npm":
-                result[label] = data["metadata"]["vulnerabilities"]
+                result[label] = summarize_npm_audit(data, json.loads((ROOT / "frontend/package-lock.json").read_text(encoding="utf-8")))
             else:
                 vulnerable = [d for d in data["dependencies"] if d.get("vulns")]
                 result[label] = {"vulnerable_packages": len(vulnerable), "advisories": sum(len(d["vulns"]) for d in vulnerable),
@@ -164,26 +205,41 @@ def check_dependency_exceptions(deps):
     unregistered = []
     expired = []
 
-    # 构建已登记包名集合（按 ecosystem 分组）
     registered = {}
+    valid_npm = {}
     for exc in exceptions:
-        eco = exc.get("ecosystem", "")
-        pkg = exc.get("package", "")
+        if not isinstance(exc, dict):
+            continue
+        eco, pkg = exc.get("ecosystem", ""), exc.get("package", "")
+        try:
+            valid_date = date.fromisoformat(exc.get("review_after", "")) >= today
+        except (TypeError, ValueError):
+            valid_date = False
+        if not valid_date:
+            expired.append(f"{pkg}（review_after无效或已过期）")
+            continue
         registered.setdefault(eco, set()).add(pkg)
-        # 检查过期
-        review_after = exc.get("review_after", "")
-        if review_after:
-            try:
-                if datetime.fromisoformat(review_after).date() < today:
-                    expired.append(f"{pkg}（review_after={review_after}）")
-            except ValueError:
-                pass
+        if eco == "npm":
+            valid_npm.setdefault(pkg, []).append(exc)
 
-    # npm：vulnerabilities 对象的 key 是包名
     npm_deps = deps.get("npm", {})
-    if isinstance(npm_deps, dict) and "vulnerabilities" in npm_deps:
-        for pkg in npm_deps["vulnerabilities"]:
-            if pkg not in registered.get("npm", set()):
+    details = npm_deps.get("vulnerabilities")
+    if not isinstance(details, dict):
+        unregistered.append("npm:漏洞明细缺失")
+    else:
+        for pkg, item in details.items():
+            covered = set()
+            versions = item.get("versions", [])
+            required_ids = set(item.get("advisory_ids", []))
+            for exc in valid_npm.get(pkg, []):
+                raw_ids = exc.get("advisories", [])
+                if isinstance(raw_ids, str):
+                    raw_ids = re.findall(r"GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}", raw_ids, re.I)
+                if not isinstance(raw_ids, list):
+                    continue
+                if required_ids.issubset(set(raw_ids)):
+                    covered.add(exc.get("version"))
+            if not item.get("complete") or not required_ids or not versions or not set(versions).issubset(covered):
                 unregistered.append(f"npm:{pkg}")
 
     # pip（backend/mcp）：packages 列表
@@ -243,7 +299,7 @@ def main():
            "tools": {rel: hashlib.sha256((ROOT / rel).read_bytes()).hexdigest() for rel in
                      ("scripts/security_precheck.py", "scripts/secret_scan.py", "apitest/probe_security_precheck.py")}}
     accounts = readonly_accounts()
-    rc, out, err, seconds = command([PY, "apitest/probe_security_precheck.py"], timeout=120)
+    rc, out, err, seconds = command([PY, "apitest/probe_security_precheck.py", "--output", EVIDENCE / "api-probe.json"], timeout=120)
     (PRIVATE / "api-probe-out.txt").write_bytes(out + err)
     run["probe_exit"] = rc
     print(f"接口探针退出码={rc}（1表示观察到红项，2表示执行未完成）", flush=True)

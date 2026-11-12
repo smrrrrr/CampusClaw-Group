@@ -30,6 +30,7 @@ async def main():
         from models import (
             AssistantSkill,
             Class,
+            Conversation,
             McpServer,
             McpTool,
             McpToolCall,
@@ -73,8 +74,8 @@ async def main():
         class FakeClient:
             fail_connect = False
             tools = [
-                DiscoveredTool("formula_hint", "数学公式与步骤提示", {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"], "additionalProperties": False}),
-                DiscoveredTool("unit_convert", "物理单位换算提示", {"type": "object", "properties": {"from_unit": {"type": "string"}, "to_unit": {"type": "string"}}, "required": ["from_unit", "to_unit"]}),
+                DiscoveredTool("formula_hint", "数学公式与步骤提示", {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"], "additionalProperties": False}, writable=False),
+                DiscoveredTool("unit_convert", "物理单位换算提示", {"type": "object", "properties": {"from_unit": {"type": "string"}, "to_unit": {"type": "string"}}, "required": ["from_unit", "to_unit"]}, writable=False),
             ]
             last_calls = []
 
@@ -315,7 +316,7 @@ async def main():
         candidates = [{
             "ref": "formula_hint@campus-tools", "tool_name": "formula_hint", "server_id": sid,
             "server_name": "campus-tools", "base_url": "http://mcp-tools:8090", "description": "公式提示",
-            "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+            "input_schema": FakeClient.tools[0].input_schema,
         }]
 
         def proposal(n, name="formula_hint"):
@@ -326,8 +327,15 @@ async def main():
             decisions.extend(DecisionResult(content="", tool_calls=p) for p in proposals)
             FakeClient.last_calls.clear()
             with SessionLocal() as db:
+                skill = db.get(AssistantSkill, skill_id)
+                skill.enabled = True
+                skill.tools = '["formula_hint@campus-tools"]'
+                server = db.get(McpServer, sid)
+                server.connected = True
+                db.merge(Conversation(id=conversation_id, student_id=4, class_id=101, subject="math", teacher_id=1))
+                db.commit()
                 events = mcp_orchestrator.run_tool_loop(
-                    db, skill=None, candidates=candidates, denied=[], messages=[],
+                    db, skill=skill, candidates=candidates, denied=[], messages=[],
                     class_id=101, subject="math", user_id=1, conversation_id=conversation_id,
                 )[0]
             return events

@@ -370,6 +370,12 @@ class AuditLogItem(BaseModel):
     method: str
     status_code: int
     ip_address: str | None = None
+    action: str | None = None
+    object_id: str | None = None
+    skill_id: str | None = None
+    duration_ms: int | None = None
+    # 决策轮用量，上游未返回或无模型调用时为 null。
+    tokens: int | None = None
     created_at: datetime
 
 
@@ -427,6 +433,11 @@ def query_audit_logs(
                 method=r.method,
                 status_code=r.status_code,
                 ip_address=r.ip_address,
+                action=r.action,
+                object_id=r.object_id,
+                skill_id=r.skill_id,
+                duration_ms=r.duration_ms,
+                tokens=r.tokens,
                 created_at=r.created_at,
             )
             for r in rows

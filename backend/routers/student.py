@@ -426,7 +426,7 @@ def conversation_messages(
         MessageItem(
             id=m.id,
             role=m.role,
-            content=_html_escape(m.content),
+            content=m.content,
             sources=[
                 Citation(**item)
                 for item in (json.loads(m.sources) if m.sources else [])

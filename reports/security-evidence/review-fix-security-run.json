@@ -1,0 +1,26 @@
+{
+  "started": "2026-11-12T07:48:36.874058+00:00",
+  "dependency_evidence_reused": false,
+  "business_changes": false,
+  "git_head": "704b631e2db5abe527416f6443bc7ce3d99caceb",
+  "tools": {
+    "scripts/security_precheck.py": "7363155a624cff99a0f2d336ede811ae647f012638f13a57dcb2900183746e21",
+    "scripts/secret_scan.py": "f69af628c2b8408201a2775bea276a20d10a81f463e60e1da0a8c3ba97bcd618",
+    "apitest/probe_security_precheck.py": "3f14a13312707b886ca185a8542a0b3f0edcabcedcb99342b12fc82a19fed9a8"
+  },
+  "probe_exit": 0,
+  "finished": "2026-11-12T07:49:11.789305+00:00",
+  "source_unchanged": true,
+  "secret_leak_detected": false,
+  "secret_scope_complete": false,
+  "unregistered_vulns": [
+    "npm:katex",
+    "npm:next",
+    "npm:postcss",
+    "npm:source-map-js"
+  ],
+  "expired_exceptions": [],
+  "exit": 1,
+  "status": "RED",
+  "has_blocked_scope": true
+}

@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 
@@ -20,11 +21,12 @@ from sqlalchemy.orm import Session
 from config import settings
 from database import SessionLocal
 from llm_service import LLMGenerationError, ToolCall, decide_with_tools
-from mcp_client import McpClient, McpClientError, looks_like_injection
-from models import McpServer, McpTool, McpToolCall
+from mcp_client import McpClient, McpClientError, looks_like_injection, tool_requires_write
+from models import AssistantSkill, AuditLog, Conversation, McpServer, McpTool, McpToolCall, Role, User
 
 TRUNCATE_CHARS = 2000
 DETAIL_MAX = 500
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +110,7 @@ def resolve_candidates(db: Session, skill, teacher_id: int | None, class_id: int
                 "base_url": server.base_url,
                 "description": tool.description,
                 "input_schema": json.loads(tool.input_schema or "{}"),
-                "writable": bool(getattr(tool, "writable", False)),
+                "writable": tool.writable or tool_requires_write(server.base_url, tool.name),
             }
         )
     return candidates, denied
@@ -174,8 +176,9 @@ def record_call(
     duration_ms: int | None = None,
     tokens: int | None = None,
 ) -> None:
-    """独立会话写一条调用记录；失败只忽略，不影响回答。"""
+    """独立事务写调用及安全审计；tokens 是决策轮用量；上游未返回或无决策时为 null。"""
     db = SessionLocal()
+    duration_ms = duration_ms if duration_ms is not None else 0
     try:
         db.add(
             McpToolCall(
@@ -195,9 +198,19 @@ def record_call(
                 tokens=tokens,
             )
         )
+        actor = db.get(User, user_id) if user_id is not None else None
+        db.add(AuditLog(
+            user_id=user_id, role=actor.role.value if actor else None,
+            class_id=class_id, subject=subject,
+            request_path="/api/student/conversations/{conversation_id}/chat", method="POST",
+            status_code={"ok": 200, "error": 502, "denied": 403}[status],
+            action="skill.invoke", object_id=str(conversation_id) if conversation_id is not None else None,
+            skill_id=skill_id, duration_ms=duration_ms, tokens=tokens,
+        ))
         db.commit()
     except Exception:  # noqa: BLE001 审计失败不影响主流程
         db.rollback()
+        logger.error("audit_write_failed")
     finally:
         db.close()
 
@@ -216,6 +229,40 @@ def _conversation_call_count(db: Session, conversation_id: int) -> int:
 def _summarize(text: str) -> str:
     compact = " ".join(text.split())
     return compact[:120]
+
+
+def _execution_problem(db, skill, candidate, class_id, subject, user_id, conversation_id):
+    """逐次复核数据库身份、资源归属和当前工具分类，不接受模型声明的角色。"""
+    user = db.get(User, user_id, populate_existing=True)
+    convo = db.get(Conversation, conversation_id, populate_existing=True)
+    saved_skill = db.get(AssistantSkill, skill.id, populate_existing=True) if skill is not None else None
+    server = db.get(McpServer, candidate["server_id"], populate_existing=True)
+    if user is None or user.must_change_password or convo is None or saved_skill is None or server is None:
+        return "工具执行上下文已失效"
+    if (convo.class_id != class_id or convo.subject != subject
+        or saved_skill.class_id != class_id or saved_skill.subject != subject or not saved_skill.enabled
+        or server.class_id != class_id or server.subject != subject or not server.connected
+        or server.base_url != candidate["base_url"] or server.name != candidate["server_name"]
+        or saved_skill.teacher_id != server.teacher_id or convo.teacher_id != server.teacher_id
+        or candidate["ref"] not in json.loads(saved_skill.tools or "[]")):
+        return "工具不在当前授权范围"
+    tool = db.query(McpTool).filter_by(server_id=server.id, name=candidate["tool_name"]).one_or_none()
+    if tool is None:
+        return "工具不在发现清单"
+    if json.loads(tool.input_schema or "{}") != candidate["input_schema"]:
+        return "工具清单已更新，请重新提问"
+    if user.role == Role.student:
+        if user.class_id != class_id or convo.student_id != user.id:
+            return "无权访问该会话"
+        if tool.writable or tool_requires_write(server.base_url, tool.name):
+            return "学生无权执行写入或未知权限工具"
+    elif user.role == Role.teacher:
+        if (user.id != server.teacher_id or user.subject != subject
+            or class_id not in json.loads(user.teaching_classes or "[]")):
+            return "教师无权执行该工具"
+    else:
+        return "无权执行该工具"
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -310,7 +357,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="denied", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail="超出调用上限",
-                    skill_id=skill_id,
+                    skill_id=skill_id, tokens=decision.tokens,
                 )
                 messages.append(
                     {
@@ -332,7 +379,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=f"参数不合结构：{problem}",
-                    skill_id=skill_id,
+                    skill_id=skill_id, tokens=decision.tokens,
                 )
                 messages.append(
                     {
@@ -345,8 +392,8 @@ def run_tool_loop(
                 continue
 
             # SEC-08：写入类工具授权校验——学生无权执行写入操作
-            if candidate.get("writable") and getattr(ctx, "role", None) != "teacher":
-                reason = "学生无权执行写入类工具"
+            reason = _execution_problem(db, skill, candidate, class_id, subject, user_id, conversation_id)
+            if reason is not None:
                 tool_events.append(
                     {"ref": candidate["ref"], "status": "denied", "reason": reason}
                 )
@@ -355,7 +402,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="denied", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=reason,
-                    skill_id=skill_id,
+                    skill_id=skill_id, tokens=decision.tokens,
                 )
                 messages.append(
                     {
@@ -394,7 +441,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=str(exc),
-                    skill_id=skill_id, duration_ms=duration_ms,
+                    skill_id=skill_id, tokens=decision.tokens, duration_ms=duration_ms,
                 )
                 messages.append(
                     {
@@ -419,7 +466,7 @@ def run_tool_loop(
                     server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                     tool_ref=candidate["ref"], status="error", user_id=user_id,
                     conversation_id=conversation_id, round_no=round_no, detail=reason,
-                    skill_id=skill_id, duration_ms=duration_ms,
+                    skill_id=skill_id, tokens=decision.tokens, duration_ms=duration_ms,
                 )
                 messages.append(
                     {
@@ -439,7 +486,7 @@ def run_tool_loop(
                 server_name=candidate["server_name"], tool_name=candidate["tool_name"],
                 tool_ref=candidate["ref"], status="ok", user_id=user_id,
                 conversation_id=conversation_id, round_no=round_no, detail=_summarize(truncated),
-                skill_id=skill_id, duration_ms=duration_ms,
+                skill_id=skill_id, tokens=decision.tokens, duration_ms=duration_ms,
             )
             marker = f"[工具 {candidate['tool_name']}@{candidate['server_name']} 返回的数据]"
             results_for_answer.append(f"{marker}\n{truncated}")

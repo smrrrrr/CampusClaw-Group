@@ -1,10 +1,12 @@
 # CampusClaw 第9课安全修复 — 队友交接说明
 
 数据包日期：2026-11-05。用途：第9课"安全检查与审计"红项修复的组内复现与PR评审。
-修复分支：`fix/security-lesson09-DuLaolaoDu`，基于提交 `55d18d36d6aec194e549271658e7f7d15d683a0f`。
-配套数据包：`CampusClaw-Review-Data-20261105`（已放项目根目录）。
+历史数据包兼容基线（第三次评审已验证；本轮修复见 `openspec/changes/2026-11-12-fix-review-findings/validation.md`）：
 
-本机已完成第9课安全修复全部代码与归档材料，四项核心门禁全绿。本说明覆盖从克隆代码到最终测试的全流程。**组员只需按第八节做交叉评审。**
+修复分支：`fix/security-lesson09-DuLaolaoDu`，基于提交 `70f0048b2a24d50512bd27b183c4e92a28704f9e`。
+配套数据包：`CampusClaw-Review-Data-20261105`（2026-11-12 重打包版；当前工作树不含数据包，需使用组内已验证的外部包）。
+
+本文的旧完成情况属于历史基线，第三次评审已指出漏测和漏报。本轮修复的实际命令、结果及未解决项见上述 OpenSpec validation；不能据历史全绿结论合并。组员仍需按第八节独立复现签名。
 
 ## 一、老师本次课的要求
 
@@ -20,10 +22,10 @@
 | **SEC-06 依赖处置** | 升级高危依赖至修复版本，或写成可检查登记条目；密钥扫描与依赖审计接入 `make check-security`，有命中退出码非 0 |
 | **SEC-07 审计日志七列** | 操作人、操作时间、操作类型、操作对象、结果状态、技能标识、用量与耗时；被拒绝请求(401/403/404)同样落一条；日志查询接口教师可查、学生不可见 |
 | **SEC-08 工具执行鉴权** | 模型决策调用写入工具不等于授权；宿主执行前按身份与归属逐次校验，不通过拒绝并留审计；四步实验当堂做完 |
-| **注入三件套** | SQL 查询参数化 + 排序列名白名单；XSS 文本字段 `html.escape()`；CSRF 一次性令牌 + SameSite Cookie；三条反例写进 `apitest/cases/` 常驻回归 |
+| **注入三件套** | SQL 查询参数化 + 排序列名白名单；XSS 普通文本字段转义；Markdown 在渲染边界禁止原始 HTML；CSRF 一次性令牌 + SameSite Cookie；三条反例写进 `apitest/cases/` 常驻回归 |
 | **回归与归档** | `make check` 全量 + 异步判据三条 + 注入反例三件套全绿；证据归档 `reports/`；交叉评审至少 2 条 |
 
-## 二、完成情况与是否达到要求
+## 二、历史完成记录（第三次评审发现缺口，非本轮验证）
 
 ### 已完成（红项已转绿）
 
@@ -35,7 +37,7 @@
 | SEC-04 批改写入校验 | — | 直调批改写入接口被拒，库无残留 | 探针 SEC-04 通过 |
 | SEC-07 审计字段 | 缺 skill_id、duration_ms、tokens | 新增三列 + 写入逻辑 + 迁移脚本；查询接口仅班主任可查本班 | 探针 SEC-07 通过 |
 | 注入三件套（防御） | 无服务端转义、无 CSRF | SQL 参数化；文本字段 `html.escape()`；CSRF 双提交 Cookie | `check.py` 全绿 |
-| SEC-08 工具授权 | 无写入类工具区分 | `McpTool.writable` 字段；学生执行写入工具 denied 并审计 | 注入实验 4/4 通过 |
+| SEC-08 工具授权 | 无写入类工具区分 | `McpTool.writable` 字段；学生执行写入工具 denied 并审计 | 注入实验 4 组隔离替身实验（实际结果见 JSON） |
 
 ### 归档材料（已全部补齐）
 
@@ -47,7 +49,7 @@
 | SEC-05 密钥扫描 | `reports/security-evidence/secret-baseline.json` | `complete=True`、`leak_detected=False`，8 容器日志 + 前端产物 0 命中 |
 | SEC-06 依赖登记 | `reports/security-evidence/dependency-exceptions.json` | 9 条漏洞包登记，含理由与降险措施；`security_precheck.py` 校验已登记包不计红项 |
 | 修复前后对照表 | `reports/security-fix-log.md` | 编号/修复前/修复后/判定，20 行对照 |
-| SEC-08 四步实验 | `reports/sec08-experiment.md` | 恶意文档/索要提示词/改规则/绕权限，4/4 通过 |
+| SEC-08 四步实验 | `reports/sec08-experiment.md` | 恶意文档/索要提示词/改规则/绕权限，4 组隔离替身实验（实际结果见 JSON） |
 | 先红后绿证据 | `reports/gate-red-green.md` | 假密钥触发 RED（退出码1），移除后 GREEN（退出码0） |
 | 返工记录 | `reports/rework-lesson09-csrf.md` | CSRF 中间件与未认证请求交互的返工 |
 | 四步演示走查 | 见本说明第七节 7.4 | 登录200→提交202→轮询→跨班404 |
@@ -57,7 +59,7 @@
 ```
 scripts/check.py                          → 28/28 PASS（含 check_injection，门禁全部通过）
 apitest/probe_security_precheck.py        → 26 通过，0 红项
-reports/.../prompt-injection/run_experiments.py → 4/4 通过
+apitest/probe_prompt_injection.py → 4 组隔离替身实验（实际结果见 JSON）
 scripts/security_precheck.py              → PASS（密钥0泄漏、范围完整、依赖全部登记）
 ```
 
@@ -67,8 +69,8 @@ scripts/security_precheck.py              → PASS（密钥0泄漏、范围完�
 
 | 项目 | 要求 |
 | --- | --- |
-| 代码 | 分支 `fix/security-lesson09-DuLaolaoDu`，检出提交 `55d18d3` |
-| 数据 | 项目根目录下 `CampusClaw-Review-Data-20261105(1)\CampusClaw-Review-Data-20261105\`（含 restore.py、manifest.json 等） |
+| 代码 | 分支 `fix/security-lesson09-DuLaolaoDu`，检出提交 `70f0048` |
+| 数据 | 项目根目录下 `CampusClaw-Review-Data-20261105(1)\CampusClaw-Review-Data-20261105\`（须使用 2026-11-12 重打包版，manifest 的 code_commit=70f0048；含 restore.py、manifest.json 等） |
 | 软件 | Git、Python 3.12+、Docker Desktop（Linux 容器引擎已启动）、uv、Node.js；构建时需联网 |
 
 ## 四、从零启动（Windows PowerShell）
@@ -79,11 +81,12 @@ scripts/security_precheck.py              → PASS（密钥0泄漏、范围完�
 git clone https://github.com/smrrrrr/CampusClaw-Group.git CampusClaw-review
 cd CampusClaw-review
 git switch fix/security-lesson09-DuLaolaoDu
-git checkout 55d18d36d6aec194e549271658e7f7d15d683a0f
+git checkout 70f0048b2a24d50512bd27b183c4e92a28704f9e
+# 此固定提交用于匹配数据包；恢复完成后测试本轮修复须切换到包含本轮修改的 review 修复分支。
 $ProjectRoot = (Get-Location).Path
 ```
 
-> 如果远程没有该分支，说明尚未推送；可让提交者推送后再拉取，或基于 `55d18d3` 本地创建同名分支。检出固定提交后 Git 提示 detached HEAD 属正常现象。
+> 如果远程没有该分支，说明尚未推送；可让提交者推送后再拉取，或基于 `70f0048` 本地创建同名分支。检出固定提交后 Git 提示 detached HEAD 属正常现象。
 
 ### 2. 确认数据包位置并校验
 
@@ -200,19 +203,21 @@ backend\.venv\Scripts\python.exe scripts\check.py
 ### 7.3 提示注入实验（SEC-08 深度验证）
 
 ```powershell
-backend\.venv\Scripts\python.exe reports\security-evidence\prompt-injection\run_experiments.py
+backend\.venv\Scripts\python.exe apitest\probe_prompt_injection.py
 ```
 
-预期：**4/4 通过**。四组实验：
+预期：**4 组隔离替身实验（实际结果见 JSON）**。四组实验：
 
 | 实验 | 内容 | 通过判据 |
 | --- | --- | --- |
-| 实验一 | 直接指令注入 | 5 组 payload 全部被 `looks_like_injection` 拦截；3 组正常文本不误报 |
-| 实验二 | 间接注入（参数校验） | `validate_arguments` 拒绝缺必填、超长、枚举越界、类型错误、额外字段 |
-| 实验三 | 指令外泄（输出截断） | 工具输出截断至 `TRUNCATE_CHARS`，泄露标记不出现在截断后文本或摘要中 |
-| 实验四 | 写入类工具学生越权 | `writable=True` 时学生被拒，教师放行 |
+| 实验一 | 直接指令注入 | 强制假模型提出候选集外工具，宿主 denied，零执行，SSE 正常 done |
+| 实验二 | 间接注入 | 合法工具返回改写规则指令，内容不进模型，审计 error，SSE 正常 done |
+| 实验三 | 指令外泄 | 工具结果要求输出提示词与密钥，正文被丢弃，审计 error，SSE 正常 done |
+| 实验四 | 写入类工具学生越权 | 学生伪造 role 仍零执行、业务不变、denied 且 done；完整探针另含教师对照 |
 
-证据：`reports/security-evidence/prompt-injection/results.json`
+实验使用临时库、强制假模型和假 MCP，验证宿主防线，不代表真实模型的抗注入率。
+
+证据：`reports/security-evidence/prompt-injection-results.json`
 
 ### 7.4 四步演示走查（老师当堂演示路径）
 
@@ -341,7 +346,7 @@ backend\.venv\Scripts\python.exe scripts\security_precheck.py
 | 注入模式 | `backend/mcp_client.py` | `INJECTION_PATTERNS` 增强匹配 `api[_s]*key` |
 | 测试 | `apitest/probe_security_precheck.py` | SEC-02 期望 403→404；SEC-07 字段含 tokens |
 | 测试 | 8 个 apitest 文件 | fetch-then-check 场景期望码 403→404 |
-| 实验 | `reports/security-evidence/prompt-injection/run_experiments.py` | 4 组提示注入实验 |
+| 实验 | `apitest/probe_prompt_injection.py` | 4 组提示注入实验 |
 | 报告 | `reports/security-evidence/lesson09-security-fix-report.md` | 修复前后对照表 |
 
 ## 十一、注意事项
