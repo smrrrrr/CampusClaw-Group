@@ -1,0 +1,107 @@
+{
+  "scope": "只读验证；临时 SQLite + 假模型/假 MCP；未修改仓库",
+  "code_commit": "70f0048b2a24d50512bd27b183c4e92a28704f9e",
+  "function_signature": [
+    "db: 'Session'",
+    "skill",
+    "candidates: 'list[dict]'",
+    "denied: 'list[dict]'",
+    "messages: 'list[dict]'",
+    "class_id: 'int'",
+    "subject: 'str'",
+    "user_id: 'int'",
+    "conversation_id: 'int'"
+  ],
+  "ctx_in_module_globals": false,
+  "cases": [
+    {
+      "case": "A 控制组：只读工具，不注入 ctx",
+      "ctx_role": null,
+      "tool_name": "read_hint",
+      "writable": false,
+      "tool_executed": [
+        "read_hint"
+      ],
+      "tool_events": [
+        {
+          "ref": "read_hint@synthetic",
+          "status": "ok",
+          "reason": "合成工具返回数据（非敏感）"
+        }
+      ],
+      "audit_rows": [
+        {
+          "status": "ok",
+          "tool_name": "read_hint",
+          "detail": "合成工具返回数据（非敏感）",
+          "skill_id": "7",
+          "user_id": 2
+        }
+      ],
+      "error": null
+    },
+    {
+      "case": "B 生产路径：写入工具，不注入 ctx",
+      "ctx_role": null,
+      "tool_name": "write_score",
+      "writable": true,
+      "tool_executed": [],
+      "tool_events": null,
+      "audit_rows": [],
+      "error": {
+        "type": "NameError",
+        "message": "name 'ctx' is not defined"
+      }
+    },
+    {
+      "case": "C 诊断：写入工具 + ctx=student",
+      "ctx_role": "student",
+      "tool_name": "write_score",
+      "writable": true,
+      "tool_executed": [],
+      "tool_events": [
+        {
+          "ref": "write_score@synthetic",
+          "status": "denied",
+          "reason": "学生无权执行写入类工具"
+        }
+      ],
+      "audit_rows": [
+        {
+          "status": "denied",
+          "tool_name": "write_score",
+          "detail": "学生无权执行写入类工具",
+          "skill_id": "7",
+          "user_id": 2
+        }
+      ],
+      "error": null
+    },
+    {
+      "case": "D 诊断：写入工具 + ctx=teacher",
+      "ctx_role": "teacher",
+      "tool_name": "write_score",
+      "writable": true,
+      "tool_executed": [
+        "write_score"
+      ],
+      "tool_events": [
+        {
+          "ref": "write_score@synthetic",
+          "status": "ok",
+          "reason": "合成工具返回数据（非敏感）"
+        }
+      ],
+      "audit_rows": [
+        {
+          "status": "ok",
+          "tool_name": "write_score",
+          "detail": "合成工具返回数据（非敏感）",
+          "skill_id": "7",
+          "user_id": 2
+        }
+      ],
+      "error": null
+    }
+  ]
+}
