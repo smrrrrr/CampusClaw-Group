@@ -122,6 +122,19 @@ def main():
             for module in (orchestrator, services): module.logger.removeHandler(handler)
             engine.dispose()
 
+    # 第10课：课程“高危 0 条”独立于例外登记；pip 未判级不能折算为 0。
+    npm_high = {"npm": {"high": 1, "critical": 1, "vulnerabilities": {}}}
+    check("第10课：npm high/critical 计数直接进入课程判据", gate.course_high_critical(npm_high) == (2, []))
+    check("第10课：npm 明细缺失视为未判级",
+          gate.course_high_critical({"npm": {"blocked": "x"}}) == (None, []))
+    pip_vuln = {"npm": {"high": 0, "critical": 0, "vulnerabilities": {}},
+                "backend": {"vulnerable_packages": 3}, "mcp": {"vulnerable_packages": 0}}
+    check("第10课：pip 有漏洞但无严重度时阻塞而不是 0", gate.course_high_critical(pip_vuln) == (0, ["backend"]))
+    check("第10课：全部为 0 才给出高危 0",
+          gate.course_high_critical({"npm": {"high": 0, "critical": 0, "vulnerabilities": {}},
+                                     "backend": {"vulnerable_packages": 0},
+                                     "mcp": {"vulnerable_packages": 0}}) == (0, []))
+
 
 if __name__ == "__main__":
     main()

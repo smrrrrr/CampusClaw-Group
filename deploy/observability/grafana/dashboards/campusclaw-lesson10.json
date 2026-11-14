@@ -1,0 +1,83 @@
+{
+  "uid": "campusclaw-lesson10",
+  "title": "CampusClaw 第10课：技能、接口与队列",
+  "tags": ["campusclaw", "lesson10"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {"from": "now-1h", "to": "now"},
+  "templating": {"list": []},
+  "annotations": {"list": []},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "三个技能的调用量（来自已记录事件）",
+      "description": "只统计 skill_invocations_total 中真实存在的 skill/status；mistake_explanation 若显示 No data，表示事件尚未接入。",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (skill, status) (rate(skill_invocations_total[5m]))",
+          "legendFormat": "{{skill}} / {{status}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "各技能失败率（failed/(succeeded+failed)，5m）",
+      "description": "denied 不计入执行失败率；无分母时显示 No data，不显示 0。",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0}, "overrides": []},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (skill) (rate(skill_invocations_total{status=\"failed\"}[5m])) / clamp_min(sum by (skill) (rate(skill_invocations_total{status=~\"succeeded|failed\"}[5m])), 1e-9)",
+          "legendFormat": "{{skill}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "三技能对应接口 P95（完整请求；SSE 仅首包）",
+      "description": "直方图来自访问日志 duration_ms。SSE 端点只记录响应开始耗时，不能当完整生成耗时。",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s", "min": 0}, "overrides": []},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (le, path) (rate(http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{path}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "批改队列深度（ready/重试）",
+      "description": "只有批改技能有持久任务队列；引导与错题讲解不虚构队列数据。",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short", "min": 0}, "overrides": []},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(grading_tasks{status=~\"pending|retrying\"})",
+          "legendFormat": "待执行"
+        },
+        {
+          "refId": "B",
+          "expr": "sum(grading_tasks{status=~\"running\"})",
+          "legendFormat": "执行中"
+        }
+      ]
+    }
+  ]
+}

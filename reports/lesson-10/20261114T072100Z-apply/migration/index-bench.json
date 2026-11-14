@@ -1,0 +1,23 @@
+{
+  "chunks": 50000,
+  "rounds": 300,
+  "before": {
+    "median_ms": 0.078,
+    "p95_ms": 0.084,
+    "mean_ms": 0.078
+  },
+  "before_plan": [
+    "SEARCH material_chunks USING INDEX ix_old (class_id=? AND material_id=?)",
+    "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+  ],
+  "after": {
+    "median_ms": 0.061,
+    "p95_ms": 0.065,
+    "mean_ms": 0.061
+  },
+  "after_plan": [
+    "SEARCH material_chunks USING COVERING INDEX ix_new (class_id=? AND material_id=?)"
+  ],
+  "delta_p95_percent": -22.62,
+  "scope": "SQL only; excludes application similarity scoring and HTTP"
+}

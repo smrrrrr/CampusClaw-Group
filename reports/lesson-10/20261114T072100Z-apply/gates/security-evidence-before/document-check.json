@@ -1,0 +1,375 @@
+{
+  "time": "2026-11-05T01:35:42.196667+00:00",
+  "markdown_files": 12,
+  "relative_links": [
+    {
+      "file": "README.md",
+      "target": "reports/assignment-history-2026-11-04.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "reports/async-grading/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "openspec/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/local-setup-2026-11-04.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "DEPLOYMENT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "AGENTS.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/standards/",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "openspec/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "reports/security-evidence",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "reports/security-precheck.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/security-review-checklist.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/standards/08-评审与完成定义规范.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "DEPLOYMENT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "openspec/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/work-and-validation-2026-10-25.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/lesson-2-5-acceptance-2026-10-18.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/lesson-07/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/standards/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "openspec/changes/2026-11-04-fix-teacher-class-switch-guard/validation.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "openspec/changes/2026-11-04-publish-quiz-as-homework/validation.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "async-grading/README.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "assignment-history-2026-11-04.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "remove-research-pages/README.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "risk-concurrency.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "risk-transaction.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "risk-authz.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "bench.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "review-async-grading.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "security-precheck.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "security-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "review-01.md",
+      "exists": true
+    },
+    {
+      "file": "reports/README.md",
+      "target": "../docs/security-review-table.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/run.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/source-before.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/source-after.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/accounts-readonly.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/api-probe.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "risk-authz.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/secret-baseline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/full-check.txt",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/api-probe-mutation.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "security-evidence/async-offline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "risk-concurrency.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "risk-transaction.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-precheck.md",
+      "target": "review-01.md",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/secret-scan.txt",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/secret-baseline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/dependency-run.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/npm-audit.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/backend-audit.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/mcp-audit.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/dependency-summary.json",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/backend-requirements.txt",
+      "exists": true
+    },
+    {
+      "file": "reports/security-baseline.md",
+      "target": "security-evidence/mcp-requirements.txt",
+      "exists": true
+    },
+    {
+      "file": "reports/review-01.md",
+      "target": "security-precheck.md",
+      "exists": true
+    },
+    {
+      "file": "reports/review-01.md",
+      "target": "security-evidence/api-probe.json",
+      "exists": true
+    },
+    {
+      "file": "reports/review-01.md",
+      "target": "security-evidence/async-offline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/review-01.md",
+      "target": "security-baseline.md",
+      "exists": true
+    },
+    {
+      "file": "reports/review-01.md",
+      "target": "../docs/security-review-table.md",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-authz.md",
+      "target": "async-grading/offline-result.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-authz.md",
+      "target": "security-evidence/api-probe.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-authz.md",
+      "target": "security-evidence/api-probe-mutation.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-authz.md",
+      "target": "security-evidence/async-offline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-concurrency.md",
+      "target": "async-grading/offline-result.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-concurrency.md",
+      "target": "async-grading/real-broker-result.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-concurrency.md",
+      "target": "security-evidence/async-offline.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-transaction.md",
+      "target": "async-grading/offline-result.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-transaction.md",
+      "target": "async-grading/real-broker-result.json",
+      "exists": true
+    },
+    {
+      "file": "reports/risk-transaction.md",
+      "target": "security-evidence/async-offline.json",
+      "exists": true
+    },
+    {
+      "file": "docs/security-review-checklist.md",
+      "target": "../reports/security-precheck.md",
+      "exists": true
+    },
+    {
+      "file": "docs/security-review-checklist.md",
+      "target": "../reports/review-01.md",
+      "exists": true
+    },
+    {
+      "file": "docs/security-review-checklist.md",
+      "target": "security-injection-preparation.md",
+      "exists": true
+    }
+  ],
+  "links_pass": true,
+  "mutation_detected": true,
+  "synthetic_network_failure_rejects_stale_results": true,
+  "business_source_unchanged": true
+}

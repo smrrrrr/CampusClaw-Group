@@ -1,0 +1,16 @@
+[dispatch]
+  MULTI-INDEX OR
+  INDEX 1
+  SEARCH grade_tasks USING INDEX ix_grade_dispatch (status=? AND next_attempt_at<?)
+  INDEX 2
+  SEARCH grade_tasks USING INDEX ix_grade_dispatch (status=?)
+  INDEX 3
+  SEARCH grade_tasks USING INDEX ix_grade_dispatch (status=?)
+  USE TEMP B-TREE FOR ORDER BY
+[task_detail]
+  SEARCH grade_tasks USING INTEGER PRIMARY KEY (rowid=?)
+[retrieval]
+  SEARCH materials USING INTEGER PRIMARY KEY (rowid=?)
+  SEARCH material_chunks USING COVERING INDEX ix_material_chunk_class_material_chunk (class_id=? AND material_id=?)
+  USE TEMP B-TREE FOR ORDER BY
+[indexes] ix_grade_dispatch, ix_grade_homework, sqlite_autoindex_grade_tasks_1, ix_material_chunk_class_material_chunk, ix_material_chunk_material_id

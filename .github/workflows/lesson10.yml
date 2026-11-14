@@ -1,0 +1,170 @@
+name: lesson10-delivery
+
+# 第10课单一流水线：同一提交 → 并列双门禁 → 两者全绿 → 构建并扫描镜像。
+# 安全门禁需要运行中的容器才能完成密钥扫描范围，因此该 job 用临时 .env 启动测试栈；
+# 测试栈镜像只是门禁环境，不是可交付镜像。可交付镜像在 gates 全绿后才构建。
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "22"
+  OPENSPEC_VERSION: "1.13.1"
+  UV_VERSION: "0.13.5"
+
+jobs:
+  check:
+    name: make check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: 安装 uv 与 OpenSpec
+        run: |
+          curl -LsSf https://astral.sh/uv/${{ env.UV_VERSION }}/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          npm install -g @openspec/cli@${{ env.OPENSPEC_VERSION }}
+      - name: 准备依赖
+        run: |
+          uv sync --project backend --locked
+          npm --prefix frontend ci
+      - name: 运行全量门禁
+        run: make check
+      - name: 归档门禁记录
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-check
+          path: reports/lesson-10/**
+          if-no-files-found: warn
+          retention-days: 14
+
+  security:
+    name: make check-security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: 安装 uv 与 OpenSpec
+        run: |
+          curl -LsSf https://astral.sh/uv/${{ env.UV_VERSION }}/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          npm install -g @openspec/cli@${{ env.OPENSPEC_VERSION }}
+      - name: 准备依赖
+        run: |
+          uv sync --project backend --locked
+          npm --prefix frontend ci
+      - name: 生成一次性测试环境（不入库）
+        run: |
+          python - <<'PY'
+          import secrets, pathlib
+          pathlib.Path(".env").write_text(
+              "JWT_SECRET_KEY=%s\n" % secrets.token_urlsafe(48)
+              + "GRADING_BROKER_PASSWORD=%s\n" % secrets.token_urlsafe(24)
+              + "MCP_AUTH_TOKEN=%s\n" % secrets.token_urlsafe(24)
+              + "MCP_TOKEN_KEY=%s\n" % secrets.token_urlsafe(32)
+              + "CAMPUSCLAW_PORT=8080\n"
+              + "CAMPUSCLAW_DATA_DIR=./data\n"
+              + "DEEPSEEK_API_KEY=\n",
+              encoding="utf-8",
+          )
+          PY
+      - name: 启动测试栈（仅用于密钥扫描范围）
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null; then exit 0; fi
+            sleep 5
+          done
+          docker compose ps
+          docker compose logs --tail=100
+          exit 1
+      - name: 运行安全门禁
+        run: make check-security
+      - name: 归档安全证据
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-security
+          path: reports/security-evidence/**
+          if-no-files-found: warn
+          retention-days: 14
+      - name: 清理测试栈
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  images:
+    name: build-and-scan
+    needs: [check, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 记录实际提交
+        id: rev
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: 构建三个应用镜像
+        run: |
+          GIT_SHA="${{ steps.rev.outputs.sha }}" docker compose build backend frontend mcp-tools
+      - name: 记录镜像摘要与 revision
+        run: |
+          mkdir -p reports/lesson-10/ci
+          for svc in backend frontend mcp-tools; do
+            image="campusclaw-${svc}:${{ steps.rev.outputs.sha }}"
+            docker image inspect "$image" --format '{{.Id}} {{json .Config.Labels}}' \
+              | tee "reports/lesson-10/ci/${svc}-image.txt"
+          done
+      - name: 扫描镜像（trivy，高危/严重非零即失败）
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: campusclaw-backend:${{ steps.rev.outputs.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          format: table
+          output: reports/lesson-10/ci/trivy-backend.txt
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: campusclaw-frontend:${{ steps.rev.outputs.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          format: table
+          output: reports/lesson-10/ci/trivy-frontend.txt
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: campusclaw-mcp-tools:${{ steps.rev.outputs.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          format: table
+          output: reports/lesson-10/ci/trivy-mcp-tools.txt
+      - name: 归档镜像证据
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: reports/lesson-10/ci/**
+          if-no-files-found: warn
+          retention-days: 14

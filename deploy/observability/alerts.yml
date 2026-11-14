@@ -1,0 +1,33 @@
+groups:
+  - name: campusclaw-skills
+    rules:
+      # 某个技能 5 分钟窗口失败率 > 1%，且该窗口执行样本 ≥ 20，持续 5 分钟才 Firing。
+      # 分母只含 succeeded/failed；denied 不计入执行失败率。
+      - alert: SkillFailureRateHigh
+        expr: |
+          (
+            sum by (skill) (rate(skill_invocations_total{status="failed"}[5m]))
+            /
+            clamp_min(sum by (skill) (rate(skill_invocations_total{status=~"succeeded|failed"}[5m])), 1e-9)
+            > 0.01
+          )
+          and
+          (
+            sum by (skill) (increase(skill_invocations_total{status=~"succeeded|failed"}[5m])) >= 20
+          )
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "技能 {{ $labels.skill }} 5 分钟失败率超过 1%"
+          description: "失败率={{ $value | humanizePercentage }}；窗口内执行样本已超过 20。请查看面板与窗口计数。"
+
+      # 采集器不可达时单独告警，避免把“无数据”误读为“无失败”。
+      - alert: CollectorDown
+        expr: up{job="campusclaw-collector"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "观测采集器不可达"
+          description: "Prometheus 连续 1 分钟抓取不到 collector；当前失败率/调用量不可信。"

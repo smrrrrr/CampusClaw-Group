@@ -7,12 +7,14 @@
 
 import json
 import logging
+import logging.handlers
 import re
 import sys
 import time
 import uuid
 from contextvars import ContextVar
 from datetime import datetime, timezone
+from pathlib import Path
 
 REQUEST_ID_HEADER = "X-Request-ID"
 _VALID_REQUEST_ID = re.compile(r"^[A-Za-z0-9._-]{8,64}$")
@@ -50,14 +52,26 @@ class JsonFormatter(logging.Formatter):
         return json.dumps(entry, ensure_ascii=False, default=str)
 
 
-def configure_logging() -> None:
-    """根 logger 与 uvicorn 日志统一为单行 JSON；uvicorn.access 由 RequestContextMiddleware 取代。"""
+def configure_logging(log_file: str = "") -> None:
+    """根 logger 与 uvicorn 日志统一为单行 JSON；uvicorn.access 由 RequestContextMiddleware 取代。
+
+    log_file 非空时额外写按大小滚动的 JSON 行文件，供独立的只读观测采集器读取；
+    默认关闭，不影响既有 stderr 行为。
+    """
     handler = logging.StreamHandler(sys.stderr)
     handler.setFormatter(JsonFormatter())
 
     root = logging.getLogger()
     root.handlers = [handler]
     root.setLevel(logging.INFO)
+    if log_file:
+        path = Path(log_file)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.handlers.RotatingFileHandler(
+            path, maxBytes=10_000_000, backupCount=3, encoding="utf-8"
+        )
+        file_handler.setFormatter(JsonFormatter())
+        root.addHandler(file_handler)
 
     for name in ("uvicorn", "uvicorn.error"):
         logger = logging.getLogger(name)

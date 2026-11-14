@@ -1,0 +1,20 @@
+route:
+  receiver: lesson10-webhook
+  group_by: ["alertname", "skill"]
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+
+receivers:
+  - name: lesson10-webhook
+    webhook_configs:
+      # 本机测试接收器：scripts/observability/webhook_receiver.py。
+      # 真实负责人/群机器人/邮件通道未落实前，这里只证明“规则→Firing→实际送达”链路。
+      - url: http://host.docker.internal:9099/alert
+        send_resolved: true
+        max_alerts: 0
+
+inhibit_rules:
+  - source_matchers: ["alertname=CollectorDown"]
+    target_matchers: ["alertname=SkillFailureRateHigh"]
+    equal: []

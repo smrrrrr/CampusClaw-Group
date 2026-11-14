@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     # 生产环境关闭交互式 API 文档（/docs、/redoc、/openapi.json）
     enable_docs: bool = True
 
+    # 可选：额外写一份单行 JSON 日志文件，供只读观测采集器读取；空值表示不写文件
+    log_file: str = ""
+
     # 学校缩写（初始密码规则：三位小写缩写 + 学号/工号后 6 位）
     school_abbr: str = "thu"
 

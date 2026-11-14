@@ -18,8 +18,11 @@ services:
   # 自建 MCP 工具服务：仅在 Compose 内网暴露 8090，不映射宿主机端口。
   # 后端不 depends_on 它，工具服务不可用不影响主应用启动与普通问答。
   mcp-tools:
+    image: campusclaw-mcp-tools:${GIT_SHA:-local}
     build:
       context: ./mcp-server
+      args:
+        GIT_SHA: ${GIT_SHA:-unknown}
     expose:
       - "8090"
     environment:
@@ -34,8 +37,11 @@ services:
     restart: unless-stopped
 
   backend:
+    image: campusclaw-backend:${GIT_SHA:-local}
     build:
       context: ./backend
+      args:
+        GIT_SHA: ${GIT_SHA:-unknown}
     # 仅 Docker 内网可达，宿主机/外网无法直连 8000
     expose:
       - "8000"
@@ -117,10 +123,12 @@ services:
     command: ["/app/.venv/bin/python", "grading_worker.py", "--mode", "dispatch"]
 
   frontend:
+    image: campusclaw-frontend:${GIT_SHA:-local}
     build:
       context: ./frontend
       args:
         BACKEND_INTERNAL_URL: http://backend:8000
+        GIT_SHA: ${GIT_SHA:-unknown}
     # 仅 Docker 内网可达，由 nginx 反代
     expose:
       - "3000"

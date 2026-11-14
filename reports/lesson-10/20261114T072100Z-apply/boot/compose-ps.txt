@@ -1,0 +1,7 @@
+backend	running	Up 4 minutes (healthy)
+frontend	running	Up 4 minutes (healthy)
+grading-dispatcher	running	Up 4 minutes
+grading-worker	running	Up 4 minutes
+mcp-tools	running	Up 4 minutes (healthy)
+nginx	running	Up 4 minutes
+rabbitmq	running	Up 4 minutes (healthy)

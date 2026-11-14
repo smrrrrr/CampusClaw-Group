@@ -26,7 +26,7 @@ from version import APP_VERSION
 
 # 根 logger 与 uvicorn 日志统一为单行 JSON 并带 request_id（engineering-baseline）。
 # uvicorn 先配置日志再导入本模块，所以在导入时覆盖即可生效。
-configure_logging()
+configure_logging(settings.log_file)
 
 MCP_HEALTH_TIMEOUT = 2.0  # 秒，见 runtime-reliability「数据库可读性纳入健康检查」
 

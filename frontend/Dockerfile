@@ -16,6 +16,10 @@ RUN npm run build
 
 # ---- 运行层：standalone 产物，不含 node_modules/源码 ----
 FROM node:22-alpine AS runner
+ARG GIT_SHA=unknown
+LABEL org.opencontainers.image.title="campusclaw-frontend" \
+      org.opencontainers.image.revision="${GIT_SHA}" \
+      org.opencontainers.image.source="campusclaw"
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \

@@ -403,8 +403,9 @@ class MaterialChunk(Base):
 
     __table_args__ = (
         Index("ix_material_chunk_material_id", "material_id"),
-        # 加速"查询某班已索引材料分块"的检索过滤
-        Index("ix_material_chunk_class_material", "class_id", "material_id"),
+        # 第10课：检索同时按 class_id 过滤、按 (material_id, chunk_index) 排序并只取 id/序号；
+        # 该索引是原 (class_id, material_id) 的超集，覆盖过滤、排序与投影。
+        Index("ix_material_chunk_class_material_chunk", "class_id", "material_id", "chunk_index"),
     )
 
 

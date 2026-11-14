@@ -1,5 +1,5 @@
 {
-  "time": "2026-11-12T07:46:56.652341+00:00",
+  "time": "2026-11-12T08:04:12.313968+00:00",
   "scope": "temporary SQLite + fake LLM/MCP; no production writes",
   "limitation": "强制假模型决策的宿主防线实验；不是在线模型安全评测",
   "groups": [

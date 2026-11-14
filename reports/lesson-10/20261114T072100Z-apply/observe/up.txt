@@ -1,0 +1,342 @@
+ Image campusclaw-mcp-tools:local Pulling
+ Image campusclaw-frontend:local Pulling
+ Image campusclaw-backend:local Pulling
+ Image grafana/grafana:11.2.0 Pulling
+ Image prom/prometheus:v2.55.1 Pulling
+ Image prom/alertmanager:v0.27.0 Pulling
+ Image campusclaw-mcp-tools:local pull access denied for campusclaw-mcp-tools, repository does not exist or may require 'docker login'
+ Image campusclaw-frontend:local pull access denied for campusclaw-frontend, repository does not exist or may require 'docker login'
+ Image campusclaw-backend:local pull access denied for campusclaw-backend, repository does not exist or may require 'docker login'
+ 27a3c8ebdfbf Pulling fs layer 0B
+ 73d7d01a1d2c Pulling fs layer 0B
+ bca4290a9639 Pulling fs layer 0B
+ 35ffea0c044a Pulling fs layer 0B
+ fbbaca673c19 Pulling fs layer 0B
+ 8ff0366d982d Pulling fs layer 0B
+ f257bec43f81 Pulling fs layer 0B
+ 15e31fbe4904 Pulling fs layer 0B
+ 1e825da9c63a Pulling fs layer 0B
+ ffca16271da6 Pulling fs layer 0B
+ 69fa3b5a7f08 Pulling fs layer 0B
+ 6ce8b87a9754 Pulling fs layer 0B
+ ac6d534529e8 Pulling fs layer 0B
+ b34c7a683469 Pulling fs layer 0B
+ d2f8aae8d80e Pulling fs layer 0B
+ b02fdcbdc5f3 Pulling fs layer 0B
+ 04d7bae2d3ad Pulling fs layer 0B
+ f19c5058b1fc Pulling fs layer 0B
+ ad3ca08ab6e2 Pulling fs layer 0B
+ ba920d0bcda2 Pulling fs layer 0B
+ c93ae5152267 Pulling fs layer 0B
+ d0079b8baf74 Pulling fs layer 0B
+ 4f4fb700ef54 Pulling fs layer 0B
+ 6406ba3e82e4 Pulling fs layer 0B
+ 780823308ea3 Pulling fs layer 0B
+ 3a8e3de09d42 Pulling fs layer 0B
+ b5b59f771a43 Pulling fs layer 0B
+ 6ce8b87a9754 Pulling fs layer 0B
+ d2f8aae8d80e Pulling fs layer 0B
+ 4f4fb700ef54 Already exists 0B
+ 4f4fb700ef54 Pull complete 0B
+ 73d7d01a1d2c Download complete 0B
+ 27a3c8ebdfbf Download complete 0B
+ 35ffea0c044a Download complete 0B
+ f257bec43f81 Download complete 0B
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+ bca4290a9639 Downloading 1.049MB
+failed to copy: httpReadSeeker: failed open: failed to do request: Get "https://registry-1.docker.io/v2/grafana/grafana/blobs/sha256:8ff0366d982db081a3287cd0cbe5ad3ec1191df529b4b02627611a66c855dc11": net/http: timeout awaiting response headers
+EXIT=1

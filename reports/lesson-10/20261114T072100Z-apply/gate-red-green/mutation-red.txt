@@ -1,0 +1,65 @@
+[PASS] openspec-validate  (0.4s)
+[PASS] layering  (0.1s)
+[PASS] secret-scan  (0.9s)
+[PASS] fe-typecheck  (0.6s)
+[PASS] check_analytics  (1.1s)
+[PASS] check_analytics_units  (0.2s)
+[PASS] check_apitest_harness  (0.1s)
+[PASS] check_assignment_history  (1.1s)
+[FAIL] check_async_grading  (0.8s)
+        {"ts": "2026-11-14T07:46:54.918Z", "level": "info", "module": "access", "request_id": "a58dfa3e9abb4b3d9848813cb3449070", "method": "POST", "path": "/api/teacher/homeworks/5/ai-grade", "status": 202, "duration_ms": 32.6}
+        {"ts": "2026-11-14T07:46:54.924Z", "level": "info", "module": "access", "request_id": "d2f4ddfcef264e1f92690bfb9467c8b4", "method": "POST", "path": "/api/teacher/homeworks/5/ai-grade", "status": 202, "duration_ms": 36.2}
+        {"ts": "2026-11-14T07:46:54.925Z", "level": "info", "module": "access", "request_id": "26b535cd14784d7c93dbf0a5a32556b7", "method": "POST", "path": "/api/teacher/homeworks/5/ai-grade", "status": 202, "duration_ms": 37.9}
+        {"ts": "2026-11-14T07:46:54.932Z", "level": "info", "module": "access", "request_id": "acc072da4c0a41c0942b6f4d0892c9f1", "method": "POST", "path": "/api/teacher/homeworks/5/ai-grade", "status": 202, "duration_ms": 48.7}
+        {"ts": "2026-11-14T07:46:54.944Z", "level": "info", "module": "access", "request_id": "d1e16c2e5ddb4ed28884e4daa7e64f2f", "method": "POST", "path": "/api/teacher/homeworks/5/ai-grade", "status": 202, "duration_ms": 57.2}
+        {"ts": "2026-11-14T07:46:54.949Z", "level": "info", "module": "access", "request_id": "b88dc378c23b43b7b9093f1ac9da898a", "method": "GET", "path": "/api/teacher/grade-tasks/22", "status": 200, "duration_ms": 1.2}
+        {"ts": "2026-11-14T07:46:54.952Z", "level": "info", "module": "access", "request_id": "6187a164ce2d4bb6996c080126f30f7c", "method": "POST", "path": "/api/teacher/homeworks/6/ai-grade", "status": 202, "duration_ms": 1.6}
+        {"ts": "2026-11-14T07:46:54.957Z", "level": "info", "module": "access", "request_id": "231d8ce16399405fa4510ee342827cda", "method": "POST", "path": "/api/teacher/homeworks/7/ai-grade", "status": 202, "duration_ms": 1.7}
+        Traceback (most recent call last):
+          File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/apitest/check_async_grading.py", line 217, in <module>
+            check("C2 边界：旧结果跳过" + changed, gs.process_task(tid) == "skipped")
+          File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/apitest/check_async_grading.py", line 22, in check
+            assert passed, name
+                   ^^^^^^
+        AssertionError: C2 边界：旧结果跳过resubmit
+[PASS] check_baseline  (1.5s)
+[PASS] check_formula_retrieval  (0.3s)
+[PASS] check_homework  (1.0s)
+[PASS] check_injection  (1.4s)
+[PASS] check_lesson10_ops  (0.3s)
+[PASS] check_lesson_prep  (2.4s)
+[PASS] check_lessons_2_5  (5.6s)
+[PASS] check_mcp_tools  (2.4s)
+[PASS] check_mistake  (1.0s)
+[PASS] check_model_json  (0.0s)
+[PASS] check_question_bank  (2.3s)
+[FAIL] check_quiz_homework  (0.6s)
+        {"ts": "2026-11-14T07:47:13.798Z", "level": "info", "module": "access", "request_id": "a7636224037f41748f500b7345b2fe63", "method": "PUT", "path": "/api/teacher/submissions/2/grade", "status": 200, "duration_ms": 2.8}
+        {"ts": "2026-11-14T07:47:13.803Z", "level": "info", "module": "access", "request_id": "fc7381081f124f839cf5da6fc8ea1b5c", "method": "GET", "path": "/api/student/analytics/overview", "status": 200, "duration_ms": 3.9}
+        {"ts": "2026-11-14T07:47:13.805Z", "level": "info", "module": "access", "request_id": "f6ce14b7236d417d9a9960816363b864", "method": "POST", "path": "/api/student/homeworks/1/submit", "status": 200, "duration_ms": 1.7}
+        {"ts": "2026-11-14T07:47:13.807Z", "level": "info", "module": "access", "request_id": "42b589928ea8463383b41773c7870c87", "method": "PUT", "path": "/api/teacher/submissions/3/grade", "status": 200, "duration_ms": 1.5}
+        {"ts": "2026-11-14T07:47:13.811Z", "level": "info", "module": "access", "request_id": "105adf5e1b384007b3af9d1b7bd9f8c5", "method": "POST", "path": "/api/teacher/quiz/papers/7/publish", "status": 200, "duration_ms": 3.3}
+        {"ts": "2026-11-14T07:47:13.813Z", "level": "info", "module": "access", "request_id": "4577ce2451054478879b4edccf3e90ef", "method": "GET", "path": "/api/teacher/homeworks/38", "status": 200, "duration_ms": 0.9}
+        {"ts": "2026-11-14T07:47:13.814Z", "level": "info", "module": "access", "request_id": "6d73a525084a4fb2aeed13d315f674e5", "method": "POST", "path": "/api/student/homeworks/38/submit", "status": 200, "duration_ms": 1.5}
+        {"ts": "2026-11-14T07:47:13.817Z", "level": "info", "module": "access", "request_id": "7765c3d0733a4b56947bafa313d6750e", "method": "POST", "path": "/api/teacher/homeworks/38/ai-grade", "status": 202, "duration_ms": 1.6}
+        Traceback (most recent call last):
+          File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/apitest/check_quiz_homework.py", line 271, in <module>
+            check("H/初批期间提交被更新或教师改分：重交", run_grade(twelve_hw)["skipped_count"] == 1)
+          File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/apitest/check_quiz_homework.py", line 23, in check
+            assert passed, name
+                   ^^^^^^
+        AssertionError: H/初批期间提交被更新或教师改分：重交
+[PASS] check_research_materials  (2.3s)
+[PASS] check_security_gate  (0.4s)
+[PASS] check_security_review  (2.1s)
+[PASS] check_sqlite_storage  (0.4s)
+[PASS] check_assignment_history_ui  (0.2s)
+[PASS] check_grading_feedback  (0.2s)
+[PASS] check_markdown_images  (0.3s)
+[PASS] check_recent_history  (0.2s)
+[PASS] check_route_guard  (0.2s)
+[PASS] check_security_review_rendering  (0.2s)
+[PASS] check_teacher_navigation  (0.3s)
+
+门禁未通过：check_async_grading, check_quiz_homework
+EXIT=1

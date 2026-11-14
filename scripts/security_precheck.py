@@ -286,6 +286,19 @@ def readonly_accounts():
     return result
 
 
+def course_high_critical(deps):
+    """课程“高危 0 条”独立判据：登记例外不能把 high/critical 折算为 0。
+
+    返回 (npm_high_critical, pip 未判级且有漏洞的项目)。npm 明细缺失时为 None，
+    调用方按阻塞处理；pip-audit 不提供严重度，有漏洞即视为无法证明 0。
+    """
+    npm = deps.get("npm", {})
+    high, critical = npm.get("high"), npm.get("critical")
+    npm_count = high + critical if isinstance(high, int) and isinstance(critical, int) else None
+    unknown = [label for label in ("backend", "mcp") if deps.get(label, {}).get("vulnerable_packages", 0)]
+    return npm_count, unknown
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--reuse-dependency-evidence", action="store_true", help="仅复查已有依赖证据，不冒充本次联网重扫")
@@ -309,19 +322,23 @@ def main():
         dependency_audit()
     deps = dependency_summary()
     unregistered, expired = check_dependency_exceptions(deps)
+    npm_hc, pip_unknown = course_high_critical(deps)
     if unregistered:
         print(f"未登记的漏洞包：{unregistered}", flush=True)
     if expired:
         print(f"已过期的依赖例外登记：{expired}", flush=True)
+    print(f"课程高危判据：npm high+critical={npm_hc}；pip 未判级且有漏洞={pip_unknown}", flush=True)
     print(json.dumps(deps, ensure_ascii=False), flush=True)
     after = fingerprint()
     run.update(finished=datetime.now(timezone.utc).isoformat(), source_unchanged=before == after,
                secret_leak_detected=secrets["leak_detected"], secret_scope_complete=secrets["complete"],
-               unregistered_vulns=unregistered, expired_exceptions=expired)
+               unregistered_vulns=unregistered, expired_exceptions=expired,
+               course_high_critical={"npm": npm_hc, "pip_unknown_severity": pip_unknown})
     save("source-after.json", after)
-    blocked = "blocked" in accounts or rc == 2 or not secrets["complete"] or any("blocked" in d for d in deps.values())
-    # 红项：探针红、密钥泄漏、有漏洞包未在例外登记表中、例外登记已过期
-    red = rc == 1 or secrets["leak_detected"] or bool(unregistered) or bool(expired)
+    blocked = ("blocked" in accounts or rc == 2 or not secrets["complete"]
+               or any("blocked" in d for d in deps.values()) or bool(pip_unknown) or npm_hc is None)
+    # 红项：探针红、密钥泄漏、未登记/过期例外、课程高危未清零（登记例外不豁免）
+    red = rc == 1 or secrets["leak_detected"] or bool(unregistered) or bool(expired) or bool(npm_hc and npm_hc > 0)
     run["exit"] = 1 if red or before != after else 2 if blocked else 0
     run["status"] = "RED" if red else "BLOCKED" if blocked else "PASS"
     run["has_blocked_scope"] = blocked

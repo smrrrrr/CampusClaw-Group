@@ -228,6 +228,18 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN mastered_at DATETIME"))
             conn.commit()
 
+        # 第10课：分块检索覆盖索引。先建超集索引，再移除被完全覆盖的旧索引。
+        # 重复执行幂等；纯索引变更不搬行数据，旧列与数据均不动。
+        chunk_indexes = {row[1] for row in conn.execute(
+            text("SELECT type, name FROM sqlite_master WHERE type='index' AND tbl_name='material_chunks'")
+        )}
+        chunk_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(material_chunks)"))}
+        if chunk_cols:
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_material_chunk_class_material_chunk "
+                              "ON material_chunks(class_id, material_id, chunk_index)"))
+            conn.execute(text("DROP INDEX IF EXISTS ix_material_chunk_class_material"))
+            conn.commit()
+
 
 @event.listens_for(engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):

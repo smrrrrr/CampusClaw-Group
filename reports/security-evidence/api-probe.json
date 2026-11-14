@@ -1,7 +1,10 @@
 {
-  "time": "2026-11-11T06:40:26.922420+00:00",
+  "time": "2026-11-14T07:21:57.306870+00:00",
   "scope": "temporary SQLite + fake LLM/MCP; no production writes",
-  "mutation": false,
+  "mutation": {
+    "material_access": false,
+    "tool_authorization": false
+  },
   "checks": [
     {
       "case": "PRE 登录 TEA001",
@@ -244,8 +247,158 @@
         "missing": []
       },
       "passed": true
+    },
+    {
+      "case": "R2 正常：技能审计字段查询与范围",
+      "expected": "技能、会话、耗时、决策轮用量37",
+      "actual": [
+        {
+          "id": 15,
+          "user_id": 3,
+          "role": "student",
+          "request_path": "/api/student/conversations/{conversation_id}/chat",
+          "method": "POST",
+          "status_code": 200,
+          "ip_address": null,
+          "action": "skill.invoke",
+          "object_id": "5",
+          "skill_id": "1",
+          "duration_ms": 0,
+          "tokens": 37,
+          "created_at": "2026-11-14T07:21:57.255274"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "R2 失败：未登录请求留匿名审计",
+      "expected": "至少7条匿名401，班主任看不到",
+      "actual": {
+        "anonymous": 7
+      },
+      "passed": true
+    },
+    {
+      "case": "R2 失败：学生不可查看审计",
+      "expected": 403,
+      "actual": 403,
+      "passed": true
+    },
+    {
+      "case": "R2 边界：他班班主任不可见技能审计",
+      "expected": "无101班技能日志",
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "SEC-08 边界：发现重连保留权限",
+      "expected": {
+        "formula_hint": false,
+        "write_score": true,
+        "unknown_tool": true
+      },
+      "actual": {
+        "formula_hint": false,
+        "write_score": true,
+        "unknown_tool": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-08 失败：学生写入拒绝且SSE完整",
+      "expected": "零调用、业务不变、denied、done",
+      "actual": {
+        "http": 200,
+        "events": [
+          "meta",
+          "delta",
+          "done"
+        ],
+        "denial": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-08 正常：教师写入执行对照",
+      "expected": "执行一次且ok",
+      "actual": [
+        {
+          "ref": "write_score@campus-tools",
+          "status": "ok",
+          "reason": "合成公式提示数据"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "SEC-08 失败：他科教师不能借技能执行",
+      "expected": "零调用且denied",
+      "actual": [
+        {
+          "ref": "write_score@campus-tools",
+          "status": "denied",
+          "reason": "教师无权执行该工具"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "SEC-08 边界：旧缓存未知工具默认拒绝",
+      "expected": "零调用且denied",
+      "actual": [
+        {
+          "ref": "unknown_tool@campus-tools",
+          "status": "denied",
+          "reason": "学生无权执行写入或未知权限工具"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-直接注入：候选集外调用被拒",
+      "expected": "零调用、denied、done",
+      "actual": [
+        "meta",
+        "delta",
+        "done"
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-间接注入：工具结果被丢弃",
+      "expected": "危险正文不进模型、error、done",
+      "actual": [
+        "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-外泄：工具结果被丢弃",
+      "expected": "危险正文不进模型、error、done",
+      "actual": [
+        "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+      ],
+      "passed": true
+    },
+    {
+      "case": "R3 正常：历史Markdown逐字保真",
+      "expected": "持久化原文",
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "R3 失败：他人历史不可见",
+      "expected": 404,
+      "actual": 404,
+      "passed": true
+    },
+    {
+      "case": "R3 失败：未登录历史不可见",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
     }
   ],
-  "passed": 26,
+  "passed": 41,
   "failed": 0
 }

@@ -44,3 +44,44 @@ fake_key = "sk-" + "abcdefghijklmnopqrstuvwxyz012345"  # 拼接形式，扫描�
 | 移除假密钥 | 0 | 0 | GREEN |
 
 密钥扫描门禁能正确检出工作区中的 `sk-` 开头 API Key，移除后变绿，证明门禁有效而非摆设。
+
+---
+
+# 第10课：完整双门禁先红后绿（2026-11-14 追加）
+
+本节是新的日期/版本记录，不修改上面第9课的子项红绿结论。
+
+## 故障注入
+
+- 位置：`backend/grading_service.py` 的 `matches()`（教师终评/重交保护）。
+- 注入内容：`return sub is not None`，即跳过提交状态、作答与时间戳比对。
+- 目的：让旧 AI 结果覆盖教师终评或新提交，验证完整 `make check` 能检出。
+
+## 红
+
+- 命令：`backend/.venv/bin/python scripts/check.py`
+- 退出码：**1**
+- 失败子项：`check_async_grading`、`check_quiz_homework`
+- 证据：`reports/lesson-10/20261114T072100Z-apply/gate-red-green/mutation-red.txt`、`mutation-meta.json`
+
+## 恢复
+
+- 操作：恢复 `matches()` 原始实现（工作区 `git diff` 为空）。
+- 说明：本轮 mutation 未提交，因此**没有“故障提交→修复提交”的远端 SHA 链**；证据是同一提交 `fe227a1` 上的工作区注入与恢复。若要求真实修复提交，需在独立分支提交故障与恢复，当前标为未完成。
+
+## 绿
+
+- 命令：`backend/.venv/bin/python scripts/check.py`
+- 退出码：**0**，全部门禁通过
+- 证据：`gate-red-green/mutation-green.txt`、`revert-meta.json`
+
+## 四要素对照
+
+| 要素 | 本课结果 |
+| --- | --- |
+| 改坏位置 | `grading_service.matches()` |
+| 红输出与退出码 | 2 个子项 FAIL，exit 1 |
+| 真实修复提交 | **缺失**（未提交故障/修复分支） |
+| 绿输出与退出码 | 全部通过，exit 0 |
+
+结论：完整门禁能检出终评保护故障，红→恢复→绿成立；但“修复提交 SHA”一项目前不满足，不能宣称先红后绿全部完成。

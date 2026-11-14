@@ -1,57 +1,47 @@
 {
   "source": "npm registry security audit API; pip-audit default PyPI vulnerability service",
-  "time": "2026-11-11T02:08:00.219937+00:00",
+  "time": "2026-11-14T07:21:57.696155+00:00",
   "commands": [
     {
       "name": "npm",
       "command": [
-        "C:\\Program Files\\nodejs\\npm.cmd",
+        "/opt/homebrew/bin/npm",
         "audit",
         "--omit=dev",
         "--json",
         "--registry=https://registry.npmjs.org"
       ],
       "exit": 1,
-      "seconds": 6.828
+      "seconds": 5.331
     },
     {
       "name": "backend-export",
-      "exit": 0,
-      "seconds": 0.031
-    },
-    {
-      "name": "backend",
-      "exit": 1,
-      "seconds": 17.922
+      "exit": 2,
+      "seconds": 0.02
     },
     {
       "name": "mcp-export",
-      "exit": 0,
-      "seconds": 0.062
-    },
-    {
-      "name": "mcp",
-      "exit": 0,
-      "seconds": 7.75
+      "exit": 2,
+      "seconds": 0.009
     }
   ],
   "locks": {
-    "frontend/package-lock.json": "01f170c4d781ed6fe0cf9f0ea4bc35f856037f5bf1c28816db8f6eaa06e18d0d",
-    "backend/uv.lock": "3b5d021b8a19e0dbf2c707419dba31199d8f4bc7dae27e1c9ff1871748567863",
-    "mcp-server/uv.lock": "2e20350d0b69ec84d6a60a6fdcd58136acdad911a34a21888e4aff179f44fdc6"
+    "frontend/package-lock.json": "65b618f6c5e6ed5ed622c6f1a5e964e6269fc329f2805688ae194f1cdc35aea8",
+    "backend/uv.lock": "4d37d325b499ff5d0d6bbdb0fa4563f0ba065c637dbd352f34ccd52970cc609f",
+    "mcp-server/uv.lock": "380c7588c10de64ca85ca4ae1ff149887fe6a7aa45ce83d8a369b2ee6ca92335"
   },
   "versions": {
     "npm": {
       "exit": 0,
-      "version": "11.8.0"
+      "version": "11.12.1"
     },
     "uv": {
       "exit": 0,
-      "version": "uv 0.12.10 (3c979abda 2026-09-04 x86_64-pc-windows-msvc)"
+      "version": "uv 0.13.5 (Homebrew 2026-10-22 aarch64-apple-darwin)"
     },
     "pip-audit": {
-      "exit": 0,
-      "version": "pip-audit 2.10.1"
+      "exit": 2,
+      "version": ""
     }
   }
 }
