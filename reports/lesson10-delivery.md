@@ -129,7 +129,7 @@
 
 - 本地与 CI 使用**同一命令**：`make check`、`make check-security`；`.github/workflows/lesson10.yml` 的两个 job 分别执行，`images` job `needs: [check, security]`，无 `continue-on-error`。
 - `scripts/check.py --json` 记录每步 `name/status/seconds/exit/finished` 与 `git_head`；`scripts/security_precheck.py` 增加 `course_high_critical`：npm 高危计数直接进入课程判据，pip 有漏洞但无严重度时判 BLOCKED，不折算为 0。
-- 本地实测：`make check` **33/33 PASS**；`make check-security` **RED**，原因仅 Next。
+- 本地实测：`make check` **34/34 PASS**（含新增 `check_frontend_image_safety`）；`make check-security` **RED**，原因仅 Next。
 
 ### 8.2 最终镜像内容（6.1）
 
@@ -155,6 +155,6 @@
 
 ### 8.5 仍然阻塞的事项
 
-1. 安全门禁 RED 的根因是 Next：4 条 critical 中 `GHSA-2464-fhr4-w9xw` 影响 `<=15.5.27`，必须升到 15.5.28+，需独立变更。
+1. 安全门禁 RED 的根因是 Next 的版本范围计数：4 条 critical 在当前代码与 Linux standalone 部署下均不可触发（`reports/next-risk-applicability.md`），是否接受该论证取决于课程口径；若要求按计数归零，仍需升到 15.5.28+。
 2. 后端镜像 OS 层 HIGH=51，不属 Next，需基础镜像维护另立任务。
 3. 真人、签名、换机、远端 CI、线上反查、课程等价确认，均无法由本机替代。

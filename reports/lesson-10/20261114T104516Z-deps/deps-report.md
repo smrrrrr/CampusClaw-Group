@@ -55,6 +55,8 @@ Next/React/React DOM 未升级；python-pptx、cryptography 保持。
 
 归因结论：应用依赖的 high/critical 扣除 Next 后为空；katex 链只剩 low。详见 `security-attribution.md`。
 
+Next 的 4 条 critical 在当前代码与 Linux standalone 部署下的适用性见 [next-risk-applicability.md](../../next-risk-applicability.md)：middleware 只放行不鉴权、无 `next/image`、镜像内无 `sharp`、优化器对所有图片返回 400、远程 URL 被拒。该论证不改变 audit 计数与门禁 RED。
+
 ## 四、与 propose 的偏差
 
 1. **PostCSS 用 8.5.33，而非候选 8.5.18**：8.5.18 仍命中 `GHSA-fxqj-rqcc-2cmp`（受影响 <=8.5.22）。已用 Next 14.2.15 完整构建验证兼容。

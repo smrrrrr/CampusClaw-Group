@@ -10,6 +10,8 @@
 | 生态 | high | critical | 来源 | 结论 |
 | --- | --- | --- | --- | --- |
 | npm | 0 | 1 | `next@14.2.15`（Next 自身及其传递依赖） | 剩余 high/critical **仅来自 Next** |
+
+Next 的 4 条 critical 在当前代码与 Linux standalone 部署下的适用性见 [next-risk-applicability.md](../../next-risk-applicability.md)：middleware 不鉴权、无 `next/image`、镜像内无 `sharp`、优化器对所有图片返回 400、远程 URL 被拒。该论证不改变 audit 计数与门禁 RED。
 | backend (pip) | 0 | 0 | — | certifi、Pillow 已升级；python-jose 已移除 |
 | mcp (pip) | 0 | 0 | — | opentelemetry-api 1.45.1→1.45.2 |
 
