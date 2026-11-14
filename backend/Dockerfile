@@ -26,6 +26,11 @@ WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
+# 第10课 6.1：最终镜像不带开发材料。运行所需的业务 .py 全部保留，
+# 只移除种子脚本、构建描述与开发期配置文件；.dockerignore 已排除 .venv/缓存/数据库/.env。
+RUN rm -f /app/dev_seed.py /app/Dockerfile /app/.dockerignore /app/.gitignore \
+    /app/.env.example /app/.python-version
+
 # 以非 root 运行；entrypoint 在容器启动时修正挂载目录属主后降权。
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/uploads \

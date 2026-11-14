@@ -129,28 +129,30 @@
 
 - 本地与 CI 使用**同一命令**：`make check`、`make check-security`；`.github/workflows/lesson10.yml` 的两个 job 分别执行，`images` job `needs: [check, security]`，无 `continue-on-error`。
 - `scripts/check.py --json` 记录每步 `name/status/seconds/exit/finished` 与 `git_head`；`scripts/security_precheck.py` 增加 `course_high_critical`：npm 高危计数直接进入课程判据，pip 有漏洞但无严重度时判 BLOCKED，不折算为 0。
-- 本地实测：`make check` **34/34 PASS**（含新增 `check_frontend_image_safety`）；`make check-security` **RED**，原因仅 Next。
+- 本地实测：`make check` **35/35 PASS**（含新增 `check_frontend_image_safety`、`check_lesson10_scenarios`）；`make check-security` **RED**，原因仅 Next。
 
 ### 8.2 最终镜像内容（6.1）
 
 | 镜像 | .py | .git | 测试文件 | 真实密钥 | 系统 CA | 开发材料 |
 | --- | --- | --- | --- | --- | --- | --- |
-| backend | 2571（含 .venv） | 0 | 0 | 0 | 151 个 `/etc/ssl/certs/*.pem` | `/app/dev_seed.py`、`Dockerfile`、`.env.example` |
+| backend | 2571（含 .venv） | 0 | 0 | 0 | 151 个 `/etc/ssl/certs/*.pem` | **已移除**（`dev_seed.py`、`Dockerfile`、`.dockerignore`、`.gitignore`、`.env.example`、`.python-version`） |
 | frontend | 59（构建产物内） | 0 | 9（node_modules 内） | 0 | 2 | — |
 | mcp-tools | 1561 | 0 | 0 | 0 | 150 | — |
 
 - `.venv/bin` 无 `pip`/`uv`，只有 `python`/`uvicorn` 等运行入口。
-- **未删除 Python 运行源码**：后端必须保留 `.py` 才能运行；`dev_seed.py` 属开发材料，是否移除待确认。
+- 后端 Dockerfile 在 `COPY . .` 后移除种子脚本与构建描述，`/app/*.py` 由 34 降为 33；新镜像重建后 health 200、启动日志正常。
+- **未删除 Python 运行源码**：后端必须保留 `.py` 才能运行；是否接受仍待课程确认。
 - 结论：不能声称“镜像绝对无源码”；密钥为零，开发材料仅 `dev_seed.py` 与构建文件。
 
 ### 8.3 CI 流水线（7.1 / 7.2 / 7.3 / 7.4）
 
 - `lesson10.yml`：`check` 与 `security` 并列，失败即停；`images` 在两 job 成功后构建三镜像并用 Trivy 扫 `HIGH,CRITICAL`；`GIT_SHA` 同时用于镜像标签与 OCI `revision` 标签。
 - 本机按同一命令跑通；**远端 CI 运行、独立 PR 故障重放、线上实例反查均未执行**（无推送授权/无线上目标）。
+- 10.5 的独立演示清单已备：`reports/demo-checklist.md`（四项判定、五个动作、六份报告、签名模板）。
 
 ### 8.4 场景与压测状态更新
 
-- 场景：505 条逐条映射已生成（`reports/scenario-coverage.md`），280 条有候选，**225 条无匹配断言**，其中 P0 高风险 66 条；不再使用“338 条能力级待映射”这一旧口径。
+- 场景：505 条逐条映射已生成（`reports/scenario-coverage.md`），**335 条有候选**（断言名 55、别名 72、弱候选 174、文件级 34），**170 条无匹配断言**，其中 P0 高风险 17 条；较上一轮 280/225/P0 66 有明显收敛。新增 `check_lesson10_scenarios.py` 把 6 条纯函数场景变成自动断言。不再使用“338 条能力级待映射”这一旧口径。
 - 9.4：检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%；按项目规则分档记录，不整体宣称通过。
 
 ### 8.5 仍然阻塞的事项
