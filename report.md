@@ -12,7 +12,7 @@
 | 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
 | 第10课 测试交付与运行验证 | 工程实施与运行验证进行中；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md) |
 
-第10课当前门禁：`make check` **31/31 PASS**；`make check-security` **RED**（npm 未登记漏洞含 critical、pip 审计本次未取得响应、密钥扫描范围不完整）。在此状态下不宣称交付完成。
+第10课当前门禁：`make check` **33/33 PASS**；`make check-security` **RED**（npm 未登记漏洞含 critical、pip 未取得可解析响应、密钥扫描范围不完整）。新目录从干净 clone 启动成功；真实 RabbitMQ 异步复现 14 项 PASS；检索接口压测已完成，但索引改进在 API 级 **未产生收益**（P95 +0.4%）。在此状态下不宣称交付完成。
 
 ## 二、第10课证据索引
 
