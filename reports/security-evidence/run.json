@@ -1,28 +1,33 @@
 {
-  "started": "2026-11-14T07:21:55.284935+00:00",
+  "started": "2026-11-14T07:53:13.114399+00:00",
   "dependency_evidence_reused": false,
   "business_changes": false,
-  "git_head": "fe227a1c8e513c5b2ecb7b04a9fd41fde27beccb",
+  "git_head": "e02e83fcb2055df7463c94f25cc580a7a06d0817",
   "tools": {
-    "scripts/security_precheck.py": "7363155a624cff99a0f2d336ede811ae647f012638f13a57dcb2900183746e21",
+    "scripts/security_precheck.py": "d815f79da0a4616c9158deaff1df880b30d7cfb7f649e1b829e85b403823d1b1",
     "scripts/secret_scan.py": "f69af628c2b8408201a2775bea276a20d10a81f463e60e1da0a8c3ba97bcd618",
     "apitest/probe_security_precheck.py": "3f14a13312707b886ca185a8542a0b3f0edcabcedcb99342b12fc82a19fed9a8"
   },
   "probe_exit": 0,
-  "finished": "2026-11-14T07:22:03.240126+00:00",
+  "finished": "2026-11-14T07:53:44.443132+00:00",
   "source_unchanged": true,
   "secret_leak_detected": false,
   "secret_scope_complete": false,
   "unregistered_vulns": [
     "npm:katex",
-    "npm:micromark-extension-math",
     "npm:next",
     "npm:postcss",
-    "npm:rehype-katex",
-    "npm:remark-math",
-    "npm:source-map-js"
+    "npm:source-map-js",
+    "mcp:opentelemetry-api"
   ],
   "expired_exceptions": [],
+  "course_high_critical": {
+    "npm": 3,
+    "pip_unknown_severity": [
+      "backend",
+      "mcp"
+    ]
+  },
   "exit": 1,
   "status": "RED",
   "has_blocked_scope": true

@@ -66,8 +66,12 @@ fake_key = "sk-" + "abcdefghijklmnopqrstuvwxyz012345"  # 拼接形式，扫描�
 
 ## 恢复
 
-- 操作：恢复 `matches()` 原始实现（工作区 `git diff` 为空）。
-- 说明：本轮 mutation 未提交，因此**没有“故障提交→修复提交”的远端 SHA 链**；证据是同一提交 `fe227a1` 上的工作区注入与恢复。若要求真实修复提交，需在独立分支提交故障与恢复，当前标为未完成。
+- 工作区注入：恢复 `matches()` 原始实现（`git diff` 为空），对应同一提交 `fe227a1`。
+- 随后在**独立证据分支** `lesson10-mutation-evidence` 重放：
+  - 故障提交：`10af3b0`（`test(lesson10): 注入终评保护故障`）
+  - 修复提交：`f7cddcb`（`Revert "…"`），只回退故障，不改业务实现
+- 该分支不合并、不推送；`lesson10-delivery` 上的正确实现为 `e02e83f`。
+- 证据：`gate-red-green/branch-mutation-meta.json`、`branch-mutation-red.txt`、`branch-revert-meta.json`、`branch-revert-green.txt`。
 
 ## 绿
 
@@ -80,8 +84,8 @@ fake_key = "sk-" + "abcdefghijklmnopqrstuvwxyz012345"  # 拼接形式，扫描�
 | 要素 | 本课结果 |
 | --- | --- |
 | 改坏位置 | `grading_service.matches()` |
-| 红输出与退出码 | 2 个子项 FAIL，exit 1 |
-| 真实修复提交 | **缺失**（未提交故障/修复分支） |
-| 绿输出与退出码 | 全部通过，exit 0 |
+| 红输出与退出码 | `check_async_grading`、`check_quiz_homework` FAIL，exit 1（提交 `10af3b0`） |
+| 真实修复提交 | `f7cddcb`（独立证据分支，不合并） |
+| 绿输出与退出码 | 全部通过，exit 0（`f7cddcb`） |
 
-结论：完整门禁能检出终评保护故障，红→恢复→绿成立；但“修复提交 SHA”一项目前不满足，不能宣称先红后绿全部完成。
+结论：完整门禁能检出终评保护故障，红→修复提交→绿四要素齐全；证据分支不进入交付分支。

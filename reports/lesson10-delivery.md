@@ -35,7 +35,7 @@
 | 1.4 分工 | BLOCKED | 需真实姓名与交叉验收人 |
 | 2.1 用例落库 | PASS（本课新增检查已入 `make check`） | `apitest/check_lesson10_ops.py` 9/9 |
 | 2.2 聚合门禁 | PASS（本机 32/32） | CI 未运行 |
-| 2.3 先红后绿 | 待执行 | 见 `gate-red-green.md` 第10课章节 |
+| 2.3 先红后绿 | 部分：`make check` 红绿齐全；`make check-security` 安全反例未重做 | 故障 `10af3b0` → 修复 `f7cddcb`，见 `gate-red-green.md` |
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
 | 3.1 多阶段镜像 | 部分 | 后端/MCP 已分构建/运行层；Python 必要运行源码仍在，字面“无源码”未获确认 |
 | 3.2 Compose 等价 | PASS（等价说明） | 七服务 + SQLite 读就绪；未迁 MySQL/Qdrant |
@@ -48,7 +48,7 @@
 | 5.1 指标口径 | PASS（按已记录事件） | 引导/批改有来源；错题讲解明确“未接入” |
 | 5.2 三张图 | PASS（配置） | Grafana 4 panel（调用量/失败率/P95/队列） |
 | 5.3 告警规则 | PASS（配置） | `deploy/observability/alerts.yml` |
-| 5.4 真触发 | PASS（测试接收器） | Pending 07:43:39Z → Firing 07:48:39Z → 送达 07:48:54Z；真实负责人未落实 |
+| 5.4 真触发 | PASS（测试接收器） | Pending 07:43:39Z → Firing 07:48:39Z → 送达 07:48:54Z → Resolved 07:53:24Z；真实负责人未落实 |
 | 6.1 H5 四步 | 部分 | 同 API 角色分步已验；**手机浏览器未验** |
 | 6.2 三名用户 | BLOCKED | 无真人反馈 |
 | 6.3 压测 | 部分 | 脚本完成；满档曲线未跑 |

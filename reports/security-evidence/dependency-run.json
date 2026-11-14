@@ -1,6 +1,6 @@
 {
   "source": "npm registry security audit API; pip-audit default PyPI vulnerability service",
-  "time": "2026-11-14T07:21:57.696155+00:00",
+  "time": "2026-11-14T07:53:16.482621+00:00",
   "commands": [
     {
       "name": "npm",
@@ -12,17 +12,27 @@
         "--registry=https://registry.npmjs.org"
       ],
       "exit": 1,
-      "seconds": 5.331
+      "seconds": 5.059
     },
     {
       "name": "backend-export",
-      "exit": 2,
-      "seconds": 0.02
+      "exit": 0,
+      "seconds": 0.052
+    },
+    {
+      "name": "backend",
+      "exit": 1,
+      "seconds": 16.348
     },
     {
       "name": "mcp-export",
-      "exit": 2,
-      "seconds": 0.009
+      "exit": 0,
+      "seconds": 0.016
+    },
+    {
+      "name": "mcp",
+      "exit": 1,
+      "seconds": 3.877
     }
   ],
   "locks": {
@@ -40,8 +50,8 @@
       "version": "uv 0.13.5 (Homebrew 2026-10-22 aarch64-apple-darwin)"
     },
     "pip-audit": {
-      "exit": 2,
-      "version": ""
+      "exit": 0,
+      "version": "pip-audit 2.10.1"
     }
   }
 }

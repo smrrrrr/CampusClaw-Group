@@ -40,31 +40,16 @@
           "range": ">=0.11.0 <0.18.2"
         }
       ],
-      "effects": [
-        "micromark-extension-math",
-        "rehype-katex"
-      ],
-      "range": "",
+      "effects": [],
+      "range": "0.11.0 - 0.18.1",
       "nodes": [
         "node_modules/katex"
       ],
-      "fixAvailable": false
-    },
-    "micromark-extension-math": {
-      "name": "micromark-extension-math",
-      "severity": "moderate",
-      "isDirect": false,
-      "via": [
-        "katex"
-      ],
-      "effects": [
-        "remark-math"
-      ],
-      "range": "",
-      "nodes": [
-        "node_modules/micromark-extension-math"
-      ],
-      "fixAvailable": false
+      "fixAvailable": {
+        "name": "katex",
+        "version": "0.16.47",
+        "isSemVerMajor": false
+      }
     },
     "next": {
       "name": "next",
@@ -625,11 +610,15 @@
         "postcss"
       ],
       "effects": [],
-      "range": "",
+      "range": "0.9.9 - 16.3.0-preview.10",
       "nodes": [
         "node_modules/next"
       ],
-      "fixAvailable": false
+      "fixAvailable": {
+        "name": "next",
+        "version": "16.4.6",
+        "isSemVerMajor": true
+      }
     },
     "postcss": {
       "name": "postcss",
@@ -701,45 +690,20 @@
             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
           },
           "range": "<=8.5.17"
-        },
-        "source-map-js"
+        }
       ],
       "effects": [
         "next"
       ],
-      "range": "",
+      "range": "<=8.5.22",
       "nodes": [
         "node_modules/postcss"
       ],
-      "fixAvailable": false
-    },
-    "rehype-katex": {
-      "name": "rehype-katex",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        "katex"
-      ],
-      "effects": [],
-      "range": "",
-      "nodes": [
-        "node_modules/rehype-katex"
-      ],
-      "fixAvailable": false
-    },
-    "remark-math": {
-      "name": "remark-math",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        "micromark-extension-math"
-      ],
-      "effects": [],
-      "range": "",
-      "nodes": [
-        "node_modules/remark-math"
-      ],
-      "fixAvailable": false
+      "fixAvailable": {
+        "name": "next",
+        "version": "16.4.6",
+        "isSemVerMajor": true
+      }
     },
     "source-map-js": {
       "name": "source-map-js",
@@ -763,24 +727,22 @@
           "range": ">=1.0.0 <1.2.2"
         }
       ],
-      "effects": [
-        "postcss"
-      ],
-      "range": "",
+      "effects": [],
+      "range": "1.0.0 - 1.2.1",
       "nodes": [
         "node_modules/source-map-js"
       ],
-      "fixAvailable": false
+      "fixAvailable": true
     }
   },
   "metadata": {
     "vulnerabilities": {
       "info": 0,
       "low": 0,
-      "moderate": 4,
+      "moderate": 1,
       "high": 2,
       "critical": 1,
-      "total": 7
+      "total": 4
     },
     "dependencies": {
       "prod": 129,

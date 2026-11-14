@@ -143,7 +143,7 @@ def main() -> int:
             "前置": "根目录 .env、独立数据目录与端口",
             "写入范围": "Compose 项目与挂载卷",
             "预期退出码": "0 / 200",
-            "上次可核实": "未知（本次未启动）",
+            "上次可核实": "2026-11-14T07:33Z 启动（见 reports/boot-reproduce.md）",
             "证据": "reports/boot-reproduce.md",
         })
 

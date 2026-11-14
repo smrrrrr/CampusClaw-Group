@@ -63,7 +63,7 @@ Grafana 已通过 provisioning 加载（`/api/dashboards/uid/campusclaw-lesson10
 | Pending | 2026-11-14T07:43:39Z | Prometheus `ALERTS{alertstate="pending"}` |
 | Firing | 2026-11-14T07:48:39.202Z | Prometheus 规则状态；Alertmanager `startsAt` |
 | 送达测试接收器 | 2026-11-14T07:48:54.189Z | `alert/received.jsonl`，status=firing |
-| Resolved | 注入停止后，待窗口跌回阈值 | 待回填 |
+| Resolved | 2026-11-14T07:53:24.199Z | 同文件 status=resolved；注入停止后窗口跌回阈值 |
 
 - Firing → 实际送达：**15 秒**，满足“60 秒内送达”的目标。
 - 通知内容包含技能名、失败率与“窗口内执行样本已超过 20”，可回到面板复核。

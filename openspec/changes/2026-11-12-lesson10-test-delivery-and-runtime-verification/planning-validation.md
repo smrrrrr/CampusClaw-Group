@@ -1,5 +1,7 @@
 # 本轮规划验证记录
 
+> **历史快照**：本文件记录 2026-11-12 的规划检查，其中“任务全部未勾选”只对当时成立。当前勾选状态与实施证据以 `tasks.md` 和 `reports/lesson10-delivery.md` 为准。
+
 日期：2026-11-12。对象仅为 `2026-11-12-lesson10-test-delivery-and-runtime-verification` 的propose文档，不是第10课业务或运行验证报告。
 
 ## 已执行检查
