@@ -42,7 +42,7 @@
   "backend/routers/student.py": "7655e6d1e59e334fb74d6c50b8dff4d28ca220943d75176c900b8f016f2ce547",
   "backend/routers/teacher.py": "1a388cb9521974a8a38c17d1f13cce45c763b99b1ea97b68bd719d8e89c7dd90",
   "backend/schemas.py": "04bbdbf5c1d65e5f14e48cc653cce0d6f3a7eefe4c7eed1561f2911a99fe8ab9",
-  "backend/security.py": "ede7bcc76877facd55ba924668f9cfedb5f9025c67c3b95d32406da1aa371247",
+  "backend/security.py": "f9d0e85586378128b0efcd1d3f62e3868cfa72ef665b55d061eca7b80bd7984a",
   "backend/services.py": "88206c3121fac1b1a7fe7d27eddb83016dc5317467487ac4f4158d12bf3a9d4e",
   "backend/skill_service.py": "fe2700fced6e4743a52f1674e372dc68ba6a5d659ea3110898c5ea420c7e2d9c",
   "backend/version.py": "394d460ed4cea71ae99aeec244ab1393a2f2e41549e814392508509186f8d138",

@@ -1,0 +1,369 @@
+ Image campusclaw-mcp-tools:04088626787c1ca5dcb99b771d407d1c63e6153c Building
+ Image campusclaw-backend:04088626787c1ca5dcb99b771d407d1c63e6153c Building
+ Image campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.35kB done
+#1 DONE 0.0s
+
+#2 [backend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.67kB done
+#2 DONE 0.0s
+
+#3 [frontend internal] load build definition from Dockerfile
+#3 transferring dockerfile: 934B done
+#3 DONE 0.0s
+
+#4 [mcp-tools internal] load build definition from Dockerfile
+#4 transferring dockerfile: 931B done
+#4 DONE 0.0s
+
+#5 [mcp-tools internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.0s
+
+#6 [frontend internal] load metadata for docker.io/library/node:22-alpine
+#6 DONE 0.0s
+
+#7 [frontend internal] load .dockerignore
+#7 transferring context: 80B done
+#7 DONE 0.0s
+
+#8 [frontend deps 1/4] FROM docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914
+#8 resolve docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 done
+#8 DONE 0.0s
+
+#9 [frontend internal] load build context
+#9 transferring context: 498.02kB 0.0s done
+#9 DONE 0.0s
+
+#10 [frontend deps 2/4] WORKDIR /app
+#10 CACHED
+
+#11 [frontend deps 3/4] COPY package*.json ./
+#11 DONE 0.0s
+
+#12 [mcp-tools internal] load metadata for ghcr.io/astral-sh/uv:0.13.5
+#12 DONE 2.9s
+
+#13 [mcp-tools internal] load .dockerignore
+#13 transferring context: 71B done
+#13 DONE 0.0s
+
+#14 [backend internal] load .dockerignore
+#14 transferring context: 303B done
+#14 DONE 0.0s
+
+#15 [mcp-tools] FROM ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff
+#15 resolve ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff 0.0s done
+#15 DONE 0.0s
+
+#16 [mcp-tools builder 1/5] FROM docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
+#16 resolve docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 0.0s done
+#16 DONE 0.0s
+
+#17 [mcp-tools internal] load build context
+#17 transferring context: 167.32kB done
+#17 DONE 0.0s
+
+#18 [mcp-tools builder 2/5] WORKDIR /app
+#18 CACHED
+
+#19 [mcp-tools builder 3/5] COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
+#19 CACHED
+
+#20 [backend internal] load build context
+#20 transferring context: 902.11kB 0.0s done
+#20 DONE 0.0s
+
+#21 [backend builder 4/5] COPY pyproject.toml uv.lock ./
+#21 ...
+
+#22 [mcp-tools builder 4/5] COPY pyproject.toml uv.lock ./
+#22 DONE 0.4s
+
+#21 [backend builder 4/5] COPY pyproject.toml uv.lock ./
+#21 DONE 0.4s
+
+#23 [backend builder 5/5] RUN uv sync --locked --no-dev
+#23 0.267 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#23 0.267 Creating virtual environment at: .venv
+#23 0.269 Resolved 49 packages in 0.61ms
+#23 3.025 Downloading sqlalchemy (3.3MiB)
+#23 3.026 Downloading cryptography (4.5MiB)
+#23 3.026 Downloading pillow (6.2MiB)
+#23 3.027 Downloading uvloop (4.1MiB)
+#23 3.028 Downloading pydantic-core (1.9MiB)
+#23 3.028 Downloading lxml (4.8MiB)
+#23 3.229 Downloading pymupdf (23.9MiB)
+#23 4.544  Downloaded pydantic-core
+#23 5.103  Downloaded sqlalchemy
+#23 5.379  Downloaded uvloop
+#23 5.544  Downloaded cryptography
+#23 5.559  Downloaded lxml
+#23 5.833  Downloaded pillow
+#23 ...
+
+#24 [frontend deps 4/4] RUN npm ci
+#24 ...
+
+#25 [mcp-tools builder 5/5] RUN uv sync --locked --no-dev
+#25 0.246 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#25 0.246 Creating virtual environment at: .venv
+#25 0.251 Resolved 21 packages in 2ms
+#25 3.683 Downloading pydantic-core (2.0MiB)
+#25 3.878 Downloading uvloop (4.2MiB)
+#25 5.506  Downloaded pydantic-core
+#25 6.388  Downloaded uvloop
+#25 6.388 Prepared 20 packages in 6.13s
+#25 6.406 Installed 20 packages in 17ms
+#25 6.406  + annotated-doc==0.0.5
+#25 6.406  + annotated-types==0.8.0
+#25 6.406  + anyio==4.15.1
+#25 6.406  + click==8.5.0
+#25 6.406  + fastapi==0.159.1
+#25 6.406  + h11==0.16.0
+#25 6.406  + httptools==0.9.0
+#25 6.406  + idna==3.20
+#25 6.406  + opentelemetry-api==1.45.2
+#25 6.406  + pydantic==2.14.1
+#25 6.406  + pydantic-core==2.50.1
+#25 6.406  + python-dotenv==1.2.4
+#25 6.406  + pyyaml==6.0.3
+#25 6.406  + starlette==1.9.0
+#25 6.406  + typing-extensions==4.16.0
+#25 6.406  + typing-inspection==0.4.4
+#25 6.406  + uvicorn==0.54.0
+#25 6.406  + uvloop==0.23.0
+#25 6.406  + watchfiles==1.3.0
+#25 6.406  + websockets==17.3
+#25 DONE 7.1s
+
+#23 [backend builder 5/5] RUN uv sync --locked --no-dev
+#23 ...
+
+#18 [mcp-tools builder 2/5] WORKDIR /app
+#18 CACHED
+
+#26 [mcp-tools runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#26 DONE 0.2s
+
+#23 [backend builder 5/5] RUN uv sync --locked --no-dev
+#23 ...
+
+#27 [mcp-tools runtime 4/5] COPY main.py ./
+#27 DONE 0.0s
+
+#28 [mcp-tools runtime 5/5] RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+#28 DONE 0.5s
+
+#23 [backend builder 5/5] RUN uv sync --locked --no-dev
+#23 ...
+
+#29 [mcp-tools] exporting to image
+#29 exporting layers
+#29 exporting layers 0.7s done
+#29 ...
+
+#24 [frontend deps 4/4] RUN npm ci
+#24 11.74
+#24 11.74 added 134 packages, and audited 135 packages in 12s
+#24 11.74
+#24 11.74 88 packages are looking for funding
+#24 11.74   run `npm fund` for details
+#24 11.83
+#24 11.83 5 vulnerabilities (4 low, 1 critical)
+#24 11.83
+#24 11.83 To address all issues (including breaking changes), run:
+#24 11.83   npm audit fix --force
+#24 11.83
+#24 11.83 Run `npm audit` for details.
+#24 11.84 npm notice
+#24 11.84 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#24 11.84 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#24 11.84 npm notice To update run: npm install -g npm@12.2.2
+#24 11.84 npm notice
+#24 DONE 12.0s
+
+#29 [mcp-tools] exporting to image
+#29 exporting manifest sha256:f2d2d06a58cf7133349bc53980ee98fe1eaa43cc408e7dc7d17956e3929b1a0c done
+#29 exporting config sha256:ff572e81b067ecdf9c96ba9cc37e0b329aeaf580017c6c733e67f7fe0955c95a done
+#29 exporting attestation manifest sha256:800b5fd38f254ff4755cfe3c57e387e91c58bca5ecea961f80e8c03729b9c972 done
+#29 exporting manifest list sha256:9922130dfb919819a26bcf44266f823d357210556007f1ed1f50cbbb030d5355 0.0s done
+#29 naming to docker.io/library/campusclaw-mcp-tools:04088626787c1ca5dcb99b771d407d1c63e6153c done
+#29 unpacking to docker.io/library/campusclaw-mcp-tools:04088626787c1ca5dcb99b771d407d1c63e6153c
+#29 ...
+
+#23 [backend builder 5/5] RUN uv sync --locked --no-dev
+#23 8.912  Downloaded pymupdf
+#23 8.913 Prepared 39 packages in 8.64s
+#23 8.950 Installed 39 packages in 36ms
+#23 8.950  + annotated-doc==0.0.5
+#23 8.950  + annotated-types==0.8.0
+#23 8.950  + anyio==4.15.1
+#23 8.950  + bcrypt==4.0.1
+#23 8.950  + certifi==2026.10.19
+#23 8.950  + cffi==2.1.1
+#23 8.950  + click==8.5.0
+#23 8.950  + cryptography==50.0.1
+#23 8.950  + fastapi==0.141.1
+#23 8.950  + greenlet==3.5.6
+#23 8.950  + h11==0.16.0
+#23 8.950  + httpcore==1.0.9
+#23 8.950  + httptools==0.8.0
+#23 8.950  + httpx==0.28.1
+#23 8.950  + idna==3.20
+#23 8.951  + lxml==6.1.3
+#23 8.951  + passlib==1.7.4
+#23 8.951  + pika==1.3.2
+#23 8.951  + pillow==13.0.0
+#23 8.951  + pycparser==3.0
+#23 8.951  + pydantic==2.13.5
+#23 8.951  + pydantic-core==2.46.5
+#23 8.951  + pydantic-settings==2.15.0
+#23 8.951  + pyjwt==2.15.1
+#23 8.951  + pymupdf==1.28.2
+#23 8.951  + python-docx==1.2.0
+#23 8.951  + python-dotenv==1.2.3
+#23 8.951  + python-multipart==0.0.32
+#23 8.951  + python-pptx==1.0.2
+#23 8.951  + pyyaml==6.0.3
+#23 8.951  + sqlalchemy==2.0.54
+#23 8.951  + starlette==1.6.0
+#23 8.951  + typing-extensions==4.16.0
+#23 8.951  + typing-inspection==0.4.4
+#23 8.951  + uvicorn==0.53.0
+#23 8.951  + uvloop==0.22.1
+#23 8.951  + watchfiles==1.3.0
+#23 8.951  + websockets==17.1
+#23 8.951  + xlsxwriter==3.2.9
+#23 DONE 9.0s
+
+#29 [mcp-tools] exporting to image
+#29 unpacking to docker.io/library/campusclaw-mcp-tools:04088626787c1ca5dcb99b771d407d1c63e6153c 0.4s done
+#29 DONE 1.2s
+
+#30 [mcp-tools] resolving provenance for metadata file
+#30 DONE 0.0s
+
+#31 [backend runtime 3/7] COPY --from=builder /app/.venv /app/.venv
+#31 DONE 0.4s
+
+#32 [frontend builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#32 ...
+
+#33 [backend runtime 4/7] COPY . .
+#33 DONE 0.1s
+
+#34 [backend runtime 5/7] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#34 ...
+
+#32 [frontend builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#32 DONE 1.7s
+
+#35 [frontend builder 4/5] COPY . .
+#35 DONE 0.1s
+
+#36 [frontend builder 5/5] RUN npm run build
+#36 0.579
+#36 0.579 > campusclaw-frontend@0.1.0 build
+#36 0.579 > next build
+#36 0.579
+#36 1.057   ▲ Next.js 14.2.15
+#36 ...
+
+#34 [backend runtime 5/7] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#34 DONE 2.8s
+
+#36 [frontend builder 5/5] RUN npm run build
+#36 1.057
+#36 1.063    Creating an optimized production build ...
+#36 ...
+
+#37 [backend runtime 6/7] COPY entrypoint.sh /app/entrypoint.sh
+#37 DONE 0.0s
+
+#38 [backend runtime 7/7] RUN chmod 0755 /app/entrypoint.sh
+#38 DONE 0.1s
+
+#39 [backend] exporting to image
+#39 exporting layers 3.9s done
+#39 exporting manifest sha256:42476e02c1dabf74730981c2d26808b45e818be73a9dff9a16290e15eb2cef90 0.0s done
+#39 exporting config sha256:d2bee938dd0f47b81e6fb637eb1792d14a941e09d88146d4745ea7385e1a73fb done
+#39 exporting attestation manifest sha256:69c88d91e962f158f78dacb27046d1bd5f45ad8efd16431403be5297b5a01f92 done
+#39 exporting manifest list sha256:57b7c571ed524dec3256e411f76e4b2148dc1202c19067984bf3cf24d0be54d8 done
+#39 naming to docker.io/library/campusclaw-backend:04088626787c1ca5dcb99b771d407d1c63e6153c done
+#39 unpacking to docker.io/library/campusclaw-backend:04088626787c1ca5dcb99b771d407d1c63e6153c
+#39 unpacking to docker.io/library/campusclaw-backend:04088626787c1ca5dcb99b771d407d1c63e6153c 1.4s done
+#39 DONE 5.4s
+
+#36 [frontend builder 5/5] RUN npm run build
+#36 ...
+
+#40 [backend] resolving provenance for metadata file
+#40 DONE 0.0s
+
+#36 [frontend builder 5/5] RUN npm run build
+#36 10.94  ✓ Compiled successfully
+#36 10.94    Linting and checking validity of types ...
+#36 13.48    Collecting page data ...
+#36 14.39    Generating static pages (0/14) ...
+#36 14.61    Generating static pages (3/14)
+#36 14.61    Generating static pages (6/14)
+#36 14.61    Generating static pages (10/14)
+#36 14.67  ✓ Generating static pages (14/14)
+#36 14.76    Finalizing page optimization ...
+#36 14.76    Collecting build traces ...
+#36 20.15
+#36 20.15 Route (app)                              Size     First Load JS
+#36 20.15 ┌ ○ /                                    2.01 kB        93.5 kB
+#36 20.15 ├ ○ /_not-found                          873 B            88 kB
+#36 20.15 ├ ○ /403                                 558 B          87.7 kB
+#36 20.15 ├ ○ /change-password                     2.46 kB        93.9 kB
+#36 20.15 ├ ○ /login                               2.49 kB          94 kB
+#36 20.15 ├ ○ /materials                           8.7 kB          222 kB
+#36 20.15 ├ ○ /student                             14 kB           223 kB
+#36 20.15 ├ ○ /teacher                             12.8 kB         233 kB
+#36 20.15 ├ ○ /teacher/lesson-prep                 10.1 kB         224 kB
+#36 20.15 ├ ○ /teacher/library                     6.87 kB         220 kB
+#36 20.15 ├ ○ /teacher/quiz                        9.78 kB         230 kB
+#36 20.15 └ ○ /teacher/upload                      3.52 kB        99.4 kB
+#36 20.15 + First Load JS shared by all            87.1 kB
+#36 20.15   ├ chunks/117-bd95ea458d1120ed.js       31.6 kB
+#36 20.15   ├ chunks/fd9d1056-04b354420cb0981c.js  53.6 kB
+#36 20.15   └ other shared chunks (total)          1.91 kB
+#36 20.15
+#36 20.15
+#36 20.15 ƒ Middleware                             26.5 kB
+#36 20.15
+#36 20.15 ○  (Static)  prerendered as static content
+#36 20.15
+#36 20.21 npm notice
+#36 20.21 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#36 20.21 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#36 20.21 npm notice To update run: npm install -g npm@12.2.2
+#36 20.21 npm notice
+#36 DONE 20.5s
+
+#41 [frontend runner 3/4] COPY --from=builder /app/.next/standalone ./
+#41 DONE 0.2s
+
+#42 [frontend runner 4/4] COPY --from=builder /app/.next/static ./.next/static
+#42 DONE 0.0s
+
+#43 [frontend] exporting to image
+#43 exporting layers
+#43 exporting layers 0.4s done
+#43 exporting manifest sha256:67d6064cea6881bc4b2584cf3bbb537ecd0d3e3623f2a5b97b4675ec852059d6 done
+#43 exporting config sha256:803862a0e99c89dd61edbb6b5910facae0b8809a5a4669643e2e2eab29b4df2e done
+#43 exporting attestation manifest sha256:04b34fd49a39af0493f29001687b5e647c22ad0475225d84a44cd686668e5adf done
+#43 exporting manifest list sha256:b0d903f15016738324b8e90d7946a028989a318873a0ee9dc35d43aeafb0f9a4 done
+#43 naming to docker.io/library/campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c done
+#43 unpacking to docker.io/library/campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c
+#43 unpacking to docker.io/library/campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c 0.2s done
+#43 DONE 0.6s
+
+#44 [frontend] resolving provenance for metadata file
+#44 DONE 0.0s
+ Image campusclaw-backend:04088626787c1ca5dcb99b771d407d1c63e6153c Built
+ Image campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c Built
+ Image campusclaw-mcp-tools:04088626787c1ca5dcb99b771d407d1c63e6153c Built
+EXIT=0

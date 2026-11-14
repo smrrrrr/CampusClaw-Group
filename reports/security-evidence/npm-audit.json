@@ -3,26 +3,9 @@
   "vulnerabilities": {
     "katex": {
       "name": "katex",
-      "severity": "moderate",
+      "severity": "low",
       "isDirect": true,
       "via": [
-        {
-          "source": 1107419,
-          "name": "katex",
-          "dependency": "katex",
-          "title": "KaTeX \\htmlData does not validate attribute names",
-          "url": "https://github.com/advisories/GHSA-cg87-wmx4-v546",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-79",
-            "CWE-116"
-          ],
-          "cvss": {
-            "score": 6.3,
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L"
-          },
-          "range": ">=0.12.0 <=0.16.20"
-        },
         {
           "source": 1241206,
           "name": "katex",
@@ -40,15 +23,38 @@
           "range": ">=0.11.0 <0.18.2"
         }
       ],
-      "effects": [],
+      "effects": [
+        "micromark-extension-math",
+        "rehype-katex"
+      ],
       "range": "0.11.0 - 0.18.1",
       "nodes": [
         "node_modules/katex"
       ],
       "fixAvailable": {
         "name": "katex",
-        "version": "0.16.47",
-        "isSemVerMajor": false
+        "version": "0.19.1",
+        "isSemVerMajor": true
+      }
+    },
+    "micromark-extension-math": {
+      "name": "micromark-extension-math",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "katex"
+      ],
+      "effects": [
+        "remark-math"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/micromark-extension-math"
+      ],
+      "fixAvailable": {
+        "name": "remark-math",
+        "version": "3.0.1",
+        "isSemVerMajor": true
       }
     },
     "next": {
@@ -606,11 +612,10 @@
             "vectorString": null
           },
           "range": ">=13.0.0 <=15.5.27"
-        },
-        "postcss"
+        }
       ],
       "effects": [],
-      "range": "0.9.9 - 16.3.0-preview.10",
+      "range": "0.9.9 - 15.5.27",
       "nodes": [
         "node_modules/next"
       ],
@@ -620,129 +625,51 @@
         "isSemVerMajor": true
       }
     },
-    "postcss": {
-      "name": "postcss",
-      "severity": "high",
-      "isDirect": false,
+    "rehype-katex": {
+      "name": "rehype-katex",
+      "severity": "low",
+      "isDirect": true,
       "via": [
-        {
-          "source": 1117015,
-          "name": "postcss",
-          "dependency": "postcss",
-          "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
-          "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-79"
-          ],
-          "cvss": {
-            "score": 6.1,
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
-          },
-          "range": "<8.5.10"
-        },
-        {
-          "source": 1124252,
-          "name": "postcss",
-          "dependency": "postcss",
-          "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
-          "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q",
-          "severity": "high",
-          "cwe": [
-            "CWE-22",
-            "CWE-200"
-          ],
-          "cvss": {
-            "score": 7.5,
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
-          },
-          "range": "<=8.5.11"
-        },
-        {
-          "source": 1130709,
-          "name": "postcss",
-          "dependency": "postcss",
-          "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
-          "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-22",
-            "CWE-200"
-          ],
-          "cvss": {
-            "score": 0,
-            "vectorString": null
-          },
-          "range": "<=8.5.22"
-        },
-        {
-          "source": 1139510,
-          "name": "postcss",
-          "dependency": "postcss",
-          "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
-          "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849",
-          "severity": "high",
-          "cwe": [
-            "CWE-22"
-          ],
-          "cvss": {
-            "score": 7.5,
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
-          },
-          "range": "<=8.5.17"
-        }
+        "katex"
       ],
-      "effects": [
-        "next"
-      ],
-      "range": "<=8.5.22",
+      "effects": [],
+      "range": ">=2.0.0",
       "nodes": [
-        "node_modules/postcss"
+        "node_modules/rehype-katex"
       ],
       "fixAvailable": {
-        "name": "next",
-        "version": "16.4.6",
+        "name": "rehype-katex",
+        "version": "1.2.0",
         "isSemVerMajor": true
       }
     },
-    "source-map-js": {
-      "name": "source-map-js",
-      "severity": "high",
-      "isDirect": false,
+    "remark-math": {
+      "name": "remark-math",
+      "severity": "low",
+      "isDirect": true,
       "via": [
-        {
-          "source": 1241209,
-          "name": "source-map-js",
-          "dependency": "source-map-js",
-          "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
-          "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
-          "severity": "high",
-          "cwe": [
-            "CWE-1284"
-          ],
-          "cvss": {
-            "score": 7.5,
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
-          },
-          "range": ">=1.0.0 <1.2.2"
-        }
+        "micromark-extension-math"
       ],
       "effects": [],
-      "range": "1.0.0 - 1.2.1",
+      "range": ">=4.0.0",
       "nodes": [
-        "node_modules/source-map-js"
+        "node_modules/remark-math"
       ],
-      "fixAvailable": true
+      "fixAvailable": {
+        "name": "remark-math",
+        "version": "3.0.1",
+        "isSemVerMajor": true
+      }
     }
   },
   "metadata": {
     "vulnerabilities": {
       "info": 0,
-      "low": 0,
-      "moderate": 1,
-      "high": 2,
+      "low": 4,
+      "moderate": 0,
+      "high": 0,
       "critical": 1,
-      "total": 4
+      "total": 5
     },
     "dependencies": {
       "prod": 129,

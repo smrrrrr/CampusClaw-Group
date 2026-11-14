@@ -1,0 +1,40 @@
+{"ts": "2026-11-12T07:03:45.003Z", "level": "info", "module": "access", "request_id": "a873ffda2e5f46169dd14d5e94415cc1", "method": "POST", "path": "/api/auth/login", "status": 200, "duration_ms": 194.3}
+{"ts": "2026-11-12T07:03:45.181Z", "level": "info", "module": "access", "request_id": "e480fe5e39514f9da5cebecf47ad3ee1", "method": "POST", "path": "/api/auth/login", "status": 200, "duration_ms": 177.5}
+{"ts": "2026-11-12T07:03:45.194Z", "level": "info", "module": "access", "request_id": "58c1b644dca844b3b3a391e2e17693c6", "method": "POST", "path": "/api/student/conversations", "status": 200, "duration_ms": 10.5}
+{"ts": "2026-11-12T07:03:45.202Z", "level": "info", "module": "access", "request_id": "b650fa9f1971486c9eccb912ea543286", "method": "POST", "path": "/api/student/conversations/1/chat", "status": 200, "duration_ms": 8.1}
+{"ts": "2026-11-12T07:03:45.207Z", "level": "info", "module": "access", "request_id": "9c4e36beef4342eb818e2b425cd84601", "method": "DELETE", "path": "/api/student/conversations/1", "status": 200, "duration_ms": 1.8}
+{"ts": "2026-11-12T07:03:45.209Z", "level": "info", "module": "access", "request_id": "489189091a7f4a1d8bfc130845568df6", "method": "POST", "path": "/api/student/conversations", "status": 200, "duration_ms": 1.7}
+{"ts": "2026-11-12T07:03:45.212Z", "level": "info", "module": "access", "request_id": "65388abb673f4da1b6d15d8628ca9aa8", "method": "POST", "path": "/api/student/conversations/1/chat", "status": 200, "duration_ms": 3.2}
+{"ts": "2026-11-12T07:03:45.215Z", "level": "info", "module": "access", "request_id": "64b2df9081454c0d9b5cd99c01d02900", "method": "DELETE", "path": "/api/student/conversations/1", "status": 200, "duration_ms": 1.2}
+{"ts": "2026-11-12T07:03:45.217Z", "level": "info", "module": "access", "request_id": "1c45861c079642ea88d3252729a244a9", "method": "POST", "path": "/api/student/conversations", "status": 200, "duration_ms": 1.8}
+{"ts": "2026-11-12T07:03:45.220Z", "level": "info", "module": "access", "request_id": "c5b09e775b8f400aaf81fa135dbcfa3c", "method": "POST", "path": "/api/student/conversations/1/chat", "status": 200, "duration_ms": 3.1}
+{"ts": "2026-11-12T07:03:45.223Z", "level": "info", "module": "access", "request_id": "3dee9dc2d9054b818a53ca1bf27325b4", "method": "DELETE", "path": "/api/student/conversations/1", "status": 200, "duration_ms": 1.1}
+{"ts": "2026-11-12T07:03:45.225Z", "level": "info", "module": "access", "request_id": "f60a6e62197f40988695a43506e45d9e", "method": "POST", "path": "/api/student/conversations", "status": 200, "duration_ms": 1.7}
+{"ts": "2026-11-12T07:03:45.228Z", "level": "info", "module": "access", "request_id": "24f6d35c2d8d42f9afc35d5196701524", "method": "POST", "path": "/api/student/conversations/1/chat", "status": 200, "duration_ms": 2.9}
+{"ts": "2026-11-12T07:03:45.231Z", "level": "info", "module": "access", "request_id": "2ec33b90cf704f68a4994cc38eb2be9f", "method": "DELETE", "path": "/api/student/conversations/1", "status": 200, "duration_ms": 1.1}
+{"ts": "2026-11-12T07:03:45.238Z", "level": "info", "module": "access", "request_id": "f8f6b7af6d8d47c39709383fc4de2f84", "method": "POST", "path": "/api/teacher/upload-material", "status": 200, "duration_ms": 7.1}
+{"ts": "2026-11-12T07:03:45.244Z", "level": "info", "module": "access", "request_id": "21bf32431d6146638194f42e65494ffe", "method": "GET", "path": "/api/materials", "status": 200, "duration_ms": 2.3}
+{"ts": "2026-11-12T07:03:45.248Z", "level": "info", "module": "access", "request_id": "f0e02b2c247a46a5ace38cc3f1aec327", "method": "POST", "path": "/api/teacher/upload-material", "status": 200, "duration_ms": 3.5}
+{"ts": "2026-11-12T07:03:45.251Z", "level": "info", "module": "access", "request_id": "9dcb01fbef6546a88edb7a225a5954f7", "method": "GET", "path": "/api/materials", "status": 200, "duration_ms": 1.1}
+{"ts": "2026-11-12T07:03:45.429Z", "level": "info", "module": "access", "request_id": "7346e9f838fd48648d9091ed08f9816b", "method": "POST", "path": "/api/auth/login", "status": 200, "duration_ms": 177.0}
+{"ts": "2026-11-12T07:03:45.430Z", "level": "info", "module": "access", "request_id": "f9fcc3626541488a82744311d1efb323", "method": "POST", "path": "/api/teacher/skills", "status": 403, "duration_ms": 1.1}
+{"ts": "2026-11-12T07:03:45.439Z", "level": "info", "module": "access", "request_id": "655b652ead0f45ecaffd21f002832fdc", "method": "POST", "path": "/api/teacher/skills", "status": 401, "duration_ms": 9.0}
+{"ts": "2026-11-12T07:03:45.441Z", "level": "info", "module": "access", "request_id": "ceb93082f67940e1b08cfa51c94097b8", "method": "POST", "path": "/api/teacher/skills", "status": 422, "duration_ms": 1.2}
+
+[SQL 注入]
+  ✓ SQL 注入 payload 不导致 500 或破坏数据
+
+[XSS]
+  ✓ 上传含 <script> 描述的材料成功
+  ✓ 列表响应不含原始 <script> 标签
+  ✓ 列表响应含转义后的 script 标记
+  ✓ img 标签被转义（&lt;img）
+
+[CSRF]
+  ✓ 登录响应下发 csrf_token Cookie
+  ✓ Cookie 会话无 X-CSRF-Token 头写请求被拒 (403)
+  ✓ Cookie 会话带正确 X-CSRF-Token 头不被 CSRF 拒绝
+  ✓ Bearer 令牌请求豁免 CSRF 校验
+
+==================================================
+注入三件套回归：9/9 通过

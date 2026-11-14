@@ -135,6 +135,44 @@ def main():
                                      "backend": {"vulnerable_packages": 0},
                                      "mcp": {"vulnerable_packages": 0}}) == (0, []))
 
+    # 依赖升级：PyJWT 替换 python-jose 后的旧语义边界（J2/J3/J7 子集）。
+    import time as _time
+    import jwt as _pyjwt
+    import security
+
+    def _token(claims):
+        return _pyjwt.encode(claims, security.settings.jwt_secret_key,
+                             algorithm=security.settings.jwt_algorithm)
+
+    fixed = 1_800_000_000
+    with patch.object(security.time, "time", return_value=fixed):
+        check("JWT-J2 正常：exp==当前整数秒仍有效",
+              security.decode_token(_token({"user_id": 1, "type": "access", "iat": fixed, "exp": fixed}))["user_id"] == 1)
+        try:
+            security.decode_token(_token({"user_id": 1, "type": "access", "iat": fixed, "exp": fixed - 1}))
+            expired_rejected = False
+        except security.JWTError:
+            expired_rejected = True
+        check("JWT-J2 失败：exp<当前秒拒绝", expired_rejected)
+        check("JWT-J7 边界：未来 iat 按旧语义允许",
+              security.decode_token(_token({"user_id": 1, "type": "access", "iat": fixed + 60,
+                                            "exp": fixed + 3600}))["user_id"] == 1)
+        try:
+            security.decode_token(_token({"user_id": 1, "type": "access", "iat": "not-a-number",
+                                          "exp": fixed + 3600}))
+            bad_iat_rejected = False
+        except security.JWTError:
+            bad_iat_rejected = True
+        check("JWT-J7 失败：iat 不可转整数拒绝", bad_iat_rejected)
+
+    valid = _token({"user_id": 1, "type": "access", "iat": int(_time.time()), "exp": int(_time.time()) + 60})
+    try:
+        security.decode_token(valid[:-3] + "abc")
+        tamper_rejected = False
+    except security.JWTError:
+        tamper_rejected = True
+    check("JWT-J3 失败：签名篡改拒绝", tamper_rejected)
+
 
 if __name__ == "__main__":
     main()

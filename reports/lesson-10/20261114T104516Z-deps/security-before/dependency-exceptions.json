@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "updated": "2026-11-11",
+  "description": "依赖漏洞例外登记表。每条记录对应一个未修复的已知漏洞包，security_precheck.py 会校验：审计发现的每个有漏洞包必须在此表中有对应记录且未过期，否则 check-security 失败。",
+  "exceptions": [
+    {
+      "ecosystem": "npm",
+      "package": "next",
+      "version": "14.2.15",
+      "severity": "critical",
+      "advisories": "GHSA 系列（通过 postcss 传递）",
+      "direct": true,
+      "used_for": "Next.js SSR 框架，前端页面服务端渲染",
+      "why_not_fixed": "next 14.2.x 为当前 LTS 兼容版本；升级到 15.x 涉及 App Router/Image API 不兼容变更，风险高于当前漏洞实际影响。所有高危均通过 postcss 传递，postcss 仅在构建时处理受信任的项目 CSS，不处理运行时用户输入。",
+      "mitigation": "1) 构建产物由 CI 生成，不暴露 postcss 给用户输入；2) 运行时用户输入仅经 markdown 渲染与 html.escape；3) 下个迭代窗口评估升级到 next 14.2 最新补丁或 15.x。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "npm",
+      "package": "postcss",
+      "version": "8.x (via next)",
+      "severity": "high",
+      "advisories": "GHSA-1117015, GHSA-1124252, GHSA-1130709, GHSA-1139510",
+      "direct": false,
+      "used_for": "构建时 CSS 预处理（next 传递依赖）",
+      "why_not_fixed": "postcss 由 next 锁定版本，单独升级可能破坏 next 构建。postcss 仅在 npm run build 阶段处理项目内受信任的 CSS/PostCSS 配置，不接触运行时用户输入。",
+      "mitigation": "构建过程无外部用户输入参与；运行时 CSS 为预构建静态文件。随 next 升级一并处置。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "npm",
+      "package": "source-map-js",
+      "version": "1.x (via postcss)",
+      "severity": "high",
+      "advisories": "GHSA-1241209",
+      "direct": false,
+      "used_for": "构建时生成 source map（postcss 传递依赖）",
+      "why_not_fixed": "由 postcss 锁定；source map 仅在构建阶段生成，不参与运行时。",
+      "mitigation": "构建阶段不处理不可信输入；source map 文件仅用于开发调试，生产构建可关闭。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "npm",
+      "package": "katex",
+      "version": "0.16.11",
+      "severity": "moderate",
+      "advisories": "GHSA-1107419, GHSA-1241206",
+      "direct": true,
+      "used_for": "题目/讲义中数学公式渲染",
+      "why_not_fixed": "0.16.x 为当前稳定分支；漏洞为正则表达式拒绝服务（ReDoS）类，触发需构造超长特定输入。",
+      "mitigation": "1) 所有用户输入在渲染前经后端 markdown 清洗与 html.escape；2) 题目内容由教师录入，学生不可直接提交公式源码；3) 下一迭代升级到 0.16.x 最新补丁。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "pip",
+      "package": "python-jose",
+      "version": "3.5.0",
+      "severity": "high",
+      "advisories": "GHSA（JWT 算法混淆/弱密钥检测）",
+      "direct": true,
+      "used_for": "JWT 令牌签发与校验",
+      "why_not_fixed": "3.5.0 为 PyPI 最新版；已知 advisory 为默认允许弱算法（none/HS1），本项目已在 security.py 中显式指定 algorithms=['HS256'] 并强制 JWT_SECRET_KEY 长度≥32，不受影响。",
+      "mitigation": "JWT 校验硬编码 algorithms=['HS256']；JWT_SECRET_KEY 由 restore.py 生成 64 字符随机串；不接受客户端指定算法。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "pip",
+      "package": "ecdsa",
+      "version": "0.19.2",
+      "severity": "high",
+      "advisories": "GHSA（ECDSA 签名实现问题）",
+      "direct": false,
+      "used_for": "python-jose 的 EC 密钥后端（传递依赖）",
+      "why_not_fixed": "由 python-jose 锁定；本项目使用 HS256 对称算法，不使用 EC 非对称密钥，ecdsa 代码路径不执行。",
+      "mitigation": "JWT 仅用 HS256，ecdsa 模块加载但不调用；升级跟随 python-jose。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "pip",
+      "package": "pyasn1",
+      "version": "0.6.4",
+      "severity": "high",
+      "advisories": "GHSA（ASN.1 解析器拒绝服务/越界）",
+      "direct": false,
+      "used_for": "python-jose 的密钥解析（传递依赖）",
+      "why_not_fixed": "由 python-jose/rsa 锁定；本项目不解析外部 ASN.1 数据，JWT 密钥为 HS256 对称字符串，不触发 ASN.1 解析路径。",
+      "mitigation": "不使用 EC/RSA 密钥，pyasn1 仅在解析 PEM 格式密钥时调用；本项目 JWT 密钥为原始字符串。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "pip",
+      "package": "certifi",
+      "version": "2026.7.22",
+      "severity": "moderate",
+      "advisories": "GHSA（CA 证书过期/移除）",
+      "direct": false,
+      "used_for": "requests/httpx 的 TLS CA 证书包（传递依赖）",
+      "why_not_fixed": "2026.7.22 为近期版本；advisory 涉及特定 CA 根证书移除，不影响当前对外 HTTPS 调用（MCP 工具服务走内网 docker 网络，模型 API 走官方域名）。",
+      "mitigation": "对外 HTTPS 仅调用 DeepSeek/OpenAI 官方 API 与内网 MCP 服务；不依赖第三方用户提供的 CA。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "ecosystem": "pip",
+      "package": "pillow",
+      "version": "12.3.0",
+      "severity": "high",
+      "advisories": "GHSA（图像解析器内存安全/拒绝服务系列）",
+      "direct": false,
+      "used_for": "python-pptx 的图像处理（传递依赖）",
+      "why_not_fixed": "由 python-pptx 锁定；pillow 仅在生成教案 PPTX 时处理教师上传的图片素材，不处理学生提交的不可信图像。",
+      "mitigation": "1) 图片上传接口限制 file_type 白名单（png/jpg/jpeg/gif/webp）；2) 限制上传文件大小；3) PPTX 生成仅在教师触发时执行，素材为教师上传。",
+      "review_after": "2026-12-15"
+    }
+  ]
+}
