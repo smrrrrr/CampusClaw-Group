@@ -38,3 +38,14 @@
 | 待填写 | 待填写 | 待填写 | 至少2项 | 待执行 | 待判断 | 待本人签名 |
 
 评审人由组内指定；修复优先级建议见自查报告，尚未授权或实施修复。无需为了交材料伪造签名、绿色结果或历史归档。
+
+---
+
+## 第10课追加复核（2026-11-14，不改上文历史结论）
+
+- **手段**：`make check`（33 项，含 `scripts/check.py --json` 执行记录）、`make check-security`、`scripts/lesson10_matrix.py`、`scripts/lesson10_scenario_map.py`、`scripts/lesson10_smoke.py`、`scripts/lesson10_api_bench.py`。
+- **对象**：`CampusClaw-Group-review`，分支 `deps/upgrade-a-b`（`378835f`、`c9a3521`）加第10课工作区改动；演示栈 `campusclaw-group` 七服务。
+- **判据**：清单 44 项逐项有脚本或证据；Scenario 505 条逐条有候选或明确缺口；门禁不得删断言凑绿。
+- **结果**：`make check` **33/33 PASS**；安全门禁 **RED**，npm high=0、critical 仅 `next`，backend/MCP pip 漏洞 0；场景映射 505 条中 280 条有候选（断言名 43、别名 55、弱候选 144、文件级 38），**225 条无匹配断言**；API 检索 P95 在并发 10 档由 737/617ms 降至 526/507ms。
+- **发现去向**：场景缺口进 `reports/scenario-coverage.md` 的「需要补检查的场景」；依赖与镜像结论进 `reports/lesson-10/20261114T104516Z-deps/`；运行期发现 nginx 上游 IP 缓存导致页面 502，记录于 `reports/boot-reproduce.md`。
+- **性质**：本次仍为代理自查与脚本证据，**不是组员本人独立复现**；人工评审栏保持待填，不得据此宣称课程安全任务完成。

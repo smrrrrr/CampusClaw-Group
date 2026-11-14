@@ -14,7 +14,7 @@ import struct
 from sqlalchemy.orm import Session
 
 from config import settings
-from embedding_service import cosine_similarity, embed_text
+from embedding_service import cosine_similarity_with_norm, embed_text, vector_norm
 from models import Material, MaterialChunk, Role, User
 
 
@@ -68,6 +68,24 @@ def _keyword_score(query_terms: set[str], content: str, weights: dict[str, float
     if not weights:
         return float(sum(content.count(t) for t in query_terms))
     return float(sum(content.count(t) * weights.get(t, 1.0) for t in query_terms))
+
+
+def _keyword_scores(query_terms: set[str], content: str, weights: dict[str, float]) -> tuple[float, float]:
+    """一次遍历同时得到加权分与原始 TF 分，避免对同一分块重复扫描两遍。
+
+    返回值与分别调用 _keyword_score(content, weights) 及 _keyword_score(content)
+    一致；累加顺序仍按 query_terms 迭代顺序。
+    """
+    if not query_terms or not content:
+        return 0.0, 0.0
+    weighted = 0.0
+    raw = 0.0
+    for term in query_terms:
+        count = content.count(term)
+        if count:
+            raw += count
+            weighted += count * weights.get(term, 1.0)
+    return weighted, raw
 
 
 def _rrf_fuse(method_lists: list[list[int]], k: int = 60) -> dict[int, float]:
@@ -236,13 +254,14 @@ def retrieve_top_k(
                 doc_counts[t] = doc_counts.get(t, 0) + 1
     kw_weights = _idf_weights(q_terms, doc_counts, len(all_contents))
 
-    # 逐块计算向量相似度与关键字重叠两种独立信号
+    # 逐块计算向量相似度与关键字重叠两种独立信号。
+    # 查询向量范数与关键字权重对全部候选块相同，循环外只算一次。
+    q_norm = vector_norm(q_vec)
     chunks: list[dict] = []
     for chunk, filename in rows:
         v = _blob_to_vector(chunk.embedding)
-        cosine = cosine_similarity(q_vec, v) if v else 0.0
-        kw = _keyword_score(q_terms, search_contents[chunk.id], kw_weights) if kw_weights else 0.0
-        kw_raw = _keyword_score(q_terms, search_contents[chunk.id])
+        cosine = cosine_similarity_with_norm(q_vec, q_norm, v) if v else 0.0
+        kw, kw_raw = _keyword_scores(q_terms, search_contents[chunk.id], kw_weights)
         if cosine <= 0 and kw <= 0:
             continue  # 双信号都无相关，直接排除
         chunks.append(

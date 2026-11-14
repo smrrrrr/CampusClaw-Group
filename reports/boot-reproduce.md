@@ -79,3 +79,32 @@ rabbitmq            running  Up (healthy)
 2. **手机浏览器**：未用真实手机验证；仅用同一 API 走通角色分步。
 3. **真实模型**：未配置 Key，语义正确性、完整生成耗时未验证。
 4. **源码字面要求**：后端镜像仍包含 Python 运行源码；是否接受待确认。
+
+---
+
+## 七、运行期就绪与摘流量（2026-11-14 追加，对应任务 3.1）
+
+判据：`health=200` 不能直接当作可接流量；还需分别证明页面资源、数据库故障路径、模型与消费者状态、以及“新实例未被反代”可观测。
+
+| 检查 | 方法 | 实测 | 结论 |
+| --- | --- | --- | --- |
+| 入口健康 | `GET http://127.0.0.1:8086/api/health` | 200，`database=ok`、`mcp_tools=ok`、`model=not_configured` | 三态可辨，未配置不被伪装成 ok |
+| 实际页面资源 | `GET /` 经 nginx | 200，首包 6.6–10.0ms | 页面可达（修复见下） |
+| request_id | 响应头 `x-request-id` 与 `logs/backend.jsonl` 的 `request_id` | 头 `4c68bd13…` 与日志同一值 | 端到端一致 |
+| 数据库故障 | 临时实例（8001）复制库后写入非 SQLite 内容 | `503`，`{"detail":"数据库暂不可用，请稍后重试"}` | 不泄露 SQL/路径/异常原文 |
+| 新实例不接流量 | 临时实例 8001 与主栈同网络；经 nginx 请求 3 次、直连 8001 一次 | 临时实例日志行数 6→6（经 nginx）、6→7（直连） | 反代只走 `backend:8000`，新实例未被接入 |
+| 模型状态 | health `dependencies.model` | `not_configured` | 未配置 Key 时显式区分 |
+| 消费者就绪 | `grading_queue.get()` 使用 `basic_get`；RabbitMQ 两条连接 `running` | 主队列 messages=0、consumers=0 属轮询设计，不是掉线 | 不能仅凭 consumers=0 判为失败 |
+| 首包耗时边界 | 上述 curl 计时 | 页面 6.6–10.0ms；`/api/materials` 401 6.9ms | 仅本机回环，不含真实生成 |
+
+### 7.1 新发现：容器重建后 nginx 上游 IP 缓存导致 502
+
+- 现象：frontend 容器重建后 IP 由 `172.19.0.6` 变为 `172.19.0.12`；nginx 仍连旧地址，`GET /` 连续 502，而 `docker exec nginx wget http://frontend:3000/` 正常。
+- 证据：nginx error log `connect() failed (111: Connection refused) ... upstream: "http://172.19.0.6:3000/"`；`getent hosts frontend` 返回 `172.19.0.12`。
+- 处置：`docker exec campusclaw-group-nginx-1 nginx -s reload`，页面立即恢复 200。
+- 结论：**重建 frontend/backend 后必须 reload nginx**，否则 health 正常但页面不可用；这条应写入部署步骤，不能只靠 `depends_on` 或 healthcheck。
+
+### 7.2 未完成
+
+- 换机复现仍缺（需另一人/另一台）。
+- 未做持续摘流量的滚动发布；本轮只证明“新实例可独立起、未被反代接入”。

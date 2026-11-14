@@ -226,3 +226,15 @@ KaTeX 渲染          raw_has_katex=true；escaped_has_katex_error=true
 | phj | 隔离 clone + Docker 七服务 + 恢复数据包 | 2026-11-12 | 环境恢复、28 项门禁、26 条探针、7.4 四步、CSRF、审计授权、SEC-08、全部问题复现 |
 
 > 本记录不能替代组员本人签名。按交接说明第八节，仍需一名组员在本机独立复现至少 2 条并签名；签名前不得宣称课程安全任务全部完成。
+
+---
+
+## 第10课追加复核（2026-11-14，不改上文历史结论）
+
+- **手段**：`scripts/lesson10_smoke.py`（登录/提交/批改/轮询/跨班）、`scripts/observability/collect.py --window`、Prometheus 规则查询与 `promtool check rules`、`scripts/lesson10_api_bench.py`、`apitest/check_lesson10_ops.py`、`check_lesson10_skills.py`。
+- **对象**：演示栈 `campusclaw-group`（nginx 8086、七服务）；观测 overlay（Prometheus 9090、Alertmanager 9093、Grafana 3000、collector 9101）。
+- **判据**：健康检查不得等同消费者就绪；新实例不接流量需日志计数证明；告警需真实 Pending→Firing→送达→Resolved；三面板空分母显示无样本。
+- **结果**：`/api/health` 200 且 `database/mcp_tools/model` 三态可辨；DB 故障返回 503 与中文脱敏提示；临时实例经 nginx 3 次请求日志 6→6，直连 8001 一次 6→7；告警 07:43:39 Pending → 07:48:39 Firing → 07:48:54 送达 → 07:53:24 Resolved；`promtool` 2 条规则通过。
+- **运行期发现（新）**：frontend 容器重建后 IP 由 `172.19.0.6` 变为 `172.19.0.12`，nginx upstream 仍连旧地址，页面持续 502；`nginx -s reload` 后恢复 200。说明容器重建后必须 reload 反代，已写入 `reports/boot-reproduce.md`。
+- **发现去向**：运行期与告警进 `reports/boot-reproduce.md`、`reports/observe-alert.md`；压测进 `reports/bench.md`；场景缺口进 `reports/scenario-coverage.md`。
+- **性质**：代理执行的机器证据，**签名栏仍为 phj 本人填写**，不得代签或据此宣称课程验收完成。

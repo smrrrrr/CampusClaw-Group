@@ -83,3 +83,14 @@
 - 无需为了交材料伪造签名或绿色结果。
 - 任一复现项与修复者结论不一致，先在本文件记录差异，再通知修复者排查。
 - 人工评审只做机器判不了的项（如 XSS 看源码、CSRF 跨站伪造、SEC-08 实验现象），并为其补一条用例或一条规则。
+
+---
+
+## 第10课追加复核（2026-11-14，不改上文历史结论）
+
+- **手段**：依赖升级变更 `2026-11-14-upgrade-deps-and-jwt` 的 propose 与实施记录；`apitest/check_security_gate.py` 的 `P1-3`、`第10课`、`JWT-J2/J3/J7` 断言；Trivy 全层镜像扫描。
+- **对象**：python-jose→PyJWT 迁移、katex/postcss/source-map-js/certifi/Pillow 升级；后端、前端、MCP 三个最终镜像。
+- **判据**：应用依赖 high/critical 扣除 Next 后为空；后端镜像 CRITICAL=0；JWT 旧整数秒语义（`exp==now` 有效、未来 `iat` 允许、`nbf>now` 拒绝）不变。
+- **结果**：`make check` 33/33；npm high=0、critical 仅 `next`；backend/MCP pip 漏洞 0；后端镜像 CRITICAL=0（HIGH=51 为系统层），MCP CRITICAL=0，前端 CRITICAL=4 全部来自 Next；真实镜像登录/刷新/受保护接口/登出均 200。
+- **发现去向**：`reports/lesson-10/20261114T104516Z-deps/deps-report.md` 与 `security-attribution.md`；两处计划外偏差（PostCSS 用 8.5.33、MCP opentelemetry 1.45.2）已单列。
+- **性质**：机器证据与代理自审；许可证独立评审、J1–J8 全量 HTTP 对照、回滚演练、非实施者签名均未完成。

@@ -84,3 +84,39 @@ python scripts/observability/collect.py --window <start> <end> --db ... --log ..
 - 通知内容包含技能名、失败率与“窗口内执行样本已超过 20”，可回到面板复核。
 
 **未完成：** 真实负责人/群机器人与发送授权未落实，因此只能证明测试接收器收到；不能宣称团队已收到，也不能把本次演练当成课程人工验收。
+
+---
+
+## 六、第10课复核追加（2026-11-14，对应 8.4 / 8.5 / 8.6）
+
+### 6.1 三面板数据链路（8.4）
+
+复核时发现后端容器未加载观测 overlay，`LOG_FILE` 未设置，access 日志停在 10:50 UTC，导致 P95 面板无数据。用
+`docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d backend` 重建后恢复。
+
+| 面板 | PromQL | 实测 |
+| --- | --- | --- |
+| 三技能调用率 | `sum by (skill, status) (rate(skill_invocations_total[5m]))` | 有系列；`tutor_guidance` succeeded=487，其余为 0 |
+| 各技能失败率 | `failed/(succeeded+failed)` | 60 秒窗口无事件时 collector 输出 `"failure_rate": null, "formula": "无样本"`，不填 0 |
+| 完整接口 P95 | `histogram_quantile(0.95, sum by (le, path) (rate(http_request_duration_seconds_bucket[5m])))` | `/api/student/ai-question` 9.54ms、`/api/student/mistakes/:id/explain` 9.50ms；无样本路径返回 `NaN` |
+| 批改队列深度 | `sum(grading_tasks{status=~...})` | 当前演示库 `grade_tasks` 为 0 行，面板显示无样本，不造数 |
+
+- 断采：`collector_status{source="database"}` / `{source="access_log"}` 为 0 时表示来源不可读，不能读成“无失败”。
+- **第三图等价仍未获课程确认**：P95 是访问日志的接口耗时，SSE 端点只记首包，不等于完整生成耗时。
+
+### 6.2 告警规则校验（8.5）
+
+- `promtool check rules /etc/prometheus/alerts.yml` → `SUCCESS: 2 rules found`。
+- 规则：`SkillFailureRateHigh`（失败率 >1%、样本 ≥20、持续 5 分钟）、`CollectorDown`（采集器不可达 1 分钟）。
+- 阈值、时序、无数据策略已在本文“四、告警规则”写明；**负责人、接收通道与发送授权仍未确认**。
+
+### 6.3 真实触发四阶段（8.6）
+
+| 阶段 | 时间（UTC） | 证据 |
+| --- | --- | --- |
+| Pending | 07:43:39 | Prometheus `ALERTS{alertstate="pending"}` |
+| Firing | 07:48:39 | 规则状态与 Alertmanager `startsAt` |
+| 送达 | 07:48:54 | `alert/received.jsonl`，status=firing，间隔 15 秒 |
+| Resolved | 07:53:24 | 同文件 status=resolved |
+
+四阶段齐全，注入为假模型连续失败，未使用测试按钮截图冒充。**仍缺**：真实接收人授权，以及“越权重放只计独立拒绝告警”的专门演练。
