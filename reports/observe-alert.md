@@ -41,6 +41,21 @@ Grafana 已通过 provisioning 加载（`/api/dashboards/uid/campusclaw-lesson10
 - Prometheus 抓取间隔 15 秒，规则评估 15 秒。
 - 采集器每次按需读取 SQLite（只读连接、短查询）与日志文件，不写业务库。
 - 实测：`collector_status{source="database"}=1`、`{source="access_log"}=1`，`campusclaw-collector` target 为 `up`。
+- 新鲜度实测：`time() - timestamp(collector_last_scan_timestamp_seconds)` = **12.3 秒**（目标 ≤30 秒）。
+
+### 时间窗报数
+
+指定 UTC 窗口 `2026-11-14T07:31:02Z` 至 `08:31:02Z`，执行：
+
+```bash
+python scripts/observability/collect.py --window <start> <end> --db ... --log ...
+```
+
+- 实际耗时 **0.04 秒**，远低于 60 秒目标。
+- 窗口内：`tutor_guidance` 成功 1、失败 0；`homework_grading` 成功 0、失败 112、失败率 100%（告警演练注入）；`mistake_explanation` 无样本。
+- 证据：`observe/window/report.json`、`observe/window/time.txt`。
+
+仍然待确认：7.4 的“每图看到三个技能”是否接受第三图由“三技能接口 P95 + 批改队列深度”组合表达；错题讲解没有持久事件源，面板显示 No data 而不是 0。
 
 ## 四、告警规则
 

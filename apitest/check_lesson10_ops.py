@@ -113,5 +113,23 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
     check("W2 边界：无样本技能不给 0，明确无样本",
           report["skills"]["mistake_explanation"]["failure_rate"] is None)
 
+    # 流水线静态核查：与本地门禁同命令、无静默放行、镜像构建依赖两道门禁。
+    import yaml
+    workflow_text = (ROOT / ".github/workflows/lesson10.yml").read_text(encoding="utf-8")
+    workflow = yaml.safe_load(workflow_text)
+    jobs = workflow["jobs"]
+
+    def run_text(job):
+        return "\n".join(step.get("run", "") for step in jobs[job]["steps"])
+
+    check("CI1 正常：check job 原样运行 make check", "make check" in run_text("check"))
+    check("CI2 正常：security job 原样运行 make check-security", "make check-security" in run_text("security"))
+    check("CI3 正常：镜像构建同时依赖两道门禁",
+          set(jobs["images"]["needs"]) == {"check", "security"})
+    check("CI4 边界：不允许 continue-on-error 静默放行", "continue-on-error" not in workflow_text)
+    check("CI5 正常：镜像使用提交号标签并带 OCI revision",
+          "GIT_SHA" in (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+          and "org.opencontainers.image.revision" in (ROOT / "backend/Dockerfile").read_text(encoding="utf-8"))
+
 print(json.dumps({"passed": len(checks), "checks": checks, "scope": "temporary SQLite; no containers/models"},
                  ensure_ascii=False))

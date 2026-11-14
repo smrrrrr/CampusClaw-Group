@@ -1,0 +1,16 @@
+PASS A1 请求不等待执行
+PASS B1 消费者停止期间任务保留
+PASS Q1 停止32秒队列长度不增长
+PASS B1 代理容器重建后持久消息仍在
+PASS B1 启动消费者无需重交自动完成
+PASS C1 同一提交20并发只创建一个任务
+PASS C1 重复投递不重复生效
+PASS B4 杀进程后任务仍在
+PASS B4 租约到期后自动重投恢复
+PASS B2 代理停止仍持久接收
+PASS B2 代理恢复后自动补投
+PASS D1 三次失败进入持久死信
+PASS D2 人工重新排队后恢复
+PASS F1 任务日志为JSON且关联原请求
+Evidence: reports/async-grading/lesson10-apply2real-broker-result.json
+EXIT=0

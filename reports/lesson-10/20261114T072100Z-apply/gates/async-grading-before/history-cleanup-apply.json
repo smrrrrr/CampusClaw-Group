@@ -1,0 +1,11 @@
+{
+  "time": "2026-11-04T13:23:04.422864+00:00",
+  "mode": "apply",
+  "matched_ids": [
+    1
+  ],
+  "matched_count": 1,
+  "removed_count": 1,
+  "backup": "before-resolved-mistakes-20261104-212304-19e8b5.db",
+  "submission_and_scores_modified": false
+}

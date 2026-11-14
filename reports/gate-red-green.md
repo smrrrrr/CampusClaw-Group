@@ -89,3 +89,13 @@ fake_key = "sk-" + "abcdefghijklmnopqrstuvwxyz012345"  # 拼接形式，扫描�
 | 绿输出与退出码 | 全部通过，exit 0（`f7cddcb`） |
 
 结论：完整门禁能检出终评保护故障，红→修复提交→绿四要素齐全；证据分支不进入交付分支。
+
+## 安全反例（同一日期追加）
+
+- 位置：工作区新增 `_lesson10_fake_secret.txt`，内容为 `sk-` 开头的合成假 Key。
+- 红：`scripts/secret_scan.py` 退出码 **1**，检出“已跟踪文件含疑似 sk- 开头的 API Key”，1 处问题。
+- 恢复：删除该文件。
+- 绿：`scripts/secret_scan.py` 退出码 **0**，0 处问题。
+- 证据：`reports/lesson-10/20261114T072100Z-apply/gate-red-green/security-mutation-red.txt`、`security-mutation-green.txt`。
+
+说明：完整 `make check-security` 当前仍为 RED，原因是依赖漏洞与扫描范围，不是因为假 Key；安全反例只证明密钥扫描子项能检出并恢复。

@@ -1,0 +1,17 @@
+{
+  "scenario": "submit",
+  "concurrency": 5,
+  "duration_seconds": 15.07,
+  "requests": 4861,
+  "accepted": 4861,
+  "business_rejected_429": 0,
+  "failed": 0,
+  "throughput_rps": 322.52,
+  "error_rate": 0.0,
+  "p95_ms": 58.9,
+  "mean_ms": 15.44,
+  "status_counts": {
+    "202": 4861
+  },
+  "utc": "2026-11-14T08:33:17.418808+00:00"
+}

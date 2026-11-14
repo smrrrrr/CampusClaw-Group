@@ -18,3 +18,18 @@
 源码复核：`GradeTask`有提交版本唯一约束；`enqueue_homework`使用短写事务；`process_task/finish`用运行租约和claim令牌防旧执行写回。这些保证最终生效一次，不保证外部模型只被调用一次。
 
 本轮队列为内存替身，未使用正在运行的教学库。Docker引擎不可达，因此真实RabbitMQ及消费者进程故障未本次复跑；上文真实代理证据仍属历史记录。
+
+---
+
+## 第10课复跑（2026-11-14）
+
+在真实 RabbitMQ + 独立 Compose 项目 + 临时库上重跑 `scripts/reproduce_async_grading.py`，14 项全 PASS，退出码 0：
+
+- `C1 同一提交20并发只创建一个任务`
+- `C1 重复投递不重复生效`
+- `B4 杀进程后任务仍在`、`B4 租约到期后自动重投恢复`
+- `B2 代理停止仍持久接收`、`B2 代理恢复后自动补投`
+
+证据：`reports/lesson-10/20261114T072100Z-apply/async/reproduce2.txt`、`reports/async-grading/lesson10-apply2real-broker-result.json`。
+
+结论不变：保证最终生效一次，不保证外部模型只被调用一次；未做生产并发容量结论。

@@ -1,0 +1,29 @@
+{
+  "started_at": "2026-11-14T08:30:54.518282+00:00",
+  "project": "cc-async-check-d576f154b9",
+  "image": "campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d",
+  "model": "local synthetic HTTP model; no real provider calls",
+  "database": "new empty temporary SQLite",
+  "commands": [
+    "docker run --rm campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d /app/.venv/bin/python -c import hashlib,json;from pathlib import Path;print(json.dumps({n:hashlib.sha256(Path(n).read_bytes()).hexdigest() for n in ['grading_service.py', 'grading_worker.py', 'grading_queue.py', 'homework_service.py', 'models.py', 'config.py', 'routers/homework.py']}))",
+    "docker compose -p cc-async-check-d576f154b9 -f <private-generated-compose> down --volumes --remove-orphans"
+  ],
+  "checks": [],
+  "metrics": {},
+  "status": "FAIL",
+  "failure": "Command failed (125): ['docker', 'run', '--rm']: Unable to find image 'campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d' locally\ndocker: Error response from daemon: pull access denied for campusclaw-backend, repository does not exist or may require 'docker login'\n\nRun 'docker run --help' for more information\n",
+  "finished_at": "2026-11-14T08:30:57.232670+00:00",
+  "source_sha256": {
+    "backend/grading_service.py": "c8e1ac3e064badaa04bd83a584b8a3bfb90f0adf0de73b09de537bfa2df13ecf",
+    "backend/grading_worker.py": "88d057fe1c8cefe8df023930cd13c474bff806e06ce6efc1ca7f13bb4844807b",
+    "backend/grading_queue.py": "17df565b5f3af023161ef3e56c8861c8257ce6218174b069a8a629e1b4ca59c2",
+    "backend/homework_service.py": "269cb53c3fbca3132f7eee0ab65e686cd24eb2f13297b698859946b7b7c2e4fb",
+    "backend/models.py": "3af24397410e4684fc56b62f70ba0e706f8f4a777807351f8050db8928db58b6",
+    "backend/config.py": "70c9e5f31e97341da620e711615266ed1fa23561343b8f6f1a439cd63eaac7dc",
+    "backend/routers/homework.py": "efb89671dd5c621be127e694d21060844f72a4be9c192d2e9aeba216ed070eba",
+    "scripts/reproduce_async_grading.py": "7975aadc8a4da20613e5d8522d589a54d28d19cd50b217082746f02570d82886",
+    "apitest/async_fixture.py": "68fa94e51125e8cd5669e52dd969f2cd31a13839bebe04d50be7dfa2013d6a39",
+    "apitest/async_fake_model.py": "5a54e2f444c18e76c46d6ba8a7833f04236301b07129df39e74714058ffe4afd"
+  },
+  "cleanup": "only generated isolated project removed"
+}

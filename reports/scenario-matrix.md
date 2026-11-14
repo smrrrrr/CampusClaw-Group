@@ -1,9 +1,10 @@
 # 第10课场景矩阵
 
-- 生成时间（UTC）：2026-11-14T07:23:44.328208+00:00
-- 主规约 Scenario 总数：**505**；断言名候选：**70**；文件级候选：**97**；空项：**338**
+- 生成时间（UTC）：2026-11-14T08:32:44.212016+00:00
+- 主规约 Scenario 总数：**505**；断言名候选：**70**；文件级候选：**97**；能力级待映射：**338**；空项：**0**
 - 匹配规则：Scenario 标题与同能力检查的断言名/脚本全文共享 ≥4 个字符二元组。
-- **候选不等于语义证明**：断言名候选仍需确认断言强度与失败路径；文件级候选只说明脚本提到相关词，必须人工定位到具体断言；空项优先补例。
+- **候选不等于语义证明**：断言名候选仍需确认断言强度与失败路径；文件级候选只说明脚本提到相关词；
+  能力级待映射表示该能力有检查文件但未定位到这条 Scenario，必须人工逐条确认，不能当作已覆盖；空项表示该能力没有登记检查文件。
 
 ## 四项必做技能
 
@@ -16,26 +17,31 @@
 
 ## 按能力统计
 
-| 能力 | Scenario 数 | 断言名候选 | 文件级候选 | 空项 |
-| --- | --- | --- | --- | --- |
-| agent-assistant | 47 | 2 | 10 | 35 |
-| async-homework-grading | 20 | 4 | 7 | 9 |
-| class-data-isolation | 34 | 12 | 5 | 17 |
-| login-and-account-system | 40 | 0 | 7 | 33 |
-| material-upload | 39 | 0 | 9 | 30 |
-| mcp-tool-integration | 31 | 5 | 6 | 20 |
-| quiz-homework-publication | 28 | 23 | 1 | 4 |
-| rag-search | 32 | 0 | 2 | 30 |
-| rbac-role-permissions | 56 | 6 | 11 | 39 |
-| research-materials | 19 | 0 | 3 | 16 |
-| runtime-reliability | 6 | 0 | 2 | 4 |
-| smart-lesson-prep | 25 | 0 | 5 | 20 |
-| smart-question-generation | 68 | 17 | 24 | 27 |
-| student-workspace | 23 | 0 | 0 | 23 |
-| teacher-identity-and-permissions | 14 | 0 | 1 | 13 |
-| teacher-workspace | 23 | 1 | 4 | 18 |
+| 能力 | Scenario 数 | 断言名候选 | 文件级候选 | 能力级待映射 | 空项 |
+| --- | --- | --- | --- | --- | --- |
+| agent-assistant | 47 | 2 | 10 | 35 | 0 |
+| async-homework-grading | 20 | 4 | 7 | 9 | 0 |
+| class-data-isolation | 34 | 12 | 5 | 17 | 0 |
+| login-and-account-system | 40 | 0 | 7 | 33 | 0 |
+| material-upload | 39 | 0 | 9 | 30 | 0 |
+| mcp-tool-integration | 31 | 5 | 6 | 20 | 0 |
+| quiz-homework-publication | 28 | 23 | 1 | 4 | 0 |
+| rag-search | 32 | 0 | 2 | 30 | 0 |
+| rbac-role-permissions | 56 | 6 | 11 | 39 | 0 |
+| research-materials | 19 | 0 | 3 | 16 | 0 |
+| runtime-reliability | 6 | 0 | 2 | 4 | 0 |
+| smart-lesson-prep | 25 | 0 | 5 | 20 | 0 |
+| smart-question-generation | 68 | 17 | 24 | 27 | 0 |
+| student-workspace | 23 | 0 | 0 | 23 | 0 |
+| teacher-identity-and-permissions | 14 | 0 | 1 | 13 | 0 |
+| teacher-workspace | 23 | 1 | 4 | 18 | 0 |
 
-## 空项清单（优先补例）
+## 空项（该能力没有登记检查文件）
+
+| 能力 | Requirement | Scenario |
+| --- | --- | --- |
+
+## 能力级待映射（需人工逐条确认）
 
 | 能力 | Requirement | Scenario |
 | --- | --- | --- |

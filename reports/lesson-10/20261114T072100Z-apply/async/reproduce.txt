@@ -1,0 +1,16 @@
+Evidence: reports/async-grading/lesson10-applyreal-broker-result.json
+Traceback (most recent call last):
+  File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/scripts/reproduce_async_grading.py", line 247, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/scripts/reproduce_async_grading.py", line 100, in main
+    actual = json.loads(command(["docker", "run", "--rm", args.image, "/app/.venv/bin/python", "-c", probe], compose=False))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jackler13ppppp/Documents/学习/研一/互联网软件开发/campusgroup/CampusClaw-Group-review/scripts/reproduce_async_grading.py", line 75, in command
+    raise RuntimeError(f"Command failed ({proc.returncode}): {tail[:3]}: {proc.stderr[-1600:]}")
+RuntimeError: Command failed (125): ['docker', 'run', '--rm']: Unable to find image 'campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d' locally
+docker: Error response from daemon: pull access denied for campusclaw-backend, repository does not exist or may require 'docker login'
+
+Run 'docker run --help' for more information
+
+EXIT=1

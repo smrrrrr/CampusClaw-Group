@@ -16,3 +16,17 @@
 复现：`backend/.venv/Scripts/python.exe apitest/probe_security_precheck.py`。只在临时应用移除`_check_material_access`后，跨班下载变成200、B班正文可见，授权探针确实变红，见 [故意改坏证据](security-evidence/api-probe-mutation.json)；未修改磁盘源码。
 
 学生合法请求体修改助手配置/Skill/MCP或直接写100分、发起AI初批，均403，所比较业务表状态一致。当前教学账号仅只读确认存在；本轮在线服务登录、全系统所有路由及全部Token撤销路径未覆盖。异步任务E1的16条拒绝也已在本次 [57条离线结果](security-evidence/async-offline.json) 中复跑。
+
+---
+
+## 第10课复跑（2026-11-14）
+
+新增离线反例 `apitest/check_lesson10_skills.py`（10/10 通过）：
+
+- `R1 本班没有的他班知识返回空引用`：跨班独有知识不产生引用。
+- `R2 归属班级内可检索到`、`R3 本班知识正常命中`：正向对照，排除“检索永远为空”。
+- `M4 模型不可用不伪造生成成功`：错题讲解降级不报成功。
+
+同时 `make check` 中 `check_injection` 9/9、`check_baseline` 越权与 503 断言均通过，见 `reports/lesson-10/20261114T072100Z-apply/gates/check-final.txt`。
+
+结论：项目 403/404 合同与跨班空引用一致；课程字面 404 口径仍按既有评审记录保留。

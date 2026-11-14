@@ -10,6 +10,7 @@
 """
 
 import argparse
+import itertools
 import json
 import os
 import statistics
@@ -19,14 +20,30 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
+_token_cycle = None
+_token_lock = threading.Lock()
+
+
+def next_token(fallback):
+    """按 STUDENT_TOKENS_FILE 轮换学生令牌，避免单账号撞每日 40 次配额。"""
+    global _token_cycle
+    with _token_lock:
+        if _token_cycle is None:
+            raw = os.environ.get("STUDENT_TOKENS_FILE", "")
+            tokens = [line.strip() for line in open(raw, encoding="utf-8") if line.strip()] if raw else []
+            _token_cycle = itertools.cycle(tokens or [fallback])
+        return next(_token_cycle)
+
 
 def request_once(scenario, base, headers, payload, results, lock, deadline):
     while time.monotonic() < deadline:
         url, method, body, expected = endpoint(scenario, base, payload)
+        request_headers = dict(headers)
+        request_headers["Authorization"] = f"Bearer {next_token(headers['Authorization'].split(' ', 1)[1])}"
         started = time.perf_counter()
         status, error = 0, None
         try:
-            req = urllib.request.Request(url, data=body, method=method, headers=headers)
+            req = urllib.request.Request(url, data=body, method=method, headers=request_headers)
             with urllib.request.urlopen(req, timeout=30) as response:
                 status = response.status
                 response.read(1)

@@ -106,7 +106,9 @@ def match(capability, scenario, names, corpus):
             script_best = (script, overlap)
     if script_best:
         return ("文件级候选", f"{script_best[0]}（全文共享 {script_best[1]} 个二元组，未定位到具体断言）")
-    return (None, "")
+    if corpus.get(capability):
+        return ("能力级待映射", "该能力已有检查文件，但未定位到具体 Scenario；需人工逐条确认")
+    return ("空项", "该能力没有登记检查文件")
 
 
 def main() -> int:
@@ -121,22 +123,24 @@ def main() -> int:
         level, evidence = match(capability, scenario, names, corpus)
         rows.append((capability, requirement, scenario, level, evidence))
 
-    covered = [r for r in rows if r[3]]
+    covered = [r for r in rows if r[3] in ("断言名候选", "文件级候选")]
     assertion_level = [r for r in covered if r[3] == "断言名候选"]
     file_level = [r for r in covered if r[3] == "文件级候选"]
-    gaps = [r for r in rows if not r[3]]
+    capability_pending = [r for r in rows if r[3] == "能力级待映射"]
+    gaps = [r for r in rows if r[3] == "空项"]
     by_capability = {}
     for row in rows:
-        by_capability.setdefault(row[0], [0, 0, 0])
-        by_capability[row[0]][0 if row[3] == "断言名候选" else (1 if row[3] == "文件级候选" else 2)] += 1
+        bucket = {"断言名候选": 0, "文件级候选": 1, "能力级待映射": 2, "空项": 3}[row[3]]
+        by_capability.setdefault(row[0], [0, 0, 0, 0])[bucket] += 1
 
     lines = [
         "# 第10课场景矩阵",
         "",
         f"- 生成时间（UTC）：{datetime.now(timezone.utc).isoformat()}",
-        f"- 主规约 Scenario 总数：**{len(rows)}**；断言名候选：**{len(assertion_level)}**；文件级候选：**{len(file_level)}**；空项：**{len(gaps)}**",
+        f"- 主规约 Scenario 总数：**{len(rows)}**；断言名候选：**{len(assertion_level)}**；文件级候选：**{len(file_level)}**；能力级待映射：**{len(capability_pending)}**；空项：**{len(gaps)}**",
         "- 匹配规则：Scenario 标题与同能力检查的断言名/脚本全文共享 ≥4 个字符二元组。",
-        "- **候选不等于语义证明**：断言名候选仍需确认断言强度与失败路径；文件级候选只说明脚本提到相关词，必须人工定位到具体断言；空项优先补例。",
+        "- **候选不等于语义证明**：断言名候选仍需确认断言强度与失败路径；文件级候选只说明脚本提到相关词；",
+        "  能力级待映射表示该能力有检查文件但未定位到这条 Scenario，必须人工逐条确认，不能当作已覆盖；空项表示该能力没有登记检查文件。",
         "",
         "## 四项必做技能",
         "",
@@ -150,21 +154,31 @@ def main() -> int:
         "",
         "## 按能力统计",
         "",
-        "| 能力 | Scenario 数 | 断言名候选 | 文件级候选 | 空项 |",
-        "| --- | --- | --- | --- | --- |",
+        "| 能力 | Scenario 数 | 断言名候选 | 文件级候选 | 能力级待映射 | 空项 |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for capability in sorted(by_capability):
-        assertion, filelevel, gap = by_capability[capability]
-        lines.append(f"| {capability} | {assertion + filelevel + gap} | {assertion} | {filelevel} | {gap} |")
+        assertion, filelevel, pending, gap = by_capability[capability]
+        lines.append(f"| {capability} | {assertion + filelevel + pending + gap} | {assertion} | {filelevel} | {pending} | {gap} |")
 
     lines += [
         "",
-        "## 空项清单（优先补例）",
+        "## 空项（该能力没有登记检查文件）",
         "",
         "| 能力 | Requirement | Scenario |",
         "| --- | --- | --- |",
     ]
     for capability, requirement, scenario, _, _ in gaps:
+        lines.append(f"| {capability} | {requirement.replace('|', '\\|')} | {scenario.replace('|', '\\|')} |")
+
+    lines += [
+        "",
+        "## 能力级待映射（需人工逐条确认）",
+        "",
+        "| 能力 | Requirement | Scenario |",
+        "| --- | --- | --- |",
+    ]
+    for capability, requirement, scenario, _, _ in capability_pending:
         lines.append(f"| {capability} | {requirement.replace('|', '\\|')} | {scenario.replace('|', '\\|')} |")
 
     lines += [
@@ -180,7 +194,8 @@ def main() -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({"total": len(rows), "assertion": len(assertion_level),
-                      "file_level": len(file_level), "gaps": len(gaps)}, ensure_ascii=False))
+                      "file_level": len(file_level), "capability_pending": len(capability_pending),
+                      "gaps": len(gaps)}, ensure_ascii=False))
     return 0
 
 

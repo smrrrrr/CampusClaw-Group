@@ -1,0 +1,290 @@
+ Image campusclaw-mcp-tools:de035b8d7242a3cb46965de220dea708de7b377d Building
+ Image campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d Building
+ Image campusclaw-group-grading-worker Building
+ Image campusclaw-group-grading-dispatcher Building
+ Image campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 3.27kB done
+#1 DONE 0.0s
+
+#2 [mcp-tools internal] load build definition from Dockerfile
+#2 transferring dockerfile: 931B done
+#2 DONE 0.0s
+
+#3 [frontend internal] load build definition from Dockerfile
+#3 transferring dockerfile: 934B done
+#3 DONE 0.0s
+
+#4 [grading-worker internal] load build definition from Dockerfile
+#4 transferring dockerfile: 1.54kB done
+#4 DONE 0.0s
+
+#5 [grading-dispatcher internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.0s
+
+#6 [frontend internal] load metadata for docker.io/library/node:22-alpine
+#6 DONE 0.0s
+
+#7 [frontend internal] load .dockerignore
+#7 transferring context: 80B done
+#7 DONE 0.0s
+
+#8 [frontend deps 1/4] FROM docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914
+#8 resolve docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 0.0s done
+#8 DONE 0.0s
+
+#9 [frontend internal] load build context
+#9 transferring context: 413.47kB 0.0s done
+#9 DONE 0.0s
+
+#10 [frontend deps 3/4] COPY package*.json ./
+#10 CACHED
+
+#11 [frontend deps 2/4] WORKDIR /app
+#11 CACHED
+
+#12 [frontend deps 4/4] RUN npm ci
+#12 CACHED
+
+#13 [frontend builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#13 CACHED
+
+#14 [grading-worker internal] load metadata for ghcr.io/astral-sh/uv:0.13.5
+#14 ...
+
+#15 [frontend builder 4/5] COPY . .
+#15 DONE 0.4s
+
+#16 [frontend builder 5/5] RUN npm run build
+#16 0.641
+#16 0.641 > campusclaw-frontend@0.1.0 build
+#16 0.641 > next build
+#16 0.641
+#16 1.137   ▲ Next.js 14.2.15
+#16 1.137
+#16 1.155    Creating an optimized production build ...
+#16 ...
+
+#14 [grading-dispatcher internal] load metadata for ghcr.io/astral-sh/uv:0.13.5
+#14 DONE 2.6s
+
+#17 [grading-dispatcher internal] load .dockerignore
+#17 transferring context: 303B done
+#17 DONE 0.0s
+
+#18 [mcp-tools internal] load .dockerignore
+#18 transferring context: 71B done
+#18 DONE 0.0s
+
+#19 [backend] FROM ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff
+#19 resolve ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff 0.0s done
+#19 DONE 0.0s
+
+#20 [grading-worker builder 1/5] FROM docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
+#20 resolve docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 0.0s done
+#20 DONE 0.0s
+
+#21 [mcp-tools internal] load build context
+#21 transferring context: 167.32kB 0.0s done
+#21 DONE 0.0s
+
+#22 [grading-worker internal] load build context
+#22 transferring context: 900.85kB 0.0s done
+#22 DONE 0.0s
+
+#23 [mcp-tools runtime 4/5] COPY main.py ./
+#23 CACHED
+
+#24 [mcp-tools builder 4/5] COPY pyproject.toml uv.lock ./
+#24 CACHED
+
+#25 [mcp-tools builder 5/5] RUN uv sync --locked --no-dev
+#25 CACHED
+
+#26 [mcp-tools runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#26 CACHED
+
+#27 [mcp-tools runtime 5/5] RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+#27 CACHED
+
+#28 [backend runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#28 CACHED
+
+#29 [backend builder 3/5] COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
+#29 CACHED
+
+#30 [backend builder 2/5] WORKDIR /app
+#30 CACHED
+
+#31 [backend builder 4/5] COPY pyproject.toml uv.lock ./
+#31 CACHED
+
+#32 [backend builder 5/5] RUN uv sync --locked --no-dev
+#32 CACHED
+
+#33 [grading-dispatcher runtime 4/5] COPY . .
+#33 CACHED
+
+#34 [backend runtime 5/5] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#34 CACHED
+
+#35 [mcp-tools] exporting to image
+#35 exporting layers done
+#35 exporting manifest sha256:9dc9b37bd919b23815324965b3a9eeb0f187baab076ff6dff17fe70cb9712f8f done
+#35 exporting config sha256:517b557a19d7b280f99357a289a10ecc8e20b955dfe4aeb18898d3418d28b9e9 done
+#35 exporting attestation manifest sha256:c27db6d99e020ee1f965e977a75025f2815921cc273613da729034c833c8be10 0.0s done
+#35 exporting manifest list sha256:c0fdf86f101d2b069a57ebc409d066d646c93be5b621ae8ff5c99bed2527463e done
+#35 naming to docker.io/library/campusclaw-mcp-tools:de035b8d7242a3cb46965de220dea708de7b377d done
+#35 unpacking to docker.io/library/campusclaw-mcp-tools:de035b8d7242a3cb46965de220dea708de7b377d 0.0s done
+#35 DONE 0.1s
+
+#36 [backend] exporting to image
+#36 exporting layers done
+#36 exporting manifest sha256:65fa6c2381ef843c85f68b4fca43c264b4d808cc31dd9618ab0862af4b59656f done
+#36 exporting config sha256:b6afd2b9f9a3df6282bf8414b890097ac939f278d32a89375f89dc0cbab3f683 done
+#36 exporting attestation manifest sha256:b280fe6d5917f415323a1bff8bb7d9635232556eb1a863a70ca6072346cec151 0.0s done
+#36 exporting manifest list sha256:12cfdc03e41a8045ffd31ac62a41fe9341f04284968d2a893b8b5e71760e0c99 done
+#36 naming to docker.io/library/campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d done
+#36 unpacking to docker.io/library/campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d done
+#36 DONE 0.1s
+
+#37 [grading-dispatcher runtime 5/5] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#37 ...
+
+#38 [backend] resolving provenance for metadata file
+#38 DONE 0.0s
+
+#39 [mcp-tools] resolving provenance for metadata file
+#39 DONE 0.0s
+
+#37 [grading-dispatcher runtime 5/5] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#37 DONE 5.1s
+
+#40 [grading-dispatcher] exporting to image
+#40 exporting layers
+#40 exporting layers 6.9s done
+#40 exporting manifest sha256:a4af140aad50792429420c0df8db8928fcd11afc24360162286b4594bdbc45bc 0.0s done
+#40 exporting config sha256:f0cb94994565b3a28104a73bc93509d272fee2b0342b87a3ca9003eaf3be6fe5 0.0s done
+#40 exporting attestation manifest sha256:4d3ad125ecc9b765a24d834a6ebda1aa82f790033c742dbb941b5444d4f3c915 0.0s done
+#40 exporting manifest list sha256:5ee8c08131e05bff5e14702245f1e535bbd9cfcdf0f7edfe8e190106571ca410 done
+#40 naming to docker.io/library/campusclaw-group-grading-dispatcher:latest done
+#40 unpacking to docker.io/library/campusclaw-group-grading-dispatcher:latest
+#40 unpacking to docker.io/library/campusclaw-group-grading-dispatcher:latest 0.9s done
+#40 DONE 8.0s
+
+#41 [grading-worker] exporting to image
+#41 exporting layers 7.0s done
+#41 exporting manifest sha256:9d3037b9719c7bc368b9ee14c4e5b14348c10f342316fddca64273cbc8d721a1 0.0s done
+#41 exporting config sha256:658c6075048bdb215da2ab0e985538023b1f8e001b35ecbe3a6b50038adff161 0.0s done
+#41 exporting attestation manifest sha256:0b0b2b2a473cc5d341f991b4b8d0da6210a0371d3059f9dfc233d6dd80691a56 0.0s done
+#41 exporting manifest list sha256:809d45644e65322a487113644a7b583d2dbf68af8417deb4a89dde338a9b7ed0 0.0s done
+#41 naming to docker.io/library/campusclaw-group-grading-worker:latest done
+#41 unpacking to docker.io/library/campusclaw-group-grading-worker:latest 0.9s done
+#41 DONE 8.0s
+
+#16 [frontend builder 5/5] RUN npm run build
+#16 ...
+
+#42 [grading-dispatcher] resolving provenance for metadata file
+#42 DONE 0.1s
+
+#43 [grading-worker] resolving provenance for metadata file
+#43 DONE 0.0s
+
+#16 [frontend builder 5/5] RUN npm run build
+#16 149.5  ✓ Compiled successfully
+#16 149.5    Linting and checking validity of types ...
+#16 152.5    Collecting page data ...
+#16 153.3    Generating static pages (0/14) ...
+#16 153.6    Generating static pages (3/14)
+#16 153.6    Generating static pages (6/14)
+#16 153.6    Generating static pages (10/14)
+#16 153.7  ✓ Generating static pages (14/14)
+#16 153.8    Finalizing page optimization ...
+#16 153.8    Collecting build traces ...
+#16 159.1
+#16 159.1 Route (app)                              Size     First Load JS
+#16 159.1 ┌ ○ /                                    2.01 kB        93.5 kB
+#16 159.1 ├ ○ /_not-found                          873 B            88 kB
+#16 159.1 ├ ○ /403                                 558 B          87.7 kB
+#16 159.1 ├ ○ /change-password                     2.46 kB        93.9 kB
+#16 159.1 ├ ○ /login                               2.49 kB          94 kB
+#16 159.1 ├ ○ /materials                           8.7 kB          222 kB
+#16 159.1 ├ ○ /student                             14 kB           223 kB
+#16 159.1 ├ ○ /teacher                             12.8 kB         233 kB
+#16 159.1 ├ ○ /teacher/lesson-prep                 10.1 kB         223 kB
+#16 159.1 ├ ○ /teacher/library                     6.87 kB         220 kB
+#16 159.1 ├ ○ /teacher/quiz                        9.78 kB         230 kB
+#16 159.1 └ ○ /teacher/upload                      3.52 kB        99.4 kB
+#16 159.1 + First Load JS shared by all            87.1 kB
+#16 159.1   ├ chunks/117-bd95ea458d1120ed.js       31.6 kB
+#16 159.1   ├ chunks/fd9d1056-04b354420cb0981c.js  53.6 kB
+#16 159.1   └ other shared chunks (total)          1.91 kB
+#16 159.1
+#16 159.1
+#16 159.1 ƒ Middleware                             26.5 kB
+#16 159.1
+#16 159.1 ○  (Static)  prerendered as static content
+#16 159.1
+#16 159.1 npm notice
+#16 159.1 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#16 159.1 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#16 159.1 npm notice To update run: npm install -g npm@12.2.2
+#16 159.1 npm notice
+#16 DONE 164.7s
+
+#11 [frontend deps 2/4] WORKDIR /app
+#11 CACHED
+
+#44 [frontend runner 3/4] COPY --from=builder /app/.next/standalone ./
+#44 DONE 0.8s
+
+#45 [frontend runner 4/4] COPY --from=builder /app/.next/static ./.next/static
+#45 DONE 0.1s
+
+#46 [frontend] exporting to image
+#46 exporting layers
+#46 exporting layers 1.3s done
+#46 exporting manifest sha256:c9888876ace98a31f745daede69f160d8400ad377cbdbe3375535fe3dbbb0011
+#46 exporting manifest sha256:c9888876ace98a31f745daede69f160d8400ad377cbdbe3375535fe3dbbb0011 0.0s done
+#46 exporting config sha256:1d807574c2d1651f670fb2f92fc37806c6b5eff6ca6cf7ef5ce0f15446e86311 done
+#46 exporting attestation manifest sha256:4d316c11913c0a4101b45b88a6bc5622592e4cce5f676f798fcc4f73cd99a2cc 0.0s done
+#46 exporting manifest list sha256:7e7835ff247b342813791f343d77e52691beca5c6f9da025c21b984ba6d19c5a done
+#46 naming to docker.io/library/campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d done
+#46 unpacking to docker.io/library/campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d
+#46 unpacking to docker.io/library/campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d 0.3s done
+#46 DONE 1.7s
+
+#47 [frontend] resolving provenance for metadata file
+#47 DONE 0.0s
+ Image campusclaw-group-grading-dispatcher Built
+ Image campusclaw-group-grading-worker Built
+ Image campusclaw-mcp-tools:de035b8d7242a3cb46965de220dea708de7b377d Built
+ Image campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d Built
+ Image campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d Built
+ Container campusclaw-group-mcp-tools-1 Running
+ Container campusclaw-group-rabbitmq-1 Running
+ Container campusclaw-group-backend-1 Recreate
+ Container campusclaw-group-backend-1 Recreated
+ Container campusclaw-group-frontend-1 Recreate
+ Container campusclaw-group-grading-dispatcher-1 Recreate
+ Container campusclaw-group-grading-worker-1 Recreate
+ Container campusclaw-group-frontend-1 Recreated
+ Container campusclaw-group-nginx-1 Recreate
+ Container campusclaw-group-nginx-1 Recreated
+ Container campusclaw-group-grading-worker-1 Recreated
+ Container campusclaw-group-grading-dispatcher-1 Recreated
+ Container campusclaw-group-backend-1 Starting
+ Container campusclaw-group-backend-1 Started
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-rabbitmq-1 Waiting
+ Container campusclaw-group-rabbitmq-1 Waiting
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-rabbitmq-1 Healthy
+ Container campusclaw-group-rabbitmq-1 Healthy
+ Container campusclaw-group-backend-1 Error dependency backend failed to start
+ Container campusclaw-group-backend-1 Error dependency backend failed to start
+ Container campusclaw-group-backend-1 Error dependency backend failed to start
+dependency failed to start: container campusclaw-group-backend-1 is unhealthy
+EXIT=1

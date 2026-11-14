@@ -1,231 +1,238 @@
 {
-  "started": "2026-11-14T07:53:56.984245+00:00",
-  "finished": "2026-11-14T07:54:28.165813+00:00",
-  "git_head": "e02e83fcb2055df7463c94f25cc580a7a06d0817",
+  "started": "2026-11-14T09:39:05.848384+00:00",
+  "finished": "2026-11-14T09:39:37.865692+00:00",
+  "git_head": "de035b8d7242a3cb46965de220dea708de7b377d",
   "steps": [
     {
       "name": "openspec-validate",
       "status": "PASS",
-      "seconds": 0.37,
+      "seconds": 0.55,
       "exit": 0,
-      "finished": "2026-11-14T07:53:57.353937+00:00"
+      "finished": "2026-11-14T09:39:06.399637+00:00"
     },
     {
       "name": "layering",
       "status": "PASS",
       "seconds": 0.09,
       "exit": 0,
-      "finished": "2026-11-14T07:53:57.444761+00:00"
+      "finished": "2026-11-14T09:39:06.485673+00:00"
     },
     {
       "name": "secret-scan",
       "status": "PASS",
-      "seconds": 1.13,
+      "seconds": 1.22,
       "exit": 0,
-      "finished": "2026-11-14T07:53:58.571125+00:00"
+      "finished": "2026-11-14T09:39:07.704846+00:00"
     },
     {
       "name": "fe-typecheck",
       "status": "PASS",
       "seconds": 0.61,
       "exit": 0,
-      "finished": "2026-11-14T07:53:59.178159+00:00"
+      "finished": "2026-11-14T09:39:08.311027+00:00"
     },
     {
       "name": "check_analytics",
       "status": "PASS",
-      "seconds": 1.1,
+      "seconds": 1.12,
       "exit": 0,
-      "finished": "2026-11-14T07:54:00.283299+00:00"
+      "finished": "2026-11-14T09:39:09.429998+00:00"
     },
     {
       "name": "check_analytics_units",
       "status": "PASS",
       "seconds": 0.23,
       "exit": 0,
-      "finished": "2026-11-14T07:54:00.517829+00:00"
+      "finished": "2026-11-14T09:39:09.661926+00:00"
     },
     {
       "name": "check_apitest_harness",
       "status": "PASS",
-      "seconds": 0.1,
+      "seconds": 0.11,
       "exit": 0,
-      "finished": "2026-11-14T07:54:00.618875+00:00"
+      "finished": "2026-11-14T09:39:09.772309+00:00"
     },
     {
       "name": "check_assignment_history",
       "status": "PASS",
-      "seconds": 1.08,
+      "seconds": 1.13,
       "exit": 0,
-      "finished": "2026-11-14T07:54:01.697875+00:00"
+      "finished": "2026-11-14T09:39:10.905913+00:00"
     },
     {
       "name": "check_async_grading",
       "status": "PASS",
-      "seconds": 0.87,
+      "seconds": 0.9,
       "exit": 0,
-      "finished": "2026-11-14T07:54:02.567161+00:00"
+      "finished": "2026-11-14T09:39:11.805546+00:00"
     },
     {
       "name": "check_baseline",
       "status": "PASS",
-      "seconds": 1.41,
+      "seconds": 1.36,
       "exit": 0,
-      "finished": "2026-11-14T07:54:03.980034+00:00"
+      "finished": "2026-11-14T09:39:13.169168+00:00"
     },
     {
       "name": "check_formula_retrieval",
       "status": "PASS",
-      "seconds": 0.31,
+      "seconds": 0.34,
       "exit": 0,
-      "finished": "2026-11-14T07:54:04.292188+00:00"
+      "finished": "2026-11-14T09:39:13.511974+00:00"
     },
     {
       "name": "check_homework",
       "status": "PASS",
-      "seconds": 1.02,
+      "seconds": 1.06,
       "exit": 0,
-      "finished": "2026-11-14T07:54:05.310916+00:00"
+      "finished": "2026-11-14T09:39:14.568013+00:00"
     },
     {
       "name": "check_injection",
       "status": "PASS",
       "seconds": 1.41,
       "exit": 0,
-      "finished": "2026-11-14T07:54:06.721001+00:00"
+      "finished": "2026-11-14T09:39:15.975424+00:00"
     },
     {
       "name": "check_lesson10_ops",
       "status": "PASS",
-      "seconds": 0.27,
+      "seconds": 0.28,
       "exit": 0,
-      "finished": "2026-11-14T07:54:06.987017+00:00"
+      "finished": "2026-11-14T09:39:16.253786+00:00"
+    },
+    {
+      "name": "check_lesson10_skills",
+      "status": "PASS",
+      "seconds": 0.25,
+      "exit": 0,
+      "finished": "2026-11-14T09:39:16.500265+00:00"
     },
     {
       "name": "check_lesson_prep",
       "status": "PASS",
-      "seconds": 2.47,
+      "seconds": 2.5,
       "exit": 0,
-      "finished": "2026-11-14T07:54:09.455497+00:00"
+      "finished": "2026-11-14T09:39:18.999187+00:00"
     },
     {
       "name": "check_lessons_2_5",
       "status": "PASS",
-      "seconds": 5.57,
+      "seconds": 5.59,
       "exit": 0,
-      "finished": "2026-11-14T07:54:15.027012+00:00"
+      "finished": "2026-11-14T09:39:24.592226+00:00"
     },
     {
       "name": "check_mcp_tools",
       "status": "PASS",
-      "seconds": 2.42,
+      "seconds": 2.62,
       "exit": 0,
-      "finished": "2026-11-14T07:54:17.451677+00:00"
+      "finished": "2026-11-14T09:39:27.213220+00:00"
     },
     {
       "name": "check_mistake",
       "status": "PASS",
-      "seconds": 1.02,
+      "seconds": 0.98,
       "exit": 0,
-      "finished": "2026-11-14T07:54:18.474687+00:00"
+      "finished": "2026-11-14T09:39:28.194301+00:00"
     },
     {
       "name": "check_model_json",
       "status": "PASS",
       "seconds": 0.02,
       "exit": 0,
-      "finished": "2026-11-14T07:54:18.491758+00:00"
+      "finished": "2026-11-14T09:39:28.209721+00:00"
     },
     {
       "name": "check_question_bank",
       "status": "PASS",
-      "seconds": 2.33,
+      "seconds": 2.29,
       "exit": 0,
-      "finished": "2026-11-14T07:54:20.818564+00:00"
+      "finished": "2026-11-14T09:39:30.495988+00:00"
     },
     {
       "name": "check_quiz_homework",
       "status": "PASS",
-      "seconds": 0.71,
+      "seconds": 0.8,
       "exit": 0,
-      "finished": "2026-11-14T07:54:21.525581+00:00"
+      "finished": "2026-11-14T09:39:31.291519+00:00"
     },
     {
       "name": "check_research_materials",
       "status": "PASS",
-      "seconds": 2.32,
+      "seconds": 2.29,
       "exit": 0,
-      "finished": "2026-11-14T07:54:23.847160+00:00"
+      "finished": "2026-11-14T09:39:33.582419+00:00"
     },
     {
       "name": "check_security_gate",
       "status": "PASS",
       "seconds": 0.4,
       "exit": 0,
-      "finished": "2026-11-14T07:54:24.248943+00:00"
+      "finished": "2026-11-14T09:39:33.980595+00:00"
     },
     {
       "name": "check_security_review",
       "status": "PASS",
-      "seconds": 2.05,
+      "seconds": 2.04,
       "exit": 0,
-      "finished": "2026-11-14T07:54:26.298988+00:00"
+      "finished": "2026-11-14T09:39:36.015846+00:00"
     },
     {
       "name": "check_sqlite_storage",
       "status": "PASS",
-      "seconds": 0.44,
+      "seconds": 0.43,
       "exit": 0,
-      "finished": "2026-11-14T07:54:26.743526+00:00"
+      "finished": "2026-11-14T09:39:36.446302+00:00"
     },
     {
       "name": "check_assignment_history_ui",
       "status": "PASS",
-      "seconds": 0.16,
+      "seconds": 0.19,
       "exit": 0,
-      "finished": "2026-11-14T07:54:26.903895+00:00"
+      "finished": "2026-11-14T09:39:36.637766+00:00"
     },
     {
       "name": "check_grading_feedback",
       "status": "PASS",
-      "seconds": 0.17,
+      "seconds": 0.16,
       "exit": 0,
-      "finished": "2026-11-14T07:54:27.071208+00:00"
+      "finished": "2026-11-14T09:39:36.798048+00:00"
     },
     {
       "name": "check_markdown_images",
       "status": "PASS",
       "seconds": 0.22,
       "exit": 0,
-      "finished": "2026-11-14T07:54:27.294598+00:00"
+      "finished": "2026-11-14T09:39:37.018131+00:00"
     },
     {
       "name": "check_recent_history",
       "status": "PASS",
       "seconds": 0.16,
       "exit": 0,
-      "finished": "2026-11-14T07:54:27.453259+00:00"
+      "finished": "2026-11-14T09:39:37.179415+00:00"
     },
     {
       "name": "check_route_guard",
       "status": "PASS",
       "seconds": 0.18,
       "exit": 0,
-      "finished": "2026-11-14T07:54:27.630698+00:00"
+      "finished": "2026-11-14T09:39:37.357779+00:00"
     },
     {
       "name": "check_security_review_rendering",
       "status": "PASS",
       "seconds": 0.24,
       "exit": 0,
-      "finished": "2026-11-14T07:54:27.872808+00:00"
+      "finished": "2026-11-14T09:39:37.597960+00:00"
     },
     {
       "name": "check_teacher_navigation",
       "status": "PASS",
-      "seconds": 0.29,
+      "seconds": 0.27,
       "exit": 0,
-      "finished": "2026-11-14T07:54:28.165750+00:00"
+      "finished": "2026-11-14T09:39:37.865660+00:00"
     }
   ],
   "exit": 0,

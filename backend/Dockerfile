@@ -26,16 +26,18 @@ WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
-# 以非 root 运行；uploads 由 Compose 卷覆盖
+# 以非 root 运行；entrypoint 在容器启动时修正挂载目录属主后降权。
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/uploads \
     && chown -R appuser:appuser /app
-USER appuser
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod 0755 /app/entrypoint.sh
 
 ENV PATH="/app/.venv/bin:${PATH}" \
     UPLOAD_DIR=/app/uploads \
     PYTHONDONTWRITEBYTECODE=1
 
 EXPOSE 8000
+ENTRYPOINT ["/app/entrypoint.sh"]
 # 直接用 .venv 里的 uvicorn，避免 `uv run` 启动时联网解析依赖（国内网络易超时）
 CMD ["/app/.venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
