@@ -102,7 +102,7 @@ python scripts/observability/collect.py --window <start> <end> --db ... --log ..
 | 批改队列深度 | `sum(grading_tasks{status=~...})` | 当前演示库 `grade_tasks` 为 0 行，面板显示无样本，不造数 |
 
 - 断采：`collector_status{source="database"}` / `{source="access_log"}` 为 0 时表示来源不可读，不能读成“无失败”。
-- **第三图等价仍未获课程确认**：P95 是访问日志的接口耗时，SSE 端点只记首包，不等于完整生成耗时。
+- **第三图口径已确认**（课程口径第 6 条，见 `reports/course-decisions-2026-11-14.md`）：访问日志的接口耗时（SSE 端点只记首包）即作为“完整接口 P95”，不再列为阻塞；但报告中仍需注明 SSE 首包与完整生成耗时的区别，避免读者误解。
 
 ### 6.2 告警规则校验（8.5）
 

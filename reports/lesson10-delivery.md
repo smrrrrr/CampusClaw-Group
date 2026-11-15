@@ -135,14 +135,15 @@
 
 | 镜像 | .py | .git | 测试文件 | 真实密钥 | 系统 CA | 开发材料 |
 | --- | --- | --- | --- | --- | --- | --- |
-| backend | 2571（含 .venv） | 0 | 0 | 0 | 151 个 `/etc/ssl/certs/*.pem` | **已移除**（`dev_seed.py`、`Dockerfile`、`.dockerignore`、`.gitignore`、`.env.example`、`.python-version`） |
+| backend | **0**（全量 `.pyc`） | 0 | 0 | 0 | 151 个 `/etc/ssl/certs/*.pem` | **已移除**（`dev_seed.py`、`Dockerfile`、`.dockerignore`、`.gitignore`、`.env.example`、`.python-version`） |
 | frontend | 59（构建产物内） | 0 | 9（node_modules 内） | 0 | 2 | — |
-| mcp-tools | 1561 | 0 | 0 | 0 | 150 | — |
+| mcp-tools | **0**（全量 `.pyc`） | 0 | 0 | 0 | 150 | — |
 
 - `.venv/bin` 无 `pip`/`uv`，只有 `python`/`uvicorn` 等运行入口。
-- 后端 Dockerfile 在 `COPY . .` 后移除种子脚本与构建描述，`/app/*.py` 由 34 降为 33；新镜像重建后 health 200、启动日志正常。
-- **未删除 Python 运行源码**：后端必须保留 `.py` 才能运行；是否接受仍待课程确认。
-- 结论：不能声称“镜像绝对无源码”；密钥为零，开发材料仅 `dev_seed.py` 与构建文件。
+- 后端与 MCP 的 Dockerfile 均采用：移除开发材料 → 全量 `compileall -b`（应用 + `.venv` + 标准库）→ 删除所有 `.py` 与 GCC 调试脚本 → `test` 断言计数为 0。
+- 实测：backend `py=0 / pyc=1468`，mcp `py=0 / pyc=459`；两者启动正常，backend `/api/health` 200、登录 200、材料 200、上传 200、索引成功、检索命中；mcp `/health` 200。
+- **`.pyc` 可反编译，不等于代码加密**；详见 `reports/no-source-plan.md`。
+- 前端为 Next.js 构建产物，`.py` 来自构建缓存与 node_modules，可否清理待确认。
 
 ### 8.3 CI 流水线（7.1 / 7.2 / 7.3 / 7.4）
 
@@ -157,6 +158,6 @@
 
 ### 8.5 仍然阻塞的事项
 
-1. 安全门禁 RED 的根因是 Next 的版本范围计数：4 条 critical 在当前代码与 Linux standalone 部署下均不可触发（`reports/next-risk-applicability.md`），是否接受该论证取决于课程口径；若要求按计数归零，仍需升到 15.5.28+。
+1. 安全门禁 RED 的根因是 Next 的版本范围计数：4 条 critical 在当前代码与 Linux standalone 部署下均不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证（`reports/course-decisions-2026-11-14.md`）；若课程后续改口径要求按计数归零，仍需升到 15.5.28+。
 2. 后端镜像 OS 层 HIGH=51，不属 Next，需基础镜像维护另立任务。
 3. 真人、签名、换机、远端 CI、线上反查、课程等价确认，均无法由本机替代。

@@ -31,6 +31,17 @@ COPY . .
 RUN rm -f /app/dev_seed.py /app/Dockerfile /app/.dockerignore /app/.gitignore \
     /app/.env.example /app/.python-version
 
+# 第10课 6.1：课程要求镜像 0 源码。递归编译应用、.venv 与系统标准库为 legacy .pyc 后删除所有 .py。
+# 必须递归整个 /app：只编译顶层会让 routers/ 等包子目录被删后无法导入。
+# 系统 Python 标准库 /usr/local/lib/python3.12 同样处理，否则 find / -name "*.py" 仍有残留。
+# 基础镜像里 GCC 的 gdb 调试辅助 .py 与业务无关，一并删除。
+# 末尾断言 .py 计数为 0：构建期强制保证，避免“注释声称无源码”但实际有残留。
+# .pyc 仍可反编译，不等于代码加密。
+RUN /app/.venv/bin/python -m compileall -b -q /app /usr/local/lib/python3.12 >/dev/null 2>&1 \
+    && find /app /usr/local/lib/python3.12 -name "*.py" -delete \
+    && { find /usr/share/gdb /usr/share/gcc -name "*.py" -delete 2>/dev/null || true; } \
+    && test "$(find / -name '*.py' -not -path '/proc/*' 2>/dev/null | wc -l)" -eq 0
+
 # 以非 root 运行；entrypoint 在容器启动时修正挂载目录属主后降权。
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/uploads \

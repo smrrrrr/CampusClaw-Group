@@ -21,6 +21,14 @@ WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY main.py ./
 
+# 第10课 6.1：与后端一致，镜像 0 源码。递归编译应用、.venv 与系统标准库为 .pyc 后删除所有 .py，
+# 并清理基础镜像 GCC 的 gdb 调试辅助脚本；末尾断言 .py 计数为 0。
+# .pyc 可反编译，不等于代码加密。
+RUN /app/.venv/bin/python -m compileall -b -q /app /usr/local/lib/python3.12 >/dev/null 2>&1 \
+    && find /app /usr/local/lib/python3.12 -name "*.py" -delete \
+    && { find /usr/share/gdb /usr/share/gcc -name "*.py" -delete 2>/dev/null || true; } \
+    && test "$(find / -name '*.py' -not -path '/proc/*' 2>/dev/null | wc -l)" -eq 0
+
 RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
 USER appuser
 
