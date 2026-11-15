@@ -45,8 +45,28 @@ backend/.venv/bin/python apitest/run_all.py
 | 第 2 次（id 对齐、直连库） | 18 passed / 3 skipped / 4 errors | 宿主与容器同时访问同一 SQLite，`disk I/O error` |
 | 第 3 次（只读副本） | 5 failed / 17 passed / 3 skipped | 副本不实时，写后读断言失败 |
 | 第 4 次（空闲期直连） | **21 passed / 3 skipped / 1 failed** | 唯一失败为 `database disk image is malformed`，并发读导致 |
+| 第 5 次（本机同宿主直连，2026-11-15） | **22 passed / 3 skipped / 0 failed** | 后端与 pytest 均在本机同一文件系统访问临时库，无挂载卷锁冲突；3 项 MCP 用例因需 compose 网络跳过 |
 
 最终 HTML：`reports/lesson-10/20261114T125424Z-online/report.html`（已检查：不含口令明文，`thu260002`、`Teach@2026` 计数为 0）。
+
+### 2.1 第 5 轮：本机同宿主直连（可复现步骤）
+
+不再经 Docker 挂载卷，改为本机同一文件系统运行后端与 pytest，彻底消除第 4 轮的跨进程 SQLite 锁冲突：
+
+1. 临时库种子：`DATABASE_URL=sqlite:///$WORK/campusclaw.db` 下运行 `backend/dev_seed.py`（隔离目录，不触碰真实库）。
+2. 学生 id 对齐：将 `20260002`（王芳，class 102）调整为 `id=3`，使 conftest 的 `id==3 且 class_id==102` 断言成立（仅临时库）。
+3. 清除首次改密标志：`UPDATE users SET must_change_password=0`，否则业务接口返回 403「请先修改初始密码」。
+4. 服务端配置 `MCP_TOKEN_KEY`（随机 32 字节 URL-safe base64），否则 `/api/mcp/servers` 登记返回 400。
+5. 向 class 102 上传并索引一份 `.md` 材料（`is_indexed=1`），满足 `class102_material_id` 夹具。
+6. 启动 `uvicorn main:app --port 8012`，运行：
+   ```bash
+   APITEST_BASE_URL=http://127.0.0.1:8012 APITEST_DB_PATH=$WORK/campusclaw.db \
+   APITEST_TEACHER_ID=TEA001 APITEST_TEACHER_PASSWORD=... APITEST_STUDENT_ID=20260002 APITEST_STUDENT_PASSWORD=... \
+   backend/.venv/bin/python -m pytest $(find apitest/cases -name '*.py' ! -name '__init__.py') -q -p no:cacheprovider -p no:randomly
+   ```
+   结果：`22 passed, 3 skipped in 1.26s`，0 failed / 0 error。
+
+**结论**：第 4 轮的 `database disk image is malformed` 是「宿主机直连容器挂载卷」的 SQLite 并发问题，改到同宿主同一进程访问后消失；22 条可运行用例全部通过。剩余 3 条 MCP 用例硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析），本机不经改 `/etc/hosts` 无法连通，保留 SKIPPED。
 
 ## 三、失败归因
 
@@ -65,6 +85,6 @@ backend/.venv/bin/python apitest/run_all.py
 
 ## 五、未完成与边界
 
-- 有 1 项因跨进程并发读失败、3 项因未传入 `APITEST_MCP_TOKEN` 跳过，**不能宣称在线用例全绿**；任务 3.3 保持未勾。
-- 若要稳定收口，需在运行命令中注入与容器一致的 `APITEST_MCP_TOKEN`，并在容器内运行 pytest（镜像需装测试依赖）或改由同一进程访问数据库以消除挂载卷锁冲突；两者均需调整测试运行方式，待确认。
+- 第 5 轮本机同宿主直连为 **22 passed / 3 skipped / 0 failed**；剩余 3 条 MCP 用例因硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析）跳过，**未计入通过，任务 3.3 仍不勾为全绿**。
+- 若要在本机也跑通这 3 条，需把 `mcp-tools` 解析到本机并在 **8090** 端口运行 `mcp-server`（当前本机在 8091 起验证进程，测试侧地址不可配置），或统一改回 compose 网络内运行；属测试环境选项，未擅自改用例或 hosts。
 - 本环境未挂载真实 `./data`，未写入真实教学库。

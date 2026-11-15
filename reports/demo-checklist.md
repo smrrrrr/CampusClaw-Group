@@ -25,7 +25,7 @@
 
 补充现场核验项（课程答复新增）：
 - **镜像 0 源码断言（任务 6.1）**：在运行中的 `backend` 与 `mcp-tools` 容器内执行 `find / -name '*.py' -not -path '/proc/*' | wc -l`，预期均为 `0`（证据见 `reports/no-source-plan.md`）。
-- **在线 cases 隔离复跑（任务 3.3）**：独立容器 + 临时库运行 `apitest/run_all.py`，当前第 4 轮为 `21 passed / 3 skipped / 1 failed`（1 项因跨进程并发读挂载 SQLite 冲突，3 项因未传 `APITEST_MCP_TOKEN` 跳过，明细见 `reports/online-cases.md`）。
+- **在线 cases 复跑（任务 3.3）**：本机同宿主直连（临时库、后端与 pytest 同文件系统）第 5 轮为 `22 passed / 3 skipped / 0 failed`；3 项 MCP 用例因硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析）跳过，明细与复现步骤见 `reports/online-cases.md`。
 
 ## 三、六份必交报告核对
 
@@ -58,6 +58,16 @@
 2. **等价未认可**：第三图 P95 是否等价于完整接口耗时、MySQL/Qdrant/Golang 是否强制，均未获课程确认。
 3. **返回码差异**：演示中若出现与本文预期不同的状态码，先记入本节「待修」，不得现场改口径。
 4. **签名**：三份审核与反馈表必须由本人填写；AI 生成的追加内容不能替代签名。
+
+## 五之二、现场核验边界（避免预期偏差）
+
+以下为本机已确认的边界，演示时须按实际行为记录，不得按理想口径改写：
+
+1. **告警规则与送达**：规则见 `deploy/observability/alerts.yml`（错误率>1% 且样本≥20 持续 5 分钟）；本机测试接收器已验证 Pending→Firing→15 秒送达→Resolved，但**真实负责人接收授权未落实**，演示若用测试接收器须注明「非真实负责人送达」。
+2. **数据库迁移与索引**：本课仅扩/迁索引，无行数据迁移（`reports/lesson-10/*/migration/README.md`）；可抽查迁移脚本执行两次幂等与 `EXPLAIN QUERY PLAN` 命中覆盖索引，但**不宣称已迁 MySQL/Qdrant**（等价待课程确认，见 `stack-equivalence.md`）。
+3. **就绪探针摘流量边界**：启动期 DB 不可读返回 503 已覆盖；**运行中 `chmod` 后因连接池复用健康检查仍可能返回 200**，运行期自动摘流量未实现，演示不得把它说成「已自动摘流量」。
+4. **镜像与扫描遗留**：后端与 MCP 镜像 `.py=0` 已实测；但**后端基础镜像 OS 层 Trivy 仍报 HIGH=51**，**前端构建产物及 node_modules 残留 59 个 `.py` 与 9 个测试文件**，**密钥扫描范围不完整（BLOCKED）**，演示须如实说明，不得笼统称「镜像无源码、无高危」。
+5. **场景覆盖**：505 条 Scenario 中 17 条 P0 已由 `check_lesson10_p0_scenarios.py` 补离线断言（P0 缺口为 0），仍有 **149 条非 P0 无匹配断言**，不得宣称「场景全覆盖」。
 
 ## 六、演示当天记录模板
 

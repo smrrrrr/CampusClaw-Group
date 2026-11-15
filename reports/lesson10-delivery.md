@@ -40,7 +40,7 @@
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
 | 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=1468）与 mcp-tools（.py=0, .pyc=459）已 0 源码**；前端构建产物及 node_modules 仍含 59 个 `.py`；后端 OS 层 Trivy HIGH=51 |
 | 3.2 Compose 等价 | PASS（等价说明） | 七服务 + SQLite 读就绪；未迁 MySQL/Qdrant（`stack-equivalence.md`） |
-| 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 隔离实例 21/25 通过（`online-cases.md`）；**换机未做** |
+| 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 本机同宿主直连第 5 轮 22 passed / 3 skipped / 0 failed（`online-cases.md`）；**换机未做** |
 | 3.4 镜像编号 | 部分 | 本机 image ID + OCI revision 可反查；干净 clone 构建成功；无镜像仓库 digest |
 | 4.1 自动构建 | 部分 | `.github/workflows/lesson10.yml` 完成，未在远端运行 |
 | 4.2 推送反查 | BLOCKED | 未推送、无 CI 编号与 digest |
@@ -84,7 +84,7 @@
 1. 安全门禁：Next.js 14.2.15 4 条 critical（及 `postcss`/`source-map-js` high）已论证在当前架构下不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证口径，若要求计数归零仍需升至 15.5.28+；后端镜像 OS 层 Trivy HIGH=51 另立维护任务。
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
 3. 远端环节：CI 运行、镜像仓库 digest、main 保护、线上实例反查。
-4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 4 轮因宿主机与容器并发访问挂载 SQLite 有 1 项失败、3 项因未传 `APITEST_MCP_TOKEN` 跳过（`reports/online-cases.md`）。
+4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，3 项 MCP 用例因硬编码 `mcp-tools:8090`（仅 compose 网络）跳过（`reports/online-cases.md`）。
 5. 场景矩阵 149 条无匹配断言（P0 高风险 17 条已由 `check_lesson10_p0_scenarios.py` 补断言，当前 P0 缺口为 0）：已逐条列出（`reports/scenario-coverage.md`），剩余非 P0 项待逐条补例（不再使用旧口径“338 条待映射”）。
 6. 检索优化低并发档位：瓶颈档（并发 10）P95 已降 23.8%（达 ≥10%），但并发 3 P95 +7.6%，按分档规则如实记录。
 
@@ -96,7 +96,7 @@
 | 后端镜像 OS 层 Trivy HIGH=51 | OPEN | 不属 Next 范畴，需基础镜像升级维护另立任务 |
 | 密钥扫描范围完整=False | BLOCKED | 无容器日志时的扫描范围限制；运行栈启动后重跑仍受镜像/容器范围影响 |
 | 场景矩阵 149 条无匹配断言（P0 已清零） | OPEN | 17 条 P0 已由 `check_lesson10_p0_scenarios.py` 补断言；剩余非 P0 项在 `scenario-coverage.md` 逐条列出，需人工逐条确认/补例 |
-| 在线 cases 第 4 轮（1 failed / 3 skipped） | OPEN | 1 项为宿主机直连容器挂载 SQLite 并发冲突，3 项为未传 `APITEST_MCP_TOKEN`；见 `online-cases.md` |
+| 在线 cases（第 5 轮 22 passed / 3 skipped / 0 failed） | PARTIAL | 第 4 轮的挂载卷 SQLite 并发失败经「本机同宿主直连」消除；3 项 MCP 用例因硬编码 `mcp-tools:8090`（仅 compose 网络）跳过；见 `online-cases.md` |
 | retrieve 并发 10 墙钟异常 | 已记录 | 样本窗数据有效，进程收尾耗时另记，不参与吞吐计算 |
 | 3 名真实用户 | BLOCKED | 无真人，未用合成账号替代 |
 | 新目录启动（首次） | FAIL→已修 | 非 root 后挂载目录属主问题；入口脚本修正后重验 |
@@ -119,7 +119,7 @@
 | 判定/动作 | 本机结果 | 缺失 |
 | --- | --- | --- |
 | 换人双跑一致 | 未执行 | 第二人 |
-| README 新目录启动 | 本机干净 clone 启动已通过；在线 cases 隔离实例 21/25 通过 | 新机/第二人 |
+| README 新目录启动 | 本机干净 clone 启动已通过；在线 cases 同宿主直连 22/22 可运行用例通过（3 项 MCP 跳过） | 新机/第二人 |
 | 线上提交反查 | 未执行 | 线上实例与 CI |
 | 60 秒窗口报数 | 0.04 秒完成 | 无 |
 | D1 改坏被拦 | 红→修复→绿齐全 | 无 |
@@ -168,3 +168,10 @@
 1. 安全门禁 RED 的根因是 Next 的版本范围计数：4 条 critical 在当前代码与 Linux standalone 部署下均不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证（`reports/course-decisions-2026-11-14.md`）；若课程后续改口径要求按计数归零，仍需升到 15.5.28+。
 2. 后端镜像 OS 层 HIGH=51，不属 Next，需基础镜像维护另立任务。
 3. 真人、签名、换机、远端 CI、线上反查、课程等价确认，均无法由本机替代。
+
+### 8.6 在线用例本机同宿主直连（2026-11-15）
+
+- 环境：本机 `uvicorn`（临时库、端口 8012）+ 本机 pytest，同一文件系统，不经 Docker 挂载卷。
+- 前置：`dev_seed` 种子 → 学生 `20260002` 对齐为 `id=3` → `must_change_password=0` → 服务端配置 `MCP_TOKEN_KEY` → 向 class 102 上传并索引一份 `.md`。
+- 结果：**22 passed / 3 skipped / 0 failed**。第 4 轮的 `database disk image is malformed`（宿主机直连容器挂载 SQLite）不再出现；3 项 MCP 用例因硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析）跳过，未计入通过。
+- 复现步骤与明细见 `reports/online-cases.md` §2.1；本项不改变任务 3.3「未全绿」的定级。
