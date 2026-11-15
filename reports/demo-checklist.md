@@ -20,12 +20,13 @@
 | D1 改坏被拦 | 临时改坏一个断言或权限判断，跑门禁，再恢复 | 先红后绿，两次输出都保留 | 已完成（`reports/gate-red-green.md`） |
 | D2 一键启动 | 新目录 `docker compose up -d` | 七服务 Up，核心 healthy | 本机通过；**缺新机** |
 | D3 面板指三技能 | 打开 Grafana 三面板，核对技能标签与失败率 | 三技能分线；空分母显示无样本 | 本机可用；**第三图等价待课程确认** |
-| D4 异步链路 | 学生提交 → 202/task_ids → 轮询三态 → 他人不可见 | 真实代理消费，跨班 404 | 真实代理 14 项 PASS；**缺手机** |
+| D4 异步链路 | 学生提交 → 202/task_ids → 轮询三态 → 他人不可见 | 真实代理消费，跨班 404 | 真实代理 15 项 PASS；**缺手机** |
 | D5 压测前后对比 | 跑 `scripts/lesson10_api_bench.py` 并对旧版同参 | 瓶颈档 P95 降 ≥10%，吞吐不降、错误率不增 | 已完成：并发 10 P95 −23.8%（`reports/bench.md`） |
 
 补充现场核验项（课程答复新增）：
 - **镜像 0 源码断言（任务 6.1）**：在运行中的 `backend` 与 `mcp-tools` 容器内执行 `find / -name '*.py' -not -path '/proc/*' | wc -l`，预期均为 `0`（证据见 `reports/no-source-plan.md`）。
-- **在线 cases 复跑（任务 3.3）**：本机同宿主直连（临时库、后端与 pytest 同文件系统）第 5 轮为 `22 passed / 3 skipped / 0 failed`；3 项 MCP 用例因硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析）跳过，明细与复现步骤见 `reports/online-cases.md`。
+- **在线 cases 复跑（任务 3.3）**：本机同宿主直连（临时库、后端与 pytest 同文件系统）第 5 轮为 `22 passed / 3 skipped / 0 failed`；compose 网络内第 6 轮（2026-11-16）为 `24 passed / 1 skipped / 0 failed`，仅剩「无模型 Key 时的工具审计」跳过，明细与复现步骤见 `reports/online-cases.md` §2.2。
+- **当前提交重建复验（2026-11-16，任务 6.1/7.1）**：七服务 + 四个观测容器全部启动，`/health`、`/api/health`、`/login` 200；backend/mcp-tools 镜像 `.py=0`、OCI revision 与提交一致；真实 RabbitMQ 异步复现 15 项 PASS。证据 `reports/lesson-10/20261116T161500Z-docker/`、`reports/async-grading/20261116tdockerreal-broker-result.json`。
 
 ## 三、六份必交报告核对
 

@@ -10,7 +10,7 @@
 | backend/routers/skills.py、teacher.py、mcp.py | 教师依赖及资源归属限制配置写入 | 学生合法请求体403；有关业务状态快照不变 | 可用（所列接口）；并发建同名Skill的异常映射未专项验证 |
 | backend/grading_service.py `enqueue_homework` | 同一短事务创建整批任务/发件箱，输入指纹唯一键去重 | B3故障整批回滚；C1的20并发单任务 | 可用；不能推断其他业务事务也安全 |
 | backend/grading_service.py `process_task/finish` | 外呼前提交租约，外呼后按claim和提交版本写分；先持久化再确认消息 | B4旧租约拒写、C2新提交/教师终评保留、D1有限重试 | 可用；至少一次投递不能保证模型永远只调用一次 |
-| backend/grading_service.py `dispatch`、grading_worker.py | 代理确认后标记已投递，断点可补投 | B2、Q1–Q3内存队列故障/恢复；旧真实MQ证据单列 | 可用（离线）；本轮真实代理与进程恢复待Docker可用后重跑 |
+| backend/grading_service.py `dispatch`、grading_worker.py | 代理确认后标记已投递，断点可补投 | B2、Q1–Q3内存队列故障/恢复；旧真实MQ证据单列 | 可用（离线）；**2026-11-16 已在隔离 compose 项目重跑真实 RabbitMQ 与进程恢复，15 项 PASS**（`reports/async-grading/20261116tdockerreal-broker-result.json`） |
 | backend/models.py GradeTask/HomeworkSubmission | DB唯一约束约束版本任务与每人每作业提交 | C1及F1重复迁移保留数据 | 可用（现有SQLite隔离案例）；未做其他数据库兼容验证 |
 | backend/models.py McpToolCall、routers/mcp.py ToolCallItem | 持久日志应能追溯谁调用哪个Skill、结果和成本 | SEC-07真实合成调用落1行，缺skill标识、duration、usage | 待修改：新增字段须先定规约和迁移；SSE技能名不能替代持久记录 |
 | backend/mcp_orchestrator.py `record_call`（约158–195行） | 审计写失败应可观测 | 静态阅读：commit异常只rollback，未记错误事件，主流程继续 | 风险：日志库失败可能有调用无记录；尚未注入失败验证，不写PASS；建议另定降级告警/可靠审计策略 |

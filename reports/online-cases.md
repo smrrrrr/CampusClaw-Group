@@ -68,6 +68,17 @@ backend/.venv/bin/python apitest/run_all.py
 
 **结论**：第 4 轮的 `database disk image is malformed` 是「宿主机直连容器挂载卷」的 SQLite 并发问题，改到同宿主同一进程访问后消失；22 条可运行用例全部通过。剩余 3 条 MCP 用例硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析），本机不经改 `/etc/hosts` 无法连通，保留 SKIPPED。
 
+### 2.2 第 6 轮：compose 网络内运行（2026-11-16）
+
+第 5 轮剩余 3 条 MCP 用例需要解析 `mcp-tools`，本轮改为在 compose 网络内运行，不修改用例、不改 hosts：
+
+1. 临时库种子与对齐同 2.1 第 1–3 步，但数据库放在 **Docker 命名卷**（Linux 原生文件系统），不在 macOS 挂载卷上并发读写；卷属主显式改为 `10001:10001`。
+2. 以当前提交的后端镜像启动隔离容器，接入 `campusclaw-group_default` 网络、别名 `online-api`，使用临时库、临时 `JWT_SECRET_KEY`/`MCP_TOKEN_KEY`、`ENABLE_DOCS=true`。
+3. 教师上传并索引一份 class 102 材料（`material_id=1`，`is_indexed=true`）。
+4. 测试运行器为一次性 Python 3.12 镜像（`uv sync --locked` 安装 pytest/requests/httpx），以 `--network campusclaw-group_default` 运行，`APITEST_BASE_URL=http://online-api:8000`、`APITEST_DB_PATH=/data/campusclaw.db`、`APITEST_MCP_TOKEN` 取自本机 `.env`。
+
+结果：**24 passed / 1 skipped / 0 failed**（1.37s）。此前跳过的 MCP `GET.py` 连接用例与 `CHAIN.py` 技能命中/meta 用例均已真实通过；唯一跳过为 `CHAIN.py:102`「AI 生成服务不可用（DeepSeek Key 未配置或无效），无法验证模型提议调用 → ok 审计」，属环境限制，未计入通过。证据：`reports/lesson-10/20261116T161500Z-docker/online-pytest.txt`、`online-health.json`、`online-material.json`。
+
 ## 三、失败归因
 
 1. **`database disk image is malformed` / `disk I/O error`**：macOS 宿主进程与容器同时读写同一挂载卷上的 SQLite 文件，DELETE journal 模式下锁与页缓存冲突。这不是业务缺陷，已在历史演示库复现过同类问题。
@@ -85,6 +96,6 @@ backend/.venv/bin/python apitest/run_all.py
 
 ## 五、未完成与边界
 
-- 第 5 轮本机同宿主直连为 **22 passed / 3 skipped / 0 failed**；剩余 3 条 MCP 用例因硬编码 `http://mcp-tools:8090`（仅 compose 网络可解析）跳过，**未计入通过，任务 3.3 仍不勾为全绿**。
-- 若要在本机也跑通这 3 条，需把 `mcp-tools` 解析到本机并在 **8090** 端口运行 `mcp-server`（当前本机在 8091 起验证进程，测试侧地址不可配置），或统一改回 compose 网络内运行；属测试环境选项，未擅自改用例或 hosts。
+- 第 5 轮本机同宿主直连为 **22 passed / 3 skipped / 0 failed**；第 6 轮在 compose 网络内为 **24 passed / 1 skipped / 0 failed**，此前 3 条 MCP 跳过中已有 2 条通过，剩余 1 条依赖真实/有效模型 Key（当前 `.env` 为空），**未计入通过**。任务 3.3 因此仍不勾为「全部用例通过」。
+- 第 6 轮的运行方式（一次性运行器容器 + 隔离后端 + Docker 命名卷）已写入 2.2；未挂载真实 `./data`，未修改任何用例的硬编码地址，也未改 hosts。
 - 本环境未挂载真实 `./data`，未写入真实教学库。

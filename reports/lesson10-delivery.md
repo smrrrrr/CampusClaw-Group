@@ -38,9 +38,9 @@
 | 2.2 聚合门禁 | PASS（本机 41/41） | CI 未运行 |
 | 2.3 先红后绿 | 部分：`make check` 红绿齐全；`make check-security` 安全反例未重做 | 故障 `10af3b0` → 修复 `f7cddcb`，见 `gate-red-green.md` |
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
-| 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=1468）与 mcp-tools（.py=0, .pyc=459）已 0 源码**；前端构建产物及 node_modules 仍含 59 个 `.py`；后端 OS 层 Trivy HIGH=51 |
+| 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=2612）与 mcp-tools（.py=0, .pyc=1598）已 0 源码**；前端构建产物及 node_modules 仍含 59 个 `.py`；后端 OS 层 Trivy HIGH=51 |
 | 3.2 Compose 等价 | PASS（等价说明） | 七服务 + SQLite 读就绪；未迁 MySQL/Qdrant（`stack-equivalence.md`） |
-| 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 本机同宿主直连第 5 轮 22 passed / 3 skipped / 0 failed（`online-cases.md`）；**换机未做** |
+| 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 本机同宿主直连第 5 轮 22 passed / 3 skipped / 0 failed，compose 网络内第 6 轮 24 passed / 1 skipped / 0 failed（`online-cases.md`）；**换机未做** |
 | 3.4 镜像编号 | 部分 | 本机 image ID + OCI revision 可反查；干净 clone 构建成功；无镜像仓库 digest |
 | 4.1 自动构建 | 部分 | `.github/workflows/lesson10.yml` 完成，未在远端运行 |
 | 4.2 推送反查 | BLOCKED | 未推送、无 CI 编号与 digest |
@@ -84,7 +84,7 @@
 1. 安全门禁：Next.js 14.2.15 4 条 critical（及 `postcss`/`source-map-js` high）已论证在当前架构下不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证口径，若要求计数归零仍需升至 15.5.28+；后端镜像 OS 层 Trivy HIGH=51 另立维护任务。
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
 3. 远端环节：CI 运行、镜像仓库 digest、main 保护、线上实例反查。
-4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，3 项 MCP 用例因硬编码 `mcp-tools:8090`（仅 compose 网络）跳过（`reports/online-cases.md`）。
+4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，第 6 轮 compose 网络内为 24 passed / 1 skipped / 0 failed（唯一跳过为未配置模型 Key 的工具审计）（`reports/online-cases.md`）。
 5. 场景矩阵已逐条判定（`reports/scenario-coverage.md`）：待补断言 0、P0 缺口 0、弱候选 0、仅文件级 0；505 条均有明确结论（人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23、已知缺口 3）。新增 `check_lesson10_scenario_gaps.py`（17 条）、`check_markdown_blanks.cjs`（9 条）、`check_mcp_server.py`（14 条）、`check_lesson10_review.py`（26 条）、`check_question_rendering.cjs`（4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。3 条已知缺口（工具说明注入句式、教师端按班级 AI 提问历史、AI 解答加入错题本）与 22 条部分覆盖均单列，不计入完全覆盖。
 6. 检索优化低并发档位：瓶颈档（并发 10）P95 已降 23.8%（达 ≥10%），但并发 3 P95 +7.6%，按分档规则如实记录。
 
@@ -96,7 +96,7 @@
 | 后端镜像 OS 层 Trivy HIGH=51 | OPEN | 不属 Next 范畴，需基础镜像升级维护另立任务 |
 | 密钥扫描范围完整=False | BLOCKED | 无容器日志时的扫描范围限制；运行栈启动后重跑仍受镜像/容器范围影响 |
 | 场景矩阵逐条判定（待补 0，P0 0） | PARTIAL | 待补、P0、弱候选与仅文件级均已清零，505 条都有明确结论；仍有 22 条部分覆盖与 3 条已知缺口（见 `scenario-coverage.md`「人工复核清单」「已知缺口」节），不得宣称完全覆盖 |
-| 在线 cases（第 5 轮 22 passed / 3 skipped / 0 failed） | PARTIAL | 第 4 轮的挂载卷 SQLite 并发失败经「本机同宿主直连」消除；3 项 MCP 用例因硬编码 `mcp-tools:8090`（仅 compose 网络）跳过；见 `online-cases.md` |
+| 在线 cases（第 6 轮 24 passed / 1 skipped / 0 failed） | PARTIAL | 第 5 轮 22/3/0；第 6 轮在 compose 网络内运行，3 条 MCP 跳过中 2 条转为通过，剩余 1 条仅因未配置模型 Key 而跳过；见 `online-cases.md` §2.2 |
 | retrieve 并发 10 墙钟异常 | 已记录 | 样本窗数据有效，进程收尾耗时另记，不参与吞吐计算 |
 | 3 名真实用户 | BLOCKED | 无真人，未用合成账号替代 |
 | 新目录启动（首次） | FAIL→已修 | 非 root 后挂载目录属主问题；入口脚本修正后重验 |
@@ -111,6 +111,8 @@
 | `image-scan/trivy.txt` | `de035b8` 镜像 | 是 |
 | `load-before/*` | `fe227a1`–`de035b8` 工作区 | 部分批次，已在 bench 标注 |
 | `alert/received.jsonl` | `fe227a1` 工作区 | 早期批次，告警链路不受代码版本影响 |
+| `lesson-10/20261116T161500Z-docker/*` | 本轮工作区提交内容 | 是（`.source-sha256.json` 与源码哈希一致；镜像随该内容重建） |
+| `async-grading/20261116tdocker*` | 同一工作区内容，隔离 compose 项目 | 是（运行前以源码哈希清单核对镜像） |
 
 结论：报告按批次标注版本；**不宣称全部证据来自同一提交**。
 
@@ -125,7 +127,7 @@
 | D1 改坏被拦 | 红→修复→绿齐全 | 无 |
 | D2 一键启动 | 本机通过 | 新机 |
 | D3 面板指三技能 | 面板与窗口可用 | 无 |
-| D4 异步链路 | 真实代理 14 项 PASS | 手机 |
+| D4 异步链路 | 真实代理 15 项 PASS | 手机 |
 | D5 压测前后对比 | 已完成（SQL 级 −22.62%；检索热点优化并发 10 瓶颈档 P95 −23.8%，并发 3 +7.6%） | 独立演示现场复跑 |
 
 ---
@@ -148,7 +150,7 @@
 
 - `.venv/bin` 无 `pip`/`uv`，只有 `python`/`uvicorn` 等运行入口。
 - 后端与 MCP 的 Dockerfile 均采用：移除开发材料 → 全量 `compileall -b`（应用 + `.venv` + 标准库）→ 删除所有 `.py` 与 GCC 调试脚本 → `test` 断言计数为 0。
-- 实测：backend `py=0 / pyc=1468`，mcp `py=0 / pyc=459`；两者启动正常，backend `/api/health` 200、登录 200、材料 200、上传 200、索引成功、检索命中；mcp `/health` 200。
+- 实测（2026-11-16 当前提交重建）：backend `py=0 / pyc=2612`，mcp `py=0 / pyc=1598`；两者启动正常，backend `/api/health` 200、登录 200、材料 200、上传 200、索引成功、检索命中；mcp `/health` 200。删除源码前写入 `.source-sha256.json`，可核对镜像与源码一致。
 - **`.pyc` 可反编译，不等于代码加密**；详见 `reports/no-source-plan.md`。
 - 前端为 Next.js 构建产物，`.py` 来自构建缓存与 node_modules，可否清理待确认。
 
@@ -190,3 +192,14 @@
 - 复核过程中补的断言：`apitest/check_lesson10_review.py`（26 条，新建）、`apitest/check_question_rendering.cjs`（4 条，新建）、`check_teacher_navigation.cjs` +3、`check_question_bank.py` 增 3 条边界与无 Key 断言、`check_mcp_tools.py` 增学生写工具拒绝、`check_lessons_2_5.py` 增 `agent.class_switch_reads_and_saves_target`、`check_sqlite_storage.py` 与 `check_formula_retrieval.py` 的断言名改为含模式的 f-string 以便逐模式入册。门禁由 39 项增至 **41 项，全绿**。
 - 3 条已知缺口（均如实标注，不计入覆盖）：工具说明「先读取其他数据并放进参数」的注入句式未进注入表；教师端没有按班级查询 AI 提问历史的接口与页面（学情汇总只有提问数）；错题本没有「把 AI 解答加入错题本」的写入接口与页面入口。
 - 22 条部分覆盖的典型差异：教师发起 AI 提问被拒的文案为「仅学生可执行该操作」而非规约的「AI 提问仅限学生发起」；重置接口对非班主任返回 404 而非 403；教师学科取自数据库当前值而非 JWT 载荷。
+
+### 8.9 Docker 可用后的本机复验（2026-11-16）
+
+- 以分支最新提交重建三个业务镜像并重建栈（含 observability profile），实际运行 **11 个容器**：nginx、backend、frontend、mcp-tools、rabbitmq、grading-worker、grading-dispatcher、collector、prometheus、alertmanager、grafana。核心七服务 Up，backend/frontend/mcp-tools/rabbitmq healthy；`/health`、`/api/health`、`/login` 均 200。
+- 容器内 0 源码：backend `py=0 / pyc=2612`，mcp-tools `py=0 / pyc=1598`；frontend 仍有构建产物与 `node_modules` 带入的 59 个 `.py`（已知项）。三镜像 OCI `revision` 与当前提交一致。
+- 发现并修复真实部署缺陷：grading-worker/dispatcher 原命令按脚本路径执行 `grading_worker.py`，在 0 源码运行层会立即退出；已改为 `python -m grading_worker`，并加静态断言防回归。另在构建期写入 `.source-sha256.json`，让异步复现脚本可核对镜像与源码。
+- 真实 RabbitMQ 异步复现（隔离 compose 项目、临时库、合成账号、假模型、无教学数据）：**15 项 PASS**，含 A1、B1/B2/B4、Q1、C1、D1/D2、F1；证据 `reports/async-grading/20261116tdockerreal-broker-result.json`。
+- 在线用例在 compose 网络内运行（一次运行器容器 + 隔离后端 + Docker 命名卷）：**24 passed / 1 skipped / 0 failed**。此前 3 条 MCP 跳过中 2 条通过；唯一跳过为未配置模型 Key 时的「模型提议工具 → ok 审计」，不计入通过。见 `reports/online-cases.md` §2.2。
+- nginx 入口 smoke：学生提交 200、教师触发初批 202、任务 pending→retrying→dead（模型未配置，属预期降级）、本人结果 200、跨班材料 404、本班 200。证据 `reports/lesson-10/20261116T161500Z-docker/smoke.json`。
+- 观测链路复验：collector `/metrics` 200 且有技能/批改/HTTP 指标，Prometheus target `campusclaw-collector=up`，两条告警规则已加载，Alertmanager ready。证据同批 `observability.txt`。
+- 仍然不能由本机替代：真实人参与签名、换机、远端 CI 运行与镜像仓库 digest、线上实例反查；真实模型工具审计需有效模型 Key。

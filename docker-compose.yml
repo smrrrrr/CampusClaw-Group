@@ -109,7 +109,8 @@ services:
       context: ./backend
     environment: *backend-env
     volumes: *backend-volumes
-    command: ["/app/.venv/bin/python", "grading_worker.py", "--mode", "consume"]
+    # 运行层已删除 .py，只能以模块方式启动（legacy .pyc 可直接导入）
+    command: ["/app/.venv/bin/python", "-m", "grading_worker", "--mode", "consume"]
     depends_on:
       backend:
         condition: service_healthy
@@ -120,7 +121,7 @@ services:
 
   grading-dispatcher:
     <<: *grading-worker
-    command: ["/app/.venv/bin/python", "grading_worker.py", "--mode", "dispatch"]
+    command: ["/app/.venv/bin/python", "-m", "grading_worker", "--mode", "dispatch"]
 
   frontend:
     image: campusclaw-frontend:${GIT_SHA:-local}

@@ -1,4 +1,4 @@
-"""独立投递/消费进程：python grading_worker.py --mode dispatch|consume|both。"""
+"""独立投递/消费进程：python -m grading_worker --mode dispatch|consume|both（镜像内无 .py，须用模块方式）。"""
 import argparse
 import logging
 import signal

@@ -85,3 +85,18 @@ Dockerfile 实际加入三步：递归编译 `/app` 与 `/usr/local/lib/python3.
 | `make check` | 41/41 PASS |
 
 关键补充：系统 Python 标准库与 GCC 调试脚本必须一并处理，否则 `find /` 仍会残留 1102 + 5 个 `.py`，只处理 `/app` 无法满足“0 源码”。
+
+## 九、Docker 可用后的当前提交复验（2026-11-16）
+
+以工作区分支最新提交重建三个业务镜像并重建七服务栈后实测：
+
+| 验证项 | backend | mcp-tools | frontend |
+| --- | --- | --- | --- |
+| 镜像内 `.py` | **0** | **0** | 59（Next 构建产物与 `node_modules` 残留，已知项） |
+| 镜像内 `.pyc` | 2612 | 1598 | 0 |
+| OCI `revision` | 与提交一致 | 与提交一致 | 与提交一致 |
+| 启动 | healthy，`/api/health` 200 | healthy，`/health` 200 | healthy，`/login` 200 |
+
+同一轮发现并修复：`grading-worker`/`grading-dispatcher` 仍按脚本路径启动 `grading_worker.py`，而运行层已删除 `.py`，导致两容器反复退出。已改为 `python -m grading_worker --mode …`（legacy `.pyc` 可直接导入），并在 `check_lesson10_scenario_gaps.py` 增加静态断言防止回归。
+
+删除源码前新增构建期 `.source-sha256.json`（只含应用 `.py` 的相对路径与 SHA-256，不含源码），用于核对“镜像是否由当前源码构建”；`scripts/reproduce_async_grading.py` 改为读取该清单，不再按源码文件路径哈希。证据见 `reports/lesson-10/20261116T161500Z-docker/no-source.txt`。

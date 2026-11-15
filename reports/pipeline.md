@@ -28,7 +28,7 @@ checkout 实际 SHA
 | 项 | 结果 | 证据 |
 | --- | --- | --- |
 | 工作流文件存在且为单一入口 | PASS | `.github/workflows/lesson10.yml` |
-| 本地同命令双门禁 | `make check` 31/31；`make check-security` RED | `reports/lesson-10/<run>/gates/` |
+| 本地同命令双门禁 | `make check` 41/41；`make check-security` RED | `reports/lesson-10/<run>/gates/` |
 | 镜像标签参数贯通 Compose | PASS（`GIT_SHA` → image tag + build arg） | `docker-compose.yml`、三个 Dockerfile |
 | 镜像 OCI revision | 本机构建可查 | 见下方命令与 `boot/` 证据 |
 | 远端 CI 运行编号 | 未执行 | 无权限/未推送 |

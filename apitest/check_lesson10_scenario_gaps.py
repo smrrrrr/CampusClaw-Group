@@ -320,6 +320,14 @@ def run(folder: Path):
     check("H4 空历史与时间边界：学生页历史分页有明确空状态",
           "暂无作业历史" in student_page and 'assignmentTab === "history"' in student_page)
 
+    compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+    dockerfile = (ROOT / "backend/Dockerfile").read_text(encoding="utf-8")
+    check("0 源码镜像：批改进程按模块启动，构建期保留源码哈希清单且断言 .py 为 0",
+          '"-m", "grading_worker"' in compose
+          and "grading_worker.py" not in compose
+          and ".source-sha256.json" in dockerfile
+          and "-name '*.py'" in dockerfile)
+
     engine.dispose()
 
 

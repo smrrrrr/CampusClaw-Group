@@ -1,0 +1,1 @@
+[(1, 'TEA001', 'teacher', None, 0), (2, 'TEA002', 'teacher', None, 0), (3, '20260002', 'student', 102, 0)]

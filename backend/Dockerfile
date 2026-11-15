@@ -31,6 +31,9 @@ COPY . .
 RUN rm -f /app/dev_seed.py /app/Dockerfile /app/.dockerignore /app/.gitignore \
     /app/.env.example /app/.python-version
 
+# 删除源码前留下构建期源码哈希清单：镜像仍为 0 源码，但可核对「镜像是否由当前源码构建」。
+RUN /app/.venv/bin/python -c "import hashlib,json;from pathlib import Path;root=Path('/app');files=sorted(p for p in root.rglob('*.py') if '.venv' not in p.parts);root.joinpath('.source-sha256.json').write_text(json.dumps({str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},sort_keys=True),encoding='utf-8')"
+
 # 第10课 6.1：课程要求镜像 0 源码。递归编译应用、.venv 与系统标准库为 legacy .pyc 后删除所有 .py。
 # 必须递归整个 /app：只编译顶层会让 routers/ 等包子目录被删后无法导入。
 # 系统 Python 标准库 /usr/local/lib/python3.12 同样处理，否则 find / -name "*.py" 仍有残留。

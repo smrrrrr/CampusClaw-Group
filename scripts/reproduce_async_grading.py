@@ -58,8 +58,8 @@ def main():
                   "ports": ["127.0.0.1::9000"], "command": ["/app/.venv/bin/python", "/fixtures/async_fake_model.py"]},
         "api": {**common, "ports": ["127.0.0.1::8000"],
                 "command": ["/app/.venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]},
-        "dispatcher": {**common, "command": ["/app/.venv/bin/python", "grading_worker.py", "--mode", "dispatch"]},
-        "worker": {**common, "command": ["/app/.venv/bin/python", "grading_worker.py", "--mode", "consume"]},
+        "dispatcher": {**common, "command": ["/app/.venv/bin/python", "-m", "grading_worker", "--mode", "dispatch"]},
+        "worker": {**common, "command": ["/app/.venv/bin/python", "-m", "grading_worker", "--mode", "consume"]},
     }, "volumes": {"broker-data": {}}}
     compose_file = work / "compose.json"
     compose_file.write_text(json.dumps(config), encoding="utf-8")
@@ -96,8 +96,10 @@ def main():
             command(["docker", "build", "-t", args.image, "./backend"], compose=False)
         critical = ["grading_service.py", "grading_worker.py", "grading_queue.py", "homework_service.py", "models.py", "config.py", "routers/homework.py"]
         expected = {n: hashlib.sha256((ROOT / "backend" / n).read_bytes()).hexdigest() for n in critical}
-        probe = "import hashlib,json;from pathlib import Path;print(json.dumps({n:hashlib.sha256(Path(n).read_bytes()).hexdigest() for n in " + repr(critical) + "}))"
+        # 运行镜像已删 .py，只能读构建期写入的源码哈希清单核对本次源码
+        probe = "import json;from pathlib import Path;print(Path('/app/.source-sha256.json').read_text())"
         actual = json.loads(command(["docker", "run", "--rm", args.image, "/app/.venv/bin/python", "-c", probe], compose=False))
+        actual = {name: actual.get(name) for name in expected}
         assert actual == expected, "测试镜像与当前代码不同，请去掉--skip-build重新构建"
         results["verified_image_source_sha256"] = actual
         results["image_id"] = command(["docker", "image", "inspect", args.image, "--format", "{{.Id}}"], compose=False)

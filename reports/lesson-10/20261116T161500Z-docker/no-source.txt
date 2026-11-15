@@ -1,0 +1,6 @@
+campusclaw-group-backend-1 py=0 pyc=2612
+campusclaw-group-mcp-tools-1 py=0 pyc=1598
+campusclaw-group-frontend-1 py=59 pyc=0
+backend revision=6ca88c47200b2b84553e02786276ebe1d21efab0
+mcp revision=6ca88c47200b2b84553e02786276ebe1d21efab0
+frontend revision=6ca88c47200b2b84553e02786276ebe1d21efab0
