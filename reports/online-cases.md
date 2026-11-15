@@ -54,9 +54,17 @@ backend/.venv/bin/python apitest/run_all.py
 2. **只读副本方案不可用**：用例在 setup 读库、在断言中读“刚刚写入”的记录，副本不实时。
 3. **学生 id 断言**：历史 cases 硬编码 id=3，`dev_seed` 先插入两名教师导致学生后移；已在临时库对齐，属测试资产与种子的历史假设差异。
 
-## 四、未完成与边界
+## 四、第 4 轮非通过项明细（提取自 `report.html`）
 
-- 有 1 项因并发读失败，**不能宣称在线用例全绿**；任务 3.3 保持未勾。
-- `skip` 共 3 项，未逐条提取名称与原因，报告中可查。
-- 若要稳定收口，应在容器内运行 pytest（镜像需装测试依赖），或把 `APITEST_DB_PATH` 指向容器内路径并在同一进程读取；两者都需要改测试运行方式，待确认。
+| 结果 | 用例 ID | 原因 |
+| --- | --- | --- |
+| Failed | `cases/api/student/conversations/chat/POST.py::test_conversation_chat_sse` | `sqlite3.DatabaseError: database disk image is malformed`（第 60、71 行宿主机直连容器挂载 SQLite 并发冲突） |
+| Skipped | `cases/api/mcp/CHAIN.py::test_chain_skill_hit_meta::setup` | 未提供 `APITEST_MCP_TOKEN`（须与服务端 `MCP_AUTH_TOKEN` 一致），跳过真实 `mcp-tools` 联调 |
+| Skipped | `cases/api/mcp/CHAIN.py::test_chain_tool_ok_audit::setup` | 同上，未提供 `APITEST_MCP_TOKEN` |
+| Skipped | `cases/api/mcp/GET.py::test_connect_then_tools_then_disconnect` | 同上，未提供 `APITEST_MCP_TOKEN` |
+
+## 五、未完成与边界
+
+- 有 1 项因跨进程并发读失败、3 项因未传入 `APITEST_MCP_TOKEN` 跳过，**不能宣称在线用例全绿**；任务 3.3 保持未勾。
+- 若要稳定收口，需在运行命令中注入与容器一致的 `APITEST_MCP_TOKEN`，并在容器内运行 pytest（镜像需装测试依赖）或改由同一进程访问数据库以消除挂载卷锁冲突；两者均需调整测试运行方式，待确认。
 - 本环境未挂载真实 `./data`，未写入真实教学库。

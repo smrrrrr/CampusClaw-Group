@@ -23,6 +23,10 @@
 | D4 异步链路 | 学生提交 → 202/task_ids → 轮询三态 → 他人不可见 | 真实代理消费，跨班 404 | 真实代理 14 项 PASS；**缺手机** |
 | D5 压测前后对比 | 跑 `scripts/lesson10_api_bench.py` 并对旧版同参 | 瓶颈档 P95 降 ≥10%，吞吐不降、错误率不增 | 已完成：并发 10 P95 −23.8%（`reports/bench.md`） |
 
+补充现场核验项（课程答复新增）：
+- **镜像 0 源码断言（任务 6.1）**：在运行中的 `backend` 与 `mcp-tools` 容器内执行 `find / -name '*.py' -not -path '/proc/*' | wc -l`，预期均为 `0`（证据见 `reports/no-source-plan.md`）。
+- **在线 cases 隔离复跑（任务 3.3）**：独立容器 + 临时库运行 `apitest/run_all.py`，当前第 4 轮为 `21 passed / 3 skipped / 1 failed`（1 项因跨进程并发读挂载 SQLite 冲突，3 项因未传 `APITEST_MCP_TOKEN` 跳过，明细见 `reports/online-cases.md`）。
+
 ## 三、六份必交报告核对
 
 | 报告 | 路径 | 当前状态 |
@@ -34,7 +38,7 @@
 | 压测 | `reports/bench.md` | 已完成两轮对比 |
 | 用户反馈 | `reports/feedback.md` | **BLOCKED**，无真实用户 |
 
-另有根 `report.md` 与 `reports/scenario-coverage.md`（505 条场景映射）。
+另有根 `report.md`、`reports/scenario-coverage.md`（505 条场景逐条映射）、`reports/no-source-plan.md`（镜像 0 源码方案与实测）、`reports/online-cases.md`（在线用例环境与非通过明细）及 `reports/next-risk-applicability.md`。
 
 ## 四、3 份审核 / 3 人反馈 / 高风险三查
 

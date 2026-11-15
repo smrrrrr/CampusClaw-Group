@@ -26,8 +26,8 @@ WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
-# 第10课 6.1：最终镜像不带开发材料。运行所需的业务 .py 全部保留，
-# 只移除种子脚本、构建描述与开发期配置文件；.dockerignore 已排除 .venv/缓存/数据库/.env。
+# 第10课 6.1：最终镜像不带开发材料。先移除种子脚本、构建描述与开发期配置文件，
+# 随后在下一步全量编译为 .pyc 并删除所有 .py；.dockerignore 已排除 .venv/缓存/数据库/.env。
 RUN rm -f /app/dev_seed.py /app/Dockerfile /app/.dockerignore /app/.gitignore \
     /app/.env.example /app/.python-version
 
