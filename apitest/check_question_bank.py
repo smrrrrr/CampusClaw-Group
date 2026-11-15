@@ -70,8 +70,10 @@ async def main():
 
         # ---- 虚构 stream_chat ----
         fake_output = {"value": ""}
+        fake_calls = {"n": 0}
 
         async def fake_stream(messages, **kw):
+            fake_calls["n"] += 1
             for i in range(0, len(fake_output["value"]), 20):
                 hook = fake_output.pop("hook", None)  # 模拟生成期间发生的外部变化
                 if hook:
@@ -118,6 +120,29 @@ async def main():
                    "difficulty_counts": {"easy": 3, "medium": 3, "hard": 1}}
             r = await req("POST", "/generations", json=bad)
             check("题型/难度合计不等 400", r.status_code == 400)
+
+            # === 配比越界：总题数 0/21、单题型 11（规约三处边界）===
+            from fastapi import HTTPException
+            def rejected_counts(type_counts, difficulty_counts):
+                try:
+                    quiz_router._validate_generation_request(
+                        quiz_router.GenerationRequest(
+                            research_material_ids=[math_rm_id], knowledge_points=["立体几何"],
+                            type_counts=type_counts, difficulty_counts=difficulty_counts),
+                        "math")
+                    return None
+                except HTTPException as exc:
+                    return exc
+            zero = rejected_counts({}, {})
+            check("配比越界：总题数为 0 返回 400", zero is not None and zero.status_code == 400
+                  and "1–20" in zero.detail)
+            too_many = rejected_counts({"single_choice": 10, "fill_blank": 10, "short_answer": 1},
+                                       {"easy": 11, "medium": 10})
+            check("配比越界：总题数为 21 返回 400", too_many is not None and too_many.status_code == 400
+                  and "1–20" in too_many.detail)
+            per_type = rejected_counts({"single_choice": 11}, {"medium": 11})
+            check("配比越界：某题型数为 11 返回 400", per_type is not None and per_type.status_code == 400
+                  and "0–10" in per_type.detail)
 
             # === 生成：词表外知识点 400 ===
             bad2 = {"research_material_ids": [math_rm_id], "knowledge_points": ["不存在的知识点"],
@@ -951,6 +976,10 @@ async def main():
             # === 事件 ===
             r = await req("GET", "/events")
             check("本人事件记录非空", r.status_code == 200 and len(r.json()["items"]) > 0)
+
+            # === 无 Key 环境运行验收脚本（占位 test-key + 进程内虚构模型）===
+            check("无 Key 环境运行验收脚本：虚构模型完成生成且无外部模型请求",
+                  fake_calls["n"] > 0 and quiz_router.stream_chat is fake_stream)
 
         print(f"\n结果：{sum(1 for _, ok in checks if ok)}/{len(checks)} 通过")
         failed = [n for n, ok in checks if not ok]

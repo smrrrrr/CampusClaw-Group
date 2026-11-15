@@ -456,6 +456,20 @@ async def main():
         check("候选集外工具 denied、不执行、不写审计",
               not FakeClient.last_calls and events and events[0]["status"] == "denied" and after == before)
 
+        # 学生身份执行可写工具：按数据库用户角色逐次复核，不采信问题里的 role 声明。
+        with SessionLocal() as db:
+            tool = db.query(McpTool).filter_by(server_id=sid, name="formula_hint").one()
+            tool.writable = True
+            db.merge(Conversation(id=9005, student_id=4, class_id=101, subject="math", teacher_id=1))
+            db.commit()
+            student_problem = mcp_orchestrator._execution_problem(
+                db, db.get(AssistantSkill, skill_id), candidates[0], 101, "math", 4, 9005)
+        check("学生身份不能执行可写工具（不采信角色声明）",
+              student_problem == "学生无权执行写入或未知权限工具")
+        with SessionLocal() as db:
+            db.query(McpTool).filter_by(server_id=sid, name="formula_hint").one().writable = False
+            db.commit()
+
         # ---- OpenAPI：403 由路由器级统一声明，路由级不再覆盖成别的文案 ----
         ops = [(path, method, op) for path, item in app.openapi()["paths"].items()
                if path.startswith(("/api/mcp", "/api/teacher/skills")) for method, op in item.items()]

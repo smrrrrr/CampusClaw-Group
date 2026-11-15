@@ -88,4 +88,34 @@ for (const [route, expectedPath, expectedView] of [
     assert.equal(target.searchParams.get('class_id'), '102'); assert.equal(target.searchParams.get('workspace'), 'teaching');
   });
 }
+check('任课教学保留班主任模块：切到 102 仍显示带班 101 入口', () => {
+  const nav = navigation('/teacher?workspace=teaching&class_id=102');
+  assert.equal(nav.classId, 102);
+  assert.equal(nav.isHeadTeacher, true);
+  const homeroom = nav.navItems.find(item => item.section === '班主任工作台');
+  assert(homeroom, '缺少班主任工作台');
+  const students = homeroom.children.find(item => item.key === 'class-students');
+  const target = new URL(students.to, 'http://check.invalid');
+  assert.equal(target.searchParams.get('workspace'), 'homeroom');
+  assert.equal(target.searchParams.get('class_id'), '101');
+});
+check('非班主任只显示任课与教研功能：无班主任工作台，保留任课/教研/助手配置', () => {
+  const nav = navigation('/teacher?workspace=teaching&class_id=101', { homeroomClassId: null });
+  assert.equal(nav.isHeadTeacher, false);
+  assert(!nav.navItems.some(item => item.section === '班主任工作台'));
+  const sections = nav.navItems.map(item => item.section);
+  for (const section of ['任课教学', '教研中心']) assert(sections.includes(section), section);
+  assert(nav.navItems.some(item => item.key === 'agent'), '缺少助手配置');
+});
+check('多班级选择器展示所有任教班级：选择器值来自任教班级列表', () => {
+  for (const classId of [101, 102, 103]) {
+    const nav = navigation(`/teacher?workspace=teaching&class_id=${classId}`,
+      { teachingClasses: [101, 102, 103] });
+    assert.equal(nav.teachingClassId, classId);
+    const teaching = nav.navItems.find(item => item.key === 'teaching');
+    assert(JSON.stringify(teaching.accessory).includes(`"value":${classId}`));
+  }
+  const fallback = navigation('/teacher?workspace=teaching&class_id=999', { teachingClasses: [101, 102, 103] });
+  assert.equal(fallback.teachingClassId, 101);
+});
 console.log(JSON.stringify({ passed, scenarios: ['R1', 'R2', 'R3'], model_calls: 0, database_writes: 0 }));

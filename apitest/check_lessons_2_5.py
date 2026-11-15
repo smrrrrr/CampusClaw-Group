@@ -201,6 +201,14 @@ async def main():
             body = {"class_id": 101, "system_prompt": marker, "tutor_enabled": True}
             check("agent.config_save", (await req("PUT", "/api/teacher/agent-config", "T1", json=body)).status_code == 200)
             check("agent.config_read", (await req("GET", "/api/teacher/agent-config?class_id=101", "T1")).json()["system_prompt"] == marker)
+            switch_marker = "CLASS_102_AFTER_SWITCH"
+            switch_write = await req("PUT", "/api/teacher/agent-config", "T1",
+                                     json={"class_id": 102, "system_prompt": switch_marker, "tutor_enabled": False})
+            switch_read = await req("GET", "/api/teacher/agent-config?class_id=102", "T1")
+            check("agent.class_switch_reads_and_saves_target",
+                  switch_write.status_code == 200
+                  and switch_read.json()["system_prompt"] == switch_marker
+                  and (await req("GET", "/api/teacher/agent-config?class_id=101", "T1")).json()["system_prompt"] == marker)
             check("agent.cross_class_config_denied", (await req("PUT", "/api/teacher/agent-config", "T2", json=body)).status_code == 403)
             tutor_prompt = llm_service.resolve_system_prompt(SimpleNamespace(system_prompt=marker, tutor_enabled=True))
             check("agent.tutor_overrides_custom_prompt", marker not in tutor_prompt and "苏格拉底" in tutor_prompt)

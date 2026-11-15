@@ -82,6 +82,6 @@ Dockerfile 实际加入三步：递归编译 `/app` 与 `/usr/local/lib/python3.
 | 上传材料 | 200 |
 | 索引 | 成功写入分块 |
 | `retrieve_top_k` | 命中 2 条，首位 `nosrc-mat.md` |
-| `make check` | 39/39 PASS |
+| `make check` | 41/41 PASS |
 
 关键补充：系统 Python 标准库与 GCC 调试脚本必须一并处理，否则 `find /` 仍会残留 1102 + 5 个 `.py`，只处理 `/app` 无法满足“0 源码”。
