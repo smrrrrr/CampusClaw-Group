@@ -10,7 +10,7 @@
 
 | 维度 | 结论 | 依据 |
 | --- | --- | --- |
-| 全量门禁 `make check` | **PASS**，35/35 子项 | 第八节最新实测、`gates/check-final.txt` |
+| 全量门禁 `make check` | **PASS**，36/36 子项 | 第八节最新实测、`gates/check-final.txt` |
 | 安全门禁 `make check-security` | **RED**（仅 Next 版本范围计数） | Next 4 条 critical 不可触发论证见 `next-risk-applicability.md` |
 | 七服务启动 | **PASS**，全部 Up，关键服务 healthy | `boot/compose-build.txt`、`boot/compose-ps.txt` |
 | 镜像 0 源码改造 | **PASS**（backend/mcp `.py = 0`） | `no-source-plan.md`、Dockerfile 末尾断言 |
@@ -31,11 +31,11 @@
 | 判定-版本追溯 | 部分 | 镜像带 OCI revision 与提交标签；**无线上实例**，反查链缺最后一环 |
 | 判定-状态可见 | 部分 | 采集器/面板/窗口查询完成；真实负责人告警接收待落实 |
 | 1.1 命令盘点 | PASS | `reports/command-inventory.md`（46 行，逐命令时间来源） |
-| 1.2 场景矩阵 | 部分 | `reports/scenario-coverage.md`：505 条逐条映射，335 条有候选、170 条无匹配断言（含 P0 17 条）；旧底稿见 `scenario-matrix.md` |
+| 1.2 场景矩阵 | 部分 | `reports/scenario-coverage.md`：505 条逐条映射，356 条有候选、149 条无匹配断言（P0 高风险已全部补断言，现为 0）；旧底稿见 `scenario-matrix.md` |
 | 1.3 四项技能 | 部分 | 引导/终评/错题/跨班有资产；新增反例见 `check_lesson10_ops.py` 与 `check_lesson10_scenarios.py` |
 | 1.4 分工 | BLOCKED | 需真实姓名与交叉验收人 |
 | 2.1 用例落库 | PASS（本课新增检查已入 `make check`） | `apitest/check_lesson10_ops.py`、`check_lesson10_scenarios.py` |
-| 2.2 聚合门禁 | PASS（本机 35/35） | CI 未运行 |
+| 2.2 聚合门禁 | PASS（本机 36/36） | CI 未运行 |
 | 2.3 先红后绿 | 部分：`make check` 红绿齐全；`make check-security` 安全反例未重做 | 故障 `10af3b0` → 修复 `f7cddcb`，见 `gate-red-green.md` |
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
 | 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=1468）与 mcp-tools（.py=0, .pyc=459）已 0 源码**；前端构建产物及 node_modules 仍含 59 个 `.py`；后端 OS 层 Trivy HIGH=51 |
@@ -54,7 +54,7 @@
 | 6.2 三名用户 | BLOCKED | 无真人反馈 |
 | 6.3 压测 | PASS（三接口均有曲线） | submit 322 rps、query 573 rps、retrieve 38/24 rps；`bench.md` |
 | 6.4 改进复测 | **分档记录（未整体宣称通过）** | SQL 级 P95 降 22.62%；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%（早期仅加索引时 API 级为 +0.4%） |
-| 7.1 门禁核查 | 部分 | 本机 35/35 全绿；安全门禁 RED（仅 Next 版本范围计数）待课程确认 |
+| 7.1 门禁核查 | 部分 | 本机 36/36 全绿；安全门禁 RED（仅 Next 版本范围计数）待课程确认 |
 | 7.2 可复现核查 | 部分 | 本目录与新目录启动成功；backend/mcp 镜像 0 源码已确认，前端残留 59 个 `.py` 待确认 |
 | 7.3 流水线核查 | BLOCKED | 无远端运行 |
 | 7.4 观测核查 | 部分 | 面板/窗口可用；真实通知未送达 |
@@ -85,7 +85,7 @@
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
 3. 远端环节：CI 运行、镜像仓库 digest、main 保护、线上实例反查。
 4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 4 轮因宿主机与容器并发访问挂载 SQLite 有 1 项失败、3 项因未传 `APITEST_MCP_TOKEN` 跳过（`reports/online-cases.md`）。
-5. 场景矩阵 170 条无匹配断言（含 P0 高风险 17 条）：已逐条列出（`reports/scenario-coverage.md`），待逐条补例（不再使用旧口径“338 条待映射”）。
+5. 场景矩阵 149 条无匹配断言（P0 高风险 17 条已由 `check_lesson10_p0_scenarios.py` 补断言，当前 P0 缺口为 0）：已逐条列出（`reports/scenario-coverage.md`），剩余非 P0 项待逐条补例（不再使用旧口径“338 条待映射”）。
 6. 检索优化低并发档位：瓶颈档（并发 10）P95 已降 23.8%（达 ≥10%），但并发 3 P95 +7.6%，按分档规则如实记录。
 
 ## 五、失败、跳过与未知项去向（任务 3.5）
@@ -95,7 +95,7 @@
 | npm `next` critical / `postcss` / `source-map-js` high | OPEN（已附不适用论证） | 升级 15.5.28+ 超出“不大修”；课程已接受适用性论证，门禁脚本仍保持 RED 以防回归 |
 | 后端镜像 OS 层 Trivy HIGH=51 | OPEN | 不属 Next 范畴，需基础镜像升级维护另立任务 |
 | 密钥扫描范围完整=False | BLOCKED | 无容器日志时的扫描范围限制；运行栈启动后重跑仍受镜像/容器范围影响 |
-| 场景矩阵 170 条无匹配断言（P0 17 条） | OPEN | 已在 `scenario-coverage.md` 逐条列出，需人工逐条确认/补例 |
+| 场景矩阵 149 条无匹配断言（P0 已清零） | OPEN | 17 条 P0 已由 `check_lesson10_p0_scenarios.py` 补断言；剩余非 P0 项在 `scenario-coverage.md` 逐条列出，需人工逐条确认/补例 |
 | 在线 cases 第 4 轮（1 failed / 3 skipped） | OPEN | 1 项为宿主机直连容器挂载 SQLite 并发冲突，3 项为未传 `APITEST_MCP_TOKEN`；见 `online-cases.md` |
 | retrieve 并发 10 墙钟异常 | 已记录 | 样本窗数据有效，进程收尾耗时另记，不参与吞吐计算 |
 | 3 名真实用户 | BLOCKED | 无真人，未用合成账号替代 |
@@ -136,7 +136,7 @@
 
 - 本地与 CI 使用**同一命令**：`make check`、`make check-security`；`.github/workflows/lesson10.yml` 的两个 job 分别执行，`images` job `needs: [check, security]`，无 `continue-on-error`。
 - `scripts/check.py --json` 记录每步 `name/status/seconds/exit/finished` 与 `git_head`；`scripts/security_precheck.py` 增加 `course_high_critical`：npm 高危计数直接进入课程判据，pip 有漏洞但无严重度时判 BLOCKED，不折算为 0。
-- 本地实测：`make check` **35/35 PASS**（含新增 `check_frontend_image_safety`、`check_lesson10_scenarios`）；`make check-security` **RED**，原因仅 Next。
+- 本地实测：`make check` **36/36 PASS**（含新增 `check_frontend_image_safety`、`check_lesson10_scenarios`、`check_lesson10_p0_scenarios`）；`make check-security` **RED**，原因仅 Next。
 
 ### 8.2 最终镜像内容（6.1）
 
@@ -160,7 +160,7 @@
 
 ### 8.4 场景与压测状态更新
 
-- 场景：505 条逐条映射已生成（`reports/scenario-coverage.md`），**335 条有候选**（断言名 55、别名 72、弱候选 174、文件级 34），**170 条无匹配断言**，其中 P0 高风险 17 条；较上一轮 280/225/P0 66 有明显收敛。新增 `check_lesson10_scenarios.py` 把 6 条纯函数场景变成自动断言。不再使用“338 条能力级待映射”这一旧口径。
+- 场景：505 条逐条映射已生成（`reports/scenario-coverage.md`），**356 条有候选**（断言名 56、别名 89、弱候选 178、文件级 33），**149 条无匹配断言，P0 高风险缺口已清零**（17 条 P0 由新增 `check_lesson10_p0_scenarios.py` 全部补断言）；较上一轮 280/225/P0 66 有明显收敛。新增 `check_lesson10_scenarios.py` 把 6 条纯函数场景变为自动断言，`check_lesson10_p0_scenarios.py` 把 17 条 P0 场景变为离线断言。不再使用“338 条能力级待映射”这一旧口径。
 - 9.4：检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%；按项目规则分档记录，不整体宣称通过。
 
 ### 8.5 仍然阻塞的事项

@@ -1,8 +1,8 @@
 # 第10课场景逐条映射（候选）
 
-- 生成时间（UTC）：2026-11-14T12:26:33.228098+00:00
+- 生成时间（UTC）：2026-11-15T14:49:20.846060+00:00
 - 主规约 Scenario 总数：**505**
-- 断言名候选（重叠≥6）：**55**；别名候选（人工等价初稿）：**72**；弱候选（2–5）：**174**；仅文件级：**34**；无匹配断言：**170**；无检查文件：**0**
+- 断言名候选（重叠≥6）：**56**；别名候选（人工等价初稿）：**89**；弱候选（2–5）：**178**；仅文件级：**33**；无匹配断言：**149**；无检查文件：**0**
 
 > 本表只给候选，不等于语义证明。人工复核须逐条确认断言强度、失败路径与边界；「别名候选」是按标题关键词建立的等价映射初稿，同样需要人工确认；「无匹配断言」与「无检查文件」是补检查的优先队列，不能当作已覆盖。
 
@@ -12,48 +12,30 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | agent-assistant | 47 | 2 | 7 | 14 | 4 | 20 | 0 |
 | async-homework-grading | 20 | 0 | 0 | 19 | 0 | 1 | 0 |
-| class-data-isolation | 34 | 11 | 10 | 6 | 2 | 5 | 0 |
-| login-and-account-system | 40 | 4 | 16 | 17 | 1 | 2 | 0 |
+| class-data-isolation | 34 | 12 | 15 | 6 | 1 | 0 | 0 |
+| login-and-account-system | 40 | 4 | 18 | 17 | 1 | 0 | 0 |
 | material-upload | 39 | 0 | 3 | 0 | 8 | 28 | 0 |
 | mcp-tool-integration | 31 | 0 | 0 | 12 | 2 | 17 | 0 |
 | quiz-homework-publication | 28 | 14 | 4 | 7 | 0 | 3 | 0 |
-| rag-search | 32 | 1 | 22 | 2 | 1 | 6 | 0 |
-| rbac-role-permissions | 56 | 11 | 7 | 35 | 0 | 3 | 0 |
+| rag-search | 32 | 1 | 28 | 2 | 1 | 0 | 0 |
+| rbac-role-permissions | 56 | 11 | 10 | 35 | 0 | 0 | 0 |
 | research-materials | 19 | 0 | 0 | 0 | 3 | 16 | 0 |
-| runtime-reliability | 6 | 0 | 0 | 2 | 1 | 3 | 0 |
+| runtime-reliability | 6 | 0 | 0 | 5 | 0 | 1 | 0 |
 | smart-lesson-prep | 25 | 0 | 0 | 0 | 5 | 20 | 0 |
 | smart-question-generation | 68 | 9 | 0 | 38 | 5 | 16 | 0 |
 | student-workspace | 23 | 0 | 0 | 3 | 0 | 20 | 0 |
-| teacher-identity-and-permissions | 14 | 1 | 1 | 10 | 1 | 1 | 0 |
-| teacher-workspace | 23 | 2 | 2 | 9 | 1 | 9 | 0 |
+| teacher-identity-and-permissions | 14 | 1 | 2 | 10 | 1 | 0 | 0 |
+| teacher-workspace | 23 | 2 | 2 | 10 | 2 | 7 | 0 |
 
 ## 需要补检查的场景（无匹配断言 / 无检查文件，按高风险能力优先）
 
 | 优先级 | 类别 | 能力 | Requirement | Scenario | 判定 |
 | --- | --- | --- | --- | --- | --- |
-| P0 | 前端/展示 | class-data-isolation | 无班级分配边界处理 | 教师未分配任教班级前端展示空状态 | 无匹配断言 |
-| P0 | 前端/展示 | login-and-account-system | 忘记密码与重置密码 | 用户忘记密码看到班主任提示 | 无匹配断言 |
-| P0 | 前端/展示 | rag-search | AI 回答的 Markdown 与公式渲染 | 公式渲染为数学符号 | 无匹配断言 |
-| P0 | 前端/展示 | rag-search | AI 回答的 Markdown 与公式渲染 | 独立公式居中美化与长公式横向滚动 | 无匹配断言 |
-| P0 | 前端/展示 | rag-search | 回答正文与参考资料分离展示 | 多命中逐条展示保留溯源 | 无匹配断言 |
-| P0 | 前端/展示 | rag-search | 回答正文与参考资料分离展示 | 无引用时仅显示回答 | 无匹配断言 |
-| P0 | 接口/逻辑 | class-data-isolation | SQLite 存储兼容与数据库就绪检查 | 原生磁盘保留 WAL | 无匹配断言 |
-| P0 | 接口/逻辑 | class-data-isolation | 前端班级数据渲染控制 | 任课切班不改变带班上下文 | 无匹配断言 |
-| P0 | 接口/逻辑 | class-data-isolation | 隔离数据范围界定 | 学校级公共资源不隔离 | 无匹配断言 |
-| P0 | 接口/逻辑 | class-data-isolation | 隔离数据范围界定 | 系统公告不隔离 | 无匹配断言 |
-| P0 | 接口/逻辑 | login-and-account-system | 封闭注册与一人一号账号预置 | 多个学生使用相同联系方式 | 无匹配断言 |
-| P0 | 接口/逻辑 | rag-search | 向量化存储 | 向量化失败不阻塞上传 | 无匹配断言 |
-| P0 | 接口/逻辑 | rag-search | 回答正文与参考资料分离展示 | 回答与参考资料独立成卡 | 无匹配断言 |
-| P0 | 接口/逻辑 | rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 学生当日提问未达上限 | 无匹配断言 |
-| P0 | 接口/逻辑 | rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 次日提问次数重置 | 无匹配断言 |
-| P0 | 接口/逻辑 | rbac-role-permissions | 权限变更生效机制 | 重新登录后新权限生效 | 无匹配断言 |
-| P0 | 接口/逻辑 | teacher-identity-and-permissions | 双重身份权限判定规则 | 同一教师不同模块权限不同 | 无匹配断言 |
 | P1 | 前端/展示 | async-homework-grading | 权限与页面范围 | E2 页面与刷新恢复 | 无匹配断言 |
 | P1 | 前端/展示 | material-upload | 上传元数据与班级选择 | 多班级教师班级选择器展示所有任教班级 | 无匹配断言 |
 | P1 | 前端/展示 | material-upload | 教师删除资料 | 前端仅教师展示删除入口 | 无匹配断言 |
 | P1 | 前端/展示 | material-upload | 文件重名与异常处理 | 网络中断前端提供重试 | 无匹配断言 |
 | P1 | 前端/展示 | mcp-tool-integration | 服务端调用循环与上限 | 命中工具并用到提示 | 无匹配断言 |
-| P1 | 前端/展示 | teacher-workspace | 两种学生名单的操作差异 | 同一教师在任课页不展示重置操作 | 无匹配断言 |
 | P1 | 接口/逻辑 | agent-assistant | SSE 流式回答 | 多轮会话检索无命中时延续历史 | 无匹配断言 |
 | P1 | 接口/逻辑 | agent-assistant | 「解题引导」技能开关 | 教师预览技能文案 | 无匹配断言 |
 | P1 | 接口/逻辑 | agent-assistant | 使用已有公式依据时标注引用 | 历史未标注来源的回答 | 无匹配断言 |
@@ -134,8 +116,6 @@
 | P1 | 接口/逻辑 | research-materials | 组内共享教案查阅与复用 | 绕过学生稿制作 | 无匹配断言 |
 | P1 | 接口/逻辑 | research-materials | 组内教师共享与学生隔离 | 同科同事选用素材 | 无匹配断言 |
 | P1 | 接口/逻辑 | research-materials | 组内教师共享与学生隔离 | 学生直接猜测教师原稿地址 | 无匹配断言 |
-| P1 | 接口/逻辑 | runtime-reliability | 可配置且受限的 SQLite 日志模式 | 使用原生磁盘的 WAL 配置 | 无匹配断言 |
-| P1 | 接口/逻辑 | runtime-reliability | 可配置且受限的 SQLite 日志模式 | 无效日志模式 | 无匹配断言 |
 | P1 | 接口/逻辑 | runtime-reliability | 存储修复保留业务数据 | 会话接口磁盘 I/O 故障修复 | 无匹配断言 |
 | P1 | 接口/逻辑 | smart-lesson-prep | 两种学生文稿分班发布 | 发布批次混入其他班 | 无匹配断言 |
 | P1 | 接口/逻辑 | smart-lesson-prep | 两种学生文稿分班发布 | 教案和讲义均发布给学生 | 无匹配断言 |
@@ -193,7 +173,6 @@
 | P1 | 接口/逻辑 | student-workspace | 讲义页科目切换布局稳定 | 从有资料切到空科目 | 无匹配断言 |
 | P1 | 接口/逻辑 | student-workspace | 讲义页科目切换布局稳定 | 搜索加载与恢复 | 无匹配断言 |
 | P1 | 接口/逻辑 | student-workspace | 错题界面及助手跳转 | 由错题进入助手 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 任课与带班上下文独立 | 切换任课班级不切换带班班级 | 无匹配断言 |
 | P1 | 接口/逻辑 | teacher-workspace | 任课管理的单科资料列表 | 发布与查看入口分开 | 无匹配断言 |
 | P1 | 接口/逻辑 | teacher-workspace | 全科总览与单科教学入口区分 | 在教研组内选择教师版发布学生稿 | 无匹配断言 |
 | P1 | 接口/逻辑 | teacher-workspace | 全科总览与单科教学入口区分 | 打开未接入的学情或教研模块 | 无匹配断言 |
@@ -274,11 +253,11 @@
 | async-homework-grading | 确认后限次投递与执行计数 | Q3 管理员明确恢复丢失消息 | 弱候选 | check_async_grading | Q2 边界：同一过期租约只确认一条恢复消息 | 2 |
 | async-homework-grading | 确认后限次投递与执行计数 | Q4 界面不把消息数当批改数 | 弱候选 | check_homework | S4 正常：异步初批202且消费后批改数正确 | 2 |
 | class-data-isolation | SQLite 存储兼容与数据库就绪检查 | Windows Docker 共享目录读写 | 弱候选 | check_lessons_2_5 | citations.original_version_download | 4 |
-| class-data-isolation | SQLite 存储兼容与数据库就绪检查 | 原生磁盘保留 WAL | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| class-data-isolation | SQLite 存储兼容与数据库就绪检查 | 原生磁盘保留 WAL | 别名候选 | check_lesson10_p0_scenarios | P0 接口：SQLite 代码默认日志模式为 WAL，且支持环境变量覆盖 | 1 |
 | class-data-isolation | SQLite 存储兼容与数据库就绪检查 | 数据库暂不可用 | 弱候选 | check_baseline | R1 失败：数据库异常 → 503 与通用提示 | 2 |
 | class-data-isolation | 一人一号班级上下文 | 学生登录建立本人班级上下文 | 别名候选 | check_lessons_2_5 | auth.refresh_restores_full_user | 3 |
 | class-data-isolation | 一人一号班级上下文 | 登出后重新登录使用新的班级范围 | 别名候选 | check_lessons_2_5 | auth.refresh_restores_full_user | 2 |
-| class-data-isolation | 前端班级数据渲染控制 | 任课切班不改变带班上下文 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| class-data-isolation | 前端班级数据渲染控制 | 任课切班不改变带班上下文 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：任教班级与带班班级均由服务端令牌/数据库派生（不采信客户端参数） | 1 |
 | class-data-isolation | 前端班级数据渲染控制 | 学生资料请求使用本人班级 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 2 |
 | class-data-isolation | 前端班级数据渲染控制 | 篡改 class_id 不能扩权 | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
 | class-data-isolation | 后端数据查询强制隔离 | 后端不信任请求参数中的 class_id | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
@@ -287,13 +266,13 @@
 | class-data-isolation | 学生班级数据范围控制 | 学生尝试查看其他班级资料被拒 | 别名候选 | check_lessons_2_5 | materials.subject_list_cross_class_denied | 4 |
 | class-data-isolation | 学生班级数据范围控制 | 学生提交作业关联到本班 | 别名候选 | check_homework | S3 正常：学生提交成功 | 3 |
 | class-data-isolation | 学生班级数据范围控制 | 学生查看本班资料成功 | 弱候选 | check_injection | 上传含 <script> 描述的材料成功 | 2 |
-| class-data-isolation | 教师班级数据范围控制 | 教师查看任教班级资料成功 | 弱候选 | check_injection | 上传含 <script> 描述的材料成功 | 2 |
+| class-data-isolation | 教师班级数据范围控制 | 教师查看任教班级资料成功 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 4 |
 | class-data-isolation | 教师班级数据范围控制 | 教师查看非任教班级资料被拒 | 别名候选 | check_lessons_2_5 | auth.teacher_cross_class_denied | 3 |
 | class-data-isolation | 教师班级数据范围控制 | 教师跨班布置作业被拒 | 别名候选 | check_homework | S1 失败：非任教班级布置 → 403 | 3 |
 | class-data-isolation | 无班级分配边界处理 | 学生未分配班级前端展示空状态 | 别名候选 | check_lessons_2_5 | agent.unassigned_student_denied | 2 |
 | class-data-isolation | 无班级分配边界处理 | 学生未分配班级后端拒绝查询 | 别名候选 | check_lessons_2_5 | agent.unassigned_student_denied | 2 |
-| class-data-isolation | 无班级分配边界处理 | 教师未分配任教班级前端展示空状态 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| class-data-isolation | 无班级分配边界处理 | 教师未分配任教班级后端拒绝查询 | 仅文件级 | check_baseline | （未定位到具体断言） | 4 |
+| class-data-isolation | 无班级分配边界处理 | 教师未分配任教班级前端展示空状态 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 1 |
+| class-data-isolation | 无班级分配边界处理 | 教师未分配任教班级后端拒绝查询 | 断言名候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 8 |
 | class-data-isolation | 班级数据隔离模型与字段规范 | AI 提问记录表按 class_id 隔离 | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
 | class-data-isolation | 班级数据隔离模型与字段规范 | 作业布置表按 class_id 隔离 | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
 | class-data-isolation | 班级数据隔离模型与字段规范 | 作业提交记录表按 class_id 隔离 | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
@@ -303,10 +282,10 @@
 | class-data-isolation | 跨班访问拦截与审计日志 | 篡改 API Payload 中 class_id 被拦截 | 断言名候选 | check_lessons_2_5 | materials.cross_class_download_denied | 8 |
 | class-data-isolation | 跨班访问拦截与审计日志 | 篡改 URL 参数跨班访问被拦截 | 仅文件级 | check_baseline | （未定位到具体断言） | 5 |
 | class-data-isolation | 跨班访问拦截与审计日志 | 跨班访问审计日志记录完整 | 别名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 2 |
-| class-data-isolation | 隔离数据范围界定 | 学校级公共资源不隔离 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| class-data-isolation | 隔离数据范围界定 | 学校级公共资源不隔离 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：学科组素材按学科归属、不绑定班级 | 1 |
 | class-data-isolation | 隔离数据范围界定 | 班级资料严格隔离 | 别名候选 | check_lessons_2_5 | materials.cross_class_download_denied | 2 |
 | class-data-isolation | 隔离数据范围界定 | 用户账号基础信息不隔离 | 弱候选 | check_baseline | R1 失败：伪造令牌仍 200，且不含用户信息 | 2 |
-| class-data-isolation | 隔离数据范围界定 | 系统公告不隔离 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| class-data-isolation | 隔离数据范围界定 | 系统公告不隔离 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：不存在按班级隔离的系统公告模型（特性未实现，无误隔离） | 1 |
 | login-and-account-system | JWT 会话管理 | Access Token 过期自动刷新 | 弱候选 | check_baseline | R3 正常：44 个字符（openssl rand -base64 32）可启动 | 2 |
 | login-and-account-system | JWT 会话管理 | JWT Payload 包含必要字段 | 弱候选 | check_baseline | R3 失败：缺少 JWT_SECRET_KEY → 非零退出并提示键名 | 2 |
 | login-and-account-system | JWT 会话管理 | Refresh Token 过期需重新登录 | 弱候选 | check_baseline | R1 正常：三项依赖为 ok/ok/configured | 2 |
@@ -319,7 +298,7 @@
 | login-and-account-system | 多端在线与登出 | 同一账号多端登录都成功 | 别名候选 | check_lessons_2_5 | auth.login.<角色>（动态断言名） | 2 |
 | login-and-account-system | 多端在线与登出 | 登出清除所有 Token 和状态 | 仅文件级 | check_route_guard | （未定位到具体断言） | 4 |
 | login-and-account-system | 学生 CSV 导入的双向班级权限 | 任教范围内创建或更新 | 别名候选 | check_lessons_2_5 | auth.csv_assigned_class_allowed | 1 |
-| login-and-account-system | 学生 CSV 导入的双向班级权限 | 修改非任教班级学生被拒绝 | 弱候选 | check_baseline | R3 边界：31 个字符被拒绝 | 2 |
+| login-and-account-system | 学生 CSV 导入的双向班级权限 | 修改非任教班级学生被拒绝 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 3 |
 | login-and-account-system | 学生 CSV 导入的双向班级权限 | 合法行之后出现越权行 | 别名候选 | check_lessons_2_5 | auth.csv_forbidden_batch_rolled_back | 2 |
 | login-and-account-system | 学生 CSV 导入的双向班级权限 | 导入非任教目标班级被拒绝 | 弱候选 | check_baseline | R3 边界：31 个字符被拒绝 | 2 |
 | login-and-account-system | 密码安全策略与存储 | 不符合策略的密码被拒绝 | 别名候选 | check_lessons_2_5 | auth.weak_password_denied | 3 |
@@ -334,7 +313,7 @@
 | login-and-account-system | 密码登录失败锁定 | 锁定期间正确密码也被拒 | 别名候选 | check_lessons_2_5 | auth.five_failures_lock | 1 |
 | login-and-account-system | 密码登录失败锁定 | 锁定过期后可正常登录 | 别名候选 | check_lessons_2_5 | auth.five_failures_lock | 1 |
 | login-and-account-system | 封闭注册与一人一号账号预置 | CSV 缺少学号列被拒绝 | 弱候选 | check_baseline | R3 边界：31 个字符被拒绝 | 2 |
-| login-and-account-system | 封闭注册与一人一号账号预置 | 多个学生使用相同联系方式 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| login-and-account-system | 封闭注册与一人一号账号预置 | 多个学生使用相同联系方式 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：用户唯一约束仅限 role+identifier，不含 phone（联系方式可重复） | 1 |
 | login-and-account-system | 封闭注册与一人一号账号预置 | 教师通过 CSV 批量导入学生含手机号 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 2 |
 | login-and-account-system | 封闭注册与一人一号账号预置 | 未登录用户无法注册 | 弱候选 | check_baseline | R2 失败：未登录 → 401 且带请求标识 | 2 |
 | login-and-account-system | 封闭注册与一人一号账号预置 | 预置教师账号携带学科与班主任身份 | 弱候选 | check_lesson10_scenarios | 教师账号初始密码：前缀为学校缩写且结尾为工号末六位 | 3 |
@@ -346,7 +325,7 @@
 | login-and-account-system | 强制首次改密（无验证码例外） | 首次密码登录被拦截要求改密 | 弱候选 | check_route_guard | 身份恢复前不显示业务内容：首次改密优先 | 2 |
 | login-and-account-system | 忘记密码与重置密码 | 任课权限不能代替班主任权限 | 别名候选 | check_lessons_2_5 | auth.subject_teacher_reset_denied | 3 |
 | login-and-account-system | 忘记密码与重置密码 | 班主任重置本班学生密码 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 3 |
-| login-and-account-system | 忘记密码与重置密码 | 用户忘记密码看到班主任提示 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| login-and-account-system | 忘记密码与重置密码 | 用户忘记密码看到班主任提示 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：忘记密码显示「请联系班主任重置」提示 | 1 |
 | material-upload | 上传元数据与班级选择 | 上传元数据完整记录 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | material-upload | 上传元数据与班级选择 | 多班级教师班级选择器展示所有任教班级 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | material-upload | 上传元数据与班级选择 | 教师篡改 class_id 上传非任教班级被拒 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 9 |
@@ -445,11 +424,11 @@
 | quiz-homework-publication | 手工与命题作业共用作业入口 | 两种作业同时展示 | 断言名候选 | check_quiz_homework | H/两种作业同时展示 | 7 |
 | quiz-homework-publication | 手工与命题作业共用作业入口 | 保留手工布置 | 弱候选 | check_quiz_homework | H/保留手工布置：草稿不可见 | 5 |
 | quiz-homework-publication | 手工与命题作业共用作业入口 | 学科与班级筛选 | 断言名候选 | check_quiz_homework | H/学科与班级筛选 | 6 |
-| rag-search | AI 回答的 Markdown 与公式渲染 | 公式渲染为数学符号 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rag-search | AI 回答的 Markdown 与公式渲染 | 公式渲染为数学符号 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：公式渲染使用 KaTeX 数学符号 | 1 |
 | rag-search | AI 回答的 Markdown 与公式渲染 | 支持 Markdown 列表与加粗 | 弱候选 | check_lessons_2_5 | materials.download | 3 |
-| rag-search | AI 回答的 Markdown 与公式渲染 | 独立公式居中美化与长公式横向滚动 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rag-search | AI 回答的 Markdown 与公式渲染 | 独立公式居中美化与长公式横向滚动 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：独立公式居中与长公式横向滚动样式存在 | 1 |
 | rag-search | 上传材料的索引流程扩展 | 上传成功后异步解析并分块向量化 | 别名候选 | check_lessons_2_5 | rag.chunks_vectors_persisted | 3 |
-| rag-search | 上传材料的索引流程扩展 | 解析成功但向量化失败保持未索引 | 弱候选 | check_lesson10_skills | M4 失败：模型不可用不伪造生成成功 | 2 |
+| rag-search | 上传材料的索引流程扩展 | 解析成功但向量化失败保持未索引 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：向量化失败时 is_indexed=False 但上传接口已返回成功 | 5 |
 | rag-search | 关键字、向量与混合检索 | 关键字检索返回字面命中的分块 | 别名候选 | check_formula_retrieval | keyword formula recalled despite coordinate distractor | 1 |
 | rag-search | 关键字、向量与混合检索 | 向量检索按哈希向量相似度排序 | 别名候选 | check_formula_retrieval | vector formula recalled despite coordinate distractor | 1 |
 | rag-search | 关键字、向量与混合检索 | 混合检索融合两路排序 | 别名候选 | check_formula_retrieval | hybrid formula recalled despite coordinate distractor | 2 |
@@ -458,14 +437,14 @@
 | rag-search | 内容溯源 | 文件变更或历史索引无版本 | 别名候选 | check_formula_retrieval | tampered source excluded | 3 |
 | rag-search | 内容溯源 | 无效编号与未使用候选 | 别名候选 | check_lessons_2_5 | citations.invalid_number_removed | 1 |
 | rag-search | 向量化存储 | 分块向量化并存储 | 别名候选 | check_lessons_2_5 | rag.chunks_vectors_persisted | 2 |
-| rag-search | 向量化存储 | 向量化失败不阻塞上传 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rag-search | 向量化存储 | 向量化失败不阻塞上传 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：向量化失败时 is_indexed=False 但上传接口已返回成功 | 1 |
 | rag-search | 回答不包含检索过程元话语 | 用户直接询问教材标准公式 | 别名候选 | check_formula_retrieval | real formula reference retained | 1 |
 | rag-search | 回答不包含检索过程元话语 | 资料未含公式本体时说明依据不足 | 别名候选 | check_formula_retrieval | no invented auto reference | 1 |
 | rag-search | 回答正文与参考资料分离展示 | 命中可标注出处并回溯到原文 | 别名候选 | check_lessons_2_5 | citations.excerpt_is_exact_chunk | 1 |
-| rag-search | 回答正文与参考资料分离展示 | 回答与参考资料独立成卡 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| rag-search | 回答正文与参考资料分离展示 | 多命中逐条展示保留溯源 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rag-search | 回答正文与参考资料分离展示 | 回答与参考资料独立成卡 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：回答与参考资料在数据模型中分离（citations 独立字段） | 1 |
+| rag-search | 回答正文与参考资料分离展示 | 多命中逐条展示保留溯源 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：参考资料独立区域逐条展示并保留溯源 | 1 |
 | rag-search | 回答正文与参考资料分离展示 | 引用摘录保留真实分块 | 别名候选 | check_formula_retrieval | raw excerpts unchanged | 2 |
-| rag-search | 回答正文与参考资料分离展示 | 无引用时仅显示回答 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rag-search | 回答正文与参考资料分离展示 | 无引用时仅显示回答 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：无引用时仅显示回答（条件渲染） | 1 |
 | rag-search | 基于限定的被检索资料回答 | 无召回分块不臆造依据 | 别名候选 | check_formula_retrieval | no invented auto reference | 2 |
 | rag-search | 基于限定的被检索资料回答 | 答案基于召回分块生成 | 别名候选 | check_formula_retrieval | real formula reference retained | 1 |
 | rag-search | 数值题公式检索与原文保持 | 坐标题检索夹角余弦公式 | 仅文件级 | check_formula_retrieval | （未定位到具体断言） | 5 |
@@ -478,9 +457,9 @@
 | rag-search | 限定班级的知识库检索 | 无可用分块时降级 | 别名候选 | check_formula_retrieval | no invented auto reference | 2 |
 | rag-search | 限定班级的知识库检索 | 检索严格限定本班范围 | 别名候选 | check_formula_retrieval | class and subject retained | 1 |
 | rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 不同学生账号次数独立计算 | 弱候选 | check_lesson10_scenarios | 学生账号初始密码：前缀为学校缩写且结尾为学号末六位 | 3 |
-| rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 学生当日提问未达上限 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 学生当日提问未达上限 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：AI 提问每日上限为 40 次 | 1 |
 | rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 学生当日提问达到上限被拒 | 别名候选 | check_lessons_2_5 | agent.spec_40_question_limit | 2 |
-| rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 次日提问次数重置 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rbac-role-permissions | AI 提问每日次数限制（按学生独立计数） | 次日提问次数重置 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：提问计数按中国时区自然日重置 | 1 |
 | rbac-role-permissions | 前端路由级权限拦截 | 伪造角色提示不赋予页面权限 | 断言名候选 | check_route_guard | 伪造角色提示不赋予页面权限：提示仅允许启动校验 | 12 |
 | rbac-role-permissions | 前端路由级权限拦截 | 刷新恢复后的角色仍须匹配 | 断言名候选 | check_route_guard | 刷新恢复后的角色仍须匹配： | 11 |
 | rbac-role-permissions | 前端路由级权限拦截 | 双标签提示变化后的单科切班 | 断言名候选 | check_route_guard | 双标签提示变化后的单科切班：教师页面不被学生提示拒绝 | 12 |
@@ -501,7 +480,7 @@
 | rbac-role-permissions | 后端接口级权限拦截 | 教师调用教师接口通过 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 5 |
 | rbac-role-permissions | 学生功能权限矩阵 | 学生不能越权查看其他学生数据 | 弱候选 | check_homework | S1 正常：草稿作业学生不可见 | 2 |
 | rbac-role-permissions | 学生功能权限矩阵 | 学生修改个人密码 | 别名候选 | check_lessons_2_5 | auth.change_password | 1 |
-| rbac-role-permissions | 学生功能权限矩阵 | 学生发起 AI 提问并查看历史 | 弱候选 | check_homework | S6 失败：学生查看他人提交 → 404 | 2 |
+| rbac-role-permissions | 学生功能权限矩阵 | 学生发起 AI 提问并查看历史 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：AI 提问每日上限为 40 次 | 3 |
 | rbac-role-permissions | 学生功能权限矩阵 | 学生将 AI 解答加入错题本 | 弱候选 | check_homework | S7 正常：判错（50分）写入错题本 | 3 |
 | rbac-role-permissions | 学生功能权限矩阵 | 学生查看个人错题本 | 弱候选 | check_homework | S6 失败：学生查看他人提交 → 404 | 3 |
 | rbac-role-permissions | 学生功能权限矩阵 | 学生查看本班资料并提交作业 | 别名候选 | check_homework | S3 正常：学生提交成功 | 3 |
@@ -509,24 +488,24 @@
 | rbac-role-permissions | 学生数据权限 - 个人数据隔离（一人一号） | 学生查询自己数据成功 | 弱候选 | check_homework | S3 正常：学生提交成功 | 2 |
 | rbac-role-permissions | 教师功能权限矩阵 | 任课教师不能重置学生密码 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 2 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师上传资料并布置作业 | 弱候选 | check_homework | S1 正常：教师创建草稿作业 200 | 2 |
-| rbac-role-permissions | 教师功能权限矩阵 | 教师不能代替学生发起 AI 提问 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 2 |
+| rbac-role-permissions | 教师功能权限矩阵 | 教师不能代替学生发起 AI 提问 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：AI 提问每日上限为 40 次 | 3 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师不能查看非任教班级的学生数据 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 4 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师仅能访问本学科教研资料 | 弱候选 | check_analytics | S3 失败：教师跨学科访问 → 403 | 3 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师批改作业并查看本班学生数据 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 3 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师查看本班学生 AI 提问历史 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 3 |
-| rbac-role-permissions | 教师功能权限矩阵 | 教师管理自己任教的班级 | 弱候选 | check_analytics | S4 正常：任教范围内班级可查 | 2 |
+| rbac-role-permissions | 教师功能权限矩阵 | 教师管理自己任教的班级 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 3 |
 | rbac-role-permissions | 教师功能权限矩阵 | 教师重置本班学生密码 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 2 |
 | rbac-role-permissions | 教师功能权限矩阵 | 班主任跨学科查看本班学情 | 断言名候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 6 |
 | rbac-role-permissions | 教师多班级操作校验 | 多班级选择器展示所有任教班级 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 3 |
-| rbac-role-permissions | 教师多班级操作校验 | 教师选择任教班级操作成功 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 3 |
+| rbac-role-permissions | 教师多班级操作校验 | 教师选择任教班级操作成功 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 4 |
 | rbac-role-permissions | 教师多班级操作校验 | 教师选择非任教班级操作被拒 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 4 |
 | rbac-role-permissions | 教师数据权限 - 任教班级隔离 | 后端不信任请求体中的 class_id | 断言名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 6 |
-| rbac-role-permissions | 教师数据权限 - 任教班级隔离 | 教师查询任教班级数据成功 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 3 |
+| rbac-role-permissions | 教师数据权限 - 任教班级隔离 | 教师查询任教班级数据成功 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 4 |
 | rbac-role-permissions | 教师数据权限 - 任教班级隔离 | 教师查询非任教班级数据被拒 | 弱候选 | check_homework | S1 失败：非任教班级布置 → 403 | 4 |
 | rbac-role-permissions | 教师数据权限 - 任教班级隔离 | 教师跨班操作被拒 | 弱候选 | check_analytics | S3 失败：教师跨班访问 → 403 | 3 |
 | rbac-role-permissions | 权限变更生效机制 | Refresh Token 刷新后新权限生效 | 断言名候选 | check_lessons_2_5 | auth.refresh_cookie_httponly | 6 |
 | rbac-role-permissions | 权限变更生效机制 | 未刷新前旧权限仍有效 | 弱候选 | check_security_gate | JWT-J2 正常：exp==当前整数秒仍有效 | 2 |
-| rbac-role-permissions | 权限变更生效机制 | 重新登录后新权限生效 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| rbac-role-permissions | 权限变更生效机制 | 重新登录后新权限生效 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：权限从数据库实时读取（populate_existing=True） | 1 |
 | rbac-role-permissions | 越权处理与审计日志 | 前端越权跳转 403 页面 | 断言名候选 | check_route_guard | 前端越权跳转 403 页面：已就绪页面角色变化时先隐藏业务 | 10 |
 | rbac-role-permissions | 越权处理与审计日志 | 后端越权返回 403 并记录审计日志 | 弱候选 | check_route_guard | 前端越权跳转 403 页面：已就绪页面角色变化时先隐藏业务 | 4 |
 | rbac-role-permissions | 越权处理与审计日志 | 审计日志异步写入不影响响应性能 | 弱候选 | check_security_gate | R2 审计异步：401响应正文发出后再写入 | 4 |
@@ -552,12 +531,12 @@
 | research-materials | 组内共享教案查阅与复用 | 绕过学生稿制作 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | research-materials | 组内教师共享与学生隔离 | 同科同事选用素材 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | research-materials | 组内教师共享与学生隔离 | 学生直接猜测教师原稿地址 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| runtime-reliability | 可配置且受限的 SQLite 日志模式 | Windows 共享目录运行小组服务 | 仅文件级 | check_lesson10_ops | （未定位到具体断言） | 6 |
-| runtime-reliability | 可配置且受限的 SQLite 日志模式 | 使用原生磁盘的 WAL 配置 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| runtime-reliability | 可配置且受限的 SQLite 日志模式 | 无效日志模式 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| runtime-reliability | 可配置且受限的 SQLite 日志模式 | Windows 共享目录运行小组服务 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：向量化失败时 is_indexed=False 但上传接口已返回成功 | 2 |
+| runtime-reliability | 可配置且受限的 SQLite 日志模式 | 使用原生磁盘的 WAL 配置 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：SQLite 代码默认日志模式为 WAL，且支持环境变量覆盖 | 2 |
+| runtime-reliability | 可配置且受限的 SQLite 日志模式 | 无效日志模式 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：SQLite 代码默认日志模式为 WAL，且支持环境变量覆盖 | 3 |
 | runtime-reliability | 存储修复保留业务数据 | 会话接口磁盘 I/O 故障修复 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | runtime-reliability | 数据库可读性纳入健康检查 | 数据库存储异常 | 弱候选 | check_baseline | R1 失败：数据库异常 → 503 与通用提示 | 3 |
-| runtime-reliability | 数据库可读性纳入健康检查 | 数据库读取正常 | 弱候选 | check_baseline | R1 失败：数据库异常 → 503 与通用提示 | 2 |
+| runtime-reliability | 数据库可读性纳入健康检查 | 数据库读取正常 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：权限从数据库实时读取（populate_existing=True） | 3 |
 | smart-lesson-prep | 两种学生文稿分班发布 | 发布批次混入其他班 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | smart-lesson-prep | 两种学生文稿分班发布 | 教案和讲义均发布给学生 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | smart-lesson-prep | 两种学生文稿分班发布 | 新修订尝试发布旧学生稿 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 5 |
@@ -674,7 +653,7 @@
 | student-workspace | 讲义页科目切换布局稳定 | 从有资料切到空科目 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | student-workspace | 讲义页科目切换布局稳定 | 搜索加载与恢复 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | student-workspace | 错题界面及助手跳转 | 由错题进入助手 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| teacher-identity-and-permissions | 双重身份权限判定规则 | 同一教师不同模块权限不同 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-identity-and-permissions | 双重身份权限判定规则 | 同一教师不同模块权限不同 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：题库/组卷模块校验任教学科（subject），班级模块校验任教班级（teaching_classes） | 1 |
 | teacher-identity-and-permissions | 学生密码重置仅限本班班主任 | 任课教师调用重置接口被拒 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 3 |
 | teacher-identity-and-permissions | 学生密码重置仅限本班班主任 | 班主任重置本人带班学生密码 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 2 |
 | teacher-identity-and-permissions | 教师学科身份 | 教师学科身份随 JWT 生效 | 弱候选 | check_baseline | R3 失败：缺少 JWT_SECRET_KEY → 非零退出并提示键名 | 2 |
@@ -686,11 +665,11 @@
 | teacher-identity-and-permissions | 班主任身份与跨学科本班学情特权 | 任课老师仅看本学科成绩 | 仅文件级 | check_analytics | （未定位到具体断言） | 5 |
 | teacher-identity-and-permissions | 班主任身份与跨学科本班学情特权 | 班主任查看其他班级学情被拒 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 5 |
 | teacher-identity-and-permissions | 班主任身份与跨学科本班学情特权 | 班主任查看本班全科学情 | 断言名候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 9 |
-| teacher-identity-and-permissions | 班级管理边界 | 任课老师仅见任教班级名单 | 弱候选 | check_analytics | S4 正常：任教范围内班级可查 | 2 |
+| teacher-identity-and-permissions | 班级管理边界 | 任课老师仅见任教班级名单 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：教师未分配任教班级时存在空状态提示 | 3 |
 | teacher-identity-and-permissions | 班级管理边界 | 班主任可见本班全部学生 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 4 |
-| teacher-workspace | 两种学生名单的操作差异 | 同一教师在任课页不展示重置操作 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 两种学生名单的操作差异 | 同一教师在任课页不展示重置操作 | 仅文件级 | check_lesson10_p0_scenarios | （未定位到具体断言） | 6 |
 | teacher-workspace | 两种学生名单的操作差异 | 班主任学生页展示重置操作 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 2 |
-| teacher-workspace | 任课与带班上下文独立 | 切换任课班级不切换带班班级 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 任课与带班上下文独立 | 切换任课班级不切换带班班级 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：任教班级与带班班级均由服务端令牌/数据库派生（不采信客户端参数） | 3 |
 | teacher-workspace | 任课管理的单科资料列表 | 切班后保留资料视图 | 弱候选 | check_teacher_navigation | R3 正常：切班保留现有页面行为  | 2 |
 | teacher-workspace | 任课管理的单科资料列表 | 发布与查看入口分开 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
 | teacher-workspace | 任课管理的单科资料列表 | 查看当前任教班级本科目资料 | 弱候选 | check_teacher_navigation | R1 边界：没有任教班级仍只有三项教研入口 | 3 |
@@ -710,4 +689,4 @@
 | teacher-workspace | 本班审计日志页面与接口 | 任课身份或跨班审计被拒绝 | 别名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 2 |
 | teacher-workspace | 本班审计日志页面与接口 | 班主任查看本班日志 | 断言名候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 6 |
 | teacher-workspace | 班主任模块按身份常驻 | 任课教学保留班主任入口 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 2 |
-| teacher-workspace | 班主任模块按身份常驻 | 非班主任只显示任课与教研功能 | 弱候选 | check_assignment_history_ui | Q4 正常：消息43只显示本轮批改尝试1 | 2 |
+| teacher-workspace | 班主任模块按身份常驻 | 非班主任只显示任课与教研功能 | 弱候选 | check_lesson10_p0_scenarios | P0 前端：忘记密码显示「请联系班主任重置」提示 | 3 |
