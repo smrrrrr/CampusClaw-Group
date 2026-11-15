@@ -1,192 +1,87 @@
 # 第10课场景逐条映射（候选）
 
-- 生成时间（UTC）：2026-11-15T14:49:20.846060+00:00
+- 生成时间（UTC）：2026-11-15T15:23:08.961710+00:00
 - 主规约 Scenario 总数：**505**
-- 断言名候选（重叠≥6）：**56**；别名候选（人工等价初稿）：**89**；弱候选（2–5）：**178**；仅文件级：**33**；无匹配断言：**149**；无检查文件：**0**
 
-> 本表只给候选，不等于语义证明。人工复核须逐条确认断言强度、失败路径与边界；「别名候选」是按标题关键词建立的等价映射初稿，同样需要人工确认；「无匹配断言」与「无检查文件」是补检查的优先队列，不能当作已覆盖。
+| 判定 | 条数 | 含义 |
+| --- | --- | --- |
+| 断言名候选（重叠≥6） | 72 | Scenario 与断言名 bigram 高度重合，仍需人工确认强度 |
+| 别名候选（关键词表） | 89 | 按标题关键词建立的等价映射 |
+| 语义别名候选（人工表） | 106 | 中文 Scenario 与英文/异措辞断言逐条核对后的人工等价 |
+| 弱候选（2–5） | 194 | bigram 低重合，噪声较多 |
+| 仅文件级 | 21 | 只能定位到检查文件，未定位断言 |
+| N/A（不适用） | 22 | 前端交互/真实模型语义/需容器或外部服务，见第三节理由 |
+| 已知缺口 | 1 | 规格条款未被实现完全满足，见「已知缺口」节，不得计入覆盖 |
+| 待补断言 | 0 | 同能力有检查文件但无对应断言，**补检查优先队列** |
+| 无检查文件 | 0 | 该能力未登记检查文件 |
+
+> 本表只给候选，不等于语义证明。人工复核须逐条确认断言强度、失败路径与边界；「别名候选」与「语义别名候选」都是人工建立的等价映射，同样需要人工确认；「待补断言」「无检查文件」是补检查的优先队列，不能当作已覆盖；「N/A（不适用）」只表示该场景无法用离线门禁断言证明，不表示已验证；「已知缺口」是规格已要求但实现只部分满足的条目，必须单列，不得计入覆盖。
 
 ## 按能力统计
 
-| 能力 | 总数 | 断言名候选 | 别名候选 | 弱候选 | 仅文件级 | 无匹配断言 | 无检查文件 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| agent-assistant | 47 | 2 | 7 | 14 | 4 | 20 | 0 |
-| async-homework-grading | 20 | 0 | 0 | 19 | 0 | 1 | 0 |
-| class-data-isolation | 34 | 12 | 15 | 6 | 1 | 0 | 0 |
-| login-and-account-system | 40 | 4 | 18 | 17 | 1 | 0 | 0 |
-| material-upload | 39 | 0 | 3 | 0 | 8 | 28 | 0 |
-| mcp-tool-integration | 31 | 0 | 0 | 12 | 2 | 17 | 0 |
-| quiz-homework-publication | 28 | 14 | 4 | 7 | 0 | 3 | 0 |
-| rag-search | 32 | 1 | 28 | 2 | 1 | 0 | 0 |
-| rbac-role-permissions | 56 | 11 | 10 | 35 | 0 | 0 | 0 |
-| research-materials | 19 | 0 | 0 | 0 | 3 | 16 | 0 |
-| runtime-reliability | 6 | 0 | 0 | 5 | 0 | 1 | 0 |
-| smart-lesson-prep | 25 | 0 | 0 | 0 | 5 | 20 | 0 |
-| smart-question-generation | 68 | 9 | 0 | 38 | 5 | 16 | 0 |
-| student-workspace | 23 | 0 | 0 | 3 | 0 | 20 | 0 |
-| teacher-identity-and-permissions | 14 | 1 | 2 | 10 | 1 | 0 | 0 |
-| teacher-workspace | 23 | 2 | 2 | 10 | 2 | 7 | 0 |
+| 能力 | 总数 | 断言名候选 | 别名候选 | 语义别名候选 | 弱候选 | 仅文件级 | N/A（不适用） | 已知缺口 | 待补断言 | 无检查文件 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| agent-assistant | 47 | 4 | 7 | 13 | 15 | 3 | 5 | 0 | 0 | 0 |
+| async-homework-grading | 20 | 0 | 0 | 0 | 19 | 0 | 1 | 0 | 0 | 0 |
+| class-data-isolation | 34 | 12 | 15 | 0 | 6 | 1 | 0 | 0 | 0 | 0 |
+| login-and-account-system | 40 | 4 | 18 | 0 | 17 | 1 | 0 | 0 | 0 | 0 |
+| material-upload | 39 | 7 | 3 | 18 | 5 | 2 | 4 | 0 | 0 | 0 |
+| mcp-tool-integration | 31 | 2 | 0 | 10 | 15 | 2 | 1 | 1 | 0 | 0 |
+| quiz-homework-publication | 28 | 14 | 4 | 3 | 7 | 0 | 0 | 0 | 0 | 0 |
+| rag-search | 32 | 1 | 28 | 0 | 2 | 1 | 0 | 0 | 0 | 0 |
+| rbac-role-permissions | 56 | 9 | 10 | 0 | 35 | 2 | 0 | 0 | 0 | 0 |
+| research-materials | 19 | 0 | 0 | 15 | 2 | 1 | 1 | 0 | 0 | 0 |
+| runtime-reliability | 6 | 0 | 0 | 1 | 5 | 0 | 0 | 0 | 0 | 0 |
+| smart-lesson-prep | 25 | 1 | 0 | 20 | 3 | 1 | 0 | 0 | 0 | 0 |
+| smart-question-generation | 68 | 11 | 0 | 13 | 40 | 4 | 0 | 0 | 0 | 0 |
+| student-workspace | 23 | 4 | 0 | 6 | 3 | 0 | 10 | 0 | 0 | 0 |
+| teacher-identity-and-permissions | 14 | 1 | 2 | 0 | 10 | 1 | 0 | 0 | 0 | 0 |
+| teacher-workspace | 23 | 2 | 2 | 7 | 10 | 2 | 0 | 0 | 0 | 0 |
 
-## 需要补检查的场景（无匹配断言 / 无检查文件，按高风险能力优先）
+## 已知缺口（规格条款未被实现完全满足）
+
+| 能力 | Scenario | 缺口说明 | 部分证据 |
+| --- | --- | --- | --- |
+| mcp-tool-integration | 工具说明夹带指令 | 「远端工具说明要求模型先读取其他数据并放进参数」不在现有注入句式表内；检查只证明已知句式（忽略指令/扮演/泄露提示词）说明会被排除，按 mcp-tool-integration Requirement「本期只拦截已知写法」记为已知限制。 | check_mcp_tools：工具说明夹带指令：含指令式说明的工具不进入候选清单并列入排除 |
+
+## 不适用清单（N/A，逐条理由）
+
+| 能力 | Scenario | 不适用理由 |
+| --- | --- | --- |
+| agent-assistant | 多次卡住与完成 | 需真实模型语义质量抽查，非确定性断言可证 |
+| agent-assistant | 学生只回复数字或不会 | 需真实模型语义质量抽查，非确定性断言可证 |
+| agent-assistant | 打开教师助手配置 | 前端配置页交互，非接口行为 |
+| agent-assistant | 教师预览技能文案 | 前端技能文案预览，属界面展示 |
+| agent-assistant | 概念与学生公式作答 | 需真实模型语义质量抽查，非确定性断言可证 |
+| async-homework-grading | E2 页面与刷新恢复 | 前端页面刷新恢复，属界面行为 |
+| material-upload | 前端仅教师展示删除入口 | 前端入口可见性，属界面展示 |
+| material-upload | 多班级教师班级选择器展示所有任教班级 | 前端选择器展示，属界面交互 |
+| material-upload | 容器重启后文件不丢失 | 需容器重启，属部署环境验证 |
+| material-upload | 网络中断前端提供重试 | 前端重试交互，属界面行为 |
+| mcp-tool-integration | 命中工具并用到提示 | 前端提示展示，属界面交互 |
+| research-materials | 配图尚未就绪 | 前端配图加载态，属界面展示 |
+| student-workspace | 从有资料切到空科目 | 前端科目切换布局，属界面行为 |
+| student-workspace | 学生搜索本班讲义 | 前端本地搜索交互，属界面行为 |
+| student-workspace | 搜索加载与恢复 | 前端布局稳定性（同一容器与标题区不随是否渲染卡片变化），属界面布局 |
+| student-workspace | 无效视图回退 | 前端路由回退，属界面行为 |
+| student-workspace | 浏览学习画像演示 | 前端画像展示，属界面展示 |
+| student-workspace | 浏览演示作业结果 | 前端演示结果展示，属界面展示 |
+| student-workspace | 浏览首页概览 | 前端概览浏览，属界面展示 |
+| student-workspace | 由错题进入助手 | 前端跳转交互，属界面行为 |
+| student-workspace | 资料页返回其他模块 | 前端导航交互，属界面行为 |
+| student-workspace | 首页进入助手对话 | 前端导航交互，属界面行为 |
+
+## 需要补检查的场景（待补断言 / 无检查文件，按高风险能力优先）
 
 | 优先级 | 类别 | 能力 | Requirement | Scenario | 判定 |
 | --- | --- | --- | --- | --- | --- |
-| P1 | 前端/展示 | async-homework-grading | 权限与页面范围 | E2 页面与刷新恢复 | 无匹配断言 |
-| P1 | 前端/展示 | material-upload | 上传元数据与班级选择 | 多班级教师班级选择器展示所有任教班级 | 无匹配断言 |
-| P1 | 前端/展示 | material-upload | 教师删除资料 | 前端仅教师展示删除入口 | 无匹配断言 |
-| P1 | 前端/展示 | material-upload | 文件重名与异常处理 | 网络中断前端提供重试 | 无匹配断言 |
-| P1 | 前端/展示 | mcp-tool-integration | 服务端调用循环与上限 | 命中工具并用到提示 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | SSE 流式回答 | 多轮会话检索无命中时延续历史 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 「解题引导」技能开关 | 教师预览技能文案 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 使用已有公式依据时标注引用 | 历史未标注来源的回答 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 删除会话 | 删除会话并清理消息 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 助手技能与 MCP 配置界面 | 以技能文件注册技能 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 助手技能与 MCP 配置界面 | 打开教师助手配置 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 多轮会话与上下文延续 | 在会话内连续追问 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 多轮会话与上下文延续 | 新建与列出会话 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 学生按科目切换教师助手 | 没有该科配置 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 引导短追问重新检索依据 | 学生只回复数字或不会 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 引导短追问重新检索依据 | 换题或无题目锚点 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 按学习进度自适应引导 | 多次卡住与完成 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 按学习进度自适应引导 | 概念与学生公式作答 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 教师技能文件 | 技能文件格式错误 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 消息与会话持久化 | 仅带最近若干轮作为上下文 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 消息与会话持久化 | 历史公式代码与实时回答一致 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 消息与会话持久化 | 历史消息权限不变 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 消息与会话持久化 | 回显历史消息 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 独立的按班级助手配置界面 | 切班回读配置 | 无匹配断言 |
-| P1 | 接口/逻辑 | agent-assistant | 自动检索班级学科参考资料 | 查看当前班级参考资料 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 上传元数据与班级选择 | 上传元数据完整记录 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 上传元数据与班级选择 | 教师选择任教班级上传成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 学生下载材料成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 学生在线预览 PDF 成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 学生在线预览图片成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 学生尝试下载其他班材料被拒 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 引用原文的文件版本已变化 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 下载与预览 | 教师下载任教班级材料成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 教师上传权限控制 | 教师上传资料成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 教师删除资料 | 删除后资料不可再访问 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件存储策略 | SQLite 仅存储元数据 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件存储策略 | 容器重启后文件不丢失 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件存储策略 | 文件存储在挂载目录 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件类型与大小限制 | 上传不允许的格式被拒 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件类型与大小限制 | 上传允许格式的文件成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件类型与大小限制 | 上传超大文件被拒 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件类型与大小限制 | 伪造扩展名被后端 MIME 校验拦截 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件重名与异常处理 | DB 写入失败时回滚删除物理文件 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件重名与异常处理 | 同名文件自动重命名 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 文件重名与异常处理 | 恶意文件头校验不通过被拒 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 材料数据隔离 | 学生尝试下载其他班材料被拒 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 材料数据隔离 | 学生查询本班材料成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 材料数据隔离 | 教师查询任教班级材料成功 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 知识库索引关联 | 上传成功后异步解析为纯文本 | 无匹配断言 |
-| P1 | 接口/逻辑 | material-upload | 知识库索引关联 | 解析失败的材料保持未索引 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | MCP 与技能接口文档 | 默认关闭文档 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | MCP 工具调用审计 | 三种结果各有记录 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | MCP 工具调用审计 | 记录只看自己的范围 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | MCP 服务器登记与令牌边界 | 不在允许清单的地址 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | MCP 服务器登记与令牌边界 | 换机后令牌不可用 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 候选工具与工具声明 | 只带技能内工具 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 工具内容的信任边界 | 工具说明夹带指令 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 工具内容的信任边界 | 工具返回夹带指令 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 工具引用格式与保存期校验 | 引用写法不合规 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 服务端调用循环与上限 | 两步任务连续两轮 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 服务端调用循环与上限 | 工具超时 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 服务端调用循环与上限 | 教师与错误归属执行对照 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 服务端调用循环与上限 | 超过轮次上限 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 自建 MCP 工具服务 | 令牌缺失或错误 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 自建 MCP 工具服务 | 非法请求可读 | 无匹配断言 |
-| P1 | 接口/逻辑 | mcp-tool-integration | 连接、发现与断开 | 连续连接两次 | 无匹配断言 |
-| P1 | 接口/逻辑 | quiz-homework-publication | 作业终评与错题同步 | M1 首次满分不入错题 | 无匹配断言 |
-| P1 | 接口/逻辑 | quiz-homework-publication | 作业终评与错题同步 | M2 低分改为及格或满分 | 无匹配断言 |
-| P1 | 接口/逻辑 | quiz-homework-publication | 作业终评与错题同步 | M3 修复历史残留不改成绩 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 发布时生成知识点标签 | 标题未包含已知知识点 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生版按任教班级独立发布 | 发布学生讲义到两个任教班级 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生版按任教班级独立发布 | 越权班级混入发布批次 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生版题干提取与教师核对 | 现有结构化讲义生成学生版 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生版题干提取与教师核对 | 编辑后重新核对 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生讲义打印与另存 PDF | 学生保存图文讲义 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生讲义打印与另存 PDF | 教师打印未发布的学生预览 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 学生讲义打印与另存 PDF | 配图尚未就绪 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 教师资料先导入学科组 | 导入完善版图文资料包 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 班级配图与图文包受权访问 | 删除班级讲义 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 班级配图与图文包受权访问 | 学生预览和下载有图讲义 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 组内共享教案查阅与复用 | 下载教师图文包 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 组内共享教案查阅与复用 | 同科同事复用共享教案 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 组内共享教案查阅与复用 | 绕过学生稿制作 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 组内教师共享与学生隔离 | 同科同事选用素材 | 无匹配断言 |
-| P1 | 接口/逻辑 | research-materials | 组内教师共享与学生隔离 | 学生直接猜测教师原稿地址 | 无匹配断言 |
-| P1 | 接口/逻辑 | runtime-reliability | 存储修复保留业务数据 | 会话接口磁盘 I/O 故障修复 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 两种学生文稿分班发布 | 发布批次混入其他班 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 两种学生文稿分班发布 | 教案和讲义均发布给学生 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 中文空格图片路径兼容 | 原题图的中文目录含空格 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 中文空格图片路径兼容 | 生成与发布图文包 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 从学科组教师资料发起备课 | 尚未提供学情 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿生成未通过检查 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 完整片段与出处核对 | 多份资料均被选入 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 完整片段与出处核对 | 核对例题出处 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 定稿快照与并发保护 | 旧窗口写入 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 定稿快照与并发保护 | 第二次定稿 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教师定稿可选共享到教研组 | 主动共享完整教师定稿 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教师定稿可选共享到教研组 | 删除私人原教案 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教师定稿可选共享到教研组 | 教师选择保留私有 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教师定稿可选共享到教研组 | 重复发布或后续修改 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教案隔离删除与审计 | 删除私人教案 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 教案隔离删除与审计 | 同学科同事访问私人教案 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 流式生成与失败处理 | AI 完成教师草案 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 流式生成与失败处理 | 生成中断或无 Key | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 编辑审阅与章节重写 | 审阅后再改正文 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-lesson-prep | 编辑审阅与章节重写 | 重写教学过程 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 公式结构校验 | 转义括号与环境不被误判 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 公式结构校验 | 转义的美元符号 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 公式结构校验 | 选项缺右括号 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 学生卷选项排版 | 选项各占一行 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 学生卷选项排版 | 选项含块级公式 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 学科题库 | 下架后组卷 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 按配比组卷 | 手工替换为下架题 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 流式进度与失败处理 | 生成中模型超时 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 结构化输出与逐题校验 | 模型声明无依据的空位 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 结构化输出与逐题校验 | 题干泄露答案 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 试卷定稿与分班发布 | 发布参数边界 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 试卷定稿与分班发布 | 发布身份边界 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 试卷定稿与分班发布 | 混合已有和新目标班级 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 题目内容显示 | 代码中的下划线 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 题目内容显示 | 空位与公式下标共存 | 无匹配断言 |
-| P1 | 接口/逻辑 | smart-question-generation | 题目内容显示 | 选项含公式 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 作业界面先展示演示结果 | 浏览演示作业结果 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 助手对话保留真实会话能力 | 从助手页连续追问 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 助手对话保留真实会话能力 | 查看回答来源 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学情分析演示界面 | 浏览学习画像演示 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生作业历史持续可查 | H1 提交后进入历史并可刷新 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生作业历史持续可查 | H3 历史读取隔离与失败 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生作业历史持续可查 | H4 空历史与时间边界 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生导航与路由 | 无效视图回退 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生导航与路由 | 资料页返回其他模块 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生导航与路由 | 首页进入助手对话 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生本地搜索与提问历史 | 助手历史不自动发送 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生本地搜索与提问历史 | 搜索后刷新与再次使用 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 学生本地搜索与提问历史 | 科目和账号隔离 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 本班讲义列表与检索界面 | 学生搜索本班讲义 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 本班讲义列表与检索界面 | 学科标签过滤资料卡 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 本班讲义列表与检索界面 | 预览和下载实际资料 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 本班首页概览 | 浏览首页概览 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 讲义页科目切换布局稳定 | 从有资料切到空科目 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 讲义页科目切换布局稳定 | 搜索加载与恢复 | 无匹配断言 |
-| P1 | 接口/逻辑 | student-workspace | 错题界面及助手跳转 | 由错题进入助手 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 任课管理的单科资料列表 | 发布与查看入口分开 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 全科总览与单科教学入口区分 | 在教研组内选择教师版发布学生稿 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 全科总览与单科教学入口区分 | 打开未接入的学情或教研模块 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 助手配置独立入口及菜单顺序 | 检查系统菜单顺序 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 教师共用工作空间导航 | 教师进入智能命题页 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 教师教研占位入口移除 | R2 旧教研链接有明确落点 | 无匹配断言 |
-| P1 | 接口/逻辑 | teacher-workspace | 教师页移除快捷切换账号 | 教师检查顶栏 | 无匹配断言 |
 
 ## 逐条候选
 
-| 能力 | Requirement | Scenario | 判定 | 候选检查 | 候选断言 | 重叠 |
+| 能力 | Requirement | Scenario | 判定 | 候选检查 | 候选断言 / N/A 理由 | 重叠 |
 | --- | --- | --- | --- | --- | --- | --- |
 | agent-assistant | SSE 流式回答 | DeepSeek 失败时降级为检索段落 | 别名候选 | check_lessons_2_5 | agent.failure_fallback | 2 |
-| agent-assistant | SSE 流式回答 | 多轮会话检索无命中时延续历史 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | SSE 流式回答 | 多轮会话检索无命中时延续历史 | 语义别名候选 | check_lessons_2_5 | agent.followup_retrieves_original_topic_with_same_scope | 1 |
 | agent-assistant | SSE 流式回答 | 多轮调用只推送一次 meta | 断言名候选 | check_mcp_tools | 两轮调用只推送一次 meta 且为首帧 | 11 |
 | agent-assistant | SSE 流式回答 | 工具事件先于正文 | 弱候选 | check_mcp_tools | meta 事件先于 delta | 3 |
 | agent-assistant | SSE 流式回答 | 断开后的引用显示被拒 | 弱候选 | check_mcp_tools | 断开后引用记 denied | 3 |
@@ -194,44 +89,44 @@
 | agent-assistant | SSE 流式回答 | 流式逐字输出 | 别名候选 | check_lessons_2_5 | agent.sse_transport_mock_llm | 1 |
 | agent-assistant | 「解题引导」技能开关 | 关闭解题引导技能 | 仅文件级 | check_lesson10_skills | （未定位到具体断言） | 4 |
 | agent-assistant | 「解题引导」技能开关 | 开启解题引导技能 | 弱候选 | check_lesson10_skills | T1 正常：开启引导时使用苏格拉底框架 | 2 |
-| agent-assistant | 「解题引导」技能开关 | 教师预览技能文案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 使用已有公式依据时标注引用 | 历史未标注来源的回答 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 「解题引导」技能开关 | 教师预览技能文案 | N/A（不适用） |  | 前端技能文案预览，属界面展示 | 0 |
+| agent-assistant | 使用已有公式依据时标注引用 | 历史未标注来源的回答 | 语义别名候选 | check_lessons_2_5 | citations.no_context_cannot_cite_history | 1 |
 | agent-assistant | 使用已有公式依据时标注引用 | 引导求两向量夹角余弦 | 仅文件级 | check_mcp_tools | （未定位到具体断言） | 5 |
-| agent-assistant | 兼容既有约束 | 教师配置与班级检索共享隔离 | 弱候选 | check_lesson10_skills | R2 正常：在归属班级内可检索到 | 2 |
+| agent-assistant | 兼容既有约束 | 教师配置与班级检索共享隔离 | 弱候选 | check_recent_history | 科目和账号隔离：不同学生、班级、科目与入口的历史互不可见且原范围可恢复 | 2 |
 | agent-assistant | 兼容既有约束 | 未分配班级学生被拒 | 别名候选 | check_lessons_2_5 | agent.unassigned_student_denied | 2 |
 | agent-assistant | 兼容既有约束 | 追问计入每日限次 | 别名候选 | check_lessons_2_5 | agent.spec_40_question_limit | 2 |
-| agent-assistant | 删除会话 | 删除会话并清理消息 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 助手技能与 MCP 配置界面 | 以技能文件注册技能 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 删除会话 | 删除会话并清理消息 | 断言名候选 | check_lesson10_scenario_gaps | 删除会话并清理消息：会话与其全部消息一并删除 | 8 |
+| agent-assistant | 助手技能与 MCP 配置界面 | 以技能文件注册技能 | 语义别名候选 | check_mcp_tools | 技能保存成功 201 | 1 |
 | agent-assistant | 助手技能与 MCP 配置界面 | 在配置页登记并连接 MCP 服务器 | 弱候选 | check_mcp_tools | 登记服务器 201 | 3 |
-| agent-assistant | 助手技能与 MCP 配置界面 | 打开教师助手配置 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 助手技能与 MCP 配置界面 | 打开教师助手配置 | N/A（不适用） |  | 前端配置页交互，非接口行为 | 0 |
 | agent-assistant | 助手技能与 MCP 配置界面 | 调整预览技能不产生真实批改配置 | 弱候选 | check_mcp_tools | 未命中技能不发 meta | 2 |
-| agent-assistant | 多轮会话与上下文延续 | 在会话内连续追问 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 多轮会话与上下文延续 | 新建与列出会话 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 多轮会话与上下文延续 | 访问他人会话被拒绝 | 仅文件级 | check_mcp_tools | （未定位到具体断言） | 4 |
+| agent-assistant | 多轮会话与上下文延续 | 在会话内连续追问 | 语义别名候选 | check_lessons_2_5 | agent.multiturn_context | 1 |
+| agent-assistant | 多轮会话与上下文延续 | 新建与列出会话 | 语义别名候选 | check_mcp_tools | 学生建会话 | 1 |
+| agent-assistant | 多轮会话与上下文延续 | 访问他人会话被拒绝 | 弱候选 | check_lesson10_scenario_gaps | 删除会话并清理消息：他人或跨班会话按不存在处理且数据保留 | 2 |
 | agent-assistant | 学生按科目切换教师助手 | 切换科目时隔离异步状态 | 别名候选 | check_lessons_2_5 | agent.physics_save_does_not_overwrite_math | 1 |
 | agent-assistant | 学生按科目切换教师助手 | 同科教师不覆盖彼此配置 | 别名候选 | check_lessons_2_5 | agent.same_subject_teacher_configs_independent | 3 |
 | agent-assistant | 学生按科目切换教师助手 | 数学与物理配置各自生效 | 仅文件级 | check_lessons_2_5 | （未定位到具体断言） | 5 |
-| agent-assistant | 学生按科目切换教师助手 | 没有该科配置 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 学生按科目切换教师助手 | 没有该科配置 | 语义别名候选 | check_lessons_2_5 | agent.unconfigured_subject_reports_default | 1 |
 | agent-assistant | 学生提问的技能路由 | 命中技能 | 弱候选 | check_mcp_tools | 未命中技能不发 meta | 3 |
 | agent-assistant | 学生提问的技能路由 | 未命中或技能停用 | 弱候选 | check_mcp_tools | 未命中技能不发 meta | 3 |
-| agent-assistant | 引导短追问重新检索依据 | 学生只回复数字或不会 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 引导短追问重新检索依据 | 换题或无题目锚点 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 按学习进度自适应引导 | 多次卡住与完成 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 按学习进度自适应引导 | 概念与学生公式作答 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 引导短追问重新检索依据 | 学生只回复数字或不会 | N/A（不适用） |  | 需真实模型语义质量抽查，非确定性断言可证 | 0 |
+| agent-assistant | 引导短追问重新检索依据 | 换题或无题目锚点 | 语义别名候选 | check_lessons_2_5 | agent.followup_without_anchor_unchanged | 1 |
+| agent-assistant | 按学习进度自适应引导 | 多次卡住与完成 | N/A（不适用） |  | 需真实模型语义质量抽查，非确定性断言可证 | 0 |
+| agent-assistant | 按学习进度自适应引导 | 概念与学生公式作答 | N/A（不适用） |  | 需真实模型语义质量抽查，非确定性断言可证 | 0 |
 | agent-assistant | 教师技能文件 | 他人技能不可见 | 弱候选 | check_mcp_tools | 同伴删他人技能 404 | 3 |
 | agent-assistant | 教师技能文件 | 保存绑定 MCP 工具的技能 | 弱候选 | check_mcp_tools | 未配置 MCP_TOKEN_KEY 拒绝保存令牌 | 3 |
-| agent-assistant | 教师技能文件 | 技能文件格式错误 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 教师技能文件 | 技能文件格式错误 | 断言名候选 | check_lesson10_scenario_gaps | 技能文件格式错误：缺分隔空行、未知字段、缺必填均解析失败且接口返回 400 | 7 |
 | agent-assistant | 教师的可配置提示词 | 教师保存某班自定义提示词 | 断言名候选 | check_lesson10_skills | T3 边界：未开启引导时保留教师自定义提示词 | 6 |
 | agent-assistant | 教师的可配置提示词 | 留空回退默认提示词 | 弱候选 | check_lesson10_skills | T3 边界：未开启引导时保留教师自定义提示词 | 2 |
 | agent-assistant | 教师的可配置提示词 | 配置非任教班级被拒绝 | 弱候选 | check_mcp_tools | 非任教班级 403 | 4 |
-| agent-assistant | 消息与会话持久化 | 仅带最近若干轮作为上下文 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 消息与会话持久化 | 历史公式代码与实时回答一致 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 消息与会话持久化 | 历史消息权限不变 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| agent-assistant | 消息与会话持久化 | 回显历史消息 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 消息与会话持久化 | 仅带最近若干轮作为上下文 | 语义别名候选 | check_lessons_2_5 | agent.multiturn_context | 1 |
+| agent-assistant | 消息与会话持久化 | 历史公式代码与实时回答一致 | 语义别名候选 | check_lessons_2_5 | agent.messages_persist | 1 |
+| agent-assistant | 消息与会话持久化 | 历史消息权限不变 | 语义别名候选 | check_lessons_2_5 | agent.other_student_conversation_hidden | 1 |
+| agent-assistant | 消息与会话持久化 | 回显历史消息 | 语义别名候选 | check_lessons_2_5 | agent.messages_persist | 1 |
 | agent-assistant | 独立的按班级助手配置界面 | 保存提示词及解题引导 | 弱候选 | check_lesson10_skills | T3 边界：未开启引导时保留教师自定义提示词 | 3 |
-| agent-assistant | 独立的按班级助手配置界面 | 切班回读配置 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 独立的按班级助手配置界面 | 切班回读配置 | 语义别名候选 | check_lessons_2_5 | agent.config_read | 1 |
 | agent-assistant | 自动检索班级学科参考资料 | 尚无任教班级 | 弱候选 | check_mcp_tools | 非任教班级 403 | 3 |
-| agent-assistant | 自动检索班级学科参考资料 | 查看当前班级参考资料 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| agent-assistant | 自动检索班级学科参考资料 | 查看当前班级参考资料 | 语义别名候选 | check_lessons_2_5 | agent.citations_provenance | 1 |
 | async-homework-grading | 可复现与证据归档 | F1 一键复现和迁移保留 | 弱候选 | check_async_grading | F1 边界：重复迁移不改变旧数据 | 2 |
 | async-homework-grading | 可靠投递及进程恢复 | B1 消费者停止再启动 | 弱候选 | check_async_grading | B1 正常：队列有消息、消费者未运行时pending | 3 |
 | async-homework-grading | 可靠投递及进程恢复 | B2 队列故障后补投 | 弱候选 | check_async_grading | B2 正常：恢复后补投并可消费 | 3 |
@@ -245,7 +140,7 @@
 | async-homework-grading | 有限重试与可处置死信 | D1 失败退避与死信 | 弱候选 | check_async_grading | D1 失败：死信投递失败不假确认 | 4 |
 | async-homework-grading | 有限重试与可处置死信 | D2 手动重试与合法模型恢复 | 弱候选 | check_async_grading | D2 正常：授权手动重试202 | 4 |
 | async-homework-grading | 权限与页面范围 | E1 未登录及越权 | 弱候选 | check_quiz_homework | H/未登录读取作业或配图： | 2 |
-| async-homework-grading | 权限与页面范围 | E2 页面与刷新恢复 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| async-homework-grading | 权限与页面范围 | E2 页面与刷新恢复 | N/A（不适用） |  | 前端页面刷新恢复，属界面行为 | 0 |
 | async-homework-grading | 权限与页面范围 | E3 初批反馈在当前作业卡片可见 | 弱候选 | check_homework | S1 正常：草稿作业学生不可见 | 2 |
 | async-homework-grading | 权限与页面范围 | E4 查看提交同步人数 | 弱候选 | check_homework | S6 失败：学生查看他人提交 → 404 | 2 |
 | async-homework-grading | 确认后限次投递与执行计数 | Q1 暂停消费者不积攒副本 | 弱候选 | check_async_grading | Q1 边界：确认后跨越30分钟不积攒副本 | 5 |
@@ -326,84 +221,84 @@
 | login-and-account-system | 忘记密码与重置密码 | 任课权限不能代替班主任权限 | 别名候选 | check_lessons_2_5 | auth.subject_teacher_reset_denied | 3 |
 | login-and-account-system | 忘记密码与重置密码 | 班主任重置本班学生密码 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 3 |
 | login-and-account-system | 忘记密码与重置密码 | 用户忘记密码看到班主任提示 | 别名候选 | check_lesson10_p0_scenarios | P0 前端：忘记密码显示「请联系班主任重置」提示 | 1 |
-| material-upload | 上传元数据与班级选择 | 上传元数据完整记录 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 上传元数据与班级选择 | 多班级教师班级选择器展示所有任教班级 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 上传元数据与班级选择 | 教师篡改 class_id 上传非任教班级被拒 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 9 |
-| material-upload | 上传元数据与班级选择 | 教师选择任教班级上传成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 学生下载材料成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 学生在线预览 PDF 成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 学生在线预览图片成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 学生尝试下载其他班材料被拒 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 引用原文的文件版本已变化 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 下载与预览 | 教师下载任教班级材料成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| material-upload | 上传元数据与班级选择 | 上传元数据完整记录 | 语义别名候选 | check_lessons_2_5 | materials.upload_md | 1 |
+| material-upload | 上传元数据与班级选择 | 多班级教师班级选择器展示所有任教班级 | N/A（不适用） |  | 前端选择器展示，属界面交互 | 0 |
+| material-upload | 上传元数据与班级选择 | 教师篡改 class_id 上传非任教班级被拒 | 弱候选 | check_research_materials | denied batch did not publish partial class | 5 |
+| material-upload | 上传元数据与班级选择 | 教师选择任教班级上传成功 | 语义别名候选 | check_lessons_2_5 | materials.upload_md | 1 |
+| material-upload | 下载与预览 | 学生下载材料成功 | 语义别名候选 | check_lessons_2_5 | materials.download | 1 |
+| material-upload | 下载与预览 | 学生在线预览 PDF 成功 | 语义别名候选 | check_lessons_2_5 | materials.preview | 1 |
+| material-upload | 下载与预览 | 学生在线预览图片成功 | 语义别名候选 | check_lessons_2_5 | materials.preview | 1 |
+| material-upload | 下载与预览 | 学生尝试下载其他班材料被拒 | 语义别名候选 | check_lessons_2_5 | materials.cross_class_download_denied | 1 |
+| material-upload | 下载与预览 | 引用原文的文件版本已变化 | 语义别名候选 | check_lessons_2_5 | citations.changed_file_stale_index_excluded | 1 |
+| material-upload | 下载与预览 | 教师下载任教班级材料成功 | 语义别名候选 | check_lessons_2_5 | materials.download | 1 |
 | material-upload | 教师上传权限控制 | 学生前端无上传入口 | 别名候选 | check_lessons_2_5 | materials.student_upload_denied | 2 |
 | material-upload | 教师上传权限控制 | 学生尝试上传被拒 | 别名候选 | check_lessons_2_5 | materials.student_upload_denied | 2 |
-| material-upload | 教师上传权限控制 | 教师上传资料成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 教师删除资料 | 删除后资料不可再访问 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 教师删除资料 | 前端仅教师展示删除入口 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| material-upload | 教师上传权限控制 | 教师上传资料成功 | 语义别名候选 | check_lessons_2_5 | materials.upload_md | 1 |
+| material-upload | 教师删除资料 | 删除后资料不可再访问 | 语义别名候选 | check_lessons_2_5 | materials.delete | 1 |
+| material-upload | 教师删除资料 | 前端仅教师展示删除入口 | N/A（不适用） |  | 前端入口可见性，属界面展示 | 0 |
 | material-upload | 教师删除资料 | 学生尝试删除资料被拒 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 4 |
 | material-upload | 教师删除资料 | 教师删除任教班级资料成功 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 4 |
 | material-upload | 教师删除资料 | 教师尝试删除非任教班级资料被拒 | 别名候选 | check_lessons_2_5 | auth.teacher_cross_class_denied | 3 |
-| material-upload | 文件存储策略 | SQLite 仅存储元数据 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件存储策略 | 容器重启后文件不丢失 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件存储策略 | 文件存储在挂载目录 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件存储策略 | 文件按 class_id 分子目录存储 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 7 |
-| material-upload | 文件类型与大小限制 | 上传不允许的格式被拒 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件类型与大小限制 | 上传允许格式的文件成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件类型与大小限制 | 上传超大文件被拒 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件类型与大小限制 | 伪造扩展名被后端 MIME 校验拦截 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件类型与大小限制 | 前端 accept 属性初步限制 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 5 |
-| material-upload | 文件重名与异常处理 | DB 写入失败时回滚删除物理文件 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件重名与异常处理 | 同名文件自动重命名 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件重名与异常处理 | 恶意文件头校验不通过被拒 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 文件重名与异常处理 | 网络中断前端提供重试 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 材料数据隔离 | 学生尝试下载其他班材料被拒 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 材料数据隔离 | 学生查询本班材料成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 材料数据隔离 | 学生篡改 class_id 查询被拒 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 8 |
-| material-upload | 材料数据隔离 | 教师查询任教班级材料成功 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 知识库索引关联 | 上传成功后异步解析为纯文本 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 知识库索引关联 | 仅 is_indexed=true 的材料被 AI 检索 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 15 |
-| material-upload | 知识库索引关联 | 解析失败的材料保持未索引 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| material-upload | 知识库索引关联 | 解析完成后标记 is_indexed 为 true | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 12 |
+| material-upload | 文件存储策略 | SQLite 仅存储元数据 | 弱候选 | check_lesson_prep | invented citation rejected | 2 |
+| material-upload | 文件存储策略 | 容器重启后文件不丢失 | N/A（不适用） |  | 需容器重启，属部署环境验证 | 0 |
+| material-upload | 文件存储策略 | 文件存储在挂载目录 | 断言名候选 | check_lesson10_scenario_gaps | 文件存储在挂载目录：按班级子目录写入 UPLOAD_DIR | 8 |
+| material-upload | 文件存储策略 | 文件按 class_id 分子目录存储 | 弱候选 | check_research_materials | denied batch did not publish partial class | 5 |
+| material-upload | 文件类型与大小限制 | 上传不允许的格式被拒 | 语义别名候选 | check_lessons_2_5 | materials.forged_pdf_denied | 1 |
+| material-upload | 文件类型与大小限制 | 上传允许格式的文件成功 | 语义别名候选 | check_lessons_2_5 | materials.upload_md | 1 |
+| material-upload | 文件类型与大小限制 | 上传超大文件被拒 | 断言名候选 | check_lesson10_scenario_gaps | 上传超大文件被拒：上限为 50MB | 7 |
+| material-upload | 文件类型与大小限制 | 伪造扩展名被后端 MIME 校验拦截 | 语义别名候选 | check_lessons_2_5 | materials.forged_pdf_denied | 1 |
+| material-upload | 文件类型与大小限制 | 前端 accept 属性初步限制 | 弱候选 | check_lesson_prep | original private plan remains inaccessible after sharing | 4 |
+| material-upload | 文件重名与异常处理 | DB 写入失败时回滚删除物理文件 | 断言名候选 | check_lesson10_scenario_gaps | DB 写入失败时回滚删除物理文件：返回 500、数据库回滚且磁盘文件已清理 | 14 |
+| material-upload | 文件重名与异常处理 | 同名文件自动重命名 | 断言名候选 | check_lesson10_scenario_gaps | 同名文件自动重命名：同秒同名文件追加计数器不覆盖 | 8 |
+| material-upload | 文件重名与异常处理 | 恶意文件头校验不通过被拒 | 语义别名候选 | check_lessons_2_5 | materials.forged_pdf_denied | 1 |
+| material-upload | 文件重名与异常处理 | 网络中断前端提供重试 | N/A（不适用） |  | 前端重试交互，属界面行为 | 0 |
+| material-upload | 材料数据隔离 | 学生尝试下载其他班材料被拒 | 语义别名候选 | check_lessons_2_5 | materials.cross_class_download_denied | 1 |
+| material-upload | 材料数据隔离 | 学生查询本班材料成功 | 语义别名候选 | check_lessons_2_5 | materials.math_subject_list | 1 |
+| material-upload | 材料数据隔离 | 学生篡改 class_id 查询被拒 | 弱候选 | check_research_materials | denied batch did not publish partial class | 5 |
+| material-upload | 材料数据隔离 | 教师查询任教班级材料成功 | 语义别名候选 | check_lessons_2_5 | materials.math_subject_list | 1 |
+| material-upload | 知识库索引关联 | 上传成功后异步解析为纯文本 | 语义别名候选 | check_lessons_2_5 | rag.chunks_vectors_persisted | 1 |
+| material-upload | 知识库索引关联 | 仅 is_indexed=true 的材料被 AI 检索 | 断言名候选 | check_lesson10_scenario_gaps | 解析失败的材料保持未索引：is_indexed 为 False 且 parse_error 落库 | 11 |
+| material-upload | 知识库索引关联 | 解析失败的材料保持未索引 | 断言名候选 | check_lesson10_scenario_gaps | 解析失败的材料保持未索引：is_indexed 为 False 且 parse_error 落库 | 11 |
+| material-upload | 知识库索引关联 | 解析完成后标记 is_indexed 为 true | 断言名候选 | check_lesson10_scenario_gaps | 解析失败的材料保持未索引：is_indexed 为 False 且 parse_error 落库 | 11 |
 | mcp-tool-integration | MCP 与技能接口文档 | 打开 Swagger 试调 | 仅文件级 | check_security_gate | （未定位到具体断言） | 5 |
-| mcp-tool-integration | MCP 与技能接口文档 | 默认关闭文档 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | MCP 工具调用审计 | 三种结果各有记录 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | MCP 与技能接口文档 | 默认关闭文档 | 弱候选 | check_lesson10_scenario_gaps | 默认关闭文档：代码默认值为关闭，/docs 与 /openapi.json 随之不暴露 | 5 |
+| mcp-tool-integration | MCP 工具调用审计 | 三种结果各有记录 | 语义别名候选 | check_mcp_tools | 写入 ok 审计记录 | 1 |
 | mcp-tool-integration | MCP 工具调用审计 | 决策轮用量可追溯 | 弱候选 | check_security_gate | P1-2 决策轮用量： | 4 |
 | mcp-tool-integration | MCP 工具调用审计 | 审计存储失败可观察 | 弱候选 | check_security_gate | 审计故障：工具存储回滚且不中断 | 2 |
-| mcp-tool-integration | MCP 工具调用审计 | 记录只看自己的范围 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | MCP 服务器登记与令牌边界 | 不在允许清单的地址 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | MCP 工具调用审计 | 记录只看自己的范围 | 语义别名候选 | check_mcp_tools | 同伴看不到我的记录 | 1 |
+| mcp-tool-integration | MCP 服务器登记与令牌边界 | 不在允许清单的地址 | 断言名候选 | check_lesson10_scenario_gaps | 不在允许清单的地址：清单外主机、回环、本机与元数据地址均被拒 | 8 |
 | mcp-tool-integration | MCP 服务器登记与令牌边界 | 同名再登记 | 弱候选 | check_mcp_tools | 同名再登记 400 | 4 |
-| mcp-tool-integration | MCP 服务器登记与令牌边界 | 换机后令牌不可用 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | MCP 服务器登记与令牌边界 | 换机后令牌不可用 | 语义别名候选 | check_mcp_tools | 换密钥后解密失败并提示重新填写令牌 | 1 |
 | mcp-tool-integration | MCP 服务器登记与令牌边界 | 登记后响应不含令牌 | 弱候选 | check_mcp_tools | 响应不含令牌 | 5 |
-| mcp-tool-integration | 候选工具与工具声明 | 只带技能内工具 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | 工具内容的信任边界 | 工具说明夹带指令 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | 工具内容的信任边界 | 工具返回夹带指令 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 候选工具与工具声明 | 只带技能内工具 | 语义别名候选 | check_mcp_tools | 候选集外工具 denied、不执行、不写审计 | 1 |
+| mcp-tool-integration | 工具内容的信任边界 | 工具说明夹带指令 | 已知缺口 | check_mcp_tools | 工具说明夹带指令：含指令式说明的工具不进入候选清单并列入排除 | 0 |
+| mcp-tool-integration | 工具内容的信任边界 | 工具返回夹带指令 | 断言名候选 | check_mcp_tools | 工具返回夹带指令：工具事件记 error 且原因为未通过安全检查 | 7 |
 | mcp-tool-integration | 工具引用格式与保存期校验 | 工具不在清单或服务器未连接 | 弱候选 | check_mcp_tools | 重复连接工具不翻倍 | 3 |
-| mcp-tool-integration | 工具引用格式与保存期校验 | 引用写法不合规 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 工具引用格式与保存期校验 | 引用写法不合规 | 语义别名候选 | check_mcp_tools | 断开后引用记 denied | 1 |
 | mcp-tool-integration | 服务器与调用记录的归属隔离 | 同伴访问我的服务器 | 弱候选 | check_mcp_tools | 同伴读取他人服务器 404 | 3 |
 | mcp-tool-integration | 服务器与调用记录的归属隔离 | 学生调用管理接口 | 弱候选 | check_mcp_tools | 学生访问管理接口 403 | 4 |
-| mcp-tool-integration | 服务端调用循环与上限 | 两步任务连续两轮 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 服务端调用循环与上限 | 两步任务连续两轮 | 语义别名候选 | check_mcp_tools | meta.tool_calls 按序含两轮 ok 记录 | 1 |
 | mcp-tool-integration | 服务端调用循环与上限 | 发现重连未知权限默认拒绝 | 弱候选 | check_security_gate | P0-5 边界：未知DiscoveredTool默认可写 | 2 |
-| mcp-tool-integration | 服务端调用循环与上限 | 命中工具并用到提示 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 服务端调用循环与上限 | 命中工具并用到提示 | N/A（不适用） |  | 前端提示展示，属界面交互 | 0 |
 | mcp-tool-integration | 服务端调用循环与上限 | 学生写入拒绝且 SSE 完整 | 仅文件级 | check_mcp_tools | （未定位到具体断言） | 5 |
-| mcp-tool-integration | 服务端调用循环与上限 | 工具超时 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | 服务端调用循环与上限 | 教师与错误归属执行对照 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | 服务端调用循环与上限 | 超过轮次上限 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| mcp-tool-integration | 自建 MCP 工具服务 | 令牌缺失或错误 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 服务端调用循环与上限 | 工具超时 | 弱候选 | check_mcp_tools | 工具超时：本次调用记 error 且原因写明失败 | 3 |
+| mcp-tool-integration | 服务端调用循环与上限 | 教师与错误归属执行对照 | 语义别名候选 | check_mcp_tools | 参数不符记 error 且未执行 | 1 |
+| mcp-tool-integration | 服务端调用循环与上限 | 超过轮次上限 | 语义别名候选 | check_mcp_tools | 超出每问上限的调用写 denied 审计 | 1 |
+| mcp-tool-integration | 自建 MCP 工具服务 | 令牌缺失或错误 | 语义别名候选 | check_mcp_tools | 未配置 MCP_TOKEN_KEY 拒绝保存令牌 | 1 |
 | mcp-tool-integration | 自建 MCP 工具服务 | 带令牌发现并调用工具 | 弱候选 | check_mcp_tools | 确实带令牌调用了工具 | 4 |
-| mcp-tool-integration | 自建 MCP 工具服务 | 非法请求可读 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 自建 MCP 工具服务 | 非法请求可读 | 弱候选 | check_mcp_server | 非法请求可读：{label} 返回 {code} 中文说明 | 5 |
 | mcp-tool-integration | 连接、发现与断开 | 令牌错误时连接失败 | 弱候选 | check_mcp_tools | 连接失败 502 | 3 |
 | mcp-tool-integration | 连接、发现与断开 | 断开后不可调用 | 弱候选 | check_mcp_tools | 断开后引用记 denied | 2 |
 | mcp-tool-integration | 连接、发现与断开 | 连接自建服务发现工具 | 弱候选 | check_mcp_tools | 重复连接工具不翻倍 | 2 |
-| mcp-tool-integration | 连接、发现与断开 | 连续连接两次 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| mcp-tool-integration | 连接、发现与断开 | 连续连接两次 | 语义别名候选 | check_mcp_tools | 重复连接工具不翻倍 | 1 |
 | quiz-homework-publication | 作业及配图逐资源授权 | 学生跨班读取或提交 | 别名候选 | check_quiz_homework | H/学生跨班读取或提交 | 3 |
 | quiz-homework-publication | 作业及配图逐资源授权 | 教师班级或学科不符 | 别名候选 | check_quiz_homework | H/教师班级或学科不符： | 3 |
 | quiz-homework-publication | 作业及配图逐资源授权 | 未登录读取作业或配图 | 别名候选 | check_quiz_homework | H/未登录读取作业或配图： | 2 |
 | quiz-homework-publication | 作业及配图逐资源授权 | 访问他人的提交或教师接口 | 断言名候选 | check_quiz_homework | H/访问他人的提交或教师接口：教师接口 | 11 |
 | quiz-homework-publication | 作业及配图逐资源授权 | 配图异常 | 弱候选 | check_quiz_homework | H/配图异常：非法名 | 3 |
-| quiz-homework-publication | 作业终评与错题同步 | M1 首次满分不入错题 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| quiz-homework-publication | 作业终评与错题同步 | M2 低分改为及格或满分 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| quiz-homework-publication | 作业终评与错题同步 | M3 修复历史残留不改成绩 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| quiz-homework-publication | 作业终评与错题同步 | M1 首次满分不入错题 | 语义别名候选 | check_assignment_history | M1 正常：首次100分不入错题 | 1 |
+| quiz-homework-publication | 作业终评与错题同步 | M2 低分改为及格或满分 | 语义别名候选 | check_quiz_homework | H/教师覆盖 AI 分且后续初批跳过 | 1 |
+| quiz-homework-publication | 作业终评与错题同步 | M3 修复历史残留不改成绩 | 语义别名候选 | check_assignment_history | M3 正常：备份后修复且重复执行0条 | 1 |
 | quiz-homework-publication | 作业终评与错题同步 | M4 越权或事务失败不部分改分 | 弱候选 | check_quiz_homework | H/教师班级或学科不符：改分学生越权 | 2 |
 | quiz-homework-publication | 历史资料和既有作业兼容 | 更新后旧资料仍可访问 | 断言名候选 | check_quiz_homework | H/更新后旧资料仍可访问 | 9 |
 | quiz-homework-publication | 历史资料和既有作业兼容 | 老试卷主动重新发布 | 断言名候选 | check_quiz_homework | H/老试卷主动重新发布 | 8 |
@@ -468,9 +363,9 @@
 | rbac-role-permissions | 前端路由级权限拦截 | 教师访问学生路由被拦截 | 弱候选 | check_baseline | R4 失败：业务层 import 路由被拦下 | 3 |
 | rbac-role-permissions | 前端路由级权限拦截 | 教师访问教师路由通过 | 弱候选 | check_analytics | S3 失败：教师跨班访问 → 403 | 2 |
 | rbac-role-permissions | 前端路由级权限拦截 | 未登录用户访问业务路由重定向登录 | 弱候选 | check_baseline | R2 失败：未登录 → 401 且带请求标识 | 2 |
-| rbac-role-permissions | 前端路由级权限拦截 | 角色目录按完整路径边界判断 | 断言名候选 | check_route_guard | 角色目录按完整路径边界判断：${route} / ${role} | 12 |
+| rbac-role-permissions | 前端路由级权限拦截 | 角色目录按完整路径边界判断 | 仅文件级 | check_route_guard | （未定位到具体断言） | 12 |
 | rbac-role-permissions | 前端路由级权限拦截 | 身份恢复前不显示业务内容 | 断言名候选 | check_route_guard | 身份恢复前不显示业务内容：缺少 | 11 |
-| rbac-role-permissions | 前端路由级权限拦截 | 辅助提示缺失但会话有效 | 断言名候选 | check_route_guard | 辅助提示缺失但会话有效：允许启动并恢复 ${route} | 10 |
+| rbac-role-permissions | 前端路由级权限拦截 | 辅助提示缺失但会话有效 | 仅文件级 | check_route_guard | （未定位到具体断言） | 10 |
 | rbac-role-permissions | 双角色定义与教师学科身份 | 学生仅以学号密码登录 | 弱候选 | check_lesson10_scenarios | 学生账号初始密码：前缀为学校缩写且结尾为学号末六位 | 3 |
 | rbac-role-permissions | 双角色定义与教师学科身份 | 教师学科身份登录后进入教研组 | 弱候选 | check_analytics | S3 失败：教师跨学科访问 → 403 | 2 |
 | rbac-role-permissions | 双角色定义与教师学科身份 | 系统不创建独立家长角色 | 断言名候选 | check_lesson10_scenarios | 双角色定义：系统不创建独立家长角色 | 10 |
@@ -512,56 +407,56 @@
 | rbac-role-permissions | 越权处理与审计日志 | 技能审计字段查询与范围 | 别名候选 | check_lessons_2_5 | auth.audit_logs_query | 1 |
 | rbac-role-permissions | 越权处理与审计日志 | 教师跨班操作记录审计日志 | 别名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 2 |
 | rbac-role-permissions | 越权处理与审计日志 | 未登录请求留匿名审计 | 弱候选 | check_baseline | R2 失败：未登录 → 401 且带请求标识 | 3 |
-| research-materials | 原班级直传入口阻止明显教师版 | 完整教师 Markdown 误传班级 | 仅文件级 | check_research_materials | （未定位到具体断言） | 8 |
-| research-materials | 发布时生成知识点标签 | 标题未包含已知知识点 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| research-materials | 原班级直传入口阻止明显教师版 | 完整教师 Markdown 误传班级 | 弱候选 | check_research_materials | unknown topic does not guess label | 3 |
+| research-materials | 发布时生成知识点标签 | 标题未包含已知知识点 | 语义别名候选 | check_research_materials | unknown topic does not guess label | 1 |
 | research-materials | 发布时生成知识点标签 | 立体几何章节带知识点标签 | 仅文件级 | check_research_materials | （未定位到具体断言） | 5 |
-| research-materials | 学生版按任教班级独立发布 | 发布学生讲义到两个任教班级 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生版按任教班级独立发布 | 越权班级混入发布批次 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生版题干提取与教师核对 | 现有结构化讲义生成学生版 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生版题干提取与教师核对 | 编辑后重新核对 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生讲义打印与另存 PDF | 学生保存图文讲义 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生讲义打印与另存 PDF | 教师打印未发布的学生预览 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 学生讲义打印与另存 PDF | 配图尚未就绪 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 教师资料先导入学科组 | 图片没有随 Markdown 导入 | 仅文件级 | check_research_materials | （未定位到具体断言） | 7 |
-| research-materials | 教师资料先导入学科组 | 导入完善版图文资料包 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 班级配图与图文包受权访问 | 删除班级讲义 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 班级配图与图文包受权访问 | 学生预览和下载有图讲义 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 组内共享教案查阅与复用 | 下载教师图文包 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 组内共享教案查阅与复用 | 同科同事复用共享教案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 组内共享教案查阅与复用 | 绕过学生稿制作 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 组内教师共享与学生隔离 | 同科同事选用素材 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| research-materials | 组内教师共享与学生隔离 | 学生直接猜测教师原稿地址 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| research-materials | 学生版按任教班级独立发布 | 发布学生讲义到两个任教班级 | 语义别名候选 | check_research_materials | authorized multi class batch succeeds | 1 |
+| research-materials | 学生版按任教班级独立发布 | 越权班级混入发布批次 | 语义别名候选 | check_research_materials | mixed unauthorized classes entire request denied | 1 |
+| research-materials | 学生版题干提取与教师核对 | 现有结构化讲义生成学生版 | 语义别名候选 | check_research_materials | student preview generated | 1 |
+| research-materials | 学生版题干提取与教师核对 | 编辑后重新核对 | 语义别名候选 | check_research_materials | publication requires review | 1 |
+| research-materials | 学生讲义打印与另存 PDF | 学生保存图文讲义 | 语义别名候选 | check_research_materials | student bundle contains only student md and original figure | 1 |
+| research-materials | 学生讲义打印与另存 PDF | 教师打印未发布的学生预览 | 语义别名候选 | check_research_materials | publication requires review | 1 |
+| research-materials | 学生讲义打印与另存 PDF | 配图尚未就绪 | N/A（不适用） |  | 前端配图加载态，属界面展示 | 0 |
+| research-materials | 教师资料先导入学科组 | 图片没有随 Markdown 导入 | 弱候选 | check_research_materials | unknown topic does not guess label | 3 |
+| research-materials | 教师资料先导入学科组 | 导入完善版图文资料包 | 语义别名候选 | check_research_materials | import teacher package | 1 |
+| research-materials | 班级配图与图文包受权访问 | 删除班级讲义 | 语义别名候选 | check_research_materials | delete student publication | 1 |
+| research-materials | 班级配图与图文包受权访问 | 学生预览和下载有图讲义 | 语义别名候选 | check_research_materials | student bundle contains only student md and original figure | 1 |
+| research-materials | 组内共享教案查阅与复用 | 下载教师图文包 | 语义别名候选 | check_lesson_prep | shared teacher bundle includes snapshot and used original figure | 1 |
+| research-materials | 组内共享教案查阅与复用 | 同科同事复用共享教案 | 语义别名候选 | check_lesson_prep | same subject colleague sees full teacher snapshot | 1 |
+| research-materials | 组内共享教案查阅与复用 | 绕过学生稿制作 | 语义别名候选 | check_lesson_prep | shared teacher plan cannot bypass student workflow | 1 |
+| research-materials | 组内教师共享与学生隔离 | 同科同事选用素材 | 语义别名候选 | check_research_materials | same subject colleagues share source | 1 |
+| research-materials | 组内教师共享与学生隔离 | 学生直接猜测教师原稿地址 | 语义别名候选 | check_research_materials | student source read denied | 1 |
 | runtime-reliability | 可配置且受限的 SQLite 日志模式 | Windows 共享目录运行小组服务 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：向量化失败时 is_indexed=False 但上传接口已返回成功 | 2 |
 | runtime-reliability | 可配置且受限的 SQLite 日志模式 | 使用原生磁盘的 WAL 配置 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：SQLite 代码默认日志模式为 WAL，且支持环境变量覆盖 | 2 |
 | runtime-reliability | 可配置且受限的 SQLite 日志模式 | 无效日志模式 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：SQLite 代码默认日志模式为 WAL，且支持环境变量覆盖 | 3 |
-| runtime-reliability | 存储修复保留业务数据 | 会话接口磁盘 I/O 故障修复 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| runtime-reliability | 存储修复保留业务数据 | 会话接口磁盘 I/O 故障修复 | 语义别名候选 | check_assignment_history | H3 失败：历史依赖故障503 | 1 |
 | runtime-reliability | 数据库可读性纳入健康检查 | 数据库存储异常 | 弱候选 | check_baseline | R1 失败：数据库异常 → 503 与通用提示 | 3 |
 | runtime-reliability | 数据库可读性纳入健康检查 | 数据库读取正常 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：权限从数据库实时读取（populate_existing=True） | 3 |
-| smart-lesson-prep | 两种学生文稿分班发布 | 发布批次混入其他班 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 两种学生文稿分班发布 | 教案和讲义均发布给学生 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 两种学生文稿分班发布 | 新修订尝试发布旧学生稿 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 5 |
-| smart-lesson-prep | 中文空格图片路径兼容 | 原题图的中文目录含空格 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 中文空格图片路径兼容 | 生成与发布图文包 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 从学科组教师资料发起备课 | 尚未提供学情 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-lesson-prep | 两种学生文稿分班发布 | 发布批次混入其他班 | 语义别名候选 | check_lesson_prep | mixed unauthorized publication denied | 1 |
+| smart-lesson-prep | 两种学生文稿分班发布 | 教案和讲义均发布给学生 | 语义别名候选 | check_lesson_prep | handout publishes both classes with index | 1 |
+| smart-lesson-prep | 两种学生文稿分班发布 | 新修订尝试发布旧学生稿 | 弱候选 | check_lesson_prep | 单反斜杠学生稿：重新生成成功并保存 | 2 |
+| smart-lesson-prep | 中文空格图片路径兼容 | 原题图的中文目录含空格 | 语义别名候选 | check_lesson_prep | teacher generation fixes raw spaced image destinations | 1 |
+| smart-lesson-prep | 中文空格图片路径兼容 | 生成与发布图文包 | 语义别名候选 | check_lesson_prep | handout publishes both classes with index | 1 |
+| smart-lesson-prep | 从学科组教师资料发起备课 | 尚未提供学情 | 语义别名候选 | check_lesson_prep | selected class context and manual profile passed | 1 |
 | smart-lesson-prep | 从学科组教师资料发起备课 | 数学教师发起线面角备课 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 4 |
-| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿中的单反斜杠公式被修补 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 8 |
-| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿含漏网控制字符 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 8 |
-| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿生成未通过检查 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 从定稿生成两种学生稿 | 教师生成并修改学生讲义 | 仅文件级 | check_lesson_prep | （未定位到具体断言） | 6 |
-| smart-lesson-prep | 完整片段与出处核对 | 多份资料均被选入 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 完整片段与出处核对 | 核对例题出处 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 定稿快照与并发保护 | 旧窗口写入 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 定稿快照与并发保护 | 第二次定稿 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教师定稿可选共享到教研组 | 主动共享完整教师定稿 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教师定稿可选共享到教研组 | 删除私人原教案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教师定稿可选共享到教研组 | 教师选择保留私有 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教师定稿可选共享到教研组 | 重复发布或后续修改 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教案隔离删除与审计 | 删除私人教案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 教案隔离删除与审计 | 同学科同事访问私人教案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 流式生成与失败处理 | AI 完成教师草案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 流式生成与失败处理 | 生成中断或无 Key | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 编辑审阅与章节重写 | 审阅后再改正文 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-lesson-prep | 编辑审阅与章节重写 | 重写教学过程 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿中的单反斜杠公式被修补 | 断言名候选 | check_lesson_prep | 单反斜杠学生稿：修补次数写入服务端日志且不含正文 | 6 |
+| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿含漏网控制字符 | 弱候选 | check_lesson_prep | 单反斜杠学生稿：合法换行保留、不含控制字符 | 5 |
+| smart-lesson-prep | 从定稿生成两种学生稿 | 学生稿生成未通过检查 | 语义别名候选 | check_lesson_prep | broken student response gives error | 1 |
+| smart-lesson-prep | 从定稿生成两种学生稿 | 教师生成并修改学生讲义 | 弱候选 | check_lesson_prep | 单反斜杠学生稿：重新生成成功并保存 | 2 |
+| smart-lesson-prep | 完整片段与出处核对 | 多份资料均被选入 | 语义别名候选 | check_lesson_prep | all selected sources contribute complete sections | 1 |
+| smart-lesson-prep | 完整片段与出处核对 | 核对例题出处 | 语义别名候选 | check_lesson_prep | reference excerpts exact and lines traceable | 1 |
+| smart-lesson-prep | 定稿快照与并发保护 | 旧窗口写入 | 语义别名候选 | check_lesson_prep | stale window cannot overwrite | 1 |
+| smart-lesson-prep | 定稿快照与并发保护 | 第二次定稿 | 语义别名候选 | check_lesson_prep | new final retains v1 and v2 | 1 |
+| smart-lesson-prep | 教师定稿可选共享到教研组 | 主动共享完整教师定稿 | 语义别名候选 | check_lesson_prep | explicitly share current final | 1 |
+| smart-lesson-prep | 教师定稿可选共享到教研组 | 删除私人原教案 | 语义别名候选 | check_lesson_prep | shared final remains readable after deleting private original | 1 |
+| smart-lesson-prep | 教师定稿可选共享到教研组 | 教师选择保留私有 | 语义别名候选 | check_lesson_prep | default private plan has no group publication | 1 |
+| smart-lesson-prep | 教师定稿可选共享到教研组 | 重复发布或后续修改 | 语义别名候选 | check_lesson_prep | same final share is idempotent | 1 |
+| smart-lesson-prep | 教案隔离删除与审计 | 删除私人教案 | 语义别名候选 | check_lesson_prep | delete owned plan | 1 |
+| smart-lesson-prep | 教案隔离删除与审计 | 同学科同事访问私人教案 | 语义别名候选 | check_lesson_prep | same subject colleague private plan denied | 1 |
+| smart-lesson-prep | 流式生成与失败处理 | AI 完成教师草案 | 语义别名候选 | check_lesson_prep | teacher draft saved with actual stream | 1 |
+| smart-lesson-prep | 流式生成与失败处理 | 生成中断或无 Key | 语义别名候选 | check_lesson_prep | AI error produces error event | 1 |
+| smart-lesson-prep | 编辑审阅与章节重写 | 审阅后再改正文 | 语义别名候选 | check_lesson_prep | edit saved and remains draft | 1 |
+| smart-lesson-prep | 编辑审阅与章节重写 | 重写教学过程 | 语义别名候选 | check_lesson_prep | section rewrite changes only selected block | 1 |
 | smart-question-generation | 候选题逐题复核 | 修改后通过 | 弱候选 | check_question_bank | 细分知识点：归一到所选知识点后通过 | 2 |
 | smart-question-generation | 候选题逐题复核 | 未确认即通过 | 弱候选 | check_question_bank | 未确认即通过 400 | 5 |
 | smart-question-generation | 候选题逐题复核 | 重复题目 | 弱候选 | check_question_bank | 重复题干通过 409 | 2 |
@@ -569,9 +464,9 @@
 | smart-question-generation | 公式结构校验 | 修改时引入不配对括号 | 断言名候选 | check_question_bank | 修改引入不配对括号：400 且题目与 revision 不变 | 7 |
 | smart-question-generation | 公式结构校验 | 修改补齐括号后通过 | 断言名候选 | check_question_bank | 补齐括号后保存并通过：进入题库且标记已修改 | 6 |
 | smart-question-generation | 公式结构校验 | 定界符不成对 | 弱候选 | check_question_bank | 公式结构：转义、cases 与定界符正反用例 | 2 |
-| smart-question-generation | 公式结构校验 | 转义括号与环境不被误判 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 公式结构校验 | 转义的美元符号 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 公式结构校验 | 选项缺右括号 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 公式结构校验 | 转义括号与环境不被误判 | 语义别名候选 | check_question_bank | 公式结构：转义、cases 与定界符正反用例 | 1 |
+| smart-question-generation | 公式结构校验 | 转义的美元符号 | 语义别名候选 | check_question_bank | 单反斜杠 LaTeX：题干还原为 LaTeX 命令 | 1 |
+| smart-question-generation | 公式结构校验 | 选项缺右括号 | 语义别名候选 | check_question_bank | 修改引入不配对括号：400 且题目与 revision 不变 | 1 |
 | smart-question-generation | 发起命题生成 | 使用词表外的知识点 | 弱候选 | check_question_bank | 词表外知识点 400 | 4 |
 | smart-question-generation | 发起命题生成 | 数学教师按配比发起命题 | 仅文件级 | check_question_bank | （未定位到具体断言） | 4 |
 | smart-question-generation | 发起命题生成 | 选用他科资料 | 弱候选 | check_question_bank | 选用他科资料 404 | 5 |
@@ -586,23 +481,23 @@
 | smart-question-generation | 学生卷选项排版 | 学生端打开新发布的试卷 | 弱候选 | check_question_bank | 新发布不写入 quiz_publications 或资料 | 2 |
 | smart-question-generation | 学生卷选项排版 | 已发布资料不被改写 | 弱候选 | check_question_bank | 发布生成已发布命题作业 | 2 |
 | smart-question-generation | 学生卷选项排版 | 第 10 题以后 | 弱候选 | check_question_bank | 学生卷第 10 题：选项缩进 4 格 | 3 |
-| smart-question-generation | 学生卷选项排版 | 选项各占一行 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 学生卷选项排版 | 选项含块级公式 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 学科题库 | 下架后组卷 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 学生卷选项排版 | 选项各占一行 | 语义别名候选 | check_question_bank | 学生卷选择题：A–D 每项一行且行尾硬换行 | 1 |
+| smart-question-generation | 学生卷选项排版 | 选项含块级公式 | 语义别名候选 | check_question_bank | 学生卷第 10 题：选项缩进 4 格 | 1 |
+| smart-question-generation | 学科题库 | 下架后组卷 | 弱候选 | check_lesson10_scenario_gaps | 下架后组卷：下架题不进入新试卷且返回缺口、不创建试卷 | 4 |
 | smart-question-generation | 学科题库 | 修改入库题目 | 弱候选 | check_question_bank | 入库题目修改 409 | 4 |
 | smart-question-generation | 学科题库 | 同科同事浏览题库 | 弱候选 | check_question_bank | 同科同事可见题库 | 4 |
-| smart-question-generation | 按配比组卷 | 手工替换为下架题 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 按配比组卷 | 手工替换为下架题 | 断言名候选 | check_lesson10_scenario_gaps | 手工替换为下架题：返回 400 且草稿题数与版本不变 | 7 |
 | smart-question-generation | 按配比组卷 | 按 3:5:2 组卷 | 仅文件级 | check_question_bank | （未定位到具体断言） | 5 |
 | smart-question-generation | 按配比组卷 | 题库不足 | 弱候选 | check_question_bank | 题库不足 422 并列出缺口 | 3 |
 | smart-question-generation | 来源片段与出处快照 | 原稿在入库后被替换 | 弱候选 | check_question_bank | 原图被替换后发布 409（指纹不一致） | 2 |
 | smart-question-generation | 来源片段与出处快照 | 查看题目出处 | 弱候选 | check_question_bank | 答案卷出处带原文行号与摘录（与题目快照一致） | 2 |
 | smart-question-generation | 流式进度与失败处理 | 同一教师重复点击生成 | 仅文件级 | check_question_bank | （未定位到具体断言） | 5 |
 | smart-question-generation | 流式进度与失败处理 | 未配置模型 Key | 弱候选 | check_question_bank | 无 Key 返回 503 | 2 |
-| smart-question-generation | 流式进度与失败处理 | 生成中模型超时 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 流式进度与失败处理 | 生成中模型超时 | 语义别名候选 | check_question_bank | 截断输出：返回 error 且不落题 | 1 |
 | smart-question-generation | 结构化输出与逐题校验 | 修补后仍不是合法 JSON | 弱候选 | check_question_bank | 用户消息以 JSON 数组重申标签 | 3 |
 | smart-question-generation | 结构化输出与逐题校验 | 全部题目通过校验 | 弱候选 | check_question_bank | 全部通过 8 题落库 | 2 |
 | smart-question-generation | 结构化输出与逐题校验 | 单反斜杠 LaTeX 被修补后通过 | 断言名候选 | check_question_bank | 单反斜杠 LaTeX：生成成功且题目保存 | 8 |
-| smart-question-generation | 结构化输出与逐题校验 | 模型声明无依据的空位 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 结构化输出与逐题校验 | 模型声明无依据的空位 | 语义别名候选 | check_question_bank | validate_batch 遇到任意结构不抛异常、逐题拒绝 | 1 |
 | smart-question-generation | 结构化输出与逐题校验 | 模型返回不构成字面包含的细分说法 | 断言名候选 | check_question_bank | 非字面包含的细分术语：判超出范围 | 6 |
 | smart-question-generation | 结构化输出与逐题校验 | 模型返回字面包含所选标签的表述 | 弱候选 | check_question_bank | 细分知识点：落库知识点为所选标签 | 3 |
 | smart-question-generation | 结构化输出与逐题校验 | 漏网的控制字符被拦截 | 弱候选 | check_question_bank | U+000C 题干：原因为含不可见控制字符 | 3 |
@@ -610,49 +505,49 @@
 | smart-question-generation | 结构化输出与逐题校验 | 被误解码的公式命令被修补 | 弱候选 | check_question_bank | 提示词要求公式花括号成对并写完整命令 | 2 |
 | smart-question-generation | 结构化输出与逐题校验 | 输出不是 JSON | 弱候选 | check_question_bank | 用户消息以 JSON 数组重申标签 | 3 |
 | smart-question-generation | 结构化输出与逐题校验 | 部分题目不合格 | 弱候选 | check_question_bank | 部分不合格：6 通过 2 未通过 | 3 |
-| smart-question-generation | 结构化输出与逐题校验 | 题干泄露答案 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 试卷定稿与分班发布 | 原图校验或文件写入失败 | 仅文件级 | check_question_bank | （未定位到具体断言） | 4 |
+| smart-question-generation | 结构化输出与逐题校验 | 题干泄露答案 | 语义别名候选 | check_question_bank | 学生卷不含答案/解析/S编号 | 1 |
+| smart-question-generation | 试卷定稿与分班发布 | 原图校验或文件写入失败 | 弱候选 | check_lesson10_scenario_gaps | DB 写入失败时回滚删除物理文件：返回 500、数据库回滚且磁盘文件已清理 | 4 |
 | smart-question-generation | 试卷定稿与分班发布 | 发布到两个任教班级 | 弱候选 | check_question_bank | 发布到两个班 200 | 4 |
-| smart-question-generation | 试卷定稿与分班发布 | 发布参数边界 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| smart-question-generation | 试卷定稿与分班发布 | 发布身份边界 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 试卷定稿与分班发布 | 发布参数边界 | 语义别名候选 | check_quiz_homework | Q/发布参数边界：缺少截止时间 | 1 |
+| smart-question-generation | 试卷定稿与分班发布 | 发布身份边界 | 语义别名候选 | check_quiz_homework | Q/发布身份边界： | 1 |
 | smart-question-generation | 试卷定稿与分班发布 | 批次混入非任教班级 | 断言名候选 | check_question_bank | 批次混入非任教班级 403 | 8 |
 | smart-question-generation | 试卷定稿与分班发布 | 未确认核对或版本冲突 | 弱候选 | check_question_bank | 未确认核对 400 | 4 |
-| smart-question-generation | 试卷定稿与分班发布 | 混合已有和新目标班级 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 试卷定稿与分班发布 | 混合已有和新目标班级 | 语义别名候选 | check_quiz_homework | Q/混合已有和新目标班级 | 1 |
 | smart-question-generation | 试卷定稿与分班发布 | 草稿试卷发布 | 弱候选 | check_question_bank | 含图试卷发布 200 | 3 |
 | smart-question-generation | 试卷定稿与分班发布 | 重复发布 | 弱候选 | check_question_bank | 重复发布复用作业 | 3 |
 | smart-question-generation | 试卷定稿与分班发布 | 重复发布更换截止时间或遇到已关闭作业 | 弱候选 | check_question_bank | 重复发布复用作业 | 4 |
-| smart-question-generation | 题目内容显示 | 代码中的下划线 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 题目内容显示 | 代码中的下划线 | 断言名候选 | check_markdown_blanks | 代码中的下划线：正文填空空位转义为字面下划线 | 6 |
 | smart-question-generation | 题目内容显示 | 填空与解答题答案含公式 | 弱候选 | check_question_bank | 答案卷含答案与解析 | 2 |
 | smart-question-generation | 题目内容显示 | 多空位填空题显示 | 弱候选 | check_question_bank | 判断题与填空题生成成功 | 2 |
 | smart-question-generation | 题目内容显示 | 多空答案与选择判断答案 | 弱候选 | check_question_bank | 答案卷含答案与解析 | 2 |
 | smart-question-generation | 题目内容显示 | 学生端打开已发布试卷 | 弱候选 | check_question_bank | 发布生成已发布命题作业 | 2 |
-| smart-question-generation | 题目内容显示 | 空位与公式下标共存 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 题目内容显示 | 空位与公式下标共存 | 语义别名候选 | check_question_bank | 公式结构：转义、cases 与定界符正反用例 | 1 |
 | smart-question-generation | 题目内容显示 | 编辑答案时显示原文 | 弱候选 | check_question_bank | 答案卷出处带原文行号与摘录（与题目快照一致） | 2 |
 | smart-question-generation | 题目内容显示 | 解答题作答横线不变 | 弱候选 | check_question_bank | 蓝图解答题在前、单选在后：组卷成功 | 2 |
-| smart-question-generation | 题目内容显示 | 选项含公式 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 作业界面先展示演示结果 | 浏览演示作业结果 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 助手对话保留真实会话能力 | 从助手页连续追问 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 助手对话保留真实会话能力 | 查看回答来源 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学情分析演示界面 | 浏览学习画像演示 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生作业历史持续可查 | H1 提交后进入历史并可刷新 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| smart-question-generation | 题目内容显示 | 选项含公式 | 语义别名候选 | check_question_bank | 单反斜杠 LaTeX：选项与解析同样还原 | 1 |
+| student-workspace | 作业界面先展示演示结果 | 浏览演示作业结果 | N/A（不适用） |  | 前端演示结果展示，属界面展示 | 0 |
+| student-workspace | 助手对话保留真实会话能力 | 从助手页连续追问 | 语义别名候选 | check_lessons_2_5 | agent.multiturn_context | 1 |
+| student-workspace | 助手对话保留真实会话能力 | 查看回答来源 | 语义别名候选 | check_lessons_2_5 | agent.citations_provenance | 1 |
+| student-workspace | 学情分析演示界面 | 浏览学习画像演示 | N/A（不适用） |  | 前端画像展示，属界面展示 | 0 |
+| student-workspace | 学生作业历史持续可查 | H1 提交后进入历史并可刷新 | 语义别名候选 | check_assignment_history | H1 正常：提交后历史输入与时间持久返回 | 1 |
 | student-workspace | 学生作业历史持续可查 | H2 关闭后保留终评及配图 | 弱候选 | check_homework | S3 失败：关闭后提交 → 400 | 2 |
-| student-workspace | 学生作业历史持续可查 | H3 历史读取隔离与失败 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生作业历史持续可查 | H4 空历史与时间边界 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生导航与路由 | 无效视图回退 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生导航与路由 | 资料页返回其他模块 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生导航与路由 | 首页进入助手对话 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生本地搜索与提问历史 | 助手历史不自动发送 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生本地搜索与提问历史 | 搜索后刷新与再次使用 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生本地搜索与提问历史 | 科目和账号隔离 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 学生身份与班级上下文 | 学生首页展示本人班级 | 弱候选 | check_analytics | S3 失败：学生访问班级学情 → 403 | 2 |
+| student-workspace | 学生作业历史持续可查 | H3 历史读取隔离与失败 | 语义别名候选 | check_assignment_history | H3 失败：他人提交不可读 | 1 |
+| student-workspace | 学生作业历史持续可查 | H4 空历史与时间边界 | 断言名候选 | check_lesson10_scenario_gaps | H4 空历史与时间边界：无历史学生返回空列表，逾期未交在历史且标记已截止 | 9 |
+| student-workspace | 学生导航与路由 | 无效视图回退 | N/A（不适用） |  | 前端路由回退，属界面行为 | 0 |
+| student-workspace | 学生导航与路由 | 资料页返回其他模块 | N/A（不适用） |  | 前端导航交互，属界面行为 | 0 |
+| student-workspace | 学生导航与路由 | 首页进入助手对话 | N/A（不适用） |  | 前端导航交互，属界面行为 | 0 |
+| student-workspace | 学生本地搜索与提问历史 | 助手历史不自动发送 | 断言名候选 | check_recent_history | 助手历史不自动发送：历史按钮仅回填并聚焦，渲染时不触发发送，清空只移除快捷记录 | 8 |
+| student-workspace | 学生本地搜索与提问历史 | 搜索后刷新与再次使用 | 断言名候选 | check_recent_history | 搜索后刷新与再次使用：重复关键词只保留一条、重建存储后可见且点击调用原搜索 | 9 |
+| student-workspace | 学生本地搜索与提问历史 | 科目和账号隔离 | 断言名候选 | check_recent_history | 科目和账号隔离：不同学生、班级、科目与入口的历史互不可见且原范围可恢复 | 6 |
+| student-workspace | 学生身份与班级上下文 | 学生首页展示本人班级 | 弱候选 | check_recent_history | 科目和账号隔离：不同学生、班级、科目与入口的历史互不可见且原范围可恢复 | 2 |
 | student-workspace | 学生身份与班级上下文 | 未分班学生访问 | 弱候选 | check_analytics | S3 失败：学生访问班级学情 → 403 | 3 |
-| student-workspace | 本班讲义列表与检索界面 | 学生搜索本班讲义 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 本班讲义列表与检索界面 | 学科标签过滤资料卡 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 本班讲义列表与检索界面 | 预览和下载实际资料 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 本班首页概览 | 浏览首页概览 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 讲义页科目切换布局稳定 | 从有资料切到空科目 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 讲义页科目切换布局稳定 | 搜索加载与恢复 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| student-workspace | 错题界面及助手跳转 | 由错题进入助手 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| student-workspace | 本班讲义列表与检索界面 | 学生搜索本班讲义 | N/A（不适用） |  | 前端本地搜索交互，属界面行为 | 0 |
+| student-workspace | 本班讲义列表与检索界面 | 学科标签过滤资料卡 | 语义别名候选 | check_lessons_2_5 | materials.math_subject_list | 1 |
+| student-workspace | 本班讲义列表与检索界面 | 预览和下载实际资料 | 语义别名候选 | check_lessons_2_5 | materials.preview | 1 |
+| student-workspace | 本班首页概览 | 浏览首页概览 | N/A（不适用） |  | 前端概览浏览，属界面展示 | 0 |
+| student-workspace | 讲义页科目切换布局稳定 | 从有资料切到空科目 | N/A（不适用） |  | 前端科目切换布局，属界面行为 | 0 |
+| student-workspace | 讲义页科目切换布局稳定 | 搜索加载与恢复 | N/A（不适用） |  | 前端布局稳定性（同一容器与标题区不随是否渲染卡片变化），属界面布局 | 0 |
+| student-workspace | 错题界面及助手跳转 | 由错题进入助手 | N/A（不适用） |  | 前端跳转交互，属界面行为 | 0 |
 | teacher-identity-and-permissions | 双重身份权限判定规则 | 同一教师不同模块权限不同 | 别名候选 | check_lesson10_p0_scenarios | P0 接口：题库/组卷模块校验任教学科（subject），班级模块校验任教班级（teaching_classes） | 1 |
 | teacher-identity-and-permissions | 学生密码重置仅限本班班主任 | 任课教师调用重置接口被拒 | 弱候选 | check_baseline | R2 失败：学生调用教师接口 → 403 且带请求标识 | 3 |
 | teacher-identity-and-permissions | 学生密码重置仅限本班班主任 | 班主任重置本人带班学生密码 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 2 |
@@ -671,20 +566,20 @@
 | teacher-workspace | 两种学生名单的操作差异 | 班主任学生页展示重置操作 | 别名候选 | check_lessons_2_5 | auth.homeroom_reset | 2 |
 | teacher-workspace | 任课与带班上下文独立 | 切换任课班级不切换带班班级 | 弱候选 | check_lesson10_p0_scenarios | P0 接口：任教班级与带班班级均由服务端令牌/数据库派生（不采信客户端参数） | 3 |
 | teacher-workspace | 任课管理的单科资料列表 | 切班后保留资料视图 | 弱候选 | check_teacher_navigation | R3 正常：切班保留现有页面行为  | 2 |
-| teacher-workspace | 任课管理的单科资料列表 | 发布与查看入口分开 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 任课管理的单科资料列表 | 发布与查看入口分开 | 语义别名候选 | check_teacher_navigation | R3 正常：资料、备课、命题点击仍到原路径，移除项不再可导航 | 1 |
 | teacher-workspace | 任课管理的单科资料列表 | 查看当前任教班级本科目资料 | 弱候选 | check_teacher_navigation | R1 边界：没有任教班级仍只有三项教研入口 | 3 |
-| teacher-workspace | 全科总览与单科教学入口区分 | 在教研组内选择教师版发布学生稿 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| teacher-workspace | 全科总览与单科教学入口区分 | 打开未接入的学情或教研模块 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 全科总览与单科教学入口区分 | 在教研组内选择教师版发布学生稿 | 语义别名候选 | check_lesson_prep | shared teacher plan cannot use simple student stripping | 1 |
+| teacher-workspace | 全科总览与单科教学入口区分 | 打开未接入的学情或教研模块 | 语义别名候选 | check_teacher_navigation | R1 边界：没有任教班级仍只有三项教研入口 | 1 |
 | teacher-workspace | 全科总览与单科教学入口区分 | 智能命题不再是占位 | 弱候选 | check_teacher_navigation | R3 正常：资料、备课、命题点击仍到原路径，移除项不再可导航 | 2 |
 | teacher-workspace | 全科总览与单科教学入口区分 | 班主任进入全科资料总览 | 弱候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 3 |
 | teacher-workspace | 助手配置独立入口及菜单顺序 | 在助手配置页切换班级 | 仅文件级 | check_lessons_2_5 | （未定位到具体断言） | 4 |
-| teacher-workspace | 助手配置独立入口及菜单顺序 | 检查系统菜单顺序 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 助手配置独立入口及菜单顺序 | 检查系统菜单顺序 | 语义别名候选 | check_teacher_navigation | R1 边界：没有任教班级仍只有三项教研入口 | 1 |
 | teacher-workspace | 教师共用工作空间导航 | 教师打开资料页仍可访问其他模块 | 弱候选 | check_analytics | S3 失败：教师跨班访问 → 403 | 2 |
-| teacher-workspace | 教师共用工作空间导航 | 教师进入智能命题页 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 教师共用工作空间导航 | 教师进入智能命题页 | 语义别名候选 | check_teacher_navigation | R3 正常：资料、备课、命题点击仍到原路径，移除项不再可导航 | 1 |
 | teacher-workspace | 教师教研占位入口移除 | R1 教研中心只有三个现有入口 | 弱候选 | check_teacher_navigation | R1 边界：没有任教班级仍只有三项教研入口 | 5 |
-| teacher-workspace | 教师教研占位入口移除 | R2 旧教研链接有明确落点 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
-| teacher-workspace | 教师教研占位入口移除 | R3 其他导航与班级不退化 | 弱候选 | check_teacher_navigation | R3 边界：其他view保持原值 ${JSON.stringify(view)} | 2 |
-| teacher-workspace | 教师页移除快捷切换账号 | 教师检查顶栏 | 无匹配断言 |  | （同能力有检查文件但无相近断言） | 0 |
+| teacher-workspace | 教师教研占位入口移除 | R2 旧教研链接有明确落点 | 语义别名候选 | check_teacher_navigation | R2 失败路径：旧${old} / ${workspace} / ${classId}归一到既有备课跳转 | 1 |
+| teacher-workspace | 教师教研占位入口移除 | R3 其他导航与班级不退化 | 弱候选 | check_teacher_navigation | R3 正常：资料、备课、命题点击仍到原路径，移除项不再可导航 | 2 |
+| teacher-workspace | 教师页移除快捷切换账号 | 教师检查顶栏 | 语义别名候选 | check_teacher_navigation | R3 正常：切班保留现有页面行为 | 1 |
 | teacher-workspace | 本地预览包含静态资源 | standalone 服务交付登录样式 | 断言名候选 | check_lessons_2_5 | citations.changed_file_stale_index_excluded | 6 |
 | teacher-workspace | 本班审计日志页面与接口 | 任课身份或跨班审计被拒绝 | 别名候选 | check_lessons_2_5 | auth.audit_logs_class_isolation | 2 |
 | teacher-workspace | 本班审计日志页面与接口 | 班主任查看本班日志 | 断言名候选 | check_analytics | S1 正常：班主任查看本班全科 101 学情 | 6 |

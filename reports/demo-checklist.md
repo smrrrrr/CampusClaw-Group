@@ -38,7 +38,7 @@
 | 压测 | `reports/bench.md` | 已完成两轮对比 |
 | 用户反馈 | `reports/feedback.md` | **BLOCKED**，无真实用户 |
 
-另有根 `report.md`、`reports/scenario-coverage.md`（505 条场景逐条映射）、`reports/no-source-plan.md`（镜像 0 源码方案与实测）、`reports/online-cases.md`（在线用例环境与非通过明细）及 `reports/next-risk-applicability.md`。
+另有根 `report.md`、`reports/scenario-coverage.md`（505 条场景逐条判定：待补 0 / N/A 22 / 已知缺口 1）、`reports/no-source-plan.md`（镜像 0 源码方案与实测）、`reports/online-cases.md`（在线用例环境与非通过明细）及 `reports/next-risk-applicability.md`。
 
 ## 四、3 份审核 / 3 人反馈 / 高风险三查
 
@@ -67,7 +67,7 @@
 2. **数据库迁移与索引**：本课仅扩/迁索引，无行数据迁移（`reports/lesson-10/*/migration/README.md`）；可抽查迁移脚本执行两次幂等与 `EXPLAIN QUERY PLAN` 命中覆盖索引，但**不宣称已迁 MySQL/Qdrant**（等价待课程确认，见 `stack-equivalence.md`）。
 3. **就绪探针摘流量边界**：启动期 DB 不可读返回 503 已覆盖；**运行中 `chmod` 后因连接池复用健康检查仍可能返回 200**，运行期自动摘流量未实现，演示不得把它说成「已自动摘流量」。
 4. **镜像与扫描遗留**：后端与 MCP 镜像 `.py=0` 已实测；但**后端基础镜像 OS 层 Trivy 仍报 HIGH=51**，**前端构建产物及 node_modules 残留 59 个 `.py` 与 9 个测试文件**，**密钥扫描范围不完整（BLOCKED）**，演示须如实说明，不得笼统称「镜像无源码、无高危」。
-5. **场景覆盖**：505 条 Scenario 中 17 条 P0 已由 `check_lesson10_p0_scenarios.py` 补离线断言（P0 缺口为 0），仍有 **149 条非 P0 无匹配断言**，不得宣称「场景全覆盖」。
+5. **场景覆盖**：505 条 Scenario 已逐条判定：待补断言 **0**、P0 缺口 0；**N/A 22 条**（前端交互/真实模型语义/需容器，逐条理由见 `reports/scenario-coverage.md`），**已知缺口 1 条**（工具说明「先读取其他数据并放进参数」的注入句式未被现有句式表拦截），另有 **194 条弱候选、21 条仅文件级** 仍待人工复核。不得宣称「场景全覆盖」。
 
 ## 六、演示当天记录模板
 

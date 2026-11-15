@@ -21,8 +21,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 120  # 2 小时
     refresh_token_expire_days: int = 7
 
-    # 生产环境关闭交互式 API 文档（/docs、/redoc、/openapi.json）
-    enable_docs: bool = True
+    # 生产环境关闭交互式 API 文档（/docs、/redoc、/openapi.json）；
+    # 规约要求 ENABLE_DOCS 缺省为关闭（mcp-tool-integration「默认关闭文档」）
+    enable_docs: bool = False
 
     # 可选：额外写一份单行 JSON 日志文件，供只读观测采集器读取；空值表示不写文件
     log_file: str = ""

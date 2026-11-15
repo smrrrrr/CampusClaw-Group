@@ -12,7 +12,7 @@
 | 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
 | 第10课 测试交付与运行验证 | 本机工程实施与运行验证已收口；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
 
-第10课当前门禁：`make check` **36/36 PASS**；`make check-security` **RED**（仅 Next.js 14.2.15 版本范围计数，4 条 critical 在当前代码与 Linux standalone 部署下均不可触发，论证见 [next-risk-applicability.md](reports/next-risk-applicability.md)）。后端与 MCP 镜像均已达成 0 源码（`.py = 0`，全量 `.pyc`）；新目录从干净 clone 启动成功；真实 RabbitMQ 异步复现 14 项 PASS；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。在此状态下不宣称交付完成。
+第10课当前门禁：`make check` **39/39 PASS**；`make check-security` **RED**（仅 Next.js 14.2.15 版本范围计数，4 条 critical 在当前代码与 Linux standalone 部署下均不可触发，论证见 [next-risk-applicability.md](reports/next-risk-applicability.md)）。后端与 MCP 镜像均已达成 0 源码（`.py = 0`，全量 `.pyc`）；新目录从干净 clone 启动成功；真实 RabbitMQ 异步复现 14 项 PASS；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。在此状态下不宣称交付完成。
 
 ## 二、第10课证据索引
 
@@ -40,4 +40,4 @@
 2. 3 名真实用户、换人双跑、另一人新目录启动、组员本人签名与真实负责人告警接收。
 3. CI 远端运行、镜像 digest、main 保护、线上实例反查。
 4. 手机浏览器实机验证与真实模型语义抽查。
-5. 场景矩阵 149 条无匹配断言（P0 高风险 17 条已全部补断言，现为 0）及在线用例跨进程 SQLite 并发冲突收口。
+5. 场景矩阵 505 条已逐条判定：待补断言 **0**、P0 缺口 0、N/A 22 条（附理由）、已知缺口 1 条（工具说明注入句式未覆盖）；弱候选 194 条仍需人工复核，不得计入覆盖。在线用例跨进程 SQLite 并发冲突已由「本机同宿主直连」收口。
