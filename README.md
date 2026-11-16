@@ -160,15 +160,13 @@ Windows 没有 make 时运行 `backend\.venv\Scripts\python.exe scripts\check.py
 - 依赖和构建产物；
 - 本地验证证据（`.review/`）。
 
-组员之间用数据包交接数据。密钥只放在服务端环境变量里。最近一次交接（Next.js 15.5.28 升级，2026-11-16）的数据包是 `handover-packs/2026-11-16-next15.zip`，**在仓库外生成、不进 Git**；包内含本地数据库、`.env`、`backend/uploads/` 与全部证据，解包与校验步骤见[交接数据说明](docs/handover-2026-11-16-next15-data.md)，启动与评审步骤见[交接评审文档](docs/handover-2026-11-16-next15.md)。
+组员之间用数据包交接数据。密钥只放在服务端环境变量里。最近一次交接（Next.js 15.5.28 升级，2026-11-16）的数据包是 `handover-packs/2026-11-16-next15.zip`，**在仓库外生成、不进 Git**；包内含本地数据库、`.env`、`backend/uploads/`、全部证据与交接说明，走组内私有渠道传递。
 
 ## 文档
 
 - [DEPLOYMENT.md](DEPLOYMENT.md)：部署、环境变量、数据与备份、本地开发
 - [openspec/README.md](openspec/README.md)：功能与规约索引
 - [docs/work-and-validation-2026-10-25.md](docs/work-and-validation-2026-10-25.md)：v1.1 的代码工作、验证结果和未完成的检测
-- [docs/handover-2026-11-16-next15.md](docs/handover-2026-11-16-next15.md)：Next.js 15.5.28 升级交接与评审说明
-- [docs/handover-2026-11-16-next15-data.md](docs/handover-2026-11-16-next15-data.md)：交接数据包的内容、恢复与校验
 - [docs/lesson-2-5-acceptance-2026-10-18.md](docs/lesson-2-5-acceptance-2026-10-18.md)：第 2—5 课功能验收记录
 
 第7课规范与当前证据见 [课程交付入口](docs/lesson-07/README.md)，八类规范及具体检查见 [规范索引](docs/standards/README.md)。本轮只整理文档与静态评测用例，未改变业务功能。
