@@ -39,7 +39,7 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/${{ env.UV_VERSION }}/install.sh | sh
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          npm install -g @openspec/cli@${{ env.OPENSPEC_VERSION }}
+          npm install -g @fission-ai/openspec@${{ env.OPENSPEC_VERSION }}
       - name: 准备依赖
         run: |
           uv sync --project backend --locked
@@ -74,7 +74,7 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/${{ env.UV_VERSION }}/install.sh | sh
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          npm install -g @openspec/cli@${{ env.OPENSPEC_VERSION }}
+          npm install -g @fission-ai/openspec@${{ env.OPENSPEC_VERSION }}
       - name: 准备依赖
         run: |
           uv sync --project backend --locked

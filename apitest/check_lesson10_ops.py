@@ -130,6 +130,9 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
     check("CI5 正常：镜像使用提交号标签并带 OCI revision",
           "GIT_SHA" in (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
           and "org.opencontainers.image.revision" in (ROOT / "backend/Dockerfile").read_text(encoding="utf-8"))
+    check("CI6 正常：安装实际存在的 OpenSpec npm 包",
+          "@fission-ai/openspec@${{ env.OPENSPEC_VERSION }}" in workflow_text
+          and "@openspec/cli" not in workflow_text)
 
 print(json.dumps({"passed": len(checks), "checks": checks, "scope": "temporary SQLite; no containers/models"},
                  ensure_ascii=False))
