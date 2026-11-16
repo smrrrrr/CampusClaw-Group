@@ -1,0 +1,105 @@
+{
+  "updated": "2026-11-16",
+  "scope": "campusclaw-backend 运行镜像 OS 层（python:3.12-slim / debian 13.7）",
+  "review_after": "2026-12-15",
+  "basis": "trivy image --severity HIGH,CRITICAL，run 43881954432 产物 trivy-backend.txt；下列条目的 Fixed Version 列为空，debian 13.7 仓库当前无修复版本",
+  "process": "有修复版本的包在 backend/Dockerfile 运行层用 apt-get upgrade 修掉，不登记例外；无修复版本的按 CVE 登记，过期后 scripts/trivy_os_gate.py 自动判失败",
+  "entries": [
+    {
+      "cve": "CVE-2026-76642",
+      "packages": ["bsdutils", "libblkid1", "liblastlog2-2", "libmount1", "libsmartcols1", "libuuid1", "login", "mount", "util-linux"],
+      "installed": "2.41.5-0+deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。组件为 util-linux 的挂载/登录工具链，容器以非 root（uid 10001）运行，应用不调用 mount、login、nsenter 等入口，镜像内无 setuid 提权路径。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-78408",
+      "packages": ["bsdutils", "libblkid1", "liblastlog2-2", "libmount1", "libsmartcols1", "libuuid1", "login", "mount", "util-linux"],
+      "installed": "2.41.5-0+deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。nsenter --join-cgroup 的权限泄漏，攻击面要求容器内可执行 nsenter 且具备相关 capability；运行容器不挂载宿主 PID/Cgroup 命名空间，且以非 root 运行。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-78409",
+      "packages": ["bsdutils", "libblkid1", "liblastlog2-2", "libmount1", "libsmartcols1", "libuuid1", "login", "mount", "util-linux"],
+      "installed": "2.41.5-0+deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。X-mount.subdir 符号链接逃逸，触发需应用执行 mount 调用；应用不执行挂载操作，容器仅使用 compose 提供的固定卷。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-78410",
+      "packages": ["bsdutils", "libblkid1", "liblastlog2-2", "libmount1", "libsmartcols1", "libuuid1", "login", "mount", "util-linux"],
+      "installed": "2.41.5-0+deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。restricted bind mount 未固定源；同 CVE-2026-78409，应用不执行 mount，容器无 CAP_SYS_ADMIN。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2025-69720",
+      "packages": ["libncursesw6", "libtinfo6", "ncurses-base"],
+      "installed": "6.5+20250216-2",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。ncurses 终端能力处理，应用为无 TTY 的 FastAPI 服务，不解析不可信 terminfo 数据。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-119373",
+      "packages": ["libsqlite3-0"],
+      "installed": "3.46.1-7+deb13u2",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。应用使用 SQLite 存储，缓解为非 root 运行、数据库文件仅容器内、写入经 ORM 参数化、不执行外部 SQL 文本。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-119374",
+      "packages": ["libsqlite3-0"],
+      "installed": "3.46.1-7+deb13u2",
+      "fixed": "",
+      "reason": "同 CVE-2026-119373：无修复版本，缓解为非 root + 参数化访问 + 数据库不对外暴露。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-119379",
+      "packages": ["libsqlite3-0"],
+      "installed": "3.46.1-7+deb13u2",
+      "fixed": "",
+      "reason": "同 CVE-2026-119373：无修复版本，缓解为非 root + 参数化访问 + 数据库不对外暴露。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-16742",
+      "packages": ["libsystemd0", "libudev1"],
+      "installed": "257.13-1~deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。容器内不运行 systemd，库仅被动态链接加载，未调用 systemd 接口。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-54369",
+      "packages": ["libacl1"],
+      "installed": "2.3.2-2+b1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。libacl 符号链接穿越提权要求攻击者已能在容器内创建文件并调用 ACL 接口；应用不接受任意路径参数。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-9538",
+      "packages": ["perl-base"],
+      "installed": "5.40.1-6+deb13u1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。perl-base 为基础镜像依赖，应用不执行任何 Perl 脚本，也不把外部输入交给 perl 解析。",
+      "review_after": "2026-12-15"
+    },
+    {
+      "cve": "CVE-2026-85091",
+      "packages": ["zlib1g"],
+      "installed": "1:1.3.dfsg+really1.3.1-1+b1",
+      "fixed": "",
+      "reason": "debian 13.7 无修复版本。zlib 解压溢出，触发需应用解压不可信压缩流；应用仅解压上传的 docx/pptx，且对大小与类型有校验。同包的 CVE-2026-76844 已有补丁，由运行层 apt-get upgrade 修掉。",
+      "review_after": "2026-12-15"
+    }
+  ]
+}

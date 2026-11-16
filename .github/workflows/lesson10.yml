@@ -192,28 +192,37 @@ jobs:
             docker image inspect "$image" --format '{{.Id}} {{json .Config.Labels}}' \
               | tee "reports/lesson-10/ci/${svc}-image.txt"
           done
-      - name: 扫描镜像（trivy，高危/严重非零即失败）
+      # 三次扫描都跑完再判定：单个镜像红不再掩盖其余镜像的结果。
+      # 扫描只出报告（exit-code 0），判定交给 scripts/trivy_os_gate.py：
+      # CRITICAL 一票否决；HIGH 必须有修复版本或未过期的书面例外。
+      - name: 扫描后端镜像（出报告，不判定）
         uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: campusclaw-backend:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
-          exit-code: "1"
-          format: table
-          output: reports/lesson-10/ci/trivy-backend.txt
-      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+          exit-code: "0"
+          format: json
+          output: reports/lesson-10/ci/trivy-backend.json
+      - name: 扫描前端镜像（出报告，不判定）
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: campusclaw-frontend:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
-          exit-code: "1"
-          format: table
-          output: reports/lesson-10/ci/trivy-frontend.txt
-      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+          exit-code: "0"
+          format: json
+          output: reports/lesson-10/ci/trivy-frontend.json
+      - name: 扫描 MCP 工具镜像（出报告，不判定）
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: campusclaw-mcp-tools:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
-          exit-code: "1"
-          format: table
-          output: reports/lesson-10/ci/trivy-mcp-tools.txt
+          exit-code: "0"
+          format: json
+          output: reports/lesson-10/ci/trivy-mcp-tools.json
+      - name: OS 层漏洞门禁（CRITICAL 一票否决，HIGH 按书面例外）
+        run: |
+          python3 scripts/trivy_os_gate.py reports/lesson-10/ci/trivy-*.json \
+            | tee reports/lesson-10/ci/os-vuln-gate.txt
       - name: 归档镜像证据
         if: always()
         uses: actions/upload-artifact@v4

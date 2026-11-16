@@ -23,6 +23,14 @@ LABEL org.opencontainers.image.title="campusclaw-backend" \
 
 WORKDIR /app
 
+# 系统层安全更新：基础镜像 python:3.12-slim（debian 13.7）发布后，stable-security 仍有可用补丁
+# （如 zlib1g 的 CVE-2026-76844）。构建时拉一次安全更新，把「有修复版本」的系统包修掉；
+# 无修复版本的包另行登记书面例外（reports/security-evidence/os-vuln-exceptions.json）。
+# 代价：构建期依赖 apt 源可达（与 builder 层"不装编译工具"的取舍不同），失效条件见规范书面例外。
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
