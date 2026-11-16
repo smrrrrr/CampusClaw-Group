@@ -11,6 +11,35 @@ MAX_LOGIN_FAILURES = 5
 LOCK_MINUTES = 15
 logger = logging.getLogger(__name__)
 
+# 审计文本字段上限，与 models.AuditLog 的 String(N) 列宽一致。
+# 放在入口统一截断：调用方（main.py / materials.py / student.py / lesson_plans.py）
+# 无需各自处理，新增调用点自动受益。SQLite 不校验长度，不截断会掩盖问题。
+_AUDIT_TEXT_LIMITS = {
+    "action": 64,
+    "object_id": 128,
+    "skill_id": 64,
+    "request_path": 256,
+    "ip_address": 64,
+    "role": 20,
+    "subject": 32,
+}
+
+
+def _clean_audit_text(value: str | None, limit: int) -> str | None:
+    """清洗审计文本字段：控制字符换空格，按列宽截断；None 原样返回。
+
+    不追加省略标记：object_id 等值可能被精确匹配，加后缀会让查询失效。
+    超长是否被截断可由「长度等于上限」推断，无需额外标记。
+    """
+    if value is None:
+        return None
+    text = "".join(" " if ch < " " or ch == "\x7f" else ch for ch in value)
+    return text[:limit]
+
+
+def _audit_text(field: str, value: str | None) -> str | None:
+    return _clean_audit_text(value, _AUDIT_TEXT_LIMITS[field])
+
 # 校园场景按中国时区划分自然日
 _CN_TZ = timezone(timedelta(hours=8))
 
@@ -92,20 +121,23 @@ def write_audit_log(
     duration_ms: int | None = None,
     tokens: int | None = None,
 ) -> None:
-    """同步写入审计日志（由 BackgroundTasks 调用，异常仅打印日志）。"""
+    """同步写入审计日志（由 BackgroundTasks 调用，异常仅打印日志）。
+
+    文本字段在此统一清洗与截断（见 _AUDIT_TEXT_LIMITS），调用方传入原始值即可。
+    """
     try:
         log = AuditLog(
             user_id=user_id,
-            role=role,
-            subject=subject,
+            role=_audit_text("role", role),
+            subject=_audit_text("subject", subject),
             class_id=class_id,
-            request_path=request_path,
+            request_path=_audit_text("request_path", request_path),
             method=method,
             status_code=status_code,
-            ip_address=ip_address,
-            action=action,
-            object_id=object_id,
-            skill_id=skill_id,
+            ip_address=_audit_text("ip_address", ip_address),
+            action=_audit_text("action", action),
+            object_id=_audit_text("object_id", object_id),
+            skill_id=_audit_text("skill_id", skill_id),
             duration_ms=duration_ms,
             tokens=tokens,
         )

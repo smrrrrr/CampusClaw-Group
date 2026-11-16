@@ -38,7 +38,7 @@
 | 4.3 迁移脚本 | **已实现** | `scripts/migrate_audit_fields.py` 存在 |
 | 4.4 工具调用写入三列 | **已实现** | `backend/mcp_orchestrator.py` 写 `McpToolCall` 时填充；`mcp_tool_calls` 表结构含三列 |
 | 4.5 `write_audit_log` 新增参数 + 拒绝请求也写 | **已实现** | `backend/services.py:78` 签名含 `action/object_id/skill_id/duration_ms/tokens`；`mcp_orchestrator.py:206` 对 denied 记 `status_code=403` |
-| 4.6 日志字段转义与截断 | **缺失** | `write_audit_log`（`services.py:96—118`）直接赋值，**没有** `json.dumps` 转义，也没有长度截断。`object_id` 若含换行会破坏单行 JSON 日志格式 |
+| 4.6 日志字段转义与截断 | **已实现（补修）** | 核对时此条确实缺失：`write_audit_log` 直接赋值，无长度截断。已由变更 `openspec/changes/2026-11-16-harden-audit-field-bounds/` 补齐：`services.py:17` `_AUDIT_TEXT_LIMITS` 按 `AuditLog` 列宽定义 7 个文本字段上限，`services.py:28` `_clean_audit_text` 把 U+0000–U+001F 与 U+007F 换为空格并按上限截断（`None` 原样返回），`write_audit_log` 七个文本字段统一走该函数。回归 `apitest/check_audit_field_bounds.py` 24/24 通过并纳入 `make check`。补充更正：控制字符对单行 JSON 日志的破坏风险被高估——`backend/logging_setup.py:36` 的 `JsonFormatter` 已用 `json.dumps` 转义；真实缺口是**长度**（SQLite 不校验 `String(N)`，超长不报错），`main.py:122` 曾手工 `[:256]` 兜底，其余 3 处调用方没有 |
 | 4.7 审计查询接口授权（学生 403） | **已实现** | `backend/routers/teacher.py:387` `@router.get("/audit-logs")` 依赖 `Depends(get_current_teacher)`，学生令牌进不来 |
 | 4.8 复测七列齐全 | **待确认** | 代码具备七列；未见该轮探针输出归档 |
 
@@ -77,13 +77,27 @@
 
 | 结论 | 数量 |
 | --- | --- |
-| 已实现 | **32** |
+| 已实现 | **33**（含 4.6 补修） |
 | 待确认（代码在、缺当次记录） | **3**：2.5、4.8、7.4 |
-| 缺失 | **1**：4.6 日志转义与截断 |
+| 缺失 | **0** |
+
+> 4.6 初次核对时为**缺失**（32 / 3 / 1）；补齐后重算为 33 / 3 / 0。补修变更与提交号见第四节。
 
 ## 四、建议
 
-1. **4.6 是真缺口**，且成本很低：在 `write_audit_log` 里对字符串字段做 `json.dumps` 或截断即可。要不要修由你和评审决定；按项目规则改行为要先改规约。
-2. **待确认的 5 项**需要当时的运行记录，可以重跑探针补齐（`apitest/probe_security_precheck.py`），或由评审认可现有代码状态后补勾。
-3. **`tasks.md` 未改动**：按 AGENTS.md「未经明确指示，不修改 tasks.md 的勾选状态」，本文件只做核对，勾选与否等你裁决。
+1. ~~**4.6 是真缺口**~~ → **已修**：变更 `openspec/changes/2026-11-16-harden-audit-field-bounds/`（含 proposal / design / spec delta / tasks / verification-plan），代码改动集中在 `backend/services.py` 的 `_clean_audit_text`，回归在 `apitest/check_audit_field_bounds.py`。
+2. **待确认的 3 项**需要当时的运行记录，可以重跑探针补齐（`apitest/probe_security_precheck.py`），或由评审认可现有代码状态后补勾。
+3. **`tasks.md` 未改动**：按 AGENTS.md「未经明确指示，不修改 tasks.md 的勾选状态」，本文件只做核对，勾选与否等你裁决。4.6 亦然——补修不自动勾选历史变更的框。
 4. 该变更一直缺 `validation.md`。若决定收口，建议补一份，把上表"已实现"的项作为验收依据，而不是简单勾 30 个框。
+
+## 五、4.6 的补修清单
+
+| 项 | 位置 |
+| --- | --- |
+| 规约（行为变更先行） | `openspec/changes/2026-11-16-harden-audit-field-bounds/specs/rbac-role-permissions/spec.md` |
+| 实现 | `backend/services.py:17—41`（常量、清洗函数）、`services.py:128—143`（`write_audit_log` 内逐字段接入） |
+| 回归 | `apitest/check_audit_field_bounds.py`（24 条断言），已由 `make check` 通配加载 |
+| 验证计划 | `openspec/changes/2026-11-16-harden-audit-field-bounds/verification-plan.md` |
+| 提交号 | 见本文件落库后的提交 `git log -1 --format=%h -- reports/security-fix-lesson09-status-2026-11-16.md` |
+
+不在本次范围：不回溯清洗历史超长记录、不改表结构、不加数据库迁移。
