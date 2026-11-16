@@ -164,6 +164,23 @@ jobs:
       - name: 记录实际提交
         id: rev
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: 生成一次性构建环境（不入库）
+        # docker-compose.yml 对 JWT_SECRET_KEY / GRADING_BROKER_PASSWORD 用 :? 强校验，
+        # 缺 .env 时 `docker compose build` 会在插值阶段直接失败；这里只提供构建期占位值。
+        run: |
+          python3 - <<'PY'
+          import base64, os, pathlib, secrets
+          pathlib.Path(".env").write_text(
+              "JWT_SECRET_KEY=%s\n" % secrets.token_urlsafe(48)
+              + "GRADING_BROKER_PASSWORD=%s\n" % secrets.token_urlsafe(24)
+              + "MCP_AUTH_TOKEN=%s\n" % secrets.token_hex(32)
+              + "MCP_TOKEN_KEY=%s\n" % base64.urlsafe_b64encode(os.urandom(32)).decode()
+              + "CAMPUSCLAW_PORT=8080\n"
+              + "CAMPUSCLAW_DATA_DIR=./data/current\n"
+              + "DEEPSEEK_API_KEY=\n",
+              encoding="utf-8",
+          )
+          PY
       - name: 构建三个应用镜像
         run: |
           GIT_SHA="${{ steps.rev.outputs.sha }}" docker compose build backend frontend mcp-tools
