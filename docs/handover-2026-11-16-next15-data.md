@@ -2,58 +2,73 @@
 
 配套文档：[交接评审文档](handover-2026-11-16-next15.md)。本文件只回答“数据在哪、怎么恢复、哪些不能传”。
 
-## 一、数据清单
+**这一版起，交接数据是一个离线数据包，不再只是哈希清单。** 此前 `handover-2026-11-16-next15.manifest.json` 与 `.data.json` 只记录文件哈希和状态，数据库、`.env`、上传正文都没有实体；现在这些内容打进 `handover-packs/2026-11-16-next15.zip`，走组内私有渠道传递，不进 Git。
 
-| 数据 | 位置 | 是否入库 | 用途 |
-| --- | --- | --- | --- |
-| 机器可读状态与全量文件哈希 | `docs/handover-2026-11-16-next15.data.json` | 是 | 161 个变更文件 + 门禁/版本/PR/CI 状态 |
-| 关键文件哈希 | `docs/handover-2026-11-16-next15.manifest.json` | 是 | 16 个核心文件快速核对 |
-| 实施证据 | `reports/lesson-10/20261116T124118Z-next15/` | 是 | 构建、镜像、隔离栈、HTTP 冒烟、双门禁原始输出 |
-| 补测证据 | `reports/lesson-10/20261116T215000Z-browser/` | 是 | headless Chrome 页面检查、KaTeX、跨班 403/404、门禁复跑 |
-| 安全扫描输出 | `reports/security-evidence/` | 是 | npm/pip 审计、例外登记、密钥扫描、账号核查 |
-| 本地数据库 | `data/current/campusclaw.db` | **否**（.gitignore） | 门禁读取四个演示身份；运行时数据 |
-| 上传资料 | `backend/uploads/` | **否** | 真实/合成资料正文，按需交接 |
-| 环境密钥 | `.env` | **否** | JWT、队列、MCP、模型密钥 |
-| 真实教学库与数据包 | 组内数据包（离线） | **否** | 只在组内传递，不进公开仓库 |
+## 一、数据包位置
 
-## 二、恢复步骤
+| 项 | 值 |
+| --- | --- |
+| 解压目录 | `campusgroup/handover-packs/2026-11-16-next15/`（仓库外，与 Git 无关） |
+| 压缩包 | `campusgroup/handover-packs/2026-11-16-next15.zip` |
+| 规模 | 232 个文件，解压约 3.8 MB，压缩后约 1.1 MB |
+| 校验值 | 与 zip 同目录的 `2026-11-16-next15.zip.sha256` |
+| 重新生成 | `python3 -I -B dist/pack-build.py`（脚本在仓库内，`dist/` 已被 `.gitignore` 忽略） |
 
-### 2.1 数据库（门禁所需）
+## 二、包内清单
 
-1. 从组内数据包取得 `campusclaw.db`（含四个演示身份）。
-2. 放到 `data/current/campusclaw.db`。
-3. 只读核对：
+| 路径 | 内容 | 是否含敏感数据 |
+| --- | --- | --- |
+| `db/campusclaw.db` | 本地 SQLite 2.1 MB；`users` 表仅 4 条：`TEA001`、`TEA002`、`20260001`、`20260002` | 是（演示账号哈希口令） |
+| `env/.env` | 本机真实配置 481 B，含 JWT / 队列 / MCP / 模型密钥 | 是（密钥） |
+| `env/.env.example` | 配置模板，密钥为空 | 否 |
+| `uploads/` | 33 个文件：12 份 Markdown + 21 张配图，子目录 `101`/`102`/`research` | 是（材料正文） |
+| `evidence/lesson-10/20261116T124118Z-next15/` | 第一批：基线、重锁、构建、镜像、隔离栈、HTTP 冒烟、双门禁、审计原文 | 已脱敏 |
+| `evidence/lesson-10/20261116T215000Z-browser/` | 第二批：headless Chrome 页面检查、KaTeX、跨班 403/404、门禁复跑 | 已脱敏 |
+| `evidence/security-evidence/` | `run.json`、`npm-audit.json`、`dependency-exceptions.json`、只读账号核查 | 已脱敏 |
+| `evidence/reports/` | `next-risk-applicability.md`、`scenario-coverage.md`、`boot-reproduce.md` | 否 |
+| `evidence/report.md` | 根报告快照 | 否 |
+| `openspec/2026-11-16-upgrade-next-15-5-28/` | proposal / design / tasks / verification-plan | 否 |
+| `docs/` | 交接说明、本文件、哈希清单、机器可读状态 | 已脱敏 |
+| `patches/next15-code.patch` | 仅代码：`package.json`、`package-lock.json`、workflow、例外表 | 否 |
+| `ci/ci-status.json` | 远端 CI run 状态 | 否 |
+| `README.md`、`MANIFEST.json`、`SHA256SUMS.txt`、`verify.py` | 包说明、元数据、逐文件哈希、校验脚本 | 否 |
 
-```bash
-sqlite3 data/current/campusclaw.db \
-  "select identifier, role, class_id from users where identifier in ('<demo-teacher-1>','<demo-teacher-2>','<demo-student-1>','<demo-student-2>');"
-```
-
-4. 再运行 `make check-security`；缺库会以 `BLOCKED / exit 2` 结束，属范围未完成。
-
-### 2.2 环境变量
-
-按 `.env.example` 生成 `.env`，至少包含：`JWT_SECRET_KEY`、`GRADING_BROKER_PASSWORD`、`MCP_AUTH_TOKEN`、`MCP_TOKEN_KEY`、`CAMPUSCLAW_DATA_DIR`、`CAMPUSCLAW_PORT`、`DEEPSEEK_API_KEY`（可为空）。
-
-### 2.3 上传资料
-
-从数据包恢复 `backend/uploads/`；不要将真实学生资料提交到 Git。
-
-## 三、校验方式
+## 三、恢复步骤
 
 ```bash
-python3 - <<'PY'
-import hashlib, json
-d = json.load(open("docs/handover-2026-11-16-next15.data.json"))
-bad = [f["path"] for f in d["files"] if hashlib.sha256(open(f["path"],"rb").read()).hexdigest() != f["sha256"]]
-print("mismatch:", bad)
-PY
+# 1) 先校验完整性，不通过就不要用
+python3 -I verify.py                 # 期望输出 OK
+
+# 2) 放进仓库（注意目标路径）
+cp db/campusclaw.db   <repo>/data/current/campusclaw.db
+cp env/.env           <repo>/.env
+cp -R uploads/.       <repo>/backend/uploads/
+
+# 3) 确认四个演示身份
+sqlite3 <repo>/data/current/campusclaw.db "select identifier, role from users;"
+
+# 4) 双门禁
+cd <repo> && make check && make check-security
 ```
 
-输出 `mismatch: []` 表示交接内容与清单一致。
+`make check` 期望 41/41 PASS、exit 0；`make check-security` 期望 PASS、exit 0。缺库会以 `BLOCKED / exit 2` 结束，属范围未完成，不是漏洞红项。
 
-## 四、交接边界
+## 四、校验方式
 
-- 本仓库为公开仓库：数据库、`.env`、上传正文、令牌一律不提交。
-- 证据中的演示账号标识已替换为 `<demo-teacher-1>` 等占位符；绝对路径已脱敏。
-- 若需把真实数据交给下一位组员，走组内私有渠道，不使用 Git。
+三层，任一层不符即视为包损坏或被改过：
+
+1. `python3 -I verify.py` → `OK`（逐文件对 `SHA256SUMS.txt`）；
+2. `shasum -a 256 2026-11-16-next15.zip` 对比同名 `.sha256`；
+3. `MANIFEST.json` 里的提交号、分支、门禁状态应与仓库 `git log` 一致。
+
+## 五、不入包、不入库
+
+- 真实教学库全量数据、学生作业正文、任何令牌明文；
+- 镜像 tar、容器卷、`node_modules`、构建产物；
+- 真实模型调用日志。
+
+## 六、传递边界
+
+- 本包含 `.env` 与本地库，**只走组内私有渠道**；不要解压进公开仓库目录，不要提交，不要生成公开下载链接。
+- 要交给组外，先轮换 `.env` 全部密钥，并删除 `env/.env` 后重新打包。
+- 远端公开仓库里只有脱敏证据（演示标识替换为 `<demo-teacher-1>` 等占位符、绝对路径脱敏），与本包不重合。

@@ -1,6 +1,6 @@
 # 交接说明：Next.js 15.5.28 升级（2026-11-16）
 
-本文件面向接手人，说明当前状态、如何启动、如何评审、剩余任务怎么做，以及本次工作由谁完成。结论与索引同步在根 [report.md](../../report.md)，原始证据在 `reports/`。
+本文件面向接手人，说明当前状态、如何启动、如何评审、剩余任务怎么做，以及本次工作由谁完成。结论与索引同步在根 [report.md](../../report.md)，原始证据在 `reports/`，可私下传递的数据实体在 **`handover-packs/2026-11-16-next15.zip`**（仓库外，见[数据说明](handover-2026-11-16-next15-data.md)）。
 
 ## 一、当前状态
 
@@ -9,16 +9,18 @@
 | 变更目录 | `openspec/changes/2026-11-16-upgrade-next-15-5-28/`（5 个文件，`skip_specs: true`） |
 | 代码改动 | `frontend/package.json` 仅 `next` 14.2.15 → **15.5.28**；`frontend/package-lock.json` 定向重锁 |
 | 清单 | `tasks.md` **14/14** 已勾选（证据见下） |
-| 门禁 | `make check` **41/41 PASS，exit 0**；`make check-security` **PASS，exit 0** |
+| 门禁（本地） | `make check` **41/41 PASS，exit 0**；`make check-security` **PASS，exit 0** |
 | 审计 | npm `critical=0 / high=0 / moderate=0 / low=4`（4 个 low 已在例外表登记） |
 | 镜像 | `campusclaw-frontend:next15-20261116t124118z`，运行层 `.py=0` |
-| 提交 | 本文件所在提交；分支 `deps/upgrade-a-b`，PR 面向 `main` |
+| 提交 | 分支 `deps/upgrade-a-b`，HEAD `90bcbe7`，PR #3 面向 `main` |
+| 远端 CI | run `43877256576`（`6325bd1`）：`check` pass、`security` pass、`images` fail（`Set up job`：`aquasecurity/trivy-action@0.28.0` 无法解析）→ 已修复 tag 并补一次性 `.env`，重跑结果见 `ci/ci-status.json` |
 | 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节 |
 
 ## 二、交接数据
 
-| 数据 | 路径 | 说明 |
+| 数据 | 位置 | 说明 |
 | --- | --- | --- |
+| **数据包（实体）** | `campusgroup/handover-packs/2026-11-16-next15.zip` | 232 个文件；含本地库、`.env`、上传材料、证据、提案。**仓库外，不进 Git**，组内私下传递 |
 | 提案与验收标准 | `openspec/changes/2026-11-16-upgrade-next-15-5-28/` | proposal / design / tasks / verification-plan |
 | 实施证据（第一批） | `reports/lesson-10/20261116T124118Z-next15/` | 基线、重锁、构建、镜像、隔离栈、HTTP 冒烟、双门禁、审计原文 |
 | 补测证据（第二批） | `reports/lesson-10/20261116T215000Z-browser/` | headless Chrome 页面检查、KaTeX、跨班 403/404、安全门禁复跑 |
@@ -26,18 +28,20 @@
 | 风险适用性 | `reports/next-risk-applicability.md` | 14.2.15 历史论证已被升级替代的说明 |
 | 场景矩阵 | `reports/scenario-coverage.md` | 505 条逐条判定（第10课任务 1.2） |
 | 启动复现 | `reports/boot-reproduce.md` | 七服务独立启动（第10课任务 2.3） |
-| 数据包 | `data/current/campusclaw.db` | **不入 Git**；需从组内数据包恢复，供 `make check-security` 读取四个演示身份 |
-| 私有配置 | `.env` | **不入 Git**；按 `.env.example` 生成，含 JWT/队列/模型密钥 |
+| 哈希清单 | `docs/handover-2026-11-16-next15.manifest.json` | 16 个关键文件快速核对 |
+| 机器可读状态 | `docs/handover-2026-11-16-next15.data.json` | 变更文件哈希 + 门禁/版本/PR/CI 状态 |
+| 本地数据库 | `data/current/campusclaw.db` | **不入 Git**；由数据包恢复，`make check-security` 读取四个演示身份 |
+| 私有配置 | `.env` | **不入 Git**；由数据包恢复或按 `.env.example` 生成 |
 
-哈希清单见 [manifest.json](handover-2026-11-16-next15.manifest.json)；完整交接数据说明见 [handover-2026-11-16-next15-data.md](handover-2026-11-16-next15-data.md)。
+数据包怎么解、怎么校验、哪些不能外传，见[数据说明](handover-2026-11-16-next15-data.md)。
 
 ## 三、如何启动（接手人从零开始）
 
 ### 3.1 前置
 
 - Node 22+、npm 10+、Python 3.12、`uv`、Docker Desktop。
-- 从组内数据包恢复 `data/current/campusclaw.db`（至少包含 `<demo-teacher-1>/<demo-teacher-2>/<demo-student-1>/<demo-student-2>` 四个演示身份）。
-- 按 `.env.example` 生成根目录 `.env`（密钥不得提交）。
+- 从数据包恢复 `data/current/campusclaw.db`（含 `<demo-teacher-1>`/`<demo-teacher-2>`/`<demo-student-1>`/`<demo-student-2>` 四个演示身份）、`.env` 与 `backend/uploads/`。
+- 先跑 `python3 -I verify.py`，输出 `OK` 再往下。
 
 ### 3.2 前端构建
 
@@ -79,16 +83,17 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 建议按以下顺序，每条都能在证据里找到对应项：
 
-1. **读提案**：`proposal.md` → `design.md` → `verification-plan.md`，确认范围只有依赖升级，没有业务行为变化。
-2. **核对 diff**：
+1. **先验数据包**：`python3 -I verify.py` 输出 `OK`，再比对 zip 的 `.sha256`。
+2. **读提案**：`proposal.md` → `design.md` → `verification-plan.md`，确认范围只有依赖升级，没有业务行为变化。
+3. **核对 diff**：
    - `git diff main -- frontend/package.json` 应只有 `next` 一行；
    - `frontend/package-lock.json` 不应出现 React/其他主版本漂移；
    - `git diff main -- scripts/security_precheck.py` 应为空（**未放宽任何门禁**）。
-3. **核对审计与例外**：`npm audit --omit=dev --json` 的 critical/high 为 0；`reports/security-evidence/dependency-exceptions.json` 的版本与 GHSA 必须与审计原文一致，且含复查日期。
-4. **核对勾选**：逐条对照 `tasks.md` 与证据路径；重点看 3.2/3.3/4.3 的边界说明是否与证据一致。
-5. **复跑门禁**：至少执行 `make check` 与 `make check-security`，退出码应为 0。
-6. **看报告而非听结论**：`report.md` 的每个数字都应能在 `reports/` 找到原始输出；发现不符按 FAIL 处理。
-7. **红灯项**：若 `make check-security` 变 BLOCKED，先确认是数据包缺失还是新增漏洞；不要用豁免表掩盖真实 high/critical。
+4. **核对审计与例外**：`npm audit --omit=dev --json` 的 critical/high 为 0；例外表的版本与 GHSA 必须与审计原文一致，且含复查日期。
+5. **核对勾选**：逐条对照 `tasks.md` 与证据路径；重点看 3.2/3.3/4.3 的边界说明是否与证据一致。
+6. **复跑门禁**：至少执行 `make check` 与 `make check-security`，退出码应为 0。
+7. **看报告而非听结论**：`report.md` 的每个数字都应能在 `reports/` 找到原始输出；发现不符按 FAIL 处理。
+8. **红灯项**：若 `make check-security` 变 BLOCKED，先确认是数据包缺失还是新增漏洞；不要用豁免表掩盖真实 high/critical。
 
 评审红线：
 
@@ -108,7 +113,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 4.2 组员独立验收 | 另一名组员 | 按 `demo-checklist.md` 从新目录走四项判定，本人签名 |
 | 5.1 分工与复核 | 真实姓名/角色 | 在 `lesson10-delivery.md` 填 A/B/C 负责人与交叉复核结论 |
 | 5.6 main 保护 | 仓库 admin | owner 配 required checks `check`/`security` |
-| 7.2 受控绿版本 | 推送 + CI 种子 | 推送后用 PR 跑 CI；先在 workflow 临时库补四个演示身份 |
+| 7.2 受控绿版本 | 远端全绿 | `check`/`security` 已绿；待 `images` 修复后确认全绿，再留 run 链接与镜像摘要 |
 | 7.3 故障重放收口 | required check | 5.6 完成后，在测试 PR 验证红色状态无法合入并留证 |
 | 7.4 线上反查 | 线上部署目标 | 部署后记录 URL → digest → revision → CI run → commit |
 | 8.5 告警规则 | 接收通道/授权 | 与负责人确认渠道，补 `reports/observe-alert.md` |
@@ -123,18 +128,19 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 ### 5.3 跨清单外部缺口
 
-- CI 临时库四个种子身份：已在 `.github/workflows/lesson10.yml` 增加写库步骤（2026-11-16），待远端复跑确认；
-- 远端 CI 已在 Next 15.5.28 上重跑一次（run `43876201284`）：`check` 通过，`security` 因种子身份缺失 BLOCKED；补种子后需再跑一次；
-- backend 镜像 OS 层 Trivy `HIGH=51` 另立维护任务；
+- `images` job 失败真因是 `aquasecurity/trivy-action@0.28.0` 这个 tag 不存在（仓库只有 `v0.28.0` 及更新版本），任务在 `Set up job` 阶段即失败；已在 `90bcbe7` 改为 `v0.28.0`；
+- 同一 job 还缺 `.env`：`docker-compose.yml` 对 `JWT_SECRET_KEY`、`GRADING_BROKER_PASSWORD` 用 `:?` 强校验，已在 `90bcbe7` 补构建前一次性占位 `.env`（本地用 `--env-file` 实证：空环境 exit 1、生成后 exit 0）；
+- backend 镜像 OS 层 Trivy `HIGH=51` 是历史问题，另立维护任务；`images` 能跑起来后仍可能因它变红；
 - 真实模型语义抽查、手机端、线上部署、真实告警接收。
 
 ## 六、已知边界与风险
 
 1. **跨班资料状态码**：学生篡改 `class_id` 参数 → 403（规约场景，实测通过）；按 ID 读取他班材料 → 404，属 `backend/routers/materials.py` 明示的防枚举设计。任务书两种说法按此区分，评审时不要误判为回归。
 2. **浏览器验收为桌面 headless Chrome**，不等于手机实机。
-3. **安全门禁依赖本地数据包副本**：CI 无种子身份时会 BLOCKED，需补 workflow 种子步骤。
+3. **安全门禁依赖本地数据包副本**：本地已恢复；CI 侧由 workflow 生成临时库并写入四个演示身份，已转绿。
 4. **SSE 在直接 Next rewrite 的 gzip 下短响应会合并**：Next 14/15 对照一致，非本次回归；Nginx 入口逐块正常。
 5. **未提交前镜像 revision 指向基线 SHA**：提交后重新构建才能让 OCI revision 对应新提交。
+6. **数据包在仓库外**：换机器、换组员时必须单独传递 zip；只 clone 仓库拿不到数据库与 `.env`。
 
 ## 七、工作说明（本次由谁完成）
 
@@ -144,6 +150,8 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 提案起草 | Claude Code | `openspec/changes/2026-11-16-upgrade-next-15-5-28/` 五份文件 |
 | 实施（改依赖、重锁、构建、隔离栈、审计、报告） | Codex CLI（写模式，经 codex-companion） | 对应第一批证据；未提交、未推送 |
 | 补测（页面验收、门禁复跑、证据归档） | Claude Code | headless Chrome + 本地库副本，对应第二批证据 |
+| CI 修复（`security` 种子身份、`images` 的 trivy tag 与一次性 `.env`） | Claude Code | `e08a99e`、`90bcbe7`；先取远端日志定位真因，本地复现后再改，未放宽门禁 |
+| 交接数据包打包 | Claude Code | `handover-packs/2026-11-16-next15.zip`，含库、`.env`、上传材料、证据；仓库外生成 |
 | 真人签名、手机实机、线上部署、告警接收 | **待接手人/组员** | 见第五节，不得由 AI 代签 |
 
 提交约定：单次提交；提交信息含 `Change:` / `Verify:` / `Evidence:` 三行；不添加 AI 共同作者署名。

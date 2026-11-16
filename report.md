@@ -10,9 +10,9 @@
 | 课程 | 结论 | 详细记录 |
 | --- | --- | --- |
 | 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
-| 第10课 测试交付与运行验证 | 既有验证见历史记录；Next 15 升级双门禁已绿，剩 3.3 跨班 404/403 判据待裁决；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
+| 第10课 测试交付与运行验证 | 既有验证见历史记录；Next 15 升级本地双门禁绿、远端 `check`/`security` 绿、`images` 已修待验；真人、required checks 与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
 
-第10课本次工作区验证（2026-11-16 UTC，Next `15.5.28`，尚未提交）：`make check` **41/41 PASS，exit 0**；`make check-security` 在将本地库只读副本放到 `data/current/` 后 **PASS，exit 0**（npm `critical=0/high=0/low=4` 已登记、`unregistered_vulns=[]`、backend/mcp 各 0 漏洞包），未改门禁判据或注入账号。旧 Next 14.2.15 的 critical 适用性论证已由升级替代，见 [next-risk-applicability.md](reports/next-risk-applicability.md)。本轮隔离安装/构建与前端镜像 `.py=0` 通过；HTTP 冒烟 26/29；headless Chrome 在独立栈完成登录、首次改密、刷新恢复、切班与登出 6/6 页面检查，Markdown/KaTeX 预览、学生篡改 `class_id` 返回 403 均通过。**变更清单 14/14 已按本轮实测勾选**；学生按 ID 读取他班材料为防枚举 404（`materials.py` 注释明示，规约未规定 by-ID 状态码）。实际证据见 [升级批次](reports/lesson-10/20261116T124118Z-next15/README.md) 与 [浏览器/门禁批次](reports/lesson-10/20261116T215000Z-browser/README.md)。
+第10课 Next 15 升级验证（2026-11-16 UTC，`next@15.5.28`，分支 `deps/upgrade-a-b`，HEAD `90bcbe7`，PR #3）：本地 `make check` **41/41 PASS，exit 0**；`make check-security` 在将本地库只读副本放到 `data/current/` 后 **PASS，exit 0**（npm `critical=0/high=0/low=4` 已登记、`unregistered_vulns=[]`、backend/mcp 各 0 漏洞包），未改门禁判据或注入账号。远端 run `43877256576`：`check` pass、`security` pass（workflow 内写入临时库四个演示身份后转绿）、`images` 在 `Set up job` 阶段失败（`aquasecurity/trivy-action@0.28.0` 无法解析，仓库仅有 `v0.28.0` 及更新 tag），已在 `90bcbe7` 改正 tag 并补构建前一次性 `.env`（compose 对 `JWT_SECRET_KEY`/`GRADING_BROKER_PASSWORD` 用 `:?` 强校验）。旧 Next 14.2.15 的 critical 适用性论证已由升级替代，见 [next-risk-applicability.md](reports/next-risk-applicability.md)。本轮隔离安装/构建与前端镜像 `.py=0` 通过；HTTP 冒烟 26/29；headless Chrome 在独立栈完成登录、首次改密、刷新恢复、切班与登出 6/6 页面检查，Markdown/KaTeX 预览、学生篡改 `class_id` 返回 403 均通过。**变更清单 14/14 已按本轮实测勾选**；学生按 ID 读取他班材料为防枚举 404（`materials.py` 注释明示，规约未规定 by-ID 状态码）。实际证据见 [升级批次](reports/lesson-10/20261116T124118Z-next15/README.md) 与 [浏览器/门禁批次](reports/lesson-10/20261116T215000Z-browser/README.md)；交接数据包 `handover-packs/2026-11-16-next15.zip`（含库、`.env`、上传材料，**仓库外私下传递**）与 [交接说明](docs/handover-2026-11-16-next15.md)、[数据说明](docs/handover-2026-11-16-next15-data.md) 同步。
 
 以下为升级前既有第10课记录，历史远端结果未在本轮刷新：backend、mcp-tools、frontend 三镜像均已达成 0 源码（`.py = 0`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；当前提交经空目录独立项目/端口启动成功，本机 registry push/pull digest 与临时库备份/上一 tag 回滚演练通过（均不代表远端或换机）；远端 Draft PR #3 的 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过，不构成受控绿版本；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
 
@@ -31,6 +31,7 @@
 | 真实用户反馈 | [feedback.md](reports/feedback.md) |
 | 命令盘点 | [command-inventory.md](reports/command-inventory.md) |
 | 交接说明（Next 15 升级） | [handover-2026-11-16-next15.md](docs/handover-2026-11-16-next15.md) |
+| 交接数据包（私有，不入库） | [数据说明](docs/handover-2026-11-16-next15-data.md)（实体为 `handover-packs/2026-11-16-next15.zip`） |
 | 场景矩阵与逐条映射 | [scenario-matrix.md](reports/scenario-matrix.md)、[scenario-coverage.md](reports/scenario-coverage.md) |
 | 镜像 0 源码方案与验证 | [no-source-plan.md](reports/no-source-plan.md) |
 | 在线用例执行记录 | [online-cases.md](reports/online-cases.md) |

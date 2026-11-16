@@ -193,21 +193,21 @@ jobs:
               | tee "reports/lesson-10/ci/${svc}-image.txt"
           done
       - name: 扫描镜像（trivy，高危/严重非零即失败）
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: campusclaw-backend:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
           exit-code: "1"
           format: table
           output: reports/lesson-10/ci/trivy-backend.txt
-      - uses: aquasecurity/trivy-action@0.28.0
+      - uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: campusclaw-frontend:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
           exit-code: "1"
           format: table
           output: reports/lesson-10/ci/trivy-frontend.txt
-      - uses: aquasecurity/trivy-action@0.28.0
+      - uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: campusclaw-mcp-tools:${{ steps.rev.outputs.sha }}
           severity: CRITICAL,HIGH
