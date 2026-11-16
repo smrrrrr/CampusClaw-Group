@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-16T21:58:00Z",
+  "generated_at": "2026-11-16T22:05:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "a944069930fd536664ec4077d41b23eca112c448",
+    "head": "a2a07da0f981c3dee57f3dee2d1ffba8718876ec",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -71,8 +71,8 @@
   "files": [
     {
       "path": ".github/workflows/lesson10.yml",
-      "bytes": 8555,
-      "sha256": "72374f8147e9c60065ed8f4d9bc641bad8796a7113760ab9846a302a4957428f"
+      "bytes": 8684,
+      "sha256": "9a36e5293f031a02f792e8fdf0faefd3b20431d9e5880b6c4800be7ec064cb4c"
     },
     {
       "path": "README.md",
@@ -86,18 +86,18 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 35192,
-      "sha256": "2a869f702677cc91e10f80f317af455585303f790e0800bdc128b8d1ac413e37"
+      "bytes": 36024,
+      "sha256": "cb5a86e9019be781209886751585ae9d749e195570b08b50281884f56a2f01ea"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
       "bytes": 2955,
-      "sha256": "94593765242babc2865d6d238091fdb91c81eb09d0a88eff148294826f3e92bf"
+      "sha256": "05366c9eef46dc3204cd5fa8d3eab80ef53312ab4bd7955260e87a199088d173"
     },
     {
       "path": "docs/handover-2026-11-16-next15.md",
-      "bytes": 11179,
-      "sha256": "db55148969892d86323caed8a966e46ff0eb2acab2812466429db264fdaa9a3f"
+      "bytes": 11850,
+      "sha256": "ffead8f79e510561e34c0edfc1ec232a0edf4034f1fd98eff8e5e1eab6371139"
     },
     {
       "path": "frontend/package-lock.json",
@@ -141,8 +141,8 @@
     },
     {
       "path": "report.md",
-      "bytes": 7240,
-      "sha256": "9c2f4e21751e5967704d483d54ac28d0012a95083b106694d7dae6da6feb59b3"
+      "bytes": 7413,
+      "sha256": "5c924f8b292e07126b15826dde8c031c1989f26a56ec1066cdfad67f618e82c4"
     },
     {
       "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
