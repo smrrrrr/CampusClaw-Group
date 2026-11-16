@@ -32,6 +32,7 @@ checkout 实际 SHA
 | 镜像标签参数贯通 Compose | PASS（`GIT_SHA` → image tag + build arg） | `docker-compose.yml`、三个 Dockerfile |
 | 镜像 OCI revision | 本机构建可查 | 见下方命令与 `boot/` 证据 |
 | 远端 CI 运行编号 | 已执行但为红：run `43826707775`（check 绿、security 红、images 跳过） | PR #3、`reports/lesson-10/20261116T075000Z-remote-ci/` |
+| 独立 PR 故障重放 | 已执行：run `43828237591` 的 `make check` 失败、`images` 跳过 | PR #4（已关闭）、`reports/lesson-10/20261116T080640Z-ci-fault-replay/` |
 | 镜像仓库 digest | 本机 registry 演练已产生；远端未产生 | `reports/lesson-10/20261116T024000Z-clone-registry-rollback/local-registry.txt` |
 | main required checks | 未配置；当前账号 `admin=false, maintain=false` | `gh api repos/...` 权限查询；无远端管理权限 |
 
@@ -74,6 +75,21 @@ docker image inspect campusclaw-backend:${GIT_SHA} --format '{{.Id}} {{index .Co
 - 安全 RED 是**真实门禁结果**，未放宽、未加 `continue-on-error`。`images` 被跳过是设计行为，说明“门禁绿才出镜像”生效。
 - 首次 404 日志见 `reports/lesson-10/20261116T075000Z-remote-ci/first-run-404.txt`，run 元数据与门禁摘要同目录。
 - **边界**：这是另一台 Linux 机器的运行证据，不是“另一个人”；因 `security` 未绿，**不构成 7.2 的受控绿版本，也没有 4.2 的远端 digest**。
+
+### 独立分支故障重放（任务 7.3，2026-11-16）
+
+在隔离分支 `ci-fault-replay`（基于 `6690202`）把 `check_lesson10_ops` 的 M2 预期值从 `1` 改为 `2`，提交 `a626a75`，以 Draft PR #4 触发远端运行；验证后关闭 PR、删除分支与临时 worktree。
+
+| 项 | 结果 |
+| --- | --- |
+| 本机 `scripts/check.py` | 退出码 **1**，失败项 `check_lesson10_ops` |
+| 远端 run `43828237591` 的 `make check` | **failure**：`AssertionError: M2 边界：纯索引迁移不改分块数据` |
+| 远端 `make check-security` | failure（与注入无关，正常分支本就 RED） |
+| `build-and-scan` | **skipped**，未构建、未推送、无 digest |
+
+- **证明**：注入的可逆故障会让远端 `make check` 失败，并使镜像 job 被跳过。
+- **未证明**：required check 阻止合入——当前账号无仓库管理权限，required checks 未配置（2.4）。因此 7.3 仍为部分完成。
+- 证据：`reports/lesson-10/20261116T080640Z-ci-fault-replay/`；PR #4 已关闭，`main` 未包含故障提交。
 
 ## 四、阻塞与后续
 

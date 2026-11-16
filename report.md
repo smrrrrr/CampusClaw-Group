@@ -39,6 +39,6 @@
 
 1. 安全门禁 `make check-security` 仍为 RED（Next 4 条 critical 不适用论证待课程书面认可；后端镜像 OS 层 Trivy HIGH=51 另立维护任务）。
 2. 3 名真实用户、换人双跑、另一人新目录启动、组员本人签名与真实负责人告警接收。
-3. CI 已在 GitHub Actions 实跑但为红（run `43826707775`：`check` 绿、`security` RED、`images` 跳过）；受控绿版本、远端镜像仓库 digest、main 保护、线上实例反查仍缺（本机 registry digest 与回滚演练已完成，不解除该项）。
+3. CI 已在 GitHub Actions 实跑但为红（run `43826707775`：`check` 绿、`security` RED、`images` 跳过）；独立分支故障重放已完成（run `43828237591`：`make check` 失败、`images` 跳过）。受控绿版本、远端镜像仓库 digest、main 保护（required check 未配置）、线上实例反查仍缺（本机 registry digest 与回滚演练已完成，不解除该项）。
 4. 手机浏览器实机验证与真实模型语义抽查。
 5. 场景矩阵 505 条已逐条判定：待补断言 **0**、P0 缺口 0、弱候选 **0**、仅文件级 **0**；人工复核确认 185 条、部分覆盖 22 条（备注写明未断言部分）、N/A 23 条（附理由）、已知缺口 3 条（工具说明注入句式；教师端按班级查看 AI 提问历史；AI 解答加入错题本）。部分覆盖与已知缺口不得计入「场景全覆盖」。在线用例已在 compose 网络内复跑至 24 passed / 1 skipped / 0 failed，唯一跳过为未配置模型 Key 时的工具审计。

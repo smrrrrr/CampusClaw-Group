@@ -29,6 +29,7 @@
 - **当前提交重建复验（2026-11-16，任务 6.1/7.1）**：七服务 + 四个观测容器全部启动，`/health`、`/api/health`、`/login` 200；backend/mcp-tools 镜像 `.py=0`、OCI revision 与提交一致；真实 RabbitMQ 异步复现 15 项 PASS。证据 `reports/lesson-10/20261116T161500Z-docker/`、`reports/async-grading/20261116tdockerreal-broker-result.json`。
 - **换目录 / 本机 registry / 备份回滚（2026-11-16）**：当前提交导出到空目录后独立项目/端口 8097 启动成功（七服务 Up、`/health` 与 `/login` 200、`.py=0`）；本机 `registry:2` push/pull 三镜像并记录 digest；演示库临时副本备份恢复指纹一致，`37aecf9` 上一 tag 在独立项目/端口 8098 回滚通过。均不替代换机、远端仓库或正式发布。证据 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/`、`reports/release-rollback.md`。
 - **GitHub Actions 远端实跑（2026-11-16）**：Draft PR #3 触发两次。首次因 `@openspec/cli` npm 404 失败；修复 `fca85f7` 后 run `43826707775` 的 `make check` 在远端 Ubuntu **41/41 通过**，`make check-security` **RED**（Next critical + 5 个未登记 npm 包；容器账本 blocked），`images` 按 `needs` 跳过。故远端没有镜像、Trivy 或 digest，也不构成受控绿版本。证据 `reports/lesson-10/20261116T075000Z-remote-ci/`。这是“另一台机器”，不是“另一个人”。
+- **独立分支故障重放（7.3，2026-11-16）**：在 `ci-fault-replay` 分支故意写错 M2 断言，Draft PR #4 的 run `43828237591` 中 `make check` **失败**、`images` **跳过**；本机退出码 1。验证后已关闭 PR、删除分支。required check 未配置，不能宣称“已阻止合入”。证据 `reports/lesson-10/20261116T080640Z-ci-fault-replay/`。
 
 ## 三、六份必交报告核对
 

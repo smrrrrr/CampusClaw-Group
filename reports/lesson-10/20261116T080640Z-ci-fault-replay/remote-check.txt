@@ -1,0 +1,12 @@
+run 43828237591 / job 133167046778
+make check	运行全量门禁	2026-11-16T08:05:11.8304459Z [PASS] check_frontend_image_safety  (0.0s)
+make check	运行全量门禁	2026-11-16T08:05:11.8304855Z [PASS] check_homework  (2.1s)
+make check	运行全量门禁	2026-11-16T08:05:11.8305217Z [PASS] check_injection  (2.7s)
+make check	运行全量门禁	2026-11-16T08:05:11.8305611Z [FAIL] check_lesson10_ops  (0.5s)
+make check	运行全量门禁	2026-11-16T08:05:11.8306028Z         Traceback (most recent call last):
+make check	运行全量门禁	2026-11-16T08:05:11.8306802Z           File "/home/runner/work/CampusClaw-Group/CampusClaw-Group/apitest/check_lesson10_ops.py", line 66, in <module>
+make check	运行全量门禁	2026-11-16T08:05:11.8307752Z             check("M2 边界：纯索引迁移不改分块数据", chunk_rows == 2)
+make check	运行全量门禁	2026-11-16T08:05:11.8308451Z           File "/home/runner/work/CampusClaw-Group/CampusClaw-Group/apitest/check_lesson10_ops.py", line 21, in check
+make check	运行全量门禁	2026-11-16T08:05:11.8309129Z             assert passed, name
+make check	运行全量门禁	2026-11-16T08:05:11.8309511Z                    ^^^^^^
+make check	运行全量门禁	2026-11-16T08:05:11.8309915Z         AssertionError: M2 边界：纯索引迁移不改分块数据

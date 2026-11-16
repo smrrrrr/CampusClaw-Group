@@ -19,5 +19,6 @@
 - [换目录、本机 registry 与备份回滚演练](release-rollback.md)
 - [流水线与 GitHub Actions 远端实跑](pipeline.md)
 - [远端 CI 原始证据（Draft PR #3，run 43826707775）](lesson-10/20261116T075000Z-remote-ci/README.md)
+- [独立分支故障重放（任务 7.3，PR #4 已关闭）](lesson-10/20261116T080640Z-ci-fault-replay/README.md)
 
 根目录report.md的正式课程报告尚未编写。这里的本机自检、真实队列+假模型结果，不代替另一成员复现、真实模型质量、外网部署或人工交叉评审。

@@ -56,7 +56,7 @@
 | 6.4 改进复测 | **分档记录（未整体宣称通过）** | SQL 级 P95 降 22.62%；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%（早期仅加索引时 API 级为 +0.4%） |
 | 7.1 门禁核查 | 部分 | 本机与 GitHub Actions 远端 Ubuntu 的 `make check` 均 41/41；安全门禁 RED（Next critical + 5 个未登记 npm 包，容器账本 blocked）待课程确认 |
 | 7.2 可复现核查 | 部分 | 本目录与当前提交空目录（独立项目/端口 8097）均启动成功；backend/mcp/frontend 三镜像均 0 源码已确认；换机未做 |
-| 7.3 流水线核查 | 部分 | PR #3 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过；不是受控绿版本 |
+| 7.3 流水线核查 | 部分 | PR #3 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过；独立分支故障重放 run `43828237591` 的 `make check` 失败、`images` 跳过。required check 未配置，不能证明阻止合入 |
 | 7.4 观测核查 | 部分 | 面板/窗口可用；真实通知未送达 |
 | 7.5 验证核查 | 部分 | 见 6.3/6.4/6.2 |
 | 7.6 Harness 规则 | PASS | `AGENTS.md` 七类责任表 + `.cursor/rules` 入口 |
@@ -83,7 +83,7 @@
 
 1. 安全门禁：Next.js 14.2.15 4 条 critical（及 `postcss`/`source-map-js` high）已论证在当前架构下不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证口径，若要求计数归零仍需升至 15.5.28+；另有 5 个未登记 npm 包（`katex`、`micromark-extension-math`、`next`、`rehype-katex`、`remark-math`）计入 RED，容器账本因演示库无四个种子身份为 blocked。后端镜像 OS 层 Trivy HIGH=51 另立维护任务。
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
-3. 远端环节：CI 已实跑但为红（run `43826707775`，`security` 未过、`images` 跳过），因此远端镜像仓库 digest、main 保护、线上实例反查仍缺。
+3. 远端环节：CI 已实跑但为红（run `43826707775`，`security` 未过、`images` 跳过）；独立分支故障重放已完成（run `43828237591`，`make check` 失败、`images` 跳过），但 required check 未配置。因此远端镜像仓库 digest、main 保护、线上实例反查仍缺。
 4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，第 6 轮 compose 网络内为 24 passed / 1 skipped / 0 failed（唯一跳过为未配置模型 Key 的工具审计）（`reports/online-cases.md`）。
 5. 场景矩阵已逐条判定（`reports/scenario-coverage.md`）：待补断言 0、P0 缺口 0、弱候选 0、仅文件级 0；505 条均有明确结论（人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23、已知缺口 3）。新增 `check_lesson10_scenario_gaps.py`（19 条）、`check_markdown_blanks.cjs`（9 条）、`check_mcp_server.py`（14 条）、`check_lesson10_review.py`（27 条）、`check_question_rendering.cjs`（4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。3 条已知缺口（工具说明注入句式、教师端按班级 AI 提问历史、AI 解答加入错题本）与 22 条部分覆盖均单列，不计入完全覆盖。
 6. 检索优化低并发档位：瓶颈档（并发 10）P95 已降 23.8%（达 ≥10%），但并发 3 P95 +7.6%，按分档规则如实记录。
@@ -235,3 +235,11 @@
 - **远端测试栈**：runner 上 backend/frontend/rabbitmq Healthy，nginx、mcp-tools、grading-worker、grading-dispatcher 已启动；随后安全门禁失败，`if: always()` 的清理步骤执行 `docker compose down -v`。`remote-stack.txt` 中一处 `curl: (56) Recv failure` 出现在等待循环，未影响后续步骤结论。
 - **证据**：`reports/lesson-10/20261116T075000Z-remote-ci/`（run 元数据、门禁摘要、脱敏安全状态、首次 404 日志、远端栈状态、README）。目录不含 `.env`、令牌、数据库或上传正文。
 - **仍未完成**：受控绿版本（要求 security 绿）、远端镜像构建与 digest（4.2）、main required checks（2.4，当前账号 `admin=false, maintain=false`）、线上实例反查（7.3/7.4）。
+
+### 8.13 独立分支故障重放（7.3，2026-11-16）
+
+- 在隔离分支 `ci-fault-replay`（基于 `6690202`）把 `apitest/check_lesson10_ops.py` 的 M2 预期值从 `1` 改为 `2`，提交 `a626a75`，以 Draft PR #4 触发远端运行；验证后关闭 PR 并删除分支。
+- 本机 `scripts/check.py`：退出码 **1**，失败项 `check_lesson10_ops`。
+- 远端 run `43828237591`：`make check` **failure**（`AssertionError: M2 边界：纯索引迁移不改分块数据`）；`make check-security` failure（与注入无关，正常分支本就 RED）；`build-and-scan` **skipped**，未构建镜像、无 digest。
+- **边界**：证明“可逆故障会让远端门禁失败并跳过镜像”，但不能证明“required check 阻止合入”——当前账号 `admin=false, maintain=false`，required checks 未配置（2.4），7.3 仍为部分完成。
+- 证据：`reports/lesson-10/20261116T080640Z-ci-fault-replay/`；PR #4 已关闭，`main` 未包含故障提交。
