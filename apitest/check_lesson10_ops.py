@@ -62,7 +62,8 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
         )]
     check("M1 正常：重复迁移两次后新覆盖索引存在、旧索引移除", "ix_material_chunk_class_material_chunk" in names
           and "ix_material_chunk_class_material" not in names)
-    check("M2 边界：纯索引迁移不改分块数据", chunk_rows == 1)
+    # 故障重放用临时断言：预期值故意写错，验证门禁能拦截；不得合并。
+    check("M2 边界：纯索引迁移不改分块数据", chunk_rows == 2)
     check("M3 正常：检索计划使用覆盖索引", any("COVERING INDEX" in line and "class_material_chunk" in line for line in plan))
 
     # 合成技能事件：直接写库，验证采集口径而非业务写入路径。
