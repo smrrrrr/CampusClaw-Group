@@ -2,7 +2,7 @@
   "generated_at": "2026-11-16T22:25:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "4715d69b4db668a254fbd2393d42fe5253f62cc7",
+    "head": "187844301879c1960ad9614e46363da3d134f3d8",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -67,7 +67,7 @@
       "gate": "scripts/trivy_os_gate.py（CRITICAL 一票否决；HIGH 未登记或过期即失败）"
     }
   },
-  "files_changed": 169,
+  "files_changed": 170,
   "evidence_batches": {
     "reports/lesson-10/20261116T124118Z-next15": 131,
     "reports/lesson-10/20261116T215000Z-browser": 6,
@@ -108,8 +108,8 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 37190,
-      "sha256": "989791c46f8deca8be783e2cdb7cd108a6979658bf84b1e4f0f7371635a2b886"
+      "bytes": 37327,
+      "sha256": "853dc9883065054da498672e62977d3592f8be38641f0704750d0bec009aa68d"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
@@ -860,6 +860,11 @@
       "path": "reports/next-risk-applicability.md",
       "bytes": 8966,
       "sha256": "dee604b257b31123fb7be9d3ec3d7ac440e669abc6f121ce0f7777399d9ebc70"
+    },
+    {
+      "path": "reports/pipeline.md",
+      "bytes": 8940,
+      "sha256": "8e083f400f5fb7728fd4440d469e1d152f02a32e47015921af5c6e46d6a84d08"
     },
     {
       "path": "reports/security-evidence/accounts-readonly.json",
