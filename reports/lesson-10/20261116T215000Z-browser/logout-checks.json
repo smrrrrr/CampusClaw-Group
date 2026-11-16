@@ -1,0 +1,33 @@
+{
+ "rows": [
+  {
+   "case": "teacher logged in",
+   "expected": "/teacher",
+   "actual": "http://127.0.0.1:55890/teacher/lesson-prep",
+   "passed": true
+  },
+  {
+   "case": "logout button clicked and returns /login",
+   "expected": true,
+   "actual": {
+    "clicked": true,
+    "url": "http://127.0.0.1:55890/login"
+   },
+   "passed": true
+  },
+  {
+   "case": "after logout reload stays /login",
+   "expected": true,
+   "actual": "http://127.0.0.1:55890/login",
+   "passed": true
+  },
+  {
+   "case": "refresh cookie cleared",
+   "expected": "no refresh cookie",
+   "actual": [],
+   "passed": true
+  }
+ ],
+ "passed": 4,
+ "total": 4
+}

@@ -1,0 +1,18 @@
+campusclaw-frontend@0.1.0 <private-temp>/frontend
+├─┬ next@15.5.28
+│ ├─┬ postcss@8.5.33 overridden
+│ │ └── source-map-js@1.2.2 overridden
+│ ├── react-dom@18.3.1 deduped
+│ ├── react@18.3.1 deduped
+│ └─┬ styled-jsx@5.1.6
+│   └── react@18.3.1 deduped
+├─┬ react-dom@18.3.1
+│ └── react@18.3.1 deduped
+├─┬ react-markdown@9.0.1
+│ └── react@18.3.1 deduped
+├── react@18.3.1
+└─┬ zustand@4.5.5
+  ├── react@18.3.1 deduped
+  └─┬ use-sync-external-store@1.2.2
+    └── react@18.3.1 deduped
+

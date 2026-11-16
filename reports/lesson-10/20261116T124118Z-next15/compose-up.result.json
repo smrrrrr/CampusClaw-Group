@@ -1,0 +1,20 @@
+{
+  "command": [
+    "docker",
+    "compose",
+    "--env-file",
+    "<private-temp>/.env",
+    "-p",
+    "<redacted>",
+    "-f",
+    "<private-temp>/compose.json",
+    "up",
+    "-d",
+    "--wait",
+    "--wait-timeout",
+    "150"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 12.57
+}

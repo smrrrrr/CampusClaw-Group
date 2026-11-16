@@ -1,10 +1,25 @@
-# Next.js 14.2.15 四条 critical 的适用性论证
+# Next.js 升级后的审计结论与历史适用性论证
+
+- 本次时间：2026-11-16 UTC；变更：`2026-11-16-upgrade-next-15-5-28`。
+- 对象：**未提交工作区** `next@15.5.28`；React / React DOM 保持 `18.3.1`，根 overrides 保持 `postcss@8.5.33`、`source-map-js@1.2.2`。
+- **14.2.15 的适用性论证已被升级至 15.5.28 替代**。下面保留的旧镜像日志、优化器不可用结论与 RED 原因仅是历史证据，不能描述本轮工作区或新镜像。
+- 本轮 `npm audit --omit=dev --json`：`critical=0`、`high=0`、`moderate=0`、`low=4`；审计命令 exit 1（存在低危），没有通过豁免折减高危数量。
+- 四个 low：`katex@0.16.47`、`micromark-extension-math@3.1.0`、`rehype-katex@7.0.1`、`remark-math@6.0.0`，均解析到 `GHSA-238p-pmpm-9mq7`。已按实际锁树登记范围、责任组、缓解措施、失效条件与 `review_after=2026-12-15`，移除旧 `next@14.2.15` 登记。低危登记不代表漏洞修复或人工签字。
+- Next 15 的可选传递依赖实际引入 **`sharp@0.35.5`**，新镜像 `/app/node_modules/sharp` 存在；不再使用“无 sharp”作为缓解前提。旧 `check_frontend_image_safety` 只检查 package.json 未直接声明 sharp，PASS 不能证明镜像中没有传递依赖 sharp。该脚本和所有门禁判据均未修改。
+- 隔离 `npm ci`、`npm run build` exit 0，静态页面生成 14/14（构建打印的路径表单独归档），类型检查通过，standalone server.js 存在；独立镜像 `.py=0`，OCI revision 与基线 HEAD 一致。revision 仅标识基础提交，锁文件 SHA-256 另标识未提交升级。
+- `make check` **exit 0，41/41 PASS**；`make check-security` **exit 2，BLOCKED**：`unregistered_vulns=[]`、npm high+critical=0、backend/mcp 本轮各 0 个漏洞包，但只读账号检查未找到四个演示身份。首次 pip 工具目录权限失败也保留记录，改用可写临时工具目录后完整重跑，未复用旧审计响应。
+- 独立八服务栈（原七服务 + 本地合成模型）HTTP 冒烟 26/29：入口 `/health`、`/login`、Next `/api` rewrite、登录/刷新完整会话、首次改密拦截、登出 Cookie 清除、鉴权配图、Nginx SSE 通过。跨班资料实际 **404，要求 403**；直接 Next rewrite 在 gzip 下短 SSE 合并（Next 14/15 同样现象，identity 下均逐块到达）。浏览器服务不可用，页面刷新/切班守卫与实际 Markdown/KaTeX 渲染待验；**不宣称运行时全部通过**。
+- 原始证据与阻塞项：[本轮 README](lesson-10/20261116T124118Z-next15/README.md)、[结果](lesson-10/20261116T124118Z-next15/results.json)。本轮不处理既有后端镜像 OS 层 Trivy HIGH=51，不声称容器 OS 漏洞已清零，也未提交、推送或归档 OpenSpec。
+
+---
+
+以下是 **Next.js 14.2.15 四条 critical 的历史适用性论证**（截至升级前）。
 
 - 日期：2026-11-14（UTC）
 - 分支：`deps/upgrade-a-b`，基于 `4b005e1`
 - 对象：`frontend` 镜像与源码，`next@14.2.15`
 - 性质：**实际适用性论证**，不改变 `npm audit` 的计数，也不改变安全门禁的 RED 结论
-- 结论：保持 14.2.15，4 条 critical 在当前代码与部署形态下均不可利用；但不宣称“零高危”
+- 历史结论（已被本次升级替代）：保持 14.2.15，4 条 critical 在当前代码与部署形态下均不可利用；但不宣称“零高危”
 
 ## 一、为什么需要这份论证
 
@@ -93,6 +108,6 @@ grep -rn "next/image" frontend/app frontend/components   # 无输出
 - 是否接受“版本范围内但受影响功能未启用”的论证，取决于课程口径；在获得明确答复前，不得宣称“高危 0 条”。
 - 若课程要求按审计计数归零，唯一路径仍是升级到 Next `15.5.28+`（或 `16.4.1+`），需独立变更与回归。
 
-## 七、结论
+## 七、历史结论（不适用于 Next 15）
 
 保持 `next@14.2.15` 在**当前代码与 Linux standalone 部署**下，4 条 critical 均不可触发；风险可接受，但安全门禁的 RED 与“未达课程零高危”的结论不变。任何启用图片优化、安装 sharp、middleware 承担鉴权或迁移 Windows 的改动，都必须先重评本论证。

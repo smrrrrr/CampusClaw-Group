@@ -1,0 +1,18 @@
+{
+  "command": [
+    "docker",
+    "compose",
+    "--env-file",
+    "<private-temp>/.env",
+    "-p",
+    "campusclaw-next15-20261116t124118z",
+    "-f",
+    "<private-temp>/compose.json",
+    "down",
+    "--volumes",
+    "--remove-orphans"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 3.32
+}

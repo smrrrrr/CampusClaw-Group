@@ -1,5 +1,5 @@
 {
-  "time": "2026-11-16T02:34:36.226493+00:00",
+  "time": "2026-11-16T12:57:11.455055+00:00",
   "scope": "temporary SQLite + fake LLM/MCP; no production writes",
   "mutation": {
     "material_access": false,
@@ -7,25 +7,25 @@
   },
   "checks": [
     {
-      "case": "PRE 登录 TEA001",
+      "case": "PRE 登录 <demo-teacher-1>",
       "expected": 200,
       "actual": 200,
       "passed": true
     },
     {
-      "case": "PRE 登录 TEA002",
+      "case": "PRE 登录 <demo-teacher-2>",
       "expected": 200,
       "actual": 200,
       "passed": true
     },
     {
-      "case": "PRE 登录 20260001",
+      "case": "PRE 登录 <demo-student-1>",
       "expected": 200,
       "actual": 200,
       "passed": true
     },
     {
-      "case": "PRE 登录 20260002",
+      "case": "PRE 登录 <demo-student-2>",
       "expected": 200,
       "actual": 200,
       "passed": true
@@ -98,7 +98,7 @@
       "passed": true
     },
     {
-      "case": "SEC-02 检索 20260001",
+      "case": "SEC-02 检索 <demo-student-1>",
       "expected": "本班1命中，他班2为空",
       "actual": {
         "http": 200,
@@ -109,7 +109,7 @@
       "passed": true
     },
     {
-      "case": "SEC-02 检索 20260002",
+      "case": "SEC-02 检索 <demo-student-2>",
       "expected": "本班2命中，他班1为空",
       "actual": {
         "http": 200,
@@ -120,7 +120,7 @@
       "passed": true
     },
     {
-      "case": "SEC-02 A班独有知识 20260001",
+      "case": "SEC-02 A班独有知识 <demo-student-1>",
       "expected": [
         1
       ],
@@ -133,7 +133,7 @@
       "passed": true
     },
     {
-      "case": "SEC-02 A班独有知识 20260002",
+      "case": "SEC-02 A班独有知识 <demo-student-2>",
       "expected": [],
       "actual": {
         "http": 200,
@@ -265,7 +265,7 @@
           "skill_id": "1",
           "duration_ms": 0,
           "tokens": 37,
-          "created_at": "2026-11-16T02:34:36.163042"
+          "created_at": "2026-11-16T12:57:11.397893"
         }
       ],
       "passed": true

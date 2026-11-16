@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "audit",
+    "--omit=dev",
+    "--json",
+    "--registry=https://registry.npmjs.org"
+  ],
+  "cwd": "frontend",
+  "exit": 1,
+  "seconds": 6.78
+}

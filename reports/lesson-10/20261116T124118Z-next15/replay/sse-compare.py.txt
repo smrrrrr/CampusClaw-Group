@@ -1,0 +1,22 @@
+import json,pathlib,subprocess,socket,time,httpx
+s=json.loads(pathlib.Path('<private-temp>').read_text()); batch=pathlib.Path(s['batch']); name=s['project']+'-baseline';old='campusclaw-frontend:984c4c8cc6963bf315bd3f0820c4965043beed23'
+with socket.socket() as sock: sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+subprocess.run(['docker','run','-d','--name',name,'--network',s['project']+'_default','-p',f'127.0.0.1:{port}:3000',old],capture_output=True,check=True)
+results=[]
+try:
+ for _ in range(30):
+  try:
+   if httpx.get(f'http://127.0.0.1:{port}/login',trust_env=False).status_code==200:break
+  except httpx.HTTPError:pass
+  time.sleep(.3)
+ for version,p in [('14.2.15',port),('15.5.28',s['frontend_port'])]:
+  for encoding in ['gzip, deflate','identity']:
+   with httpx.Client(base_url=f'http://127.0.0.1:{p}',trust_env=False,headers={'Accept-Encoding':encoding},timeout=20) as c:
+    r=c.post('/api/auth/login',json={'identifier':'<demo-student-1>','password':'<synthetic-password>'}); h={'Authorization':'Bearer '+r.json()['access_token']};r=c.post('/api/student/conversations',json={'title':'合成SSE对照','subject':'math'},headers=h);cid=r.json()['id']; events=[];start=time.monotonic()
+    with c.stream('POST',f'/api/student/conversations/{cid}/chat',json={'question':'合成流对照'},headers=h) as resp:
+     response_encoding=resp.headers.get('content-encoding');status=resp.status_code
+     for line in resp.iter_lines():
+      if line.startswith('data:'):events.append({'type':json.loads(line[5:]).get('type'),'ms':round((time.monotonic()-start)*1000,1)})
+    results.append({'version':version,'accept_encoding':encoding,'content_encoding':response_encoding,'status':status,'events':events})
+finally: subprocess.run(['docker','rm','-f',name],capture_output=True)
+(batch/'sse-version-comparison.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps(results,indent=2))

@@ -1,0 +1,21 @@
+{
+  "standalone_server": ".next/standalone/server.js",
+  "exists": true,
+  "sha256": "1ab459d6076237070a39c98768e97bd21101a3155148fc24a193a8894c6003d6",
+  "pages_generation": "14/14",
+  "typecheck": "next build Linting and checking validity of types; exit 0",
+  "routes": {
+    "/_not-found/page": "app/_not-found/page.js",
+    "/403/page": "app/403/page.js",
+    "/change-password/page": "app/change-password/page.js",
+    "/student/page": "app/student/page.js",
+    "/page": "app/page.js",
+    "/teacher/lesson-prep/page": "app/teacher/lesson-prep/page.js",
+    "/login/page": "app/login/page.js",
+    "/teacher/library/page": "app/teacher/library/page.js",
+    "/materials/page": "app/materials/page.js",
+    "/teacher/page": "app/teacher/page.js",
+    "/teacher/upload/page": "app/teacher/upload/page.js",
+    "/teacher/quiz/page": "app/teacher/quiz/page.js"
+  }
+}

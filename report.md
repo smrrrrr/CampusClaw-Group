@@ -10,9 +10,11 @@
 | 课程 | 结论 | 详细记录 |
 | --- | --- | --- |
 | 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
-| 第10课 测试交付与运行验证 | 本机工程实施与运行验证已收口；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
+| 第10课 测试交付与运行验证 | 既有验证见历史记录；Next 15 升级双门禁已绿，剩 3.3 跨班 404/403 判据待裁决；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
 
-第10课当前门禁：`make check` **41/41 PASS**（本机与 GitHub Actions 远端 Ubuntu 均通过）；`make check-security` **RED**（Next.js 14.2.15 critical + 5 个未登记 npm 包：katex、micromark-extension-math、next、rehype-katex、remark-math；容器账本仍 blocked，CI 临时库无四个种子身份；Next 4 条 critical 的适用性论证见 [next-risk-applicability.md](reports/next-risk-applicability.md)）。backend、mcp-tools、frontend 三镜像均已达成 0 源码（`.py = 0`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；当前提交经空目录独立项目/端口启动成功，本机 registry push/pull digest 与临时库备份/上一 tag 回滚演练通过（均不代表远端或换机）；远端 Draft PR #3 的 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过，不构成受控绿版本；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
+第10课本次工作区验证（2026-11-16 UTC，Next `15.5.28`，尚未提交）：`make check` **41/41 PASS，exit 0**；`make check-security` 在将本地库只读副本放到 `data/current/` 后 **PASS，exit 0**（npm `critical=0/high=0/low=4` 已登记、`unregistered_vulns=[]`、backend/mcp 各 0 漏洞包），未改门禁判据或注入账号。旧 Next 14.2.15 的 critical 适用性论证已由升级替代，见 [next-risk-applicability.md](reports/next-risk-applicability.md)。本轮隔离安装/构建与前端镜像 `.py=0` 通过；HTTP 冒烟 26/29；headless Chrome 在独立栈完成登录、首次改密、刷新恢复、切班与登出 6/6 页面检查，Markdown/KaTeX 预览、学生篡改 `class_id` 返回 403 均通过。**变更清单 14/14 已按本轮实测勾选**；学生按 ID 读取他班材料为防枚举 404（`materials.py` 注释明示，规约未规定 by-ID 状态码）。实际证据见 [升级批次](reports/lesson-10/20261116T124118Z-next15/README.md) 与 [浏览器/门禁批次](reports/lesson-10/20261116T215000Z-browser/README.md)。
+
+以下为升级前既有第10课记录，历史远端结果未在本轮刷新：backend、mcp-tools、frontend 三镜像均已达成 0 源码（`.py = 0`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；当前提交经空目录独立项目/端口启动成功，本机 registry push/pull digest 与临时库备份/上一 tag 回滚演练通过（均不代表远端或换机）；远端 Draft PR #3 的 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过，不构成受控绿版本；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
 
 ## 二、第10课证据索引
 
@@ -28,16 +30,18 @@
 | 压测与改进 | [bench.md](reports/bench.md) |
 | 真实用户反馈 | [feedback.md](reports/feedback.md) |
 | 命令盘点 | [command-inventory.md](reports/command-inventory.md) |
+| 交接说明（Next 15 升级） | [handover-2026-11-16-next15.md](docs/handover-2026-11-16-next15.md) |
 | 场景矩阵与逐条映射 | [scenario-matrix.md](reports/scenario-matrix.md)、[scenario-coverage.md](reports/scenario-coverage.md) |
 | 镜像 0 源码方案与验证 | [no-source-plan.md](reports/no-source-plan.md) |
 | 在线用例执行记录 | [online-cases.md](reports/online-cases.md) |
 | 安全适用性与技术栈等价 | [next-risk-applicability.md](reports/next-risk-applicability.md)、[stack-equivalence.md](reports/stack-equivalence.md)、[course-decisions-2026-11-14.md](reports/course-decisions-2026-11-14.md) |
 | 索引迁移 | [migration/README.md](reports/lesson-10/20261114T072100Z-apply/migration/README.md) |
+| Next 15 升级批次 | [验证与阻塞记录](reports/lesson-10/20261116T124118Z-next15/README.md) |
 | 原始证据 | `reports/lesson-10/20261114T072100Z-apply/` |
 
 ## 三、未完成项
 
-1. 安全门禁 `make check-security` 仍为 RED（Next 4 条 critical 不适用论证待课程书面认可；后端镜像 OS 层 Trivy HIGH=51 另立维护任务）。
+1. 本次 `make check-security` exit 2 / BLOCKED：只读核查库缺四个演示身份；不向真实库补写账号。Next 的 npm critical/high 已按本轮审计归零，4 个 low 已登记。后端镜像 OS 层 Trivy HIGH=51 仍是独立维护项。Next 15 运行时验收未完：跨班资料实际 404 与 tasks 要求 403 不符；直接 rewrite 在 gzip 下合并短 SSE（14/15 对照一致，identity 下均正常）；浏览器服务不可用，页面守卫与实际公式渲染待验。
 2. 3 名真实用户、换人双跑、另一人新目录启动、组员本人签名与真实负责人告警接收。
 3. CI 已在 GitHub Actions 实跑但为红（run `43826707775`：`check` 绿、`security` RED、`images` 跳过）；独立分支故障重放已完成（run `43828237591`：`make check` 失败、`images` 跳过）。受控绿版本、远端镜像仓库 digest、main 保护（required check 未配置）、线上实例反查仍缺（本机 registry digest 与回滚演练已完成，不解除该项）。
 4. 手机浏览器实机验证与真实模型语义抽查。

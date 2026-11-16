@@ -1,0 +1,332 @@
+{
+  "project": "<redacted>",
+  "model": "local synthetic SSE server; no real provider",
+  "rows": [
+    {
+      "case": "nginx GET /health",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "nginx GET /login",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "nginx GET /api/health",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "nginx first login requires password change",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "case": "nginx first login protected API blocked",
+      "expected": 403,
+      "actual": 403,
+      "passed": true
+    },
+    {
+      "case": "nginx normal login + HttpOnly cookie",
+      "expected": {
+        "status": 200,
+        "httponly": true
+      },
+      "actual": {
+        "status": 200,
+        "httponly": true
+      },
+      "passed": true
+    },
+    {
+      "case": "nginx refresh restores full teacher session",
+      "expected": {
+        "role": "teacher",
+        "subject": "math",
+        "teaching_classes": [
+          101,
+          102
+        ],
+        "homeroom_class_id": null,
+        "must_change_password": false
+      },
+      "actual": {
+        "role": "teacher",
+        "subject": "math",
+        "teaching_classes": [
+          101,
+          102
+        ],
+        "homeroom_class_id": null,
+        "must_change_password": false
+      },
+      "passed": true
+    },
+    {
+      "case": "nginx teacher class 101 API",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "nginx teacher class 102 API",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "nginx logout clears cookie then refresh denied",
+      "expected": {
+        "logout": 200,
+        "cleared": true,
+        "refresh": 401
+      },
+      "actual": {
+        "logout": 200,
+        "cleared": true,
+        "refresh": 401
+      },
+      "passed": true
+    },
+    {
+      "case": "nginx student material 1",
+      "expected": 200,
+      "actual": {
+        "status": 200,
+        "other_body_leaked": false
+      },
+      "passed": true
+    },
+    {
+      "case": "nginx student material 2",
+      "expected": 403,
+      "actual": {
+        "status": 404,
+        "other_body_leaked": false
+      },
+      "passed": false
+    },
+    {
+      "case": "nginx authenticated image",
+      "expected": {
+        "status": 200,
+        "png": true
+      },
+      "actual": {
+        "status": 200,
+        "png": true
+      },
+      "passed": true
+    },
+    {
+      "case": "nginx image without login denied",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "nginx student SSE receives separated chunks and done",
+      "expected": {
+        "status": 200,
+        "deltas": 3,
+        "done": true,
+        "separation_ms": ">=500"
+      },
+      "actual": {
+        "status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "events": [
+          {
+            "type": "delta",
+            "ms": 11.8,
+            "chars": 8
+          },
+          {
+            "type": "delta",
+            "ms": 415.2,
+            "chars": 12
+          },
+          {
+            "type": "delta",
+            "ms": 817.7,
+            "chars": 6
+          },
+          {
+            "type": "done",
+            "ms": 1234.4,
+            "chars": 0
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite GET /login",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite GET /api/health",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite first login requires password change",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite first login protected API blocked",
+      "expected": 403,
+      "actual": 403,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite normal login + HttpOnly cookie",
+      "expected": {
+        "status": 200,
+        "httponly": true
+      },
+      "actual": {
+        "status": 200,
+        "httponly": true
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite refresh restores full teacher session",
+      "expected": {
+        "role": "teacher",
+        "subject": "math",
+        "teaching_classes": [
+          101,
+          102
+        ],
+        "homeroom_class_id": null,
+        "must_change_password": false
+      },
+      "actual": {
+        "role": "teacher",
+        "subject": "math",
+        "teaching_classes": [
+          101,
+          102
+        ],
+        "homeroom_class_id": null,
+        "must_change_password": false
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite teacher class 101 API",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite teacher class 102 API",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite logout clears cookie then refresh denied",
+      "expected": {
+        "logout": 200,
+        "cleared": true,
+        "refresh": 401
+      },
+      "actual": {
+        "logout": 200,
+        "cleared": true,
+        "refresh": 401
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite student material 1",
+      "expected": 200,
+      "actual": {
+        "status": 200,
+        "other_body_leaked": false
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite student material 2",
+      "expected": 403,
+      "actual": {
+        "status": 404,
+        "other_body_leaked": false
+      },
+      "passed": false
+    },
+    {
+      "case": "frontend-rewrite authenticated image",
+      "expected": {
+        "status": 200,
+        "png": true
+      },
+      "actual": {
+        "status": 200,
+        "png": true
+      },
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite image without login denied",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "frontend-rewrite student SSE receives separated chunks and done",
+      "expected": {
+        "status": 200,
+        "deltas": 3,
+        "done": true,
+        "separation_ms": ">=500"
+      },
+      "actual": {
+        "status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "events": [
+          {
+            "type": "delta",
+            "ms": 1236.6,
+            "chars": 8
+          },
+          {
+            "type": "delta",
+            "ms": 1236.6,
+            "chars": 12
+          },
+          {
+            "type": "delta",
+            "ms": 1236.6,
+            "chars": 6
+          },
+          {
+            "type": "done",
+            "ms": 1236.7,
+            "chars": 0
+          }
+        ]
+      },
+      "passed": false
+    }
+  ],
+  "passed": 26,
+  "failed": 3,
+  "browser_verified": false,
+  "browser_blocker": "Browser access host unavailable; native Safari access not approved"
+}

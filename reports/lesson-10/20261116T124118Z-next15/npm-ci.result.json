@@ -1,0 +1,11 @@
+{
+  "command": [
+    "npm",
+    "ci",
+    "--no-fund",
+    "--no-audit"
+  ],
+  "cwd": "frontend",
+  "exit": 0,
+  "seconds": 23.43
+}

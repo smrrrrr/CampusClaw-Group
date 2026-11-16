@@ -1,0 +1,4 @@
+接口探针退出码=0（1表示观察到红项，2表示执行未完成）
+密钥扫描：疑似泄漏=False，范围完整=True
+{"npm": {"info": 0, "low": 0, "moderate": 1, "high": 2, "critical": 1, "total": 4}, "backend": {"vulnerable_packages": 5, "advisories": 49, "unique_ids": 47, "severity": "pip-audit响应不提供严重度，未判级，不能填high/critical=0", "packages": [{"name": "certifi", "version": "2026.7.22", "advisories": 2}, {"name": "ecdsa", "version": "0.19.2", "advisories": 2}, {"name": "pillow", "version": "12.3.0", "advisories": 40}, {"name": "pyasn1", "version": "0.6.4", "advisories": 4}, {"name": "python-jose", "version": "3.5.0", "advisories": 1}]}, "mcp": {"vulnerable_packages": 0, "advisories": 0, "unique_ids": 0, "severity": "pip-audit响应不提供严重度，未判级，不能填high/critical=0", "packages": []}}
+安全自查=PASS，有待验范围=False；reports/security-evidence/run.json

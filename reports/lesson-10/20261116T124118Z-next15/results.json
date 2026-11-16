@@ -1,0 +1,44 @@
+{
+  "change": "2026-11-16-upgrade-next-15-5-28",
+  "git_head": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+  "workspace_uncommitted": true,
+  "make_check": {
+    "exit": 0,
+    "passed": 41,
+    "total": 41
+  },
+  "make_check_security": {
+    "make_exit": 2,
+    "script_exit": 2,
+    "status": "BLOCKED",
+    "unregistered_vulns": [],
+    "expired_exceptions": [],
+    "npm": {
+      "low": 4,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "pip_vulnerable_packages": {
+      "backend": 0,
+      "mcp": 0
+    },
+    "blocker": "accounts-readonly.json: 四个演示身份未全部在本地库中找到（identities=[]）；不向真实库补写账号。"
+  },
+  "http_smoke": {
+    "passed": 26,
+    "failed": 3,
+    "browser_verified": false
+  },
+  "remaining_tasks": [
+    "3.2",
+    "3.3",
+    "4.3"
+  ],
+  "guard_unchanged": true,
+  "openspec_validate": {
+    "exit": 0,
+    "passed": 38,
+    "total": 38
+  }
+}
