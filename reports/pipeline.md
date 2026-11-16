@@ -32,7 +32,7 @@ checkout 实际 SHA
 | 镜像标签参数贯通 Compose | PASS（`GIT_SHA` → image tag + build arg） | `docker-compose.yml`、三个 Dockerfile |
 | 镜像 OCI revision | 本机构建可查 | 见下方命令与 `boot/` 证据 |
 | 远端 CI 运行编号 | 未执行 | 无权限/未推送 |
-| 镜像仓库 digest | 未产生 | 未推送 |
+| 镜像仓库 digest | 本机 registry 演练已产生；远端未产生 | `reports/lesson-10/20261116T024000Z-clone-registry-rollback/local-registry.txt` |
 | main required checks | 未配置 | 无远端管理权限 |
 
 ## 三、镜像反查（本机部分）
@@ -46,9 +46,21 @@ docker image inspect campusclaw-backend:${GIT_SHA} --format '{{.Id}} {{index .Co
 
 远端完整链路应为：线上 URL → 部署实例 → 实际镜像 digest → OCI revision → CI run → 提交。当前**没有线上实例**，该链缺最后一环，不能宣称 7.3/7.4 通过。
 
+### 本机 registry 演练（2026-11-16，不替代远端）
+
+在本机启动 `registry:2`（仅监听 `127.0.0.1:5001`），把当前提交的三镜像 tag → push → pull，再记录 `RepoDigests`、OCI revision 并复验容器内 `.py=0`：
+
+| 镜像 | RepoDigest | OCI revision | `.py` |
+| --- | --- | --- | --- |
+| backend | `127.0.0.1:5001/campusclaw-backend@sha256:3275eeec2ffa…` | `984c4c8…` | 0 |
+| mcp-tools | `127.0.0.1:5001/campusclaw-mcp-tools@sha256:130a84fe2878…` | `984c4c8…` | 0 |
+| frontend | `127.0.0.1:5001/campusclaw-frontend@sha256:8b5778d9ac1d…` | `984c4c8…` | 0 |
+
+结论：镜像可经 OCI registry 分发，digest 与 revision 在 push/pull 后保持一致。**这不是远端仓库/GHCR**：没有 CI run、没有远端保留策略、没有线上实例反查，4.2 仍为 BLOCKED。完整 digest 与原始输出见 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/local-registry.txt`。
+
 ## 四、阻塞与后续
 
 1. 需要远端仓库写权限与 GitHub Actions 运行权限。
 2. 需要在仓库设置中把 `lesson10-delivery / make check`、`make check-security` 设为 required checks，并禁止未审批合入。
-3. 需要镜像仓库（或 GHCR）推送权限，才能记录 digest。
+3. 需要镜像仓库（或 GHCR）推送权限，才能记录**远端** digest；本机 registry 演练已完成，只证明链路，不解除该阻塞。
 4. 安全门禁当前 RED，即使推送也会在 security job 失败；这是预期行为，不放宽。

@@ -16,5 +16,6 @@
 - [密钥与依赖修复前基线](security-baseline.md)
 - [首次安全评审与待完成的人工复现](review-01.md)
 - [逐文件审核表](../docs/security-review-table.md)
+- [换目录、本机 registry 与备份回滚演练](release-rollback.md)
 
 根目录report.md的正式课程报告尚未编写。这里的本机自检、真实队列+假模型结果，不代替另一成员复现、真实模型质量、外网部署或人工交叉评审。

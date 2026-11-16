@@ -9,7 +9,7 @@
 | 判定 | 演示人要做的事 | 通过信号 | 证据写回 |
 | --- | --- | --- | --- |
 | J1 换人双跑一致 | 同一提交、同一锁文件、同一夹具与参数，运行 `make check` 与 `make check-security` 各两次 | 断言数、退出码、关键状态一致；时间与随机 ID 不同需说明 | 本文件表下追加，或 `reports/boot-reproduce.md` |
-| J2 README 新目录启动 | 新建空目录克隆，按 README 准备 `.env`、构建、`docker compose up -d` | 七服务就绪，`/health` 200，页面 200；不得复用已有数据目录 | `reports/boot-reproduce.md`「换机/换目录」节 |
+| J2 README 新目录启动 | 新建空目录克隆，按 README 准备 `.env`、构建、`docker compose up -d` | 七服务就绪，`/health` 200，页面 200；不得复用已有数据目录 | `reports/boot-reproduce.md` §八（本机已做当前提交空目录；仍需他人独立执行） |
 | J3 线上提交反查 | 从线上 URL 找到实例 → 镜像 digest → OCI `revision` 标签 → CI run → 提交 | 五步可追溯且互相一致 | `reports/pipeline.md` |
 | J4 60 秒窗口报数 | 指定任意 UTC 60 秒窗口，调用采集器窗口模式 | 60 秒内返回三技能调用量与失败率；空分母显示「无样本」 | `reports/observe-alert.md` |
 
@@ -18,7 +18,7 @@
 | 动作 | 命令/操作 | 预期 | 当前本机状态 |
 | --- | --- | --- | --- |
 | D1 改坏被拦 | 临时改坏一个断言或权限判断，跑门禁，再恢复 | 先红后绿，两次输出都保留 | 已完成（`reports/gate-red-green.md`） |
-| D2 一键启动 | 新目录 `docker compose up -d` | 七服务 Up，核心 healthy | 本机通过；**缺新机** |
+| D2 一键启动 | 新目录 `docker compose up -d` | 七服务 Up，核心 healthy | 本机空目录已通过（当前提交、独立项目/端口 8097）；**缺新机** |
 | D3 面板指三技能 | 打开 Grafana 三面板，核对技能标签与失败率 | 三技能分线；空分母显示无样本 | 本机可用；**第三图等价待课程确认** |
 | D4 异步链路 | 学生提交 → 202/task_ids → 轮询三态 → 他人不可见 | 真实代理消费，跨班 404 | 真实代理 15 项 PASS；**缺手机** |
 | D5 压测前后对比 | 跑 `scripts/lesson10_api_bench.py` 并对旧版同参 | 瓶颈档 P95 降 ≥10%，吞吐不降、错误率不增 | 已完成：并发 10 P95 −23.8%（`reports/bench.md`） |
@@ -27,13 +27,14 @@
 - **镜像 0 源码断言（任务 6.1）**：在运行中的 `backend` 与 `mcp-tools` 容器内执行 `find / -name '*.py' -not -path '/proc/*' | wc -l`，预期均为 `0`（证据见 `reports/no-source-plan.md`）。
 - **在线 cases 复跑（任务 3.3）**：本机同宿主直连（临时库、后端与 pytest 同文件系统）第 5 轮为 `22 passed / 3 skipped / 0 failed`；compose 网络内第 6 轮（2026-11-16）为 `24 passed / 1 skipped / 0 failed`，仅剩「无模型 Key 时的工具审计」跳过，明细与复现步骤见 `reports/online-cases.md` §2.2。
 - **当前提交重建复验（2026-11-16，任务 6.1/7.1）**：七服务 + 四个观测容器全部启动，`/health`、`/api/health`、`/login` 200；backend/mcp-tools 镜像 `.py=0`、OCI revision 与提交一致；真实 RabbitMQ 异步复现 15 项 PASS。证据 `reports/lesson-10/20261116T161500Z-docker/`、`reports/async-grading/20261116tdockerreal-broker-result.json`。
+- **换目录 / 本机 registry / 备份回滚（2026-11-16）**：当前提交导出到空目录后独立项目/端口 8097 启动成功（七服务 Up、`/health` 与 `/login` 200、`.py=0`）；本机 `registry:2` push/pull 三镜像并记录 digest；演示库临时副本备份恢复指纹一致，`37aecf9` 上一 tag 在独立项目/端口 8098 回滚通过。均不替代换机、远端仓库或正式发布。证据 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/`、`reports/release-rollback.md`。
 
 ## 三、六份必交报告核对
 
 | 报告 | 路径 | 当前状态 |
 | --- | --- | --- |
 | 交付与对照 | `reports/lesson10-delivery.md` | 已更新最新状态 |
-| 从零启动 | `reports/boot-reproduce.md` | 本机完成；换机待做 |
+| 从零启动 | `reports/boot-reproduce.md` | 本机完成（含当前提交空目录复验）；换机待做 |
 | 流水线 | `reports/pipeline.md` | 文件齐全；远端 run 待做 |
 | 观测与告警 | `reports/observe-alert.md` | 四阶段齐全；接收授权待确认 |
 | 压测 | `reports/bench.md` | 已完成两轮对比 |

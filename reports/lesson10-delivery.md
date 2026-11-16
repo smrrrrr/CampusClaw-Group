@@ -40,10 +40,10 @@
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
 | 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=2612）、mcp-tools（.py=0, .pyc=1598）与 frontend（.py=0）均已 0 源码**；后端 OS 层 Trivy HIGH=51 |
 | 3.2 Compose 等价 | PASS（等价说明） | 七服务 + SQLite 读就绪；未迁 MySQL/Qdrant（`stack-equivalence.md`） |
-| 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 本机同宿主直连第 5 轮 22 passed / 3 skipped / 0 failed，compose 网络内第 6 轮 24 passed / 1 skipped / 0 failed（`online-cases.md`）；**换机未做** |
-| 3.4 镜像编号 | 部分 | 本机 image ID + OCI revision 可反查；干净 clone 构建成功；无镜像仓库 digest |
+| 3.3 换目录/机器 | 部分 | 当前提交 `984c4c8` 经 `git archive` 到全新空目录，独立项目名/端口 8097 构建并启动成功，七服务 Up、`/health` 与 `/login` 200、三镜像 `.py=0`（`reports/lesson-10/20261116T024000Z-clone-registry-rollback/`）；在线 cases compose 网络内 24 passed / 1 skipped / 0 failed（`online-cases.md`）；**换机未做**，换目录不能替代 |
+| 3.4 镜像编号 | 部分 | 本机 image ID + OCI revision 可反查；干净 clone 构建成功；本机 registry push/pull 已产生 digest，**远端仓库 digest 仍无** |
 | 4.1 自动构建 | 部分 | `.github/workflows/lesson10.yml` 完成，未在远端运行 |
-| 4.2 推送反查 | BLOCKED | 未推送、无 CI 编号与 digest |
+| 4.2 推送反查 | BLOCKED | 未推送远端、无 CI 编号；本机 registry 演练已产生 digest，仅为链路验证，不能替代远端仓库或 GHCR |
 | 4.3 扩迁缩 | PASS（N/A 说明） | 仅索引变更，无行数据迁移；见 `migration/README.md` |
 | 4.4 就绪探针 | 部分 | DB 不可读 503 有既有检查；运行期摘流量未实现 |
 | 5.1 指标口径 | PASS（按已记录事件） | 引导/批改有来源；错题讲解明确“未接入” |
@@ -55,7 +55,7 @@
 | 6.3 压测 | PASS（三接口均有曲线） | submit 322 rps、query 573 rps、retrieve 38/24 rps；`bench.md` |
 | 6.4 改进复测 | **分档记录（未整体宣称通过）** | SQL 级 P95 降 22.62%；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%（早期仅加索引时 API 级为 +0.4%） |
 | 7.1 门禁核查 | 部分 | 本机 41/41 全绿；安全门禁 RED（仅 Next 版本范围计数）待课程确认 |
-| 7.2 可复现核查 | 部分 | 本目录与新目录启动成功；backend/mcp/frontend 三镜像均 0 源码已确认 |
+| 7.2 可复现核查 | 部分 | 本目录与当前提交空目录（独立项目/端口 8097）均启动成功；backend/mcp/frontend 三镜像均 0 源码已确认；换机未做 |
 | 7.3 流水线核查 | BLOCKED | 无远端运行 |
 | 7.4 观测核查 | 部分 | 面板/窗口可用；真实通知未送达 |
 | 7.5 验证核查 | 部分 | 见 6.3/6.4/6.2 |
@@ -113,6 +113,9 @@
 | `alert/received.jsonl` | `fe227a1` 工作区 | 早期批次，告警链路不受代码版本影响 |
 | `lesson-10/20261116T161500Z-docker/*` | 本轮工作区提交内容 | 是（`.source-sha256.json` 与源码哈希一致；镜像随该内容重建） |
 | `async-grading/20261116tdocker*` | 同一工作区内容，隔离 compose 项目 | 是（运行前以源码哈希清单核对镜像） |
+| `lesson-10/20261116T024000Z-clone-registry-rollback/clone-*` | `984c4c8` 干净导出目录，独立项目/端口 8097 | 是（构建参数 `GIT_SHA=984c4c8`） |
+| 同目录 `local-registry.txt` | 同提交三镜像经本机 registry push/pull | 是（digest 与 OCI revision 一致） |
+| 同目录 `backup-restore.txt`、`rollback-*` | 演示库临时副本备份恢复 + `37aecf9` 镜像回滚 | 回滚镜像为上一批次；主栈仍为 `984c4c8` |
 
 结论：报告按批次标注版本；**不宣称全部证据来自同一提交**。
 
@@ -121,11 +124,11 @@
 | 判定/动作 | 本机结果 | 缺失 |
 | --- | --- | --- |
 | 换人双跑一致 | 未执行 | 第二人 |
-| README 新目录启动 | 本机干净 clone 启动已通过；在线 cases 同宿主直连 22/22 可运行用例通过（3 项 MCP 跳过） | 新机/第二人 |
+| README 新目录启动 | 当前提交 `984c4c8` 在空目录、独立项目/端口 8097 构建并启动通过，七服务 Up、`/health` 与 `/login` 200；在线 cases 24 passed / 1 skipped / 0 failed | 新机/第二人 |
 | 线上提交反查 | 未执行 | 线上实例与 CI |
 | 60 秒窗口报数 | 0.04 秒完成 | 无 |
 | D1 改坏被拦 | 红→修复→绿齐全 | 无 |
-| D2 一键启动 | 本机通过 | 新机 |
+| D2 一键启动 | 本机空目录通过（当前提交）；主栈未受影响 | 新机 |
 | D3 面板指三技能 | 面板与窗口可用 | 无 |
 | D4 异步链路 | 真实代理 15 项 PASS | 手机 |
 | D5 压测前后对比 | 已完成（SQL 级 −22.62%；检索热点优化并发 10 瓶颈档 P95 −23.8%，并发 3 +7.6%） | 独立演示现场复跑 |
@@ -210,3 +213,10 @@
 - `scripts/security_precheck.py` 原先把 compose 项目名写死为 `campusclaw-groupv3`，实际项目为 `campusclaw-group`，导致容器日志与前端静态包根本没被扫描。已改为按容器标签中的工作目录自动识别本仓库的 compose 项目；重跑后**密钥扫描范围完整=True、0 命中**。`make check-security` 仍为 RED 的原因是 Next 版本计数；`has_blocked_scope` 仍为真仅因演示库没有四个种子身份，与扫描范围无关。证据 `reports/lesson-10/20261116T161500Z-docker/security-scope.txt`。
 - 补「并发同名技能」断言：模拟两个请求都通过前置查重，第二次插入撞唯一约束。此前会以数据库异常返回 500；已按 `agent-assistant` 规约「重名 MUST 返回 400」补 `IntegrityError → 400` 映射（新建与改写均覆盖），断言同时确认不新增第二条。`record_call` 审计写失败的注入验证原已存在于 `check_security_gate.py`（回滚、不中断、告警不含异常原文），本轮只更正安全评审表中的过期描述。
 - 场景覆盖重生成后计数不变（505 条，弱候选/仅文件级/待补均为 0）。
+
+### 8.11 换目录、本机 registry 与备份回滚演练（2026-11-16）
+
+- **换目录二次启动**：`git archive HEAD` 把当前提交 `984c4c8` 导出到全新空目录，生成独立 `.env`（随机密钥、临时数据目录），使用不同 compose 项目名与端口 8097，执行 `docker compose build` 与 `up -d`。七服务全部 Up，backend/frontend/mcp-tools/rabbitmq healthy；`/health` 200、`/login` 200；三业务镜像容器内 `.py=0`，OCI revision 均为 `984c4c8…`。演练后 `down -v` 并删除临时目录。**这是换目录，不是换机**。
+- **本机 registry digest**：本机 `registry:2`（仅监听 `127.0.0.1:5001`）接收三镜像 tag/push/pull，记录 RepoDigest、OCI revision 并复验 `.py=0`；backend `sha256:3275eeec2ffa…`、mcp-tools `sha256:130a84fe2878…`、frontend `sha256:8b5778d9ac1d…`。registry 容器演练后删除。**不替代远端仓库/GHCR**，4.2 仍 BLOCKED。
+- **备份恢复与回滚**：对演示库以只读连接 + SQLite online backup API 生成临时备份，恢复副本与备份字节相同、34 表行数一致、`integrity_check=ok`；`backend/uploads/` 9 个文件的源/备份/恢复 manifest 一致。从上一提交 `37aecf9` 导出临时目录，用上一 tag 三镜像与恢复副本在独立项目/端口 8098 启动，七服务 Up、`/health` 与 `/login` 200、`.py=0`、revision 均为 `37aecf9…`，从启动到 health 200 约 26 秒；演练后清理。主栈全程未切换，事后复核仍为 `984c4c8` 且 health 200。真实教学库与上传目录未被修改。
+- **边界**：以上均为本机隔离演练，不构成正式发布；远端 CI、远端镜像仓库、线上反查、另一名组员复核、自动备份保留策略仍缺。详见 `reports/release-rollback.md`，原始证据在 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/`。

@@ -75,7 +75,7 @@ rabbitmq            running  Up (healthy)
 
 ## 六、未完成
 
-1. **换目录/换机**：本轮只在同一目录启动，不能冒充 3.3/10.2。
+1. **换目录/换机**：本节最初只在同一目录启动；当前提交的换目录复验见 §八，**换机仍需另一人/另一台机器**，不能用换目录冒充。
 2. **手机浏览器**：未用真实手机验证；仅用同一 API 走通角色分步。
 3. **真实模型**：未配置 Key，语义正确性、完整生成耗时未验证。
 4. **源码字面要求**：后端镜像仍包含 Python 运行源码；是否接受待确认。
@@ -108,3 +108,14 @@ rabbitmq            running  Up (healthy)
 
 - 换机复现仍缺（需另一人/另一台）。
 - 未做持续摘流量的滚动发布；本轮只证明“新实例可独立起、未被反代接入”。
+
+---
+
+## 八、换目录二次启动复验（2026-11-16，当前提交）
+
+- 方法：`git archive HEAD` 把提交 `984c4c8` 导出到全新空目录（不复用工作区文件），生成独立 `.env`（随机密钥、临时数据目录），使用不同 compose 项目名与端口 8097，执行 `docker compose build` 后 `up -d`；不挂载主栈容器或数据卷。
+- 结果：七服务全部 Up，backend/frontend/mcp-tools/rabbitmq healthy；`GET /health` 200（`database=ok`、`mcp_tools=ok`、`model=not_configured`）；`GET /login` 200。
+- 0 源码与版本：backend/mcp-tools/frontend 容器内 `.py=0`；三镜像 OCI `revision` 均为 `984c4c8cc6963bf315bd3f0820c4965043beed23`。
+- 清理：独立项目 `down -v`，临时目录删除，无残留容器/卷。
+- **边界**：这证明“空目录 + 新项目名 + 新端口”可以按 README 用当前提交重建并启动；它不是“换机”，不能替代另一人/另一台机器的复验，也不覆盖主机、内核、Docker 版本差异。
+- 证据：`reports/lesson-10/20261116T024000Z-clone-registry-rollback/`（`clone-build.txt`、`clone-up.txt`、`clone-ps.txt`、`clone-health.json`、`clone-no-source.txt`、`clone-summary.txt`）。

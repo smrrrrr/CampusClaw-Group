@@ -103,3 +103,5 @@ Dockerfile 实际加入三步：递归编译 `/app` 与 `/usr/local/lib/python3.
 同一轮发现并修复：`grading-worker`/`grading-dispatcher` 仍按脚本路径启动 `grading_worker.py`，而运行层已删除 `.py`，导致两容器反复退出。已改为 `python -m grading_worker --mode …`（legacy `.pyc` 可直接导入），并在 `check_lesson10_scenario_gaps.py` 增加静态断言防止回归。
 
 删除源码前新增构建期 `.source-sha256.json`（只含应用 `.py` 的相对路径与 SHA-256，不含源码），用于核对“镜像是否由当前源码构建”；`scripts/reproduce_async_grading.py` 改为读取该清单，不再按源码文件路径哈希。证据见 `reports/lesson-10/20261116T161500Z-docker/no-source.txt`。
+
+同一提交又在全新空目录（独立 compose 项目、端口 8097）重建并启动七服务，三镜像容器内 `.py` 仍为 0，OCI revision 与提交一致；证据见 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/clone-no-source.txt`。这是换目录复验，不是换机。

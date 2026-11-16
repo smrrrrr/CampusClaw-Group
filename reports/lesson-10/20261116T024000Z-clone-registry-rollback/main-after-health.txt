@@ -1,0 +1,3 @@
+backend rev=984c4c8cc6963bf315bd3f0820c4965043beed23 py=0
+mcp-tools rev=984c4c8cc6963bf315bd3f0820c4965043beed23 py=0
+frontend rev=984c4c8cc6963bf315bd3f0820c4965043beed23 py=0

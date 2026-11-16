@@ -1,0 +1,15 @@
+registry=cc-registry-024248 endpoint=127.0.0.1:5001 image=registry:2
+backend
+  repo_digest=127.0.0.1:5001/campusclaw-backend@sha256:3275eeec2ffa7f0e02e6a313b07bb92bd5812f00653a418d9aa566b84786f73f
+  revision=984c4c8cc6963bf315bd3f0820c4965043beed23
+  py=0
+mcp-tools
+  repo_digest=127.0.0.1:5001/campusclaw-mcp-tools@sha256:130a84fe2878715296d5051f3cbabf7dcd29b965990eb899972119bea787fc44
+  revision=984c4c8cc6963bf315bd3f0820c4965043beed23
+  py=0
+frontend
+  repo_digest=127.0.0.1:5001/campusclaw-frontend@sha256:8b5778d9ac1dcdc05d273af33a5c26d4d8fc4f9ce44c63649567c8b36aac23f5
+  revision=984c4c8cc6963bf315bd3f0820c4965043beed23
+  py=0
+{"repositories":["campusclaw-backend","campusclaw-frontend","campusclaw-mcp-tools"]}
+

@@ -1,0 +1,2 @@
+CLONE_DIR=/var/folders/t3/b194x9v94bjg7l5_dyy0ljvr0000gn/T//campusclaw-clone-024109
+PROJECT=campusclaw-clone-024109

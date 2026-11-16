@@ -1,0 +1,4 @@
+ Container campusclaw-clone-024109-backend-1 Healthy 
+ Container campusclaw-clone-024109-frontend-1 Healthy 
+ Container campusclaw-clone-024109-nginx-1 Starting 
+ Container campusclaw-clone-024109-nginx-1 Started 
