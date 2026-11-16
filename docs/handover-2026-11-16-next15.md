@@ -123,8 +123,8 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 ### 5.3 跨清单外部缺口
 
-- CI 临时库四个种子身份（否则远端 `security` 永远 BLOCKED）；
-- 远端 CI 尚未在 Next 15.5.28 上重跑；
+- CI 临时库四个种子身份：已在 `.github/workflows/lesson10.yml` 增加写库步骤（2026-11-16），待远端复跑确认；
+- 远端 CI 已在 Next 15.5.28 上重跑一次（run `43876201284`）：`check` 通过，`security` 因种子身份缺失 BLOCKED；补种子后需再跑一次；
 - backend 镜像 OS 层 Trivy `HIGH=51` 另立维护任务；
 - 真实模型语义抽查、手机端、线上部署、真实告警接收。
 

@@ -93,10 +93,43 @@ jobs:
               + "MCP_AUTH_TOKEN=%s\n" % secrets.token_hex(32)
               + "MCP_TOKEN_KEY=%s\n" % fernet
               + "CAMPUSCLAW_PORT=8080\n"
-              + "CAMPUSCLAW_DATA_DIR=./data\n"
+              + "CAMPUSCLAW_DATA_DIR=./data/current\n"
               + "DEEPSEEK_API_KEY=\n",
               encoding="utf-8",
           )
+          PY
+      - name: 写入四个演示身份（临时核查库）
+        env:
+          DATABASE_URL: sqlite:///./data/current/campusclaw.db
+          JWT_SECRET_KEY: ci-seed-only-jwt-secret-000000000000000000
+        run: |
+          mkdir -p data/current
+          backend/.venv/bin/python - <<'PY'
+          import sys
+          sys.path.insert(0, "backend")
+          from database import Base, SessionLocal, engine
+          from models import Class, User, Role
+          from security import hash_password
+
+          Base.metadata.create_all(engine)
+          identities = [
+              ("TEA001", Role.teacher, None, "math", "[101,102]", 101),
+              ("TEA002", Role.teacher, None, "physics", "[101,102]", 102),
+              ("20260001", Role.student, 101, None, None, None),
+              ("20260002", Role.student, 102, None, None, None),
+          ]
+          with SessionLocal() as db:
+              for cid, name in ((101, "合成A班"), (102, "合成B班")):
+                  if not db.get(Class, cid):
+                      db.add(Class(id=cid, name=name))
+              db.flush()
+              for ident, role, cid, subject, classes, head in identities:
+                  if not db.query(User).filter(User.identifier == ident).first():
+                      db.add(User(identifier=ident, name=ident, role=role, class_id=cid,
+                                  subject=subject, teaching_classes=classes,
+                                  homeroom_class_id=head, password_hash=hash_password("Test@2026"),
+                                  must_change_password=False))
+              db.commit()
           PY
       - name: 启动测试栈（仅用于密钥扫描范围）
         run: |
