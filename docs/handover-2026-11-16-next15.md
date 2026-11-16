@@ -13,7 +13,7 @@
 | 审计 | npm `critical=0 / high=0 / moderate=0 / low=4`（4 个 low 已在例外表登记） |
 | 镜像 | `campusclaw-frontend:next15-20261116t124118z`，运行层 `.py=0` |
 | 提交 | 分支 `deps/upgrade-a-b`，PR #3 面向 `main`；依赖升级 `f6d3a2b`，CI 与文档修复 `90bcbe7`→`9fffcb2`（最新提交以 `git log -1` 为准） |
-| 远端 CI | run `43881954432`（分支 HEAD `63037a7`，镜像 revision `3dbbe5c`）：`check` pass、`security` pass、`images` 三个镜像构建成功但 Trivy 红——backend 基础镜像 debian 13.7 有 **49 条 HIGH / 0 CRITICAL**，`Fixed Version` 为空（上游无修复） |
+| 远端 CI | run `43885117587`（HEAD `3074cae`）：**三个 job 全绿**——`check` pass、`security` pass、`images` pass（backend 47 / mcp-tools 47 / frontend 0 条 HIGH，CRITICAL 0，HIGH 均在未过期书面例外内） |
 | 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节 |
 
 ## 二、交接数据
@@ -113,7 +113,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 4.2 组员独立验收 | 另一名组员 | 按 `demo-checklist.md` 从新目录走四项判定，本人签名 |
 | 5.1 分工与复核 | 真实姓名/角色 | 在 `lesson10-delivery.md` 填 A/B/C 负责人与交叉复核结论 |
 | 5.6 main 保护 | 仓库 admin | owner 配 required checks `check`/`security` |
-| 7.2 受控绿版本 | 全绿 CI | `check`/`security` 已绿；`images` 卡在 backend OS 层 49 条 HIGH（上游无修复），需先处置基础镜像才可能全绿 |
+| 7.2 受控绿版本 | 授权勾选 | 三个 job 已全绿（run `43885117587`），镜像摘要与 revision 齐备；按项目规则勾选需明确授权，未擅自改 `tasks.md` |
 | 7.3 故障重放收口 | required check | 5.6 完成后，在测试 PR 验证红色状态无法合入并留证 |
 | 7.4 线上反查 | 线上部署目标 | 部署后记录 URL → digest → revision → CI run → commit |
 | 8.5 告警规则 | 接收通道/授权 | 与负责人确认渠道，补 `reports/observe-alert.md` |
@@ -128,7 +128,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 ### 5.3 跨清单外部缺口
 
-`images` job 连续踩了三个上游问题，已逐个修掉：
+`images` job 先修掉三个上游问题，再处置系统层漏洞，现已全绿（run `43885117587`）：
 
 1. `aquasecurity/trivy-action@0.28.0` 这个 tag 不存在（仓库只有 `v0.28.0` 及更新版本），任务在 `Set up job` 阶段报 `Unable to resolve action`；
 2. 改成 `v0.28.0` 后，它内部引用的 `aquasecurity/setup-trivy@v0.2.1` 也已被上游删除（现存 `v0.2.6`/`v0.3.0`/`v0.3.1`）；
@@ -136,7 +136,14 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 同一个 job 还缺 `.env`：`docker-compose.yml` 对 `JWT_SECRET_KEY`、`GRADING_BROKER_PASSWORD` 用 `:?` 强校验，已补构建前一次性占位 `.env`（本地 `--env-file` 实证：空环境 exit 1、生成后 exit 0）。
 
-修完后真实结果：三个镜像都构建成功（revision `3dbbe5c`，即 PR 合并引用），backend 扫描 `Total: 49 (HIGH: 49, CRITICAL: 0)`，全部位于 debian 13.7 系统层，`Fixed Version` 为空。这是**上游尚未修复**的 OS 层问题，不是本次升级引入；处置办法是等基础镜像更新或另立维护变更，不得靠放宽 `severity`/`exit-code` 换绿。前端与 mcp-tools 的扫描因 job 在后端处失败而未执行。
+**系统层 49 条 HIGH 的处置（`8f21ad0` / `3074cae`）：**
+
+- 有修复版本的在构建时真修：`backend` 与 `mcp-server` 运行层加 `apt-get upgrade`，zlib1g 的 CVE-2026-76844、CVE-2026-85091 随之消失，两个镜像各从 49 降到 47；
+- 无修复版本的 11 个 CVE（util-linux 四个、ncurses、sqlite 三个、systemd、acl、perl）登记在 `reports/security-evidence/os-vuln-exceptions.json`，含受影响包、不处置原因、复查日期 2026-12-15；
+- 判定改由 `scripts/trivy_os_gate.py` 执行：三个镜像都扫完再判，CRITICAL 一票否决且不接受例外，HIGH 未登记或例外过期即失败；扫描报告保留全部条目，不使用 `.trivyignore`；
+- 期间修掉一个真实缺陷：门禁步骤原写法 `python3 gate.py | tee` 没有 `set -o pipefail`，退出码取自 `tee`，判失败会显示通过（run `43884238012` 实际踩到），已加 pipefail 并补回归断言。
+
+最终扫描（run `43885117587`）：backend 47、mcp-tools 47、frontend（node:22-alpine）0，CRITICAL 0，HIGH 均在未过期书面例外内。
 
 其余缺口：真实模型语义抽查、手机端、线上部署、真实告警接收。
 
@@ -158,6 +165,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 实施（改依赖、重锁、构建、隔离栈、审计、报告） | Codex CLI（写模式，经 codex-companion） | 对应第一批证据；未提交、未推送 |
 | 补测（页面验收、门禁复跑、证据归档） | Claude Code | headless Chrome + 本地库副本，对应第二批证据 |
 | CI 修复（`security` 种子身份、`images` 的 compose `.env` 与 trivy 版本） | Claude Code | `e08a99e`、`90bcbe7`、`a944069`、`bcf3c92`、`8cb169b`、`63037a7`；每次先取远端日志定位真因，本地复现后再改，未放宽门禁 |
+| 镜像 OS 层漏洞处置 | Claude Code | `8f21ad0` 运行层安全更新 + 书面例外 + 门禁脚本；`3074cae` 补 mcp-tools 与 `pipefail`；CRITICAL 仍一票否决 |
 | 交接数据包打包 | Claude Code | `handover-packs/2026-11-16-next15.zip`，含库、`.env`、上传材料、证据；仓库外生成 |
 | 真人签名、手机实机、线上部署、告警接收 | **待接手人/组员** | 见第五节，不得由 AI 代签 |
 

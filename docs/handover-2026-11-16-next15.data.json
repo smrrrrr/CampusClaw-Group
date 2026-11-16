@@ -2,7 +2,7 @@
   "generated_at": "2026-11-16T22:25:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "63037a78541b38bda2b2f969cb83464c12b5bd33",
+    "head": "3074caee331b7dc70d616054028482f8d8dd67a9",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -26,17 +26,17 @@
     "py_count": 0
   },
   "ci": {
-    "run": 43881954432,
-    "head": "63037a7",
+    "run": 43885117587,
+    "head": "3074cae",
     "check": "pass",
     "security": "pass（workflow 内写入四个演示身份后转绿）",
     "images_build": "三个镜像均构建成功",
     "images_scan": {
-      "backend": "Total: 49 (HIGH: 49, CRITICAL: 0)，debian 13.7 系统层，Fixed Version 为空",
-      "frontend": "未执行（job 在 backend 扫描失败后终止）",
-      "mcp-tools": "未执行"
+      "backend": "HIGH=47 CRITICAL=0，全部命中未过期书面例外；zlib1g 两条已由 apt 安全更新修掉",
+      "mcp-tools": "HIGH=47 CRITICAL=0，同上",
+      "frontend": "HIGH=0 CRITICAL=0（node:22-alpine）"
     },
-    "images_conclusion": "failure（真实漏洞，非流程问题）",
+    "images_conclusion": "success（由 scripts/trivy_os_gate.py 判定，非放宽 severity/exit-code）",
     "upstream_fixes": [
       "trivy-action 0.28.0 tag 不存在 → 改用 v0.36.0 并按 commit a9c7b0f 固定",
       "trivy-action v0.28.0 内部 setup-trivy@v0.2.1 被上游删除（现存 v0.2.6/v0.3.0/v0.3.1）",
@@ -50,16 +50,24 @@
       "bcf3c92",
       "9fffcb2",
       "8cb169b",
-      "63037a7"
+      "63037a7",
+      "8f21ad0",
+      "3074cae"
     ],
     "ci_images": {
-      "backend": "campusclaw-backend:3dbbe5c",
-      "frontend": "campusclaw-frontend:3dbbe5c",
-      "mcp-tools": "campusclaw-mcp-tools:3dbbe5c"
+      "backend": "campusclaw-backend:ea3134a9",
+      "frontend": "campusclaw-frontend:ea3134a9",
+      "mcp-tools": "campusclaw-mcp-tools:ea3134a9"
     },
-    "merge_ref_revision": "3dbbe5c（PR 合并引用，镜像 OCI revision）"
+    "merge_ref_revision": "ea3134a9（PR 合并引用，镜像 OCI revision）",
+    "os_exceptions": {
+      "path": "reports/security-evidence/os-vuln-exceptions.json",
+      "count": 11,
+      "review_after": "2026-12-15",
+      "gate": "scripts/trivy_os_gate.py（CRITICAL 一票否决；HIGH 未登记或过期即失败）"
+    }
   },
-  "files_changed": 164,
+  "files_changed": 169,
   "evidence_batches": {
     "reports/lesson-10/20261116T124118Z-next15": 131,
     "reports/lesson-10/20261116T215000Z-browser": 6,
@@ -75,13 +83,23 @@
   "files": [
     {
       "path": ".github/workflows/lesson10.yml",
-      "bytes": 8684,
-      "sha256": "9a36e5293f031a02f792e8fdf0faefd3b20431d9e5880b6c4800be7ec064cb4c"
+      "bytes": 9524,
+      "sha256": "12af1d36aaca3f93a8909042184fa08c8433a497be8c400a00bbc3fdc2f2ef8e"
     },
     {
       "path": "README.md",
       "bytes": 17049,
       "sha256": "99c5d43cbe1ae5fb4a68211561cc684b07cff17534adb596f10deccad4ef294e"
+    },
+    {
+      "path": "apitest/check_os_vuln_gate.py",
+      "bytes": 7199,
+      "sha256": "8a11ef087d674a1bf745a50287590056b7cd77fcdce186b07c21de862c5f73c6"
+    },
+    {
+      "path": "backend/Dockerfile",
+      "bytes": 3949,
+      "sha256": "985ae36aef45035a517467071d8e53ca10740514bbdf76733f2fde28e722130c"
     },
     {
       "path": "docs/handover-2026-11-16-next15-data.md",
@@ -90,18 +108,18 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 36023,
-      "sha256": "2263af6a57d3dd724c86069e582ca7401dc5cf3d1825dca9b5d014a29a15f1cc"
+      "bytes": 36374,
+      "sha256": "024329e31d2320cab8bb84d5aafdd0d4c349f8e7dd167efaddb442ff6b8480f1"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
       "bytes": 2955,
-      "sha256": "43d9e1280f3e889a08d4f5794df79f5494624b8389644ba2377e99eadbc92d7b"
+      "sha256": "d8b8dfd3481023e96f081f9dfc5001ae2f383cec262aecb36383c58163e9536c"
     },
     {
       "path": "docs/handover-2026-11-16-next15.md",
-      "bytes": 12034,
-      "sha256": "940314776c3b95443f51c4756072c01329a6ec4775183c053657f35defcf37f7"
+      "bytes": 12844,
+      "sha256": "dac2a53d5067dccc7e658f520ecf27cdb3b0fe93655f265432be93bb724b5f8d"
     },
     {
       "path": "frontend/package-lock.json",
@@ -112,6 +130,11 @@
       "path": "frontend/package.json",
       "bytes": 655,
       "sha256": "36a463c0109cdc34619b48470550acaaaf742e2369f34ab930f106bee2cc58e8"
+    },
+    {
+      "path": "mcp-server/Dockerfile",
+      "bytes": 1795,
+      "sha256": "31694d0c598cdc4f1635ab9988118d1c6753435d854d43ace90cb300540c9d17"
     },
     {
       "path": "openspec/changes/2026-11-12-lesson10-test-delivery-and-runtime-verification/tasks.md",
@@ -145,8 +168,8 @@
     },
     {
       "path": "report.md",
-      "bytes": 7443,
-      "sha256": "beadca1d5681d30bdd32c284a2b8c2f7853f0ef3443b28794588b7892ba43081"
+      "bytes": 7555,
+      "sha256": "fcb71b348ccf7374d0434a71029f521c9c826f52fb6330b01d2dd7a248e32d91"
     },
     {
       "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
@@ -879,6 +902,11 @@
       "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
     },
     {
+      "path": "reports/security-evidence/os-vuln-exceptions.json",
+      "bytes": 5343,
+      "sha256": "c53dae10e47d6f0775db88b311f5bef1954fb4e58d7932bea0ba46b21e256df7"
+    },
+    {
       "path": "reports/security-evidence/run.json",
       "bytes": 866,
       "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
@@ -892,6 +920,11 @@
       "path": "reports/security-evidence/secret-scan.txt",
       "bytes": 156,
       "sha256": "c907fb00ed1113e9a57c625471f37daaee81e8802ad93c05795748a19aaee682"
+    },
+    {
+      "path": "scripts/trivy_os_gate.py",
+      "bytes": 5718,
+      "sha256": "beafedb4ae2aedc7203af7209a7d4fed5846359c0d7a363bbf107b368825184c"
     }
   ],
   "handover_pack": {

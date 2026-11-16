@@ -124,7 +124,7 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     # 边界：真实例外表可解析，且覆盖当前 12 个 CVE
     data = json.loads(REAL_EXCEPTIONS.read_text(encoding="utf-8"))
     cves = {e["cve"] for e in data["entries"]}
-    check("真实例外表含 12 条", len(data["entries"]) == 12)
+    check("真实例外表含 11 条", len(data["entries"]) == 11)
     check("真实例外表均带 reason 与 review_after",
           all(e.get("reason") and e.get("review_after") for e in data["entries"]))
     check("可修复的 CVE-2026-76844 未登记为例外", "CVE-2026-76844" not in cves)
@@ -142,11 +142,10 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
         vuln("CVE-2026-16742", "HIGH", pkg="libsystemd0", installed="257.13-1~deb13u1"),
         vuln("CVE-2026-54369", "HIGH", pkg="libacl1", installed="2.3.2-2+b1"),
         vuln("CVE-2026-9538", "HIGH", pkg="perl-base", installed="5.40.1-6+deb13u1"),
-        vuln("CVE-2026-85091", "HIGH", pkg="zlib1g", installed="1:1.3.dfsg+really1.3.1-1+b1"),
     ]
     write_report(report, "campusclaw-backend:t", current)
     result = run(["--exceptions", str(REAL_EXCEPTIONS), "--today", "2026-11-16", str(report)])
-    check("真实例外表覆盖当前 12 个 CVE → exit 0", result.returncode == 0)
+    check("真实例外表覆盖当前 11 个 CVE → exit 0", result.returncode == 0)
 
     # 边界：已修复的包不再算失败来源
     write_report(report, "campusclaw-backend:t", [vuln("CVE-2026-76844", "HIGH", pkg="zlib1g",
