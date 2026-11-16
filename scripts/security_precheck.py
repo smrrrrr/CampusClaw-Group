@@ -42,6 +42,18 @@ def fingerprint():
     return {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 
 
+def pick_compose_project(explicit, rows, root=ROOT):
+    """优先用显式项目名；否则按容器标签的工作目录匹配当前仓库，避免写死项目名扫错栈。"""
+    if explicit:
+        return explicit
+    root = Path(root).resolve()
+    matches = {
+        project for project, workdir in rows
+        if project and workdir and Path(workdir).resolve() == root
+    }
+    return sorted(matches)[0] if len(matches) == 1 else None
+
+
 def secret_baseline():
     rc, out, err, seconds = command([PY, "scripts/secret_scan.py"])
     (EVIDENCE / "secret-scan.txt").write_bytes(out + err)
@@ -63,18 +75,28 @@ def secret_baseline():
                     if line.strip().startswith("COMPOSE_PROJECT_NAME="):
                         compose_project = line.split("=", 1)[1].strip().strip('"').strip("'")
                         break
-        if not compose_project:
-            compose_project = "campusclaw-groupv3"
-        drc, names, _, _ = command([docker, "ps", "--filter", f"label=com.docker.compose.project={compose_project}", "--format", "{{.Names}}"], timeout=20)
-        if drc == 0 and names.strip():
-            for name in names.decode().splitlines():
-                lrc, logs, stderr, _ = command([docker, "logs", name], timeout=30)
-                result["runtime"].append({"container": name, "kind": "available_logs", "exit": lrc, **inspect(logs + stderr)})
-                if "frontend" in name:
-                    trc, tar, _, _ = command([docker, "exec", name, "tar", "-cf", "-", ".next/static"], timeout=60)
-                    result["runtime"].append({"container": name, "kind": "frontend_static_tar", "exit": trc, **inspect(tar)})
+        rows = []
+        lrc, listing, _, _ = command([docker, "ps", "--format",
+                                     '{{.Label "com.docker.compose.project"}}\t'
+                                     '{{.Label "com.docker.compose.project.working_dir"}}'], timeout=20)
+        if lrc == 0:
+            for line in listing.decode().splitlines():
+                project, _, workdir = line.partition("\t")
+                rows.append((project.strip(), workdir.strip()))
+        compose_project = pick_compose_project(compose_project, rows)
+        if compose_project:
+            drc, names, _, _ = command([docker, "ps", "--filter", f"label=com.docker.compose.project={compose_project}", "--format", "{{.Names}}"], timeout=20)
+            if drc == 0 and names.strip():
+                for name in names.decode().splitlines():
+                    lrc, logs, stderr, _ = command([docker, "logs", name], timeout=30)
+                    result["runtime"].append({"container": name, "kind": "available_logs", "exit": lrc, **inspect(logs + stderr)})
+                    if "frontend" in name:
+                        trc, tar, _, _ = command([docker, "exec", name, "tar", "-cf", "-", ".next/static"], timeout=60)
+                        result["runtime"].append({"container": name, "kind": "frontend_static_tar", "exit": trc, **inspect(tar)})
+            else:
+                result["runtime_blocked"] = "Docker引擎不可达或本项目容器未运行"
         else:
-            result["runtime_blocked"] = "Docker引擎不可达或本项目容器未运行"
+            result["runtime_blocked"] = "未发现当前工作区对应的运行容器"
     else:
         result["runtime_blocked"] = "Docker命令不存在"
     scopes = [result["local_git_history"], *result["runtime"]]

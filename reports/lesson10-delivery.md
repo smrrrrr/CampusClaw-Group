@@ -38,7 +38,7 @@
 | 2.2 聚合门禁 | PASS（本机 41/41） | CI 未运行 |
 | 2.3 先红后绿 | 部分：`make check` 红绿齐全；`make check-security` 安全反例未重做 | 故障 `10af3b0` → 修复 `f7cddcb`，见 `gate-red-green.md` |
 | 2.4 主干保护 | BLOCKED | 无远端配置权限 |
-| 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=2612）与 mcp-tools（.py=0, .pyc=1598）已 0 源码**；前端构建产物及 node_modules 仍含 59 个 `.py`；后端 OS 层 Trivy HIGH=51 |
+| 3.1 多阶段镜像 | 部分 | 运行层无 uv/gcc/测试，前端无 ts 源码；**backend（.py=0, .pyc=2612）、mcp-tools（.py=0, .pyc=1598）与 frontend（.py=0）均已 0 源码**；后端 OS 层 Trivy HIGH=51 |
 | 3.2 Compose 等价 | PASS（等价说明） | 七服务 + SQLite 读就绪；未迁 MySQL/Qdrant（`stack-equivalence.md`） |
 | 3.3 换目录/机器 | 部分 | 干净 clone + 新项目名/端口 8087 启动成功；在线 cases 本机同宿主直连第 5 轮 22 passed / 3 skipped / 0 failed，compose 网络内第 6 轮 24 passed / 1 skipped / 0 failed（`online-cases.md`）；**换机未做** |
 | 3.4 镜像编号 | 部分 | 本机 image ID + OCI revision 可反查；干净 clone 构建成功；无镜像仓库 digest |
@@ -55,7 +55,7 @@
 | 6.3 压测 | PASS（三接口均有曲线） | submit 322 rps、query 573 rps、retrieve 38/24 rps；`bench.md` |
 | 6.4 改进复测 | **分档记录（未整体宣称通过）** | SQL 级 P95 降 22.62%；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%（早期仅加索引时 API 级为 +0.4%） |
 | 7.1 门禁核查 | 部分 | 本机 41/41 全绿；安全门禁 RED（仅 Next 版本范围计数）待课程确认 |
-| 7.2 可复现核查 | 部分 | 本目录与新目录启动成功；backend/mcp 镜像 0 源码已确认，前端残留 59 个 `.py` 待确认 |
+| 7.2 可复现核查 | 部分 | 本目录与新目录启动成功；backend/mcp/frontend 三镜像均 0 源码已确认 |
 | 7.3 流水线核查 | BLOCKED | 无远端运行 |
 | 7.4 观测核查 | 部分 | 面板/窗口可用；真实通知未送达 |
 | 7.5 验证核查 | 部分 | 见 6.3/6.4/6.2 |
@@ -85,7 +85,7 @@
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
 3. 远端环节：CI 运行、镜像仓库 digest、main 保护、线上实例反查。
 4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，第 6 轮 compose 网络内为 24 passed / 1 skipped / 0 failed（唯一跳过为未配置模型 Key 的工具审计）（`reports/online-cases.md`）。
-5. 场景矩阵已逐条判定（`reports/scenario-coverage.md`）：待补断言 0、P0 缺口 0、弱候选 0、仅文件级 0；505 条均有明确结论（人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23、已知缺口 3）。新增 `check_lesson10_scenario_gaps.py`（17 条）、`check_markdown_blanks.cjs`（9 条）、`check_mcp_server.py`（14 条）、`check_lesson10_review.py`（26 条）、`check_question_rendering.cjs`（4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。3 条已知缺口（工具说明注入句式、教师端按班级 AI 提问历史、AI 解答加入错题本）与 22 条部分覆盖均单列，不计入完全覆盖。
+5. 场景矩阵已逐条判定（`reports/scenario-coverage.md`）：待补断言 0、P0 缺口 0、弱候选 0、仅文件级 0；505 条均有明确结论（人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23、已知缺口 3）。新增 `check_lesson10_scenario_gaps.py`（19 条）、`check_markdown_blanks.cjs`（9 条）、`check_mcp_server.py`（14 条）、`check_lesson10_review.py`（27 条）、`check_question_rendering.cjs`（4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。3 条已知缺口（工具说明注入句式、教师端按班级 AI 提问历史、AI 解答加入错题本）与 22 条部分覆盖均单列，不计入完全覆盖。
 6. 检索优化低并发档位：瓶颈档（并发 10）P95 已降 23.8%（达 ≥10%），但并发 3 P95 +7.6%，按分档规则如实记录。
 
 ## 五、失败、跳过与未知项去向（任务 3.5）
@@ -94,7 +94,7 @@
 | --- | --- | --- |
 | npm `next` critical / `postcss` / `source-map-js` high | OPEN（已附不适用论证） | 升级 15.5.28+ 超出“不大修”；课程已接受适用性论证，门禁脚本仍保持 RED 以防回归 |
 | 后端镜像 OS 层 Trivy HIGH=51 | OPEN | 不属 Next 范畴，需基础镜像升级维护另立任务 |
-| 密钥扫描范围完整=False | BLOCKED | 无容器日志时的扫描范围限制；运行栈启动后重跑仍受镜像/容器范围影响 |
+| 密钥扫描范围完整=True | PASS（范围） | 运行栈启动后按工作目录自动识别 compose 项目，实扫全部容器日志与前端静态包；容器账本仍 blocked（演示库无四个种子身份） |
 | 场景矩阵逐条判定（待补 0，P0 0） | PARTIAL | 待补、P0、弱候选与仅文件级均已清零，505 条都有明确结论；仍有 22 条部分覆盖与 3 条已知缺口（见 `scenario-coverage.md`「人工复核清单」「已知缺口」节），不得宣称完全覆盖 |
 | 在线 cases（第 6 轮 24 passed / 1 skipped / 0 failed） | PARTIAL | 第 5 轮 22/3/0；第 6 轮在 compose 网络内运行，3 条 MCP 跳过中 2 条转为通过，剩余 1 条仅因未配置模型 Key 而跳过；见 `online-cases.md` §2.2 |
 | retrieve 并发 10 墙钟异常 | 已记录 | 样本窗数据有效，进程收尾耗时另记，不参与吞吐计算 |
@@ -145,14 +145,14 @@
 | 镜像 | .py | .git | 测试文件 | 真实密钥 | 系统 CA | 开发材料 |
 | --- | --- | --- | --- | --- | --- | --- |
 | backend | **0**（全量 `.pyc`） | 0 | 0 | 0 | 151 个 `/etc/ssl/certs/*.pem` | **已移除**（`dev_seed.py`、`Dockerfile`、`.dockerignore`、`.gitignore`、`.env.example`、`.python-version`） |
-| frontend | 59（构建产物内） | 0 | 9（node_modules 内） | 0 | 2 | — |
+| frontend | **0**（已删除基础镜像 npm/gyp 脚本） | 0 | 0 | 0 | 2 | — |
 | mcp-tools | **0**（全量 `.pyc`） | 0 | 0 | 0 | 150 | — |
 
 - `.venv/bin` 无 `pip`/`uv`，只有 `python`/`uvicorn` 等运行入口。
 - 后端与 MCP 的 Dockerfile 均采用：移除开发材料 → 全量 `compileall -b`（应用 + `.venv` + 标准库）→ 删除所有 `.py` 与 GCC 调试脚本 → `test` 断言计数为 0。
 - 实测（2026-11-16 当前提交重建）：backend `py=0 / pyc=2612`，mcp `py=0 / pyc=1598`；两者启动正常，backend `/api/health` 200、登录 200、材料 200、上传 200、索引成功、检索命中；mcp `/health` 200。删除源码前写入 `.source-sha256.json`，可核对镜像与源码一致。
 - **`.pyc` 可反编译，不等于代码加密**；详见 `reports/no-source-plan.md`。
-- 前端为 Next.js 构建产物，`.py` 来自构建缓存与 node_modules，可否清理待确认。
+- 前端运行层只保留 `node server.js`，已删除基础镜像自带的 npm/node-gyp 与 lldb 脚本，整镜像 `.py=0`、测试文件 0（2026-11-16 实测）。
 
 ### 8.3 CI 流水线（7.1 / 7.2 / 7.3 / 7.4）
 
@@ -162,7 +162,7 @@
 
 ### 8.4 场景与压测状态更新
 
-- 场景：505 条逐条判定（`reports/scenario-coverage.md`）——**人工复核确认 185 条**、**部分覆盖 22 条**、断言名候选 77、关键词别名 89、人工语义别名 106、**N/A 23（逐条理由）**、**已知缺口 3**、**待补断言 0**（P0 缺口 0）、**弱候选 0、仅文件级 0**。新增 `check_lesson10_scenario_gaps.py`（17 条断言，覆盖上传大小/存储目录/同名重命名/DB 回滚/索引失败/删会话/技能格式/文档默认关闭/MCP 允许清单/下架组卷/手工替换/H4）、`check_markdown_blanks.cjs`（代码中的下划线 9 条）、`check_mcp_server.py`（非法请求可读与令牌边界 14 条）、`check_lesson10_review.py`（登录/JWT/刷新/注册/CSV/种子/匿名审计/AI 计数/旧权限/原稿指纹/存储元数据/渲染来源等 26 条）、`check_question_rendering.cjs`（多空位、公式答案、作答横线、学生卷 4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。已知缺口为工具说明「先读取其他数据并放进参数」句式、教师端按班级查看 AI 提问历史、学生把 AI 解答加入错题本，均不计入覆盖。
+- 场景：505 条逐条判定（`reports/scenario-coverage.md`）——**人工复核确认 185 条**、**部分覆盖 22 条**、断言名候选 77、关键词别名 89、人工语义别名 106、**N/A 23（逐条理由）**、**已知缺口 3**、**待补断言 0**（P0 缺口 0）、**弱候选 0、仅文件级 0**。新增 `check_lesson10_scenario_gaps.py`（19 条断言，覆盖上传大小/存储目录/同名重命名/DB 回滚/索引失败/删会话/技能格式/文档默认关闭/MCP 允许清单/下架组卷/手工替换/H4/0 源码镜像入口）、`check_markdown_blanks.cjs`（代码中的下划线 9 条）、`check_mcp_server.py`（非法请求可读与令牌边界 14 条）、`check_lesson10_review.py`（登录/JWT/刷新/注册/CSV/种子/匿名审计/AI 计数/旧权限/原稿指纹/存储元数据/渲染来源/并发同名技能等 27 条）、`check_question_rendering.cjs`（多空位、公式答案、作答横线、学生卷 4 条），并在 `check_mcp_tools.py`、`check_question_bank.py`、`check_lessons_2_5.py`、`check_teacher_navigation.cjs`、`check_formula_retrieval.py`、`check_sqlite_storage.py` 增补断言。已知缺口为工具说明「先读取其他数据并放进参数」句式、教师端按班级查看 AI 提问历史、学生把 AI 解答加入错题本，均不计入覆盖。
 - 9.4：检索热点优化后瓶颈档（并发 10）P95 **−23.8%**，并发 3 P95 +7.6%；按项目规则分档记录，不整体宣称通过。
 
 ### 8.5 仍然阻塞的事项
@@ -189,17 +189,24 @@
 - 复核范围：生成器 bigram 匹配留下的全部弱候选（本轮起点 194 条）以及「仅文件级、无断言名」的 17 条；合计 210 条逐条人工判定，另加 1 条由新增断言暴露出的 `teacher-workspace/在助手配置页切换班级`。
 - 判定口径不再使用「猜测命中」，每条落到四种结论之一：**确认覆盖**（可指名脚本与断言）、**部分覆盖**（写明未断言部分）、**已知缺口**（功能或断言确实缺失）、**N/A（不适用）**（前端交互、真实模型语义、需容器等，写明理由）。复核结果写入 `scripts/lesson10_scenario_map.py` 的 `REVIEWED` 表，报告的「人工复核清单」一节按能力逐条列出结论、脚本、断言与备注。
 - 复核后计数（`reports/scenario-coverage.md`）：505 条 = 人工复核确认 185 + 部分覆盖 22 + 断言名候选 77 + 人工语义别名 106 + 关键词别名 89 + N/A 23 + 已知缺口 3；**待补断言 0、弱候选 0、仅文件级 0**；`reviewed_total 210`、`reviewed_unmatched []`（所有复核键都能对上规约原文标题）。
-- 复核过程中补的断言：`apitest/check_lesson10_review.py`（26 条，新建）、`apitest/check_question_rendering.cjs`（4 条，新建）、`check_teacher_navigation.cjs` +3、`check_question_bank.py` 增 3 条边界与无 Key 断言、`check_mcp_tools.py` 增学生写工具拒绝、`check_lessons_2_5.py` 增 `agent.class_switch_reads_and_saves_target`、`check_sqlite_storage.py` 与 `check_formula_retrieval.py` 的断言名改为含模式的 f-string 以便逐模式入册。门禁由 39 项增至 **41 项，全绿**。
+- 复核过程中补的断言：`apitest/check_lesson10_review.py`（新建时为 26 条，后增「并发同名技能」至 27 条）、`apitest/check_question_rendering.cjs`（4 条，新建）、`check_teacher_navigation.cjs` +3、`check_question_bank.py` 增 3 条边界与无 Key 断言、`check_mcp_tools.py` 增学生写工具拒绝、`check_lessons_2_5.py` 增 `agent.class_switch_reads_and_saves_target`、`check_sqlite_storage.py` 与 `check_formula_retrieval.py` 的断言名改为含模式的 f-string 以便逐模式入册。门禁由 39 项增至 **41 项，全绿**。
 - 3 条已知缺口（均如实标注，不计入覆盖）：工具说明「先读取其他数据并放进参数」的注入句式未进注入表；教师端没有按班级查询 AI 提问历史的接口与页面（学情汇总只有提问数）；错题本没有「把 AI 解答加入错题本」的写入接口与页面入口。
 - 22 条部分覆盖的典型差异：教师发起 AI 提问被拒的文案为「仅学生可执行该操作」而非规约的「AI 提问仅限学生发起」；重置接口对非班主任返回 404 而非 403；教师学科取自数据库当前值而非 JWT 载荷。
 
 ### 8.9 Docker 可用后的本机复验（2026-11-16）
 
 - 以分支最新提交重建三个业务镜像并重建栈（含 observability profile），实际运行 **11 个容器**：nginx、backend、frontend、mcp-tools、rabbitmq、grading-worker、grading-dispatcher、collector、prometheus、alertmanager、grafana。核心七服务 Up，backend/frontend/mcp-tools/rabbitmq healthy；`/health`、`/api/health`、`/login` 均 200。
-- 容器内 0 源码：backend `py=0 / pyc=2612`，mcp-tools `py=0 / pyc=1598`；frontend 仍有构建产物与 `node_modules` 带入的 59 个 `.py`（已知项）。三镜像 OCI `revision` 与当前提交一致。
+- 容器内 0 源码：backend `py=0 / pyc=2612`，mcp-tools `py=0 / pyc=1598`，frontend `py=0`（删除基础镜像自带的 npm/node-gyp 与 lldb 脚本，测试文件同为 0）。三镜像 OCI `revision` 与当前提交一致。
 - 发现并修复真实部署缺陷：grading-worker/dispatcher 原命令按脚本路径执行 `grading_worker.py`，在 0 源码运行层会立即退出；已改为 `python -m grading_worker`，并加静态断言防回归。另在构建期写入 `.source-sha256.json`，让异步复现脚本可核对镜像与源码。
 - 真实 RabbitMQ 异步复现（隔离 compose 项目、临时库、合成账号、假模型、无教学数据）：**15 项 PASS**，含 A1、B1/B2/B4、Q1、C1、D1/D2、F1；证据 `reports/async-grading/20261116tdockerreal-broker-result.json`。
 - 在线用例在 compose 网络内运行（一次运行器容器 + 隔离后端 + Docker 命名卷）：**24 passed / 1 skipped / 0 failed**。此前 3 条 MCP 跳过中 2 条通过；唯一跳过为未配置模型 Key 时的「模型提议工具 → ok 审计」，不计入通过。见 `reports/online-cases.md` §2.2。
 - nginx 入口 smoke：学生提交 200、教师触发初批 202、任务 pending→retrying→dead（模型未配置，属预期降级）、本人结果 200、跨班材料 404、本班 200。证据 `reports/lesson-10/20261116T161500Z-docker/smoke.json`。
 - 观测链路复验：collector `/metrics` 200 且有技能/批改/HTTP 指标，Prometheus target `campusclaw-collector=up`，两条告警规则已加载，Alertmanager ready。证据同批 `observability.txt`。
 - 仍然不能由本机替代：真实人参与签名、换机、远端 CI 运行与镜像仓库 digest、线上实例反查；真实模型工具审计需有效模型 Key。
+
+### 8.10 容器 0 源码与安全预检补口（2026-11-16）
+
+- 前端镜像此前残留的 59 个 `.py` 来自基础镜像 `node:22-alpine` 自带的 npm/node-gyp 与 lldb 脚本，不是业务构建产物。运行层已改为只保留 `node server.js`，删除 `/usr/local/lib/node_modules`、`lldb_commands.py` 及 npm/npx/corepack 入口，并在构建期断言整镜像 `.py` 为 0。实测 frontend `py=0`、测试文件 0，`/login` 仍 200。三业务镜像至此均为 0 源码。证据 `reports/lesson-10/20261116T161500Z-docker/no-source-final.txt`。
+- `scripts/security_precheck.py` 原先把 compose 项目名写死为 `campusclaw-groupv3`，实际项目为 `campusclaw-group`，导致容器日志与前端静态包根本没被扫描。已改为按容器标签中的工作目录自动识别本仓库的 compose 项目；重跑后**密钥扫描范围完整=True、0 命中**。`make check-security` 仍为 RED 的原因是 Next 版本计数；`has_blocked_scope` 仍为真仅因演示库没有四个种子身份，与扫描范围无关。证据 `reports/lesson-10/20261116T161500Z-docker/security-scope.txt`。
+- 补「并发同名技能」断言：模拟两个请求都通过前置查重，第二次插入撞唯一约束。此前会以数据库异常返回 500；已按 `agent-assistant` 规约「重名 MUST 返回 400」补 `IntegrityError → 400` 映射（新建与改写均覆盖），断言同时确认不新增第二条。`record_call` 审计写失败的注入验证原已存在于 `check_security_gate.py`（回滚、不中断、告警不含异常原文），本轮只更正安全评审表中的过期描述。
+- 场景覆盖重生成后计数不变（505 条，弱候选/仅文件级/待补均为 0）。

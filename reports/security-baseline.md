@@ -46,7 +46,7 @@
 
 `reports/security-evidence/secret-baseline.json`：`complete=True`、`leak_detected=False`。
 
-**处置**：无真实明文密钥命中，无需轮换。`security_precheck.py` 已修复项目名与数据库路径硬编码问题（从 `.env` 读取 `COMPOSE_PROJECT_NAME` 与 `DATABASE_URL`），运行日志与前端产物扫描范围完整。
+**处置**：无真实明文密钥命中，无需轮换。`security_precheck.py` 已改为按容器标签中的工作目录自动识别本仓库的 compose 项目（不再写死项目名），运行日志与前端静态产物扫描范围完整；容器账本仍因演示库缺少四个种子身份而 blocked，与扫描范围无关。
 
 ### 依赖审计（SEC-06）
 

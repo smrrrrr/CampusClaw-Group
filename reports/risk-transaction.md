@@ -17,7 +17,7 @@
 
 源码复核：`enqueue_homework`统一commit/rollback；外部模型调用在获取租约并提交后执行；`finish`将有效评分及任务完成在同一短事务提交；worker在处理函数返回后才确认消息。此处检查的是作业批改路径，不是全系统事务证明。
 
-本轮真实代理/进程中断待Docker引擎恢复后验证，不能用内存队列结果替代。另在`mcp_orchestrator.record_call`静态发现审计写失败只回滚而不告警的风险；尚未做专项故障注入，不能写已保证审计不丢。
+本轮真实代理/进程中断已在隔离 compose 项目重跑通过；`mcp_orchestrator.record_call` 的审计写失败已做故障注入：commit 异常时回滚、记 `audit_write_failed` 且不泄露异常原文、主流程继续（`apitest/check_security_gate.py`）。可靠审计/降级告警策略仍待另议，不能据此宣称审计绝不丢失。
 
 ---
 

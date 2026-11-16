@@ -21,6 +21,12 @@ def check(name, value):
 
 
 def main():
+    check("密钥扫描范围：按工作目录选择本项目 compose，不写死项目名",
+          gate.pick_compose_project(None, [("other", "/tmp/other"), ("mine", str(ROOT))]) == "mine"
+          and gate.pick_compose_project("explicit", [("mine", str(ROOT))]) == "explicit"
+          and gate.pick_compose_project(None, [("other", "/tmp/other")]) is None
+          and gate.pick_compose_project(None, [("a", str(ROOT)), ("b", str(ROOT))]) is None)
+
     advisory = "GHSA-abcd-1234-efgh"
     raw = {"metadata": {"vulnerabilities": {"critical": 1, "high": 0, "total": 2}}, "vulnerabilities": {
         "direct": {"via": [{"url": "https://github.com/advisories/" + advisory}], "nodes": ["node_modules/direct"]},

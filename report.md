@@ -12,7 +12,7 @@
 | 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
 | 第10课 测试交付与运行验证 | 本机工程实施与运行验证已收口；真人、远端与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
 
-第10课当前门禁：`make check` **41/41 PASS**；`make check-security` **RED**（仅 Next.js 14.2.15 版本范围计数，4 条 critical 在当前代码与 Linux standalone 部署下均不可触发，论证见 [next-risk-applicability.md](reports/next-risk-applicability.md)）。后端与 MCP 镜像均已达成 0 源码（`.py = 0`，全量 `.pyc`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；新目录从干净 clone 启动成功；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
+第10课当前门禁：`make check` **41/41 PASS**；`make check-security` **RED**（仅 Next.js 14.2.15 版本范围计数，4 条 critical 在当前代码与 Linux standalone 部署下均不可触发，论证见 [next-risk-applicability.md](reports/next-risk-applicability.md)）。backend、mcp-tools、frontend 三镜像均已达成 0 源码（`.py = 0`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；新目录从干净 clone 启动成功；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
 
 ## 二、第10课证据索引
 

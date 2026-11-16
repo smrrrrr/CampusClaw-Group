@@ -327,6 +327,11 @@ def run(folder: Path):
           and "grading_worker.py" not in compose
           and ".source-sha256.json" in dockerfile
           and "-name '*.py'" in dockerfile)
+    frontend_dockerfile = (ROOT / "frontend/Dockerfile").read_text(encoding="utf-8")
+    check("0 源码镜像：前端运行层删除基础镜像 npm/gyp 脚本并断言 .py 为 0",
+          "rm -rf /usr/local/lib/node_modules" in frontend_dockerfile
+          and "-name '*.py'" in frontend_dockerfile
+          and 'wc -l)" -eq 0' in frontend_dockerfile)
 
     engine.dispose()
 

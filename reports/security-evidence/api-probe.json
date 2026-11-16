@@ -1,5 +1,5 @@
 {
-  "time": "2026-11-14T12:49:14.302835+00:00",
+  "time": "2026-11-16T02:34:36.226493+00:00",
   "scope": "temporary SQLite + fake LLM/MCP; no production writes",
   "mutation": {
     "material_access": false,
@@ -265,7 +265,7 @@
           "skill_id": "1",
           "duration_ms": 0,
           "tokens": 37,
-          "created_at": "2026-11-14T12:49:14.245545"
+          "created_at": "2026-11-16T02:34:36.163042"
         }
       ],
       "passed": true

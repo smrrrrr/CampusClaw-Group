@@ -16,6 +16,7 @@ import tempfile
 import types
 from datetime import timedelta
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -44,15 +45,19 @@ def run(folder: Path):
     os.environ["UPLOAD_DIR"] = str(folder / "uploads")
     sys.path.insert(0, str(ROOT / "backend"))
 
+    from fastapi import HTTPException
     from fastapi.testclient import TestClient
     from sqlalchemy import LargeBinary
 
     import routers.quiz as quiz_router
+    from deps import CurrentUser
+    from routers import skills as skills_router
+    from routers.skills import SkillRequest
     import security
     from database import Base, SessionLocal, engine
     from main import app
     from material_service import parse_material_text, write_physical_file
-    from models import AuditLog, Class, Material, Role, User
+    from models import AssistantSkill, AuditLog, Class, Material, Role, User
     from security import REFRESH_COOKIE_NAME, decode_token, hash_password
     from services import get_ai_daily_count
 
@@ -301,6 +306,27 @@ def run(folder: Path):
               "{isHomeroom && <th style={{ width: 140 }}>操作</th>}" in teacher_page
               and "{isHomeroom && <td>" in teacher_page
               and "重置密码" in teacher_page)
+
+        # ---- 并发同名技能：唯一约束映射为 400 而非 500 ---------------------
+        source = ("名称：并发同名技能\n适用条件：夹角\n工具：knowledge_search\n启用：是\n\n"
+                  "只给公式提示，不直接给答案。")
+        current = CurrentUser(user_id=1, role="teacher", class_id=None, must_change_password=False,
+                              teaching_classes=[101, 102, 103], subject="math")
+        with SessionLocal() as db:
+            first = skills_router.create_skill(SkillRequest(class_id=101, source=source),
+                                               current=current, db=db)
+            # 模拟两个请求都已通过前置查重：跳过查重后第二次插入必然撞唯一约束
+            with patch.object(skills_router, "_check_name_unique", lambda *a, **k: None):
+                try:
+                    skills_router.create_skill(SkillRequest(class_id=101, source=source),
+                                               current=current, db=db)
+                    outcome = (None, None)
+                except HTTPException as exc:
+                    outcome = (exc.status_code, exc.detail)
+            total = db.query(AssistantSkill).count()
+        check("技能文件格式错误：并发同名创建仍返回 400 且不新增",
+              outcome == (400, "本班本科目下已存在同名技能")
+              and total == 1 and first.name == "并发同名技能")
 
     engine.dispose()
 

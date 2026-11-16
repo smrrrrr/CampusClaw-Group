@@ -1,15 +1,15 @@
 {
-  "started": "2026-11-14T12:49:12.200458+00:00",
+  "started": "2026-11-16T02:34:34.127373+00:00",
   "dependency_evidence_reused": false,
   "business_changes": false,
-  "git_head": "073ce993c6232753e5bd492d4efbe7ffd60d2f17",
+  "git_head": "37aecf9b52cc9663c6572f657ab05e8ad7f5a2d8",
   "tools": {
-    "scripts/security_precheck.py": "d815f79da0a4616c9158deaff1df880b30d7cfb7f649e1b829e85b403823d1b1",
+    "scripts/security_precheck.py": "d7c264c4c6009e4a6ce3f19e9ba112b9cdf897ee5f4ac82ee2dc0393e64ed06c",
     "scripts/secret_scan.py": "f69af628c2b8408201a2775bea276a20d10a81f463e60e1da0a8c3ba97bcd618",
     "apitest/probe_security_precheck.py": "3f14a13312707b886ca185a8542a0b3f0edcabcedcb99342b12fc82a19fed9a8"
   },
   "probe_exit": 0,
-  "finished": "2026-11-14T12:49:48.099964+00:00",
+  "finished": "2026-11-16T02:34:42.412253+00:00",
   "source_unchanged": true,
   "secret_leak_detected": false,
   "secret_scope_complete": true,

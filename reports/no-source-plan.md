@@ -92,10 +92,13 @@ Dockerfile 实际加入三步：递归编译 `/app` 与 `/usr/local/lib/python3.
 
 | 验证项 | backend | mcp-tools | frontend |
 | --- | --- | --- | --- |
-| 镜像内 `.py` | **0** | **0** | 59（Next 构建产物与 `node_modules` 残留，已知项） |
+| 镜像内 `.py` | **0** | **0** | **0**（已删除基础镜像 npm/node-gyp 与 lldb 脚本） |
 | 镜像内 `.pyc` | 2612 | 1598 | 0 |
+| 测试文件 | 0 | 0 | 0 |
 | OCI `revision` | 与提交一致 | 与提交一致 | 与提交一致 |
 | 启动 | healthy，`/api/health` 200 | healthy，`/health` 200 | healthy，`/login` 200 |
+
+前端运行层只保留 `node server.js`；基础镜像 `node:22-alpine` 自带的 `/usr/local/lib/node_modules/npm`（含 node-gyp 的 Python 脚本）与 `/usr/local/share/doc/node/lldb_commands.py` 已删除，并以 `test "$(find / -name '*.py' | wc -l)" -eq 0` 在构建期断言。
 
 同一轮发现并修复：`grading-worker`/`grading-dispatcher` 仍按脚本路径启动 `grading_worker.py`，而运行层已删除 `.py`，导致两容器反复退出。已改为 `python -m grading_worker --mode …`（legacy `.pyc` 可直接导入），并在 `check_lesson10_scenario_gaps.py` 增加静态断言防止回归。
 
