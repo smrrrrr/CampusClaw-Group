@@ -2,7 +2,7 @@
   "generated_at": "2026-11-16T22:25:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "8cb169b8ac01f215dd717f04e98056db75e576a2",
+    "head": "63037a78541b38bda2b2f969cb83464c12b5bd33",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -26,8 +26,8 @@
     "py_count": 0
   },
   "ci": {
-    "run": 43880980797,
-    "head": "8cb169b",
+    "run": 43881954432,
+    "head": "63037a7",
     "check": "pass",
     "security": "pass（workflow 内写入四个演示身份后转绿）",
     "images_build": "三个镜像均构建成功",
@@ -49,14 +49,15 @@
       "cffbb31",
       "bcf3c92",
       "9fffcb2",
-      "8cb169b"
+      "8cb169b",
+      "63037a7"
     ],
     "ci_images": {
-      "backend": "campusclaw-backend:c15d218",
-      "frontend": "campusclaw-frontend:c15d218",
-      "mcp-tools": "campusclaw-mcp-tools:c15d218"
+      "backend": "campusclaw-backend:3dbbe5c",
+      "frontend": "campusclaw-frontend:3dbbe5c",
+      "mcp-tools": "campusclaw-mcp-tools:3dbbe5c"
     },
-    "merge_ref_revision": "c15d218（PR 合并引用，镜像 OCI revision）"
+    "merge_ref_revision": "3dbbe5c（PR 合并引用，镜像 OCI revision）"
   },
   "files_changed": 164,
   "evidence_batches": {
@@ -89,18 +90,18 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 36006,
-      "sha256": "3ef8a31b0e781a27f107c6f4e231b3ba7d069c4560410051d9c43cfa80b0130e"
+      "bytes": 36023,
+      "sha256": "2263af6a57d3dd724c86069e582ca7401dc5cf3d1825dca9b5d014a29a15f1cc"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
       "bytes": 2955,
-      "sha256": "9257a95b463659a36521184bc3eca6c8ce23f26e09870981d9d85f9989b92df4"
+      "sha256": "43d9e1280f3e889a08d4f5794df79f5494624b8389644ba2377e99eadbc92d7b"
     },
     {
       "path": "docs/handover-2026-11-16-next15.md",
-      "bytes": 12022,
-      "sha256": "577c8e70434f9e0b695b1baee08528cfb0a219fa625b27ba0eb80ac2f2c0a963"
+      "bytes": 12034,
+      "sha256": "940314776c3b95443f51c4756072c01329a6ec4775183c053657f35defcf37f7"
     },
     {
       "path": "frontend/package-lock.json",
@@ -145,7 +146,7 @@
     {
       "path": "report.md",
       "bytes": 7443,
-      "sha256": "522a05a3b6331f2c24fe7a0559927582e8f9033c6aaa72f164675e1a5b3b3709"
+      "sha256": "beadca1d5681d30bdd32c284a2b8c2f7853f0ef3443b28794588b7892ba43081"
     },
     {
       "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
