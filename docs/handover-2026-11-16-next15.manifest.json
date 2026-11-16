@@ -1,85 +1,85 @@
 {
- "generated_at": "2026-11-16",
- "files": [
-  {
-   "path": "frontend/package.json",
-   "bytes": 655,
-   "sha256": "36a463c0109cdc34619b48470550acaaaf742e2369f34ab930f106bee2cc58e8"
-  },
-  {
-   "path": "frontend/package-lock.json",
-   "bytes": 93958,
-   "sha256": "b94a745eb47dba3c6bbd6eef9de92faaeec583999808a411352b180c60134608"
-  },
-  {
-   "path": "reports/security-evidence/dependency-exceptions.json",
-   "bytes": 10931,
-   "sha256": "0d7d914643ce32800c79038c9e5ec8bc808f6d856bbb7e2807e580a8f0374dec"
-  },
-  {
-   "path": "reports/security-evidence/run.json",
-   "bytes": 866,
-   "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
-  },
-  {
-   "path": "reports/security-evidence/npm-audit.json",
-   "bytes": 2464,
-   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
-  },
-  {
-   "path": "reports/security-evidence/accounts-readonly.json",
-   "bytes": 890,
-   "sha256": "aa29a2e620c4c5226c446f9e018896ea1e5cf145cc8e0cba48a17b9c7885bd78"
-  },
-  {
-   "path": "reports/next-risk-applicability.md",
-   "bytes": 8966,
-   "sha256": "dee604b257b31123fb7be9d3ec3d7ac440e669abc6f121ce0f7777399d9ebc70"
-  },
-  {
-   "path": "report.md",
-   "bytes": 6377,
-   "sha256": "28b57c3bfe01d457e8e6b49c73e8822b1d9c905e0a149a0f97fbc7e6017b5ecb"
-  },
-  {
-   "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
-   "bytes": 7019,
-   "sha256": "38294a891d02aab7171d2bd5426a82fad1f92b54d014e915d211afc9c9e33f4d"
-  },
-  {
-   "path": "reports/lesson-10/20261116T124118Z-next15/http-smoke.json",
-   "bytes": 7180,
-   "sha256": "e6c8a81587ec7e570e7245e499109c734f62e1985b6b6da5310d5f296df2b83b"
-  },
-  {
-   "path": "reports/lesson-10/20261116T124118Z-next15/image-zero-source.json",
-   "bytes": 594,
-   "sha256": "6a085a5cb42f2fa8f28e2a9c7154024e0279def0ad20dc813f656ab47d5ac1df"
-  },
-  {
-   "path": "reports/lesson-10/20261116T215000Z-browser/README.md",
-   "bytes": 4121,
-   "sha256": "31728742a420dcca6d7a1aa2657f087758192370a0baa08f94f9105c354998f1"
-  },
-  {
-   "path": "reports/lesson-10/20261116T215000Z-browser/page-checks.json",
-   "bytes": 1507,
-   "sha256": "597f799f0454e1389efb3b788dc60b3a9663e0c8bdc602f305e59f06ff58e322"
-  },
-  {
-   "path": "reports/lesson-10/20261116T215000Z-browser/cross-class-checks.json",
-   "bytes": 460,
-   "sha256": "8c5567e7dd4f168655d246156f8f50d1d62bd4e9bac07dd34aa084735f6e55a1"
-  },
-  {
-   "path": "reports/lesson-10/20261116T215000Z-browser/security-run-after-db-restore.json",
-   "bytes": 866,
-   "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
-  },
-  {
-   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/tasks.md",
-   "bytes": 5464,
-   "sha256": "876782ef4d01e0c3ecac6953ad085c692258314617b4c5e2b9edc0076fd13e93"
-  }
- ]
+  "generated_at": "2026-11-16",
+  "files": [
+    {
+      "path": "frontend/package.json",
+      "bytes": 655,
+      "sha256": "36a463c0109cdc34619b48470550acaaaf742e2369f34ab930f106bee2cc58e8"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "bytes": 93958,
+      "sha256": "b94a745eb47dba3c6bbd6eef9de92faaeec583999808a411352b180c60134608"
+    },
+    {
+      "path": "reports/security-evidence/dependency-exceptions.json",
+      "bytes": 10931,
+      "sha256": "0d7d914643ce32800c79038c9e5ec8bc808f6d856bbb7e2807e580a8f0374dec"
+    },
+    {
+      "path": "reports/security-evidence/run.json",
+      "bytes": 866,
+      "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
+    },
+    {
+      "path": "reports/security-evidence/npm-audit.json",
+      "bytes": 2464,
+      "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+    },
+    {
+      "path": "reports/security-evidence/accounts-readonly.json",
+      "bytes": 890,
+      "sha256": "aa29a2e620c4c5226c446f9e018896ea1e5cf145cc8e0cba48a17b9c7885bd78"
+    },
+    {
+      "path": "reports/next-risk-applicability.md",
+      "bytes": 8966,
+      "sha256": "dee604b257b31123fb7be9d3ec3d7ac440e669abc6f121ce0f7777399d9ebc70"
+    },
+    {
+      "path": "report.md",
+      "bytes": 7240,
+      "sha256": "9c2f4e21751e5967704d483d54ac28d0012a95083b106694d7dae6da6feb59b3"
+    },
+    {
+      "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
+      "bytes": 7019,
+      "sha256": "38294a891d02aab7171d2bd5426a82fad1f92b54d014e915d211afc9c9e33f4d"
+    },
+    {
+      "path": "reports/lesson-10/20261116T124118Z-next15/http-smoke.json",
+      "bytes": 7180,
+      "sha256": "e6c8a81587ec7e570e7245e499109c734f62e1985b6b6da5310d5f296df2b83b"
+    },
+    {
+      "path": "reports/lesson-10/20261116T124118Z-next15/image-zero-source.json",
+      "bytes": 594,
+      "sha256": "6a085a5cb42f2fa8f28e2a9c7154024e0279def0ad20dc813f656ab47d5ac1df"
+    },
+    {
+      "path": "reports/lesson-10/20261116T215000Z-browser/README.md",
+      "bytes": 4121,
+      "sha256": "31728742a420dcca6d7a1aa2657f087758192370a0baa08f94f9105c354998f1"
+    },
+    {
+      "path": "reports/lesson-10/20261116T215000Z-browser/page-checks.json",
+      "bytes": 1507,
+      "sha256": "597f799f0454e1389efb3b788dc60b3a9663e0c8bdc602f305e59f06ff58e322"
+    },
+    {
+      "path": "reports/lesson-10/20261116T215000Z-browser/cross-class-checks.json",
+      "bytes": 460,
+      "sha256": "8c5567e7dd4f168655d246156f8f50d1d62bd4e9bac07dd34aa084735f6e55a1"
+    },
+    {
+      "path": "reports/lesson-10/20261116T215000Z-browser/security-run-after-db-restore.json",
+      "bytes": 866,
+      "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
+    },
+    {
+      "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/tasks.md",
+      "bytes": 5464,
+      "sha256": "876782ef4d01e0c3ecac6953ad085c692258314617b4c5e2b9edc0076fd13e93"
+    }
+  ]
 }
