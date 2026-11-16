@@ -14,7 +14,7 @@
 | 镜像 | `campusclaw-frontend:next15-20261116t124118z`，运行层 `.py=0` |
 | 提交 | 分支 `deps/upgrade-a-b`，PR #3 面向 `main`；依赖升级 `f6d3a2b`，CI 与文档修复 `90bcbe7`→`9fffcb2`（最新提交以 `git log -1` 为准） |
 | 远端 CI | run `43885117587`（HEAD `3074cae`）：**三个 job 全绿**——`check` pass、`security` pass、`images` pass（backend 47 / mcp-tools 47 / frontend 0 条 HIGH，CRITICAL 0，HIGH 均在未过期书面例外内） |
-| 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节 |
+| 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节（7.2 已按 run `43885117587` 勾选） |
 
 ## 二、交接数据
 
@@ -104,7 +104,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 ## 五、剩余任务与做法
 
-### 5.1 第10课清单（13 项未勾）
+### 5.1 第10课清单（12 项未勾）
 
 | 任务 | 缺什么 | 接手做法 |
 | --- | --- | --- |
@@ -113,7 +113,6 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 4.2 组员独立验收 | 另一名组员 | 按 `demo-checklist.md` 从新目录走四项判定，本人签名 |
 | 5.1 分工与复核 | 真实姓名/角色 | 在 `lesson10-delivery.md` 填 A/B/C 负责人与交叉复核结论 |
 | 5.6 main 保护 | 仓库 admin | owner 配 required checks `check`/`security` |
-| 7.2 受控绿版本 | 授权勾选 | 三个 job 已全绿（run `43885117587`），镜像摘要与 revision 齐备；按项目规则勾选需明确授权，未擅自改 `tasks.md` |
 | 7.3 故障重放收口 | required check | 5.6 完成后，在测试 PR 验证红色状态无法合入并留证 |
 | 7.4 线上反查 | 线上部署目标 | 部署后记录 URL → digest → revision → CI run → commit |
 | 8.5 告警规则 | 接收通道/授权 | 与负责人确认渠道，补 `reports/observe-alert.md` |

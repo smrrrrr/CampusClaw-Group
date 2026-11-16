@@ -49,7 +49,7 @@
 ## 7. 流水线与反查新增任务
 
 - [x] 7.1 新增单一.github/workflows/lesson10.yml，按锁准备兼容工具和合成环境，以两个并列job运行原make双命令，两者成功后才构建镜像；验证失败证据仍脱敏归档，job不共享可写DB/报告目录，缺联网或Docker不降级成绿。
-- [ ] 7.2 在后续明确允许推送且远端权限可用时提交一次受控绿版本，记录CI编号/SHA/工具/双门禁/镜像digest；验证reports/pipeline.md链接可打开且为真实远端运行，不能用本机日志替代。
+- [x] 7.2 在后续明确允许推送且远端权限可用时提交一次受控绿版本，记录CI编号/SHA/工具/双门禁/镜像digest；验证reports/pipeline.md链接可打开且为真实远端运行，不能用本机日志替代。（2026-11-16：run `43885117587`，head `3074cae`，合并引用 `ea3134a9`；check 与 security 均 success，images 构建并扫描通过；镜像内容摘要 backend `a9f926a7…` / frontend `c3087880…` / mcp-tools `c89c53e6…`；未推送 registry，故无 RepoDigest；链接见 reports/pipeline.md）
 - [ ] 7.3 在独立测试PR/分支重放同一可逆故障，验证本地非0且远端required check失败、不生成可交付镜像/不能进main；保存故障与恢复记录，未经推送授权或权限不足则阻塞，不在当前工作区实施。
 - [ ] 7.4 建立线上URL→实际部署实例/digest→镜像revision→CI run→提交的反查记录；验证读取的是实际运行镜像而不是本机HEAD/固定应用版本，未有线上目标时标阻塞，不额外开版本业务API凑展示。
 

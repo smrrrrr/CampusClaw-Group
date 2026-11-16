@@ -2,7 +2,7 @@
   "generated_at": "2026-11-16T22:25:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "3074caee331b7dc70d616054028482f8d8dd67a9",
+    "head": "4715d69b4db668a254fbd2393d42fe5253f62cc7",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -108,8 +108,8 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 36374,
-      "sha256": "024329e31d2320cab8bb84d5aafdd0d4c349f8e7dd167efaddb442ff6b8480f1"
+      "bytes": 37190,
+      "sha256": "989791c46f8deca8be783e2cdb7cd108a6979658bf84b1e4f0f7371635a2b886"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
@@ -118,8 +118,8 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.md",
-      "bytes": 12844,
-      "sha256": "dac2a53d5067dccc7e658f520ecf27cdb3b0fe93655f265432be93bb724b5f8d"
+      "bytes": 12701,
+      "sha256": "9f51601752f65554f5c71271c48d019033c298f8fd80b5be815af0ffebe603da"
     },
     {
       "path": "frontend/package-lock.json",
@@ -138,8 +138,8 @@
     },
     {
       "path": "openspec/changes/2026-11-12-lesson10-test-delivery-and-runtime-verification/tasks.md",
-      "bytes": 13099,
-      "sha256": "436e3365f635c51c764b58d02b44e84cbb52062f8a9fd9004f62b4f675a9c448"
+      "bytes": 13409,
+      "sha256": "0974f06328e68e7244039a1543dd739ff916969b9b609ec2be1231388ad01893"
     },
     {
       "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/.openspec.yaml",
@@ -943,5 +943,14 @@
     ],
     "file_count": 212,
     "note": "仓库外生成；大小与哈希随重打包变化，见同名 .sha256"
+  },
+  "tasks": {
+    "lesson10": {
+      "checked": 32,
+      "unchecked": 12,
+      "ticked_this_round": [
+        "7.2"
+      ]
+    }
   }
 }

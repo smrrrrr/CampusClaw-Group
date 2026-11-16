@@ -1,8 +1,8 @@
 # 第10课流水线与镜像追溯
 
 - 工作流：`.github/workflows/lesson10.yml`
-- 远端验证：GitHub Actions **已实跑**（Draft PR #3，run `43826707775`）：`check` 通过、`security` RED、`images` 跳过
-- 状态：部分完成；受控绿版本、镜像 digest、主干保护为阻塞项
+- 远端验证：GitHub Actions **已实跑并全绿**（PR #3，run `43885117587`）：`check` 通过、`security` 通过、`images` 构建并扫描通过
+- 状态：**受控绿版本已达成（7.2）**；主干保护（5.6/7.3 收口）与线上反查（7.4）仍为阻塞项
 
 ## 一、流水线结构
 
@@ -74,7 +74,7 @@ docker image inspect campusclaw-backend:${GIT_SHA} --format '{{.Id}} {{index .Co
 
 - 安全 RED 是**真实门禁结果**，未放宽、未加 `continue-on-error`。`images` 被跳过是设计行为，说明“门禁绿才出镜像”生效。
 - 首次 404 日志见 `reports/lesson-10/20261116T075000Z-remote-ci/first-run-404.txt`，run 元数据与门禁摘要同目录。
-- **边界**：这是另一台 Linux 机器的运行证据，不是“另一个人”；因 `security` 未绿，**不构成 7.2 的受控绿版本，也没有 4.2 的远端 digest**。
+- **边界**：这是另一台 Linux 机器的运行证据，不是“另一个人”；因 `security` 未绿，**该轮不构成 7.2 的受控绿版本，也没有 4.2 的远端 digest**（后续 run `43885117587` 已全绿，见下文“受控绿版本”）。
 
 ### 独立分支故障重放（任务 7.3，2026-11-16）
 
@@ -91,9 +91,32 @@ docker image inspect campusclaw-backend:${GIT_SHA} --format '{{.Id}} {{index .Co
 - **未证明**：required check 阻止合入——当前账号无仓库管理权限，required checks 未配置（2.4）。因此 7.3 仍为部分完成。
 - 证据：`reports/lesson-10/20261116T080640Z-ci-fault-replay/`；PR #4 已关闭，`main` 未包含故障提交。
 
+### 受控绿版本（任务 7.2，2026-11-16）
+
+`deps/upgrade-a-b` 推送后由 PR #3 触发 `pull_request` 运行，三个 job 全部通过。这是**真实远端运行**，不是本机日志替代：
+
+| 项 | 值 |
+| --- | --- |
+| CI 编号 | run `43885117587` — https://github.com/smrrrrr/CampusClaw-Group/actions/runs/43885117587 |
+| 提交 / 合并引用 | head `3074cae`；PR 合并引用 `ea3134a9` |
+| 工具链 | 工作流固定：OpenSpec `1.13.1`、uv `0.13.5`、Node `22`、Python `3.12` |
+| `make check` | **success**，远端输出 `门禁全部通过`（含 `check_os_vuln_gate`） |
+| `make check-security` | **success**（临时库写入四个演示身份，未改判据） |
+| `build-and-scan` | **success**：三镜像构建 → Trivy 扫描 → `scripts/trivy_os_gate.py` 判定通过 |
+| 镜像内容摘要 | backend `sha256:a9f926a7…`、frontend `sha256:c3087880…`、mcp-tools `sha256:c89c53e6…` |
+| OCI revision | 三镜像标签 `org.opencontainers.image.revision=ea3134a9…`（PR 合并引用） |
+| OS 层扫描 | backend 47 / mcp-tools 47 / frontend 0 条 HIGH，CRITICAL 0；HIGH 均在未过期书面例外内（`reports/security-evidence/os-vuln-exceptions.json`，复查 2026-12-15） |
+| 证据归档 | CI artifact `images`：`os-vuln-gate.txt`、`trivy-*.json`、`*-image.txt` |
+
+**边界与诚实说明**：
+
+1. 镜像只在本跑的任务内构建，**未推送到任何 registry**，因此没有 `RepoDigest`；上表“镜像内容摘要”是 `docker image inspect .Id` 的内容寻址摘要，不等同于 registry digest。
+2. 该绿版本不包含分支保护效果验证——required checks 仍需仓库管理员配置（5.6），因此 7.3 的“不能进 main”仍未被证明。
+3. 扫描通过依赖书面例外；例外到期（2026-12-15）后门禁会自动失败，必须重新评估而不是续期了事。
+
 ## 四、阻塞与后续
 
 1. 远端写权限与 GitHub Actions 运行权限已具备；仍缺仓库管理权限（`admin=false, maintain=false`），无法配置 required checks / 分支保护。
 2. 需在仓库设置中把 `lesson10-delivery / make check`、`make check-security` 设为 required checks，并禁止未审批合入；当前账号无此权限。
-3. 安全门禁当前 RED（Next critical + 5 个未登记 npm 包），`images` 因此被跳过；不放宽门禁，因此没有远端镜像与 digest。本机 registry 演练只证明链路。
+3. 安全门禁已绿（run `43885117587`），`images` 已构建并扫描通过；但镜像未推送 registry，仍无远端 `RepoDigest`。本机 registry 演练只证明链路。
 4. 需要线上实例与正式发布流程，才能完成“线上 URL → 镜像 digest → OCI revision → CI run → 提交”的完整反查。
