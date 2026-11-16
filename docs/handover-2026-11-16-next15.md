@@ -13,7 +13,7 @@
 | 审计 | npm `critical=0 / high=0 / moderate=0 / low=4`（4 个 low 已在例外表登记） |
 | 镜像 | `campusclaw-frontend:next15-20261116t124118z`，运行层 `.py=0` |
 | 提交 | 分支 `deps/upgrade-a-b`，PR #3 面向 `main`；依赖升级 `f6d3a2b`，CI 与文档修复 `90bcbe7`→`9fffcb2`（最新提交以 `git log -1` 为准） |
-| 远端 CI | run `43879790468`（`bcf3c92`）：`check` pass、`security` pass、`images` 构建三个镜像成功但 Trivy 红——backend 基础镜像 debian 13.7 有 **49 条 HIGH / 0 CRITICAL**，`Fixed Version` 为空（上游无修复） |
+| 远端 CI | run `43880980797`（分支 HEAD `8cb169b`，镜像 revision `c15d218`）：`check` pass、`security` pass、`images` 三个镜像构建成功但 Trivy 红——backend 基础镜像 debian 13.7 有 **49 条 HIGH / 0 CRITICAL**，`Fixed Version` 为空（上游无修复） |
 | 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节 |
 
 ## 二、交接数据
@@ -136,7 +136,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 
 同一个 job 还缺 `.env`：`docker-compose.yml` 对 `JWT_SECRET_KEY`、`GRADING_BROKER_PASSWORD` 用 `:?` 强校验，已补构建前一次性占位 `.env`（本地 `--env-file` 实证：空环境 exit 1、生成后 exit 0）。
 
-修完后真实结果：三个镜像都构建成功（`61bbca8…`），backend 扫描 `Total: 49 (HIGH: 49, CRITICAL: 0)`，全部位于 debian 13.7 系统层，`Fixed Version` 为空。这是**上游尚未修复**的 OS 层问题，不是本次升级引入；处置办法是等基础镜像更新或另立维护变更，不得靠放宽 `severity`/`exit-code` 换绿。前端与 mcp-tools 的扫描因 job 在后端处失败而未执行。
+修完后真实结果：三个镜像都构建成功（revision `c15d218`，即 PR 合并引用），backend 扫描 `Total: 49 (HIGH: 49, CRITICAL: 0)`，全部位于 debian 13.7 系统层，`Fixed Version` 为空。这是**上游尚未修复**的 OS 层问题，不是本次升级引入；处置办法是等基础镜像更新或另立维护变更，不得靠放宽 `severity`/`exit-code` 换绿。前端与 mcp-tools 的扫描因 job 在后端处失败而未执行。
 
 其余缺口：真实模型语义抽查、手机端、线上部署、真实告警接收。
 
@@ -157,7 +157,7 @@ CAMPUSCLAW_PORT=55890 CAMPUSCLAW_DATA_DIR="$TMP/data" GIT_SHA=<基线SHA> \
 | 提案起草 | Claude Code | `openspec/changes/2026-11-16-upgrade-next-15-5-28/` 五份文件 |
 | 实施（改依赖、重锁、构建、隔离栈、审计、报告） | Codex CLI（写模式，经 codex-companion） | 对应第一批证据；未提交、未推送 |
 | 补测（页面验收、门禁复跑、证据归档） | Claude Code | headless Chrome + 本地库副本，对应第二批证据 |
-| CI 修复（`security` 种子身份、`images` 的 compose `.env` 与 trivy 版本） | Claude Code | `e08a99e`、`90bcbe7`、`a944069`、`bcf3c92`；每次先取远端日志定位真因，本地复现后再改，未放宽门禁 |
+| CI 修复（`security` 种子身份、`images` 的 compose `.env` 与 trivy 版本） | Claude Code | `e08a99e`、`90bcbe7`、`a944069`、`bcf3c92`、`8cb169b`；每次先取远端日志定位真因，本地复现后再改，未放宽门禁 |
 | 交接数据包打包 | Claude Code | `handover-packs/2026-11-16-next15.zip`，含库、`.env`、上传材料、证据；仓库外生成 |
 | 真人签名、手机实机、线上部署、告警接收 | **待接手人/组员** | 见第五节，不得由 AI 代签 |
 

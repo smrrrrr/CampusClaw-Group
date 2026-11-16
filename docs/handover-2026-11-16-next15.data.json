@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-16T22:05:00Z",
+  "generated_at": "2026-11-16T22:25:00Z",
   "git": {
     "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
-    "head": "9fffcb2086a3da5bafd68b29758e88c99f4464fa",
+    "head": "8cb169b8ac01f215dd717f04e98056db75e576a2",
     "branch": "deps/upgrade-a-b",
     "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
   },
@@ -26,8 +26,8 @@
     "py_count": 0
   },
   "ci": {
-    "run": 43879790468,
-    "head": "bcf3c92",
+    "run": 43880980797,
+    "head": "8cb169b",
     "check": "pass",
     "security": "pass（workflow 内写入四个演示身份后转绿）",
     "images_build": "三个镜像均构建成功",
@@ -47,13 +47,16 @@
       "90bcbe7",
       "a944069",
       "cffbb31",
-      "bcf3c92"
+      "bcf3c92",
+      "9fffcb2",
+      "8cb169b"
     ],
     "ci_images": {
-      "backend": "sha256:62db78bdf6f27fdea3a72f78205ee4e98bda3cc72dc4e236e5ab1c9d70839321",
-      "frontend": "sha256:ad2891eb1c317df5e1402c21b43699f9ff3c87c68eeccf264228d1ab0e4ecb2f",
-      "mcp-tools": "sha256:8b34e4f9ea22d616797e50b2433d6594df9cb50ba105d097f3e974260aeb0c5e"
-    }
+      "backend": "campusclaw-backend:c15d218",
+      "frontend": "campusclaw-frontend:c15d218",
+      "mcp-tools": "campusclaw-mcp-tools:c15d218"
+    },
+    "merge_ref_revision": "c15d218（PR 合并引用，镜像 OCI revision）"
   },
   "files_changed": 164,
   "evidence_batches": {
@@ -86,18 +89,18 @@
     },
     {
       "path": "docs/handover-2026-11-16-next15.data.json",
-      "bytes": 36024,
-      "sha256": "cb5a86e9019be781209886751585ae9d749e195570b08b50281884f56a2f01ea"
+      "bytes": 36006,
+      "sha256": "3ef8a31b0e781a27f107c6f4e231b3ba7d069c4560410051d9c43cfa80b0130e"
     },
     {
       "path": "docs/handover-2026-11-16-next15.manifest.json",
       "bytes": 2955,
-      "sha256": "05366c9eef46dc3204cd5fa8d3eab80ef53312ab4bd7955260e87a199088d173"
+      "sha256": "9257a95b463659a36521184bc3eca6c8ce23f26e09870981d9d85f9989b92df4"
     },
     {
       "path": "docs/handover-2026-11-16-next15.md",
-      "bytes": 11850,
-      "sha256": "ffead8f79e510561e34c0edfc1ec232a0edf4034f1fd98eff8e5e1eab6371139"
+      "bytes": 12022,
+      "sha256": "577c8e70434f9e0b695b1baee08528cfb0a219fa625b27ba0eb80ac2f2c0a963"
     },
     {
       "path": "frontend/package-lock.json",
@@ -141,8 +144,8 @@
     },
     {
       "path": "report.md",
-      "bytes": 7413,
-      "sha256": "5c924f8b292e07126b15826dde8c031c1989f26a56ec1066cdfad67f618e82c4"
+      "bytes": 7443,
+      "sha256": "522a05a3b6331f2c24fe7a0559927582e8f9033c6aaa72f164675e1a5b3b3709"
     },
     {
       "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
