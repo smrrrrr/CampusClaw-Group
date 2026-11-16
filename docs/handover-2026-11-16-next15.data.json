@@ -26,17 +26,34 @@
     "py_count": 0
   },
   "ci": {
-    "run": 43877256576,
+    "run": 43879790468,
+    "head": "bcf3c92",
     "check": "pass",
     "security": "pass（workflow 内写入四个演示身份后转绿）",
-    "images_before": "fail：Set up job，aquasecurity/trivy-action@0.28.0 无法解析（仓库仅有 v0.28.0 及更新 tag）",
-    "images_fixes": [
-      "trivy-action tag 改为 v0.28.0",
-      "构建前生成一次性占位 .env（compose 对 JWT_SECRET_KEY/GRADING_BROKER_PASSWORD 用 :? 强校验）"
+    "images_build": "三个镜像均构建成功",
+    "images_scan": {
+      "backend": "Total: 49 (HIGH: 49, CRITICAL: 0)，debian 13.7 系统层，Fixed Version 为空",
+      "frontend": "未执行（job 在 backend 扫描失败后终止）",
+      "mcp-tools": "未执行"
+    },
+    "images_conclusion": "failure（真实漏洞，非流程问题）",
+    "upstream_fixes": [
+      "trivy-action 0.28.0 tag 不存在 → 改用 v0.36.0 并按 commit a9c7b0f 固定",
+      "trivy-action v0.28.0 内部 setup-trivy@v0.2.1 被上游删除（现存 v0.2.6/v0.3.0/v0.3.1）",
+      "compose 对 JWT_SECRET_KEY/GRADING_BROKER_PASSWORD 用 :? 强校验 → 构建前生成一次性 .env"
     ],
-    "seed_commit": "e08a99e",
-    "images_fix_commit": "90bcbe7",
-    "next_run": "重跑中，结果见 ci/ci-status.json"
+    "commits": [
+      "e08a99e",
+      "90bcbe7",
+      "a944069",
+      "cffbb31",
+      "bcf3c92"
+    ],
+    "ci_images": {
+      "backend": "sha256:62db78bdf6f27fdea3a72f78205ee4e98bda3cc72dc4e236e5ab1c9d70839321",
+      "frontend": "sha256:ad2891eb1c317df5e1402c21b43699f9ff3c87c68eeccf264228d1ab0e4ecb2f",
+      "mcp-tools": "sha256:8b34e4f9ea22d616797e50b2433d6594df9cb50ba105d097f3e974260aeb0c5e"
+    }
   },
   "files_changed": 164,
   "evidence_batches": {
