@@ -12,7 +12,7 @@
 | 门禁（本地） | `make check` **41/41 PASS，exit 0**；`make check-security` **PASS，exit 0** |
 | 审计 | npm `critical=0 / high=0 / moderate=0 / low=4`（4 个 low 已在例外表登记） |
 | 镜像 | `campusclaw-frontend:next15-20261116t124118z`，运行层 `.py=0` |
-| 提交 | 分支 `deps/upgrade-a-b`，HEAD `90bcbe7`，PR #3 面向 `main` |
+| 提交 | 分支 `deps/upgrade-a-b`，PR #3 面向 `main`；依赖升级 `f6d3a2b`，CI 与文档修复 `90bcbe7`→`9fffcb2`（最新提交以 `git log -1` 为准） |
 | 远端 CI | run `43879790468`（`bcf3c92`）：`check` pass、`security` pass、`images` 构建三个镜像成功但 Trivy 红——backend 基础镜像 debian 13.7 有 **49 条 HIGH / 0 CRITICAL**，`Fixed Version` 为空（上游无修复） |
 | 未完成 | 真人/手机/远端 required checks/线上部署等，见第五节 |
 
