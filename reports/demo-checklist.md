@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | J1 换人双跑一致 | 同一提交、同一锁文件、同一夹具与参数，运行 `make check` 与 `make check-security` 各两次 | 断言数、退出码、关键状态一致；时间与随机 ID 不同需说明 | 本文件表下追加，或 `reports/boot-reproduce.md` |
 | J2 README 新目录启动 | 新建空目录克隆，按 README 准备 `.env`、构建、`docker compose up -d` | 七服务就绪，`/health` 200，页面 200；不得复用已有数据目录 | `reports/boot-reproduce.md` §八（本机已做当前提交空目录；仍需他人独立执行） |
-| J3 线上提交反查 | 从线上 URL 找到实例 → 镜像 digest → OCI `revision` 标签 → CI run → 提交 | 五步可追溯且互相一致 | `reports/pipeline.md` |
+| J3 线上提交反查 | 从线上 URL 找到实例 → 镜像 digest → OCI `revision` 标签 → CI run → 提交 | 五步可追溯且互相一致 | `reports/pipeline.md`；远端 CI run `43826707775` 已存在但 `images` 跳过、无在线实例，五步仍缺两环 |
 | J4 60 秒窗口报数 | 指定任意 UTC 60 秒窗口，调用采集器窗口模式 | 60 秒内返回三技能调用量与失败率；空分母显示「无样本」 | `reports/observe-alert.md` |
 
 ## 二、五个当场动作
@@ -28,6 +28,7 @@
 - **在线 cases 复跑（任务 3.3）**：本机同宿主直连（临时库、后端与 pytest 同文件系统）第 5 轮为 `22 passed / 3 skipped / 0 failed`；compose 网络内第 6 轮（2026-11-16）为 `24 passed / 1 skipped / 0 failed`，仅剩「无模型 Key 时的工具审计」跳过，明细与复现步骤见 `reports/online-cases.md` §2.2。
 - **当前提交重建复验（2026-11-16，任务 6.1/7.1）**：七服务 + 四个观测容器全部启动，`/health`、`/api/health`、`/login` 200；backend/mcp-tools 镜像 `.py=0`、OCI revision 与提交一致；真实 RabbitMQ 异步复现 15 项 PASS。证据 `reports/lesson-10/20261116T161500Z-docker/`、`reports/async-grading/20261116tdockerreal-broker-result.json`。
 - **换目录 / 本机 registry / 备份回滚（2026-11-16）**：当前提交导出到空目录后独立项目/端口 8097 启动成功（七服务 Up、`/health` 与 `/login` 200、`.py=0`）；本机 `registry:2` push/pull 三镜像并记录 digest；演示库临时副本备份恢复指纹一致，`37aecf9` 上一 tag 在独立项目/端口 8098 回滚通过。均不替代换机、远端仓库或正式发布。证据 `reports/lesson-10/20261116T024000Z-clone-registry-rollback/`、`reports/release-rollback.md`。
+- **GitHub Actions 远端实跑（2026-11-16）**：Draft PR #3 触发两次。首次因 `@openspec/cli` npm 404 失败；修复 `fca85f7` 后 run `43826707775` 的 `make check` 在远端 Ubuntu **41/41 通过**，`make check-security` **RED**（Next critical + 5 个未登记 npm 包；容器账本 blocked），`images` 按 `needs` 跳过。故远端没有镜像、Trivy 或 digest，也不构成受控绿版本。证据 `reports/lesson-10/20261116T075000Z-remote-ci/`。这是“另一台机器”，不是“另一个人”。
 
 ## 三、六份必交报告核对
 
@@ -35,7 +36,7 @@
 | --- | --- | --- |
 | 交付与对照 | `reports/lesson10-delivery.md` | 已更新最新状态 |
 | 从零启动 | `reports/boot-reproduce.md` | 本机完成（含当前提交空目录复验）；换机待做 |
-| 流水线 | `reports/pipeline.md` | 文件齐全；远端 run 待做 |
+| 流水线 | `reports/pipeline.md` | GitHub Actions 已实跑（run `43826707775`）：check 绿、security 红、images 跳过；受控绿版本与远端 digest 待做 |
 | 观测与告警 | `reports/observe-alert.md` | 四阶段齐全；接收授权待确认 |
 | 压测 | `reports/bench.md` | 已完成两轮对比 |
 | 用户反馈 | `reports/feedback.md` | **BLOCKED**，无真实用户 |
@@ -56,7 +57,7 @@
 
 ## 五、展示前必须处理
 
-1. **安全门禁 RED**：Next 4 条 critical 已有不适用论证（`reports/next-risk-applicability.md`），但课程是否接受尚未答复；未答复前不得说「高危 0 条」。
+1. **安全门禁 RED**：Next 4 条 critical 已有不适用论证（`reports/next-risk-applicability.md`），但计数还包含 5 个未登记 npm 包；课程是否接受尚未答复，未答复前不得说「高危 0 条」。
 2. **等价未认可**：第三图 P95 是否等价于完整接口耗时、MySQL/Qdrant/Golang 是否强制，均未获课程确认。
 3. **返回码差异**：演示中若出现与本文预期不同的状态码，先记入本节「待修」，不得现场改口径。
 4. **签名**：三份审核与反馈表必须由本人填写；AI 生成的追加内容不能替代签名。

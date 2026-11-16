@@ -1,0 +1,6 @@
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2663784Z npm error 404
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2664331Z npm error 404  '@openspec/cli@1.13.1' is not in this registry.
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2664782Z npm error 404
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2665219Z npm error 404 Note that you can also install from a
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2665773Z npm error 404 tarball, folder, http url, or git url.
+make check	安装 uv 与 OpenSpec	2026-11-16T07:48:27.2827358Z ##[error]Process completed with exit code 1.

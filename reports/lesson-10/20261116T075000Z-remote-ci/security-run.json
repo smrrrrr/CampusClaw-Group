@@ -1,0 +1,31 @@
+{
+  "started": "2026-11-16T07:52:43.699090+00:00",
+  "dependency_evidence_reused": false,
+  "business_changes": false,
+  "git_head": "2ba142a87908a5f7d180dbe6c58cd12589feb58c",
+  "tools": {
+    "scripts/security_precheck.py": "d7c264c4c6009e4a6ce3f19e9ba112b9cdf897ee5f4ac82ee2dc0393e64ed06c",
+    "scripts/secret_scan.py": "f69af628c2b8408201a2775bea276a20d10a81f463e60e1da0a8c3ba97bcd618",
+    "apitest/probe_security_precheck.py": "3f14a13312707b886ca185a8542a0b3f0edcabcedcb99342b12fc82a19fed9a8"
+  },
+  "probe_exit": 0,
+  "finished": "2026-11-16T07:52:53.611118+00:00",
+  "source_unchanged": true,
+  "secret_leak_detected": false,
+  "secret_scope_complete": true,
+  "unregistered_vulns": [
+    "npm:katex",
+    "npm:micromark-extension-math",
+    "npm:next",
+    "npm:rehype-katex",
+    "npm:remark-math"
+  ],
+  "expired_exceptions": [],
+  "course_high_critical": {
+    "npm": 1,
+    "pip_unknown_severity": []
+  },
+  "exit": 1,
+  "status": "RED",
+  "has_blocked_scope": true
+}
