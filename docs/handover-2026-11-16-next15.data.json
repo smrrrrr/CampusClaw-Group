@@ -1,0 +1,854 @@
+{
+ "generated_at": "2026-11-16T00:00:00Z",
+ "git": {
+  "base": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+  "head": "e08a99e063acd12db001a8e8c941d13fee8aa911",
+  "branch": "deps/upgrade-a-b",
+  "remote": "https://github.com/smrrrrr/CampusClaw-Group/pull/3"
+ },
+ "versions": {
+  "next": "15.5.28",
+  "react": "18.3.1",
+  "node_runtime": "22"
+ },
+ "gates": {
+  "make_check": "41/41 PASS exit 0",
+  "make_check_security": "PASS exit 0（本地，data/current 副本）"
+ },
+ "audit": {
+  "critical": 0,
+  "high": 0,
+  "moderate": 0,
+  "low": 4
+ },
+ "image": {
+  "tag": "campusclaw-frontend:next15-20261116t124118z",
+  "py_count": 0
+ },
+ "ci": {
+  "run": 43876201284,
+  "check": "pass",
+  "security_before_seed": "BLOCKED exit 2",
+  "seed_commit": "e08a99e"
+ },
+ "files_changed": 161,
+ "evidence_batches": {
+  "reports/lesson-10/20261116T124118Z-next15": 131,
+  "reports/lesson-10/20261116T215000Z-browser": 6,
+  "reports/security-evidence": 42
+ },
+ "excluded_from_repo": [
+  "data/ 下的数据库与上传",
+  ".env",
+  "真实教学库",
+  "资料原文件",
+  "令牌与密钥"
+ ],
+ "files": [
+  {
+   "path": ".github/workflows/lesson10.yml",
+   "bytes": 7672,
+   "sha256": "5f43ddfa8006baf58a09c26fc1b18f375a871fa9fea960fbcc4ada199f9fec5a"
+  },
+  {
+   "path": "docs/handover-2026-11-16-next15.manifest.json",
+   "bytes": 2743,
+   "sha256": "d2cbcc8b01f6e27864eec8ffd05c9966e13b13f3941a662c88159744a9046ad2"
+  },
+  {
+   "path": "docs/handover-2026-11-16-next15.md",
+   "bytes": 9531,
+   "sha256": "a2a03b6a3e634cfa2daf144eafc15fe41d7f30da835e05efabf7d3d7a2931518"
+  },
+  {
+   "path": "frontend/package-lock.json",
+   "bytes": 93958,
+   "sha256": "b94a745eb47dba3c6bbd6eef9de92faaeec583999808a411352b180c60134608"
+  },
+  {
+   "path": "frontend/package.json",
+   "bytes": 655,
+   "sha256": "36a463c0109cdc34619b48470550acaaaf742e2369f34ab930f106bee2cc58e8"
+  },
+  {
+   "path": "openspec/changes/2026-11-12-lesson10-test-delivery-and-runtime-verification/tasks.md",
+   "bytes": 13099,
+   "sha256": "436e3365f635c51c764b58d02b44e84cbb52062f8a9fd9004f62b4f675a9c448"
+  },
+  {
+   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/.openspec.yaml",
+   "bytes": 57,
+   "sha256": "5638cbfe3054a7515a2ca1e84cb956f4671c104aff9ffda8016358ccea2a2956"
+  },
+  {
+   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/design.md",
+   "bytes": 5872,
+   "sha256": "c2ed3f83139a891d26df279c5cbc80f3132597355dc99f41c0f89ab311c823df"
+  },
+  {
+   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/proposal.md",
+   "bytes": 3734,
+   "sha256": "c61a22bcce5b2c5ba6ed9b44d77fa41a37cf12f883955c225a12799663c206ff"
+  },
+  {
+   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/tasks.md",
+   "bytes": 5464,
+   "sha256": "876782ef4d01e0c3ecac6953ad085c692258314617b4c5e2b9edc0076fd13e93"
+  },
+  {
+   "path": "openspec/changes/2026-11-16-upgrade-next-15-5-28/verification-plan.md",
+   "bytes": 2175,
+   "sha256": "5a56548451ce845576020d3859983a2addef0c7c304e2dee22e088ca4abe455d"
+  },
+  {
+   "path": "report.md",
+   "bytes": 6377,
+   "sha256": "28b57c3bfe01d457e8e6b49c73e8822b1d9c905e0a149a0f97fbc7e6017b5ecb"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/README.md",
+   "bytes": 7019,
+   "sha256": "38294a891d02aab7171d2bd5426a82fad1f92b54d014e915d211afc9c9e33f4d"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/baseline.json",
+   "bytes": 3941,
+   "sha256": "c573538421dad7c946d391c9f8d2053741f3b2ae64ce176aa0ce3b9bcaa18af7"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/build-artifacts.json",
+   "bytes": 869,
+   "sha256": "c70282886b68d3df0584d7b1452d41da79b77d515ef96e531140eb8ab668ddef"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/cleanup.json",
+   "bytes": 180,
+   "sha256": "6ef39edb0157ad10a9ad367f894ce1603aa2039b9e7c5856b4762168940cb34f"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/compose-down.result.json",
+   "bytes": 295,
+   "sha256": "5b7c0c3ddf2a33477b015890e0d933b61ece88bca5ca9d7e5b33aefa98996c30"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/compose-down.txt",
+   "bytes": 2446,
+   "sha256": "43c6618b6e29dfbb91d9e17187cdfe8efd4b2d92e74ffdcae6f1bd93be892c68"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/compose-ps.jsonl",
+   "bytes": 12977,
+   "sha256": "73ff0419a50efce5147b16a1fc9e16a425f33279da06b50e62ca41f70b10d10c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/compose-up.result.json",
+   "bytes": 286,
+   "sha256": "065faf99147014d002a47d2abef44912e8cbdd67c2e1fc3fabdf0a1888528684"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/compose-up.txt",
+   "bytes": 3026,
+   "sha256": "0bf0f58b50fbbb072cbe55792971d15a04f46ce720e47c74b733a285b2ab756b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/docker-build-initial.txt",
+   "bytes": 164,
+   "sha256": "8a3fbdcf5b748e5f0b4362a7c8101de04962591b78320233067214462571a607"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/docker-build.result.json",
+   "bytes": 277,
+   "sha256": "5572aa3ac1d7647f9177a8cdc2da4533a9183a4ca136574cc9d6917ff2ae21ab"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/docker-build.txt",
+   "bytes": 5120,
+   "sha256": "5f5a955ae31d9df6cd31825af7dddcf02be02a9f40e8805044da73f9a3aec76c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/http-smoke.json",
+   "bytes": 7180,
+   "sha256": "e6c8a81587ec7e570e7245e499109c734f62e1985b6b6da5310d5f296df2b83b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/image-runtime-dependencies.json",
+   "bytes": 78,
+   "sha256": "9b32e9e56798f0d8a45bf2aa0f0bb596beb5d33ea0280a575c2a0312680599de"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/image-zero-source.json",
+   "bytes": 594,
+   "sha256": "6a085a5cb42f2fa8f28e2a9c7154024e0279def0ad20dc813f656ab47d5ac1df"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/lock-diff.json",
+   "bytes": 4533,
+   "sha256": "266cd265391d83a5d78bcfcbdede7f8c7b74bf1545674a03d5c8d881a6181c03"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/make-check-security.result.json",
+   "bytes": 105,
+   "sha256": "7b9d273a7c74de6d25db0678590c4ecd6eaba55548a0f41148ad8f5c0adb60d5"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/make-check-security.txt",
+   "bytes": 2569,
+   "sha256": "8237812bbf0ac5277fbf063aac4799cc719df1702019dbc1d459d09e5fc4e9bf"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/make-check.result.json",
+   "bytes": 97,
+   "sha256": "310f34b4d3c444242c1d206ed39df14c7e6f7a8c0f2ee75024b99e69ad4f87af"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/make-check.txt",
+   "bytes": 1521,
+   "sha256": "e20cafca7bdea5eedc930961646b9faaa1122c51d1fe24d63a198f63d92a2763"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/manifest.json",
+   "bytes": 13786,
+   "sha256": "3a281572b8be5ac4fb8931b46e87f2be5a3a1ea74bbe56c6f23867723c84ca01"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/next-build.result.json",
+   "bytes": 111,
+   "sha256": "f2a0c577e6f8eb145f62d2694b4e6b9d6bfd6660fa5b8df682fbc5e88dea2762"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/next-build.txt",
+   "bytes": 1658,
+   "sha256": "cd5a3106d845a612e001e12ea4310f6f699b7595a2aed35dc8da92c6146cdb31"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-audit-summary.json",
+   "bytes": 2745,
+   "sha256": "324affe7bf37250842bd45efea3db5da2ed73c8670ba025d6764d794fbd5b6cb"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-audit.json",
+   "bytes": 2464,
+   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-audit.result.json",
+   "bytes": 176,
+   "sha256": "5a9eb016d0527b66af561ab4d63112c4a2a0437ca8d2786027187215521f53da"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-audit.txt",
+   "bytes": 2464,
+   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-ci.result.json",
+   "bytes": 132,
+   "sha256": "66ba1b252ee475f9657c46d21077ba389254b48c0c1cc96a35f2b5b226e5a116"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-ci.txt",
+   "bytes": 27,
+   "sha256": "b4501c7c6e69700072118e386a7862221ce9b6ccec17df9c500cf204bc9794ab"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-ls.result.json",
+   "bytes": 174,
+   "sha256": "cbddc6f7dc23f5c924d6704bfb87fb0cd573645319b914626d8a099fe6a1533d"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/npm-ls.txt",
+   "bytes": 590,
+   "sha256": "48935d5f693a981e5e542f991153aec25e33ffe618f05ef5a543f6b2a1c6134e"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/openspec-validate.result.json",
+   "bytes": 156,
+   "sha256": "5354d747a47988ea6185c3b85bc306b67dd21a50ae5688a6916bc3cd9f5bc023"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/openspec-validate.txt",
+   "bytes": 4321,
+   "sha256": "7c9ddbaee781885a94cb65806780eff740f34d62fb9de1858b665882e797b3fd"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/fake_model.py.txt",
+   "bytes": 722,
+   "sha256": "e761209ce912dd783ccbc4d6cad441d61409dad736b4e49d2a10bab5553793de"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/fixture.py.txt",
+   "bytes": 2607,
+   "sha256": "ace3e9e7e3abd973b680ddcb34cd7e2b1bbdd0bed0eeab0adb6c9cdc22e36047"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/http-smoke.py.txt",
+   "bytes": 5127,
+   "sha256": "8c668843e5507254425d11b4bdb38b5a045536e01c25de9baaa8570a1cb735e9"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/run.py.txt",
+   "bytes": 980,
+   "sha256": "af459542ab4942a5604f86e64781773b86257dac08422c4ec7d94978b20a40d1"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/runtime-setup.py.txt",
+   "bytes": 3127,
+   "sha256": "23214cd08db827041146f876ae618007f07da89dbd21f7c4172d2e56a0693c4c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/replay/sse-compare.py.txt",
+   "bytes": 1912,
+   "sha256": "706c1cc2638b045c13fbf37128d1c54efb4cd051ae48c0f6b05fac33021b64bc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/results.json",
+   "bytes": 937,
+   "sha256": "7df86f339837b62cebbf0e55e9be0de7db915f591daeb4b6ccd2162b0c9e6d71"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/runtime-isolation.json",
+   "bytes": 2609,
+   "sha256": "5a48a76dbb7ff622c1fc185deb262c836e9a9642724584adfd30194bf25013c1"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/accounts-readonly.json",
+   "bytes": 166,
+   "sha256": "a5bd98db48c46f8a725d05e2d0c60a38f13f2eb9a2fb5d4d20ed1d8ea40af3ae"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/api-probe-mutation.json",
+   "bytes": 5460,
+   "sha256": "3dafd378c07d2b6038109f962a435cf655aee23e6c09892958104c6260fd2edb"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/api-probe.json",
+   "bytes": 9506,
+   "sha256": "033bc0078a0f440e4968194f26d6e8a9266ef1e06e8e24ff024ca6fa3895d697"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/async-offline.json",
+   "bytes": 3037,
+   "sha256": "37dd6141cfe76d299abe3b47246629bd19b7919931c6c8adc2680020a8dbd362"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/backend-requirements.txt",
+   "bytes": 2712,
+   "sha256": "7c0ce042afa629dd0d1b9b67ce8b31f2174151273e73268a26f3a6a7b52bea24"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/dependency-exceptions.json",
+   "bytes": 10931,
+   "sha256": "0d7d914643ce32800c79038c9e5ec8bc808f6d856bbb7e2807e580a8f0374dec"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/dependency-run.json",
+   "bytes": 1276,
+   "sha256": "6ad641e100c5102d4a7a90d0a352d605f7ac18a4a59a313ed670b653bb486291"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/dependency-summary.json",
+   "bytes": 3177,
+   "sha256": "87dfb3f4c7695fc6093b79cc3323b8f8fed6775d361c4d6c59b97ac2981063db"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/document-check.json",
+   "bytes": 9138,
+   "sha256": "446c485252411742f57c586e4bbd4099b1a72a45de30a444352c98a723336d78"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/full-check-run.json",
+   "bytes": 225,
+   "sha256": "518793cfb197aecbcb1124f4a46e9c10b5c2f8d3a9138635a69a99b0a05b9573"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/full-check.txt",
+   "bytes": 943,
+   "sha256": "84a963f96357bef4ad53ded43d831a5b2afb559caeeff403172279773fcebd70"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/make-check-security.result.json",
+   "bytes": 105,
+   "sha256": "d5e75ab17a052c104eba454b01bc0a24324053497940666717be45b2b7d14caf"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/make-check-security.txt",
+   "bytes": 2361,
+   "sha256": "f846653a24be59e9cb8e3f2ad1cdf8f6aa321324e421b7f5b67c0fe8ecb51a85"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/mcp-requirements.txt",
+   "bytes": 1250,
+   "sha256": "e70909b11711048777cf1aff6e142f6a75f384ef7b7bffbf7c028e1911411a46"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/npm-audit.json",
+   "bytes": 2464,
+   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/prompt-injection-results.json",
+   "bytes": 1958,
+   "sha256": "28f6648a5e6921829d5566506928adadececf0f7a926727de0bc8097c780d18a"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-api.json",
+   "bytes": 9506,
+   "sha256": "560c734d79425243449a0a69200abd9bd902880128120650a7874de937750902"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-build.txt",
+   "bytes": 1644,
+   "sha256": "8b619fa2e896fe85ab0c635683e822b1e40e9eb4ee5cde76fbfb9a32f8162ced"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-check.txt",
+   "bytes": 1134,
+   "sha256": "e857ac1c80eae311aeaecb00abf518903d214eae9bf458f34a537e26a09c73ab"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-dependency-run.json",
+   "bytes": 1295,
+   "sha256": "fca52ee8e94b501ea76d51fee316ac46037b61c8184ddf14b75a53e4ce72ab56"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-dependency-summary.json",
+   "bytes": 27341,
+   "sha256": "878c125e48e4c253102c5820e8fa8744358b8afb5770ea893f80c5c23dca9f15"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-gate.txt",
+   "bytes": 1647,
+   "sha256": "c23c512b0e4a5a3ac251afb0c8d35a28efb30e4e8d761b4d2b298f16753a3c14"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-mutation.json",
+   "bytes": 9476,
+   "sha256": "da9b43d717355ddf99d6a64881e97a61bd2fddeb6750aecfa107d5f129d6322c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-secret-baseline.json",
+   "bytes": 622,
+   "sha256": "630bcf33de399ca5f6dd6d543cf5d559ba0244b1dbbafddca9cbfcb23de309d2"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-security-precheck.txt",
+   "bytes": 17848,
+   "sha256": "e911ca55f4c18d4c92fcda35ce27e32dfd4b226c3533f9f8657d20f07c0f27bc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review-fix-security-run.json",
+   "bytes": 866,
+   "sha256": "851a7de372848bac87ed071ebff0fe2154c5d341b9ac9f0ededb61cdc0a03a64"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-check-injection.txt",
+   "bytes": 5225,
+   "sha256": "cc9aed7f480e469d892f4c3088f6c825be1138176f37259127abd653050f316a"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-check.txt",
+   "bytes": 973,
+   "sha256": "1d5eaf3924b3c7bb63b0b7e246a35b891bb4d3bd1686093ce7e9a737649722cf"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-dependency-summary.json",
+   "bytes": 1010,
+   "sha256": "4ffda86642ef5f605073b60a148c74a5baafc3a93f9a672165d5f742f8e185ff"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-peer-api.json",
+   "bytes": 5513,
+   "sha256": "380f04b164c7084a6d00bd988c0202d27b926902699ed4d309f7e0427a1eb15f"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-run.json",
+   "bytes": 788,
+   "sha256": "e7a13da0852fa777cd18c1d7d15d014d064574233432bf3afb6bbc9010b4d744"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-sec08.json",
+   "bytes": 2666,
+   "sha256": "f4ae4fb321e9fbd01736dd34734f490b17098ed37ac7249a95ed9fe288010275"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-secret-baseline.json",
+   "bytes": 2679,
+   "sha256": "05ba492b4a2fbd6c4476730396ca1089bd5c771e60e1ef1ee28b533dbb723151"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/review03-security-precheck.txt",
+   "bytes": 941,
+   "sha256": "838f425c78542d703bad7aed65031344b98aac7ed841e4014e395afaae7c3fea"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/run.json",
+   "bytes": 868,
+   "sha256": "d7038502bb35db95e487f4bb6ca8a2aa49a93e62f22c4e4b679cc05b1fcc0ddc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/secret-baseline.json",
+   "bytes": 2816,
+   "sha256": "09c4cc39d645c459ab6611a1978d01297fc19b53cec4dd9100e29cbc8eed63f2"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/secret-scan.txt",
+   "bytes": 156,
+   "sha256": "c907fb00ed1113e9a57c625471f37daaee81e8802ad93c05795748a19aaee682"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/security-check.txt",
+   "bytes": 940,
+   "sha256": "20e886232d2e8056290ceab9921b522dc5858cf509143b548d5fcb4d58795597"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/source-after.json",
+   "bytes": 8340,
+   "sha256": "c2af2ffc7e72350af8114a374a2fb13a4ff0cbeca460150802e6edae6cc5560b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/source-before.json",
+   "bytes": 8340,
+   "sha256": "c2af2ffc7e72350af8114a374a2fb13a4ff0cbeca460150802e6edae6cc5560b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/submission-full-check.txt",
+   "bytes": 943,
+   "sha256": "e296c7db041c399a275c86846fe7f3500485448de85fbd98d6950a9924f21bf9"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/submission-pipeline-check.json",
+   "bytes": 597,
+   "sha256": "4cd70ee966e8ef7c08875bf99bc88df0cbda94105ac409b821d5bbc35d031f55"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-attempt1/tool-blocker.txt",
+   "bytes": 140,
+   "sha256": "4e66e5087acf81eb3805c063d1f949794fb9bd174bf108a94a266c4056bcd727"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/accounts-readonly.json",
+   "bytes": 166,
+   "sha256": "a5bd98db48c46f8a725d05e2d0c60a38f13f2eb9a2fb5d4d20ed1d8ea40af3ae"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/api-probe-mutation.json",
+   "bytes": 5460,
+   "sha256": "3dafd378c07d2b6038109f962a435cf655aee23e6c09892958104c6260fd2edb"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/api-probe.json",
+   "bytes": 9506,
+   "sha256": "98614e928c772de1eae8ccf44bd1629c81353e963eb5cb3fd7261afbe82a2509"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/async-offline.json",
+   "bytes": 3037,
+   "sha256": "37dd6141cfe76d299abe3b47246629bd19b7919931c6c8adc2680020a8dbd362"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/backend-audit.json",
+   "bytes": 2172,
+   "sha256": "c3001a16d53c78e051a186dc4a598af711f05198db13b1e2f6f61c21ca174791"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/backend-requirements.txt",
+   "bytes": 2712,
+   "sha256": "7c0ce042afa629dd0d1b9b67ce8b31f2174151273e73268a26f3a6a7b52bea24"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/dependency-exceptions.json",
+   "bytes": 10931,
+   "sha256": "0d7d914643ce32800c79038c9e5ec8bc808f6d856bbb7e2807e580a8f0374dec"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/dependency-run.json",
+   "bytes": 1293,
+   "sha256": "06e3f1b6f0711b6cdd2cc6d0d4d9a1a6d3466fb7dbf627e0ed05e9a7a71274e8"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/dependency-summary.json",
+   "bytes": 3417,
+   "sha256": "f2222a4ff5c2bfcd1e92c0b59600f6372b2e76acf02a073b392cbf405cbbb1ab"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/document-check.json",
+   "bytes": 9138,
+   "sha256": "446c485252411742f57c586e4bbd4099b1a72a45de30a444352c98a723336d78"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/full-check-run.json",
+   "bytes": 225,
+   "sha256": "518793cfb197aecbcb1124f4a46e9c10b5c2f8d3a9138635a69a99b0a05b9573"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/full-check.txt",
+   "bytes": 943,
+   "sha256": "84a963f96357bef4ad53ded43d831a5b2afb559caeeff403172279773fcebd70"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/mcp-audit.json",
+   "bytes": 1174,
+   "sha256": "d68658bc1bf0ec353ab9aa596689681fb7306a4b933b0793f24d13643aa6fe51"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/mcp-requirements.txt",
+   "bytes": 1250,
+   "sha256": "e70909b11711048777cf1aff6e142f6a75f384ef7b7bffbf7c028e1911411a46"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/npm-audit.json",
+   "bytes": 2464,
+   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/prompt-injection-results.json",
+   "bytes": 1958,
+   "sha256": "28f6648a5e6921829d5566506928adadececf0f7a926727de0bc8097c780d18a"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-api.json",
+   "bytes": 9506,
+   "sha256": "560c734d79425243449a0a69200abd9bd902880128120650a7874de937750902"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-build.txt",
+   "bytes": 1644,
+   "sha256": "8b619fa2e896fe85ab0c635683e822b1e40e9eb4ee5cde76fbfb9a32f8162ced"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-check.txt",
+   "bytes": 1134,
+   "sha256": "e857ac1c80eae311aeaecb00abf518903d214eae9bf458f34a537e26a09c73ab"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-dependency-run.json",
+   "bytes": 1295,
+   "sha256": "fca52ee8e94b501ea76d51fee316ac46037b61c8184ddf14b75a53e4ce72ab56"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-dependency-summary.json",
+   "bytes": 27341,
+   "sha256": "878c125e48e4c253102c5820e8fa8744358b8afb5770ea893f80c5c23dca9f15"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-gate.txt",
+   "bytes": 1647,
+   "sha256": "c23c512b0e4a5a3ac251afb0c8d35a28efb30e4e8d761b4d2b298f16753a3c14"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-mutation.json",
+   "bytes": 9476,
+   "sha256": "da9b43d717355ddf99d6a64881e97a61bd2fddeb6750aecfa107d5f129d6322c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-secret-baseline.json",
+   "bytes": 622,
+   "sha256": "630bcf33de399ca5f6dd6d543cf5d559ba0244b1dbbafddca9cbfcb23de309d2"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-security-precheck.txt",
+   "bytes": 17848,
+   "sha256": "e911ca55f4c18d4c92fcda35ce27e32dfd4b226c3533f9f8657d20f07c0f27bc"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review-fix-security-run.json",
+   "bytes": 866,
+   "sha256": "851a7de372848bac87ed071ebff0fe2154c5d341b9ac9f0ededb61cdc0a03a64"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-check-injection.txt",
+   "bytes": 5225,
+   "sha256": "cc9aed7f480e469d892f4c3088f6c825be1138176f37259127abd653050f316a"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-check.txt",
+   "bytes": 973,
+   "sha256": "1d5eaf3924b3c7bb63b0b7e246a35b891bb4d3bd1686093ce7e9a737649722cf"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-dependency-summary.json",
+   "bytes": 1010,
+   "sha256": "4ffda86642ef5f605073b60a148c74a5baafc3a93f9a672165d5f742f8e185ff"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-peer-api.json",
+   "bytes": 5513,
+   "sha256": "380f04b164c7084a6d00bd988c0202d27b926902699ed4d309f7e0427a1eb15f"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-run.json",
+   "bytes": 788,
+   "sha256": "e7a13da0852fa777cd18c1d7d15d014d064574233432bf3afb6bbc9010b4d744"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-sec08.json",
+   "bytes": 2666,
+   "sha256": "f4ae4fb321e9fbd01736dd34734f490b17098ed37ac7249a95ed9fe288010275"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-secret-baseline.json",
+   "bytes": 2679,
+   "sha256": "05ba492b4a2fbd6c4476730396ca1089bd5c771e60e1ef1ee28b533dbb723151"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/review03-security-precheck.txt",
+   "bytes": 941,
+   "sha256": "838f425c78542d703bad7aed65031344b98aac7ed841e4014e395afaae7c3fea"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/run.json",
+   "bytes": 868,
+   "sha256": "981a2b008e9f51cdfe0d5d1f645896af9b322a113dcbb2031da15a9f2a969312"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/secret-baseline.json",
+   "bytes": 2816,
+   "sha256": "c2dc3f9a2c8a92a1147acacd189f64490175fde7843f0d4f9afad40ef8658125"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/secret-scan.txt",
+   "bytes": 156,
+   "sha256": "c907fb00ed1113e9a57c625471f37daaee81e8802ad93c05795748a19aaee682"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/security-check.txt",
+   "bytes": 940,
+   "sha256": "20e886232d2e8056290ceab9921b522dc5858cf509143b548d5fcb4d58795597"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/source-after.json",
+   "bytes": 8340,
+   "sha256": "c2af2ffc7e72350af8114a374a2fb13a4ff0cbeca460150802e6edae6cc5560b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/source-before.json",
+   "bytes": 8340,
+   "sha256": "c2af2ffc7e72350af8114a374a2fb13a4ff0cbeca460150802e6edae6cc5560b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/submission-full-check.txt",
+   "bytes": 943,
+   "sha256": "e296c7db041c399a275c86846fe7f3500485448de85fbd98d6950a9924f21bf9"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/security-final/submission-pipeline-check.json",
+   "bytes": 597,
+   "sha256": "4cd70ee966e8ef7c08875bf99bc88df0cbda94105ac409b821d5bbc35d031f55"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/sse-version-comparison.json",
+   "bytes": 1573,
+   "sha256": "6b0341b3953f3876ff0da95b37a705588d2bc44084dac9907bf219ec57c8042f"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/targeted-lock.result.json",
+   "bytes": 233,
+   "sha256": "e458271f7c7f19f4bbe4e27f2735a99e0f93e380783f20f7c97de4270618b319"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/targeted-lock.txt",
+   "bytes": 231,
+   "sha256": "c7d8503739f722bae68d4e7c7b18dc8f8df9d9c624073bef3eeb890bc6e9b63a"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/workspace-npm-ci.result.json",
+   "bytes": 159,
+   "sha256": "7ac5c56f76c6682b3eb231081bebcea71ac776e913861f11b1d06a5e2b6d679c"
+  },
+  {
+   "path": "reports/lesson-10/20261116T124118Z-next15/workspace-npm-ci.txt",
+   "bytes": 26,
+   "sha256": "61b1d675d44b7b8bf928b2af1b8e10ff330709fe6435b7042bd092fe23ab9ba8"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/README.md",
+   "bytes": 4121,
+   "sha256": "31728742a420dcca6d7a1aa2657f087758192370a0baa08f94f9105c354998f1"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/accounts-readonly.json",
+   "bytes": 890,
+   "sha256": "aa29a2e620c4c5226c446f9e018896ea1e5cf145cc8e0cba48a17b9c7885bd78"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/cross-class-checks.json",
+   "bytes": 460,
+   "sha256": "8c5567e7dd4f168655d246156f8f50d1d62bd4e9bac07dd34aa084735f6e55a1"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/logout-checks.json",
+   "bytes": 632,
+   "sha256": "cd36831ca1c10e2ecc7fdf9fd5c557426e4c77c1fc5b876f5045be9c41a1dc8b"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/page-checks.json",
+   "bytes": 1507,
+   "sha256": "597f799f0454e1389efb3b788dc60b3a9663e0c8bdc602f305e59f06ff58e322"
+  },
+  {
+   "path": "reports/lesson-10/20261116T215000Z-browser/security-run-after-db-restore.json",
+   "bytes": 866,
+   "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
+  },
+  {
+   "path": "reports/next-risk-applicability.md",
+   "bytes": 8966,
+   "sha256": "dee604b257b31123fb7be9d3ec3d7ac440e669abc6f121ce0f7777399d9ebc70"
+  },
+  {
+   "path": "reports/security-evidence/accounts-readonly.json",
+   "bytes": 890,
+   "sha256": "aa29a2e620c4c5226c446f9e018896ea1e5cf145cc8e0cba48a17b9c7885bd78"
+  },
+  {
+   "path": "reports/security-evidence/api-probe.json",
+   "bytes": 9506,
+   "sha256": "25389234bf5a80bfcad7b09cec0ccbdadf2a3d94befd75d58824d02c319a84d7"
+  },
+  {
+   "path": "reports/security-evidence/backend-requirements.txt",
+   "bytes": 2667,
+   "sha256": "c52120bc05dbac143c19f109837e753a221857484df5346787f46e0f8e0c363e"
+  },
+  {
+   "path": "reports/security-evidence/dependency-exceptions.json",
+   "bytes": 10931,
+   "sha256": "0d7d914643ce32800c79038c9e5ec8bc808f6d856bbb7e2807e580a8f0374dec"
+  },
+  {
+   "path": "reports/security-evidence/dependency-run.json",
+   "bytes": 1294,
+   "sha256": "d006728bf75607afd19fde11aa24daebe66425b7ca951a2e065172f313b50a52"
+  },
+  {
+   "path": "reports/security-evidence/dependency-summary.json",
+   "bytes": 3417,
+   "sha256": "f2222a4ff5c2bfcd1e92c0b59600f6372b2e76acf02a073b392cbf405cbbb1ab"
+  },
+  {
+   "path": "reports/security-evidence/mcp-requirements.txt",
+   "bytes": 1209,
+   "sha256": "14ee41b475f48aefa7395bc57b71dfbe5d85b23dc37793d53f150e177f35441b"
+  },
+  {
+   "path": "reports/security-evidence/npm-audit.json",
+   "bytes": 2464,
+   "sha256": "b8a810f4567b7a4475cdbc38b7fb7d4ab63a2e9493c1ad96623493937f1a77cc"
+  },
+  {
+   "path": "reports/security-evidence/run.json",
+   "bytes": 866,
+   "sha256": "c5066ade6fdaef431fb5c4872fdbeefc0fcbbc807e73bf66ed56f1e9d55e3fc3"
+  },
+  {
+   "path": "reports/security-evidence/secret-baseline.json",
+   "bytes": 3649,
+   "sha256": "49d2f06542a4712a0f97dcaa01da9e949a4409afc80ad1302105e6fac542f357"
+  },
+  {
+   "path": "reports/security-evidence/secret-scan.txt",
+   "bytes": 156,
+   "sha256": "c907fb00ed1113e9a57c625471f37daaee81e8802ad93c05795748a19aaee682"
+  }
+ ]
+}

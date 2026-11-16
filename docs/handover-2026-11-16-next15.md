@@ -29,7 +29,7 @@
 | 数据包 | `data/current/campusclaw.db` | **不入 Git**；需从组内数据包恢复，供 `make check-security` 读取四个演示身份 |
 | 私有配置 | `.env` | **不入 Git**；按 `.env.example` 生成，含 JWT/队列/模型密钥 |
 
-哈希清单见 [manifest.json](handover-2026-11-16-next15.manifest.json)。
+哈希清单见 [manifest.json](handover-2026-11-16-next15.manifest.json)；完整交接数据说明见 [handover-2026-11-16-next15-data.md](handover-2026-11-16-next15-data.md)。
 
 ## 三、如何启动（接手人从零开始）
 
