@@ -81,7 +81,7 @@
 
 ## 四、未完成与阻塞
 
-1. 安全门禁：Next.js 14.2.15 4 条 critical（及 `postcss`/`source-map-js` high）已论证在当前架构下不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证口径，若要求计数归零仍需升至 15.5.28+；另有 5 个未登记 npm 包（`katex`、`micromark-extension-math`、`next`、`rehype-katex`、`remark-math`）计入 RED，容器账本因演示库无四个种子身份为 blocked。后端镜像 OS 层 Trivy HIGH=51 另立维护任务。
+1. 安全门禁：Next.js 14.2.15 4 条 critical（及 `postcss`/`source-map-js` high）已论证在当前架构下不可触发（`reports/next-risk-applicability.md`），课程已接受适用性论证口径，若要求计数归零仍需升至 15.5.28+；另有 5 个未登记 npm 包（`katex`、`micromark-extension-math`、`next`、`rehype-katex`、`remark-math`）计入 RED，容器账本因演示库无四个种子身份为 blocked。后端镜像 OS 层 Trivy HIGH=51 另立维护任务。因此 tasks.md **2.2（两条命令均退出 0）保持未勾选**；**7.1（工作流交付：两 job 并列、镜像依赖两者、失败脱敏归档）已按实际运行勾选**。
 2. 真人环节：3 名真实用户、换人双跑、另一人新目录启动、组员签名与真实负责人告警接收。
 3. 远端环节：CI 已实跑但为红（run `43826707775`，`security` 未过、`images` 跳过）；独立分支故障重放已完成（run `43828237591`，`make check` 失败、`images` 跳过），但 required check 未配置。因此远端镜像仓库 digest、main 保护、线上实例反查仍缺。
 4. 运行期摘流量与在线用例全绿：运行中 chmod 后健康检查仍为 200（连接池），未证明自动摘流量；在线 cases 第 5 轮本机同宿主直连为 22 passed / 3 skipped / 0 failed，第 6 轮 compose 网络内为 24 passed / 1 skipped / 0 failed（唯一跳过为未配置模型 Key 的工具审计）（`reports/online-cases.md`）。
