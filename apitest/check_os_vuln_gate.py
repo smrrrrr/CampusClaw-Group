@@ -154,6 +154,12 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     result = run(["--exceptions", str(REAL_EXCEPTIONS), "--today", "2026-11-16", str(report)])
     check("有修复版本但未升级的包仍判失败（不因 FixedVersion 非空而放行）", result.returncode == 1)
 
+    # 回归：CI 里门禁步骤必须带 pipefail，否则退出码取自 tee，判失败也会显示通过
+    # （run 43884238012 实际踩过：脚本 exit 1，job 仍 success）
+    workflow = (ROOT / ".github" / "workflows" / "lesson10.yml").read_text(encoding="utf-8")
+    check("workflow 门禁步骤启用 pipefail", "set -o pipefail" in workflow)
+    check("workflow 门禁步骤调用 trivy_os_gate.py", "scripts/trivy_os_gate.py" in workflow)
+
 passed = sum(1 for _, p in checks if p)
 total = len(checks)
 print(f"\n结果：{passed}/{total} 通过")

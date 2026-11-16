@@ -18,6 +18,12 @@ LABEL org.opencontainers.image.title="campusclaw-mcp-tools" \
 
 WORKDIR /app
 
+# 系统层安全更新：与 backend 运行层同一处置——装进基础镜像发布后新增的安全补丁。
+# 无修复版本的包由 reports/security-evidence/os-vuln-exceptions.json 登记书面例外。
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/.venv /app/.venv
 COPY main.py ./
 

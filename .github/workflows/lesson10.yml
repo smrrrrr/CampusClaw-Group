@@ -220,7 +220,10 @@ jobs:
           format: json
           output: reports/lesson-10/ci/trivy-mcp-tools.json
       - name: OS 层漏洞门禁（CRITICAL 一票否决，HIGH 按书面例外）
+        # set -o pipefail 必须保留：否则 `python3 ... | tee` 的退出码取自 tee，
+        # 门禁判失败而 job 仍显示通过——这正是 run 43884238012 暴露过的问题。
         run: |
+          set -o pipefail
           python3 scripts/trivy_os_gate.py reports/lesson-10/ci/trivy-*.json \
             | tee reports/lesson-10/ci/os-vuln-gate.txt
       - name: 归档镜像证据
