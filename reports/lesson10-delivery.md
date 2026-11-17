@@ -6,6 +6,23 @@
 - 更新：2026-11-16（UTC）
 - 性质：工程实施与运行验证记录；**不是**组员本人签名，也不代表课程验收完成
 
+## 2026-11-17 交叉复核与主干交付
+
+| 项目 | 本次结论 | 证据 |
+| --- | --- | --- |
+| 实施与复核 | `hexzun1` 提交第 10 课升级与收口变更，`smrrrrr` 独立复核启动和门禁，并在 GitHub 提交正式批准。 | [PR #3](https://github.com/smrrrrr/CampusClaw-Group/pull/3) · [本人批准](https://github.com/smrrrrr/CampusClaw-Group/pull/3#pullrequestreview-5935012549) |
+| 本人新目录启动 | `smrrrrr` 在自己的 Windows 电脑上，新克隆 PR #3 基线 `977bcde`，用空库启动七个服务。`/health` 与 `/login` 均返回 200。 | [Windows 启动复验 §九](https://github.com/smrrrrr/CampusClaw-Group/blob/85f7573/reports/boot-reproduce.md#九102-本人启动复验2026-11-17) |
+| 复核意见与修复 | 空扫描报告被放行，同一 CVE 下未登记的软件包也被放行。修复校验后，远端发现后端和 MCP 镜像各有一条 `ncurses-bin` HIGH。两份镜像移除受影响的程序并通过实际镜像核验，原始告警保留。 | [复核意见](https://github.com/smrrrrr/CampusClaw-Group/pull/3#issuecomment-6938974465) · [修复 PR #5](https://github.com/smrrrrr/CampusClaw-Group/pull/5) · [先红后绿证据](gate-red-green.md) |
+| 主干门禁 | PR #3 合入 `main`，合并提交为 `8964200`。合并前和合并后的普通门禁、安全门禁、镜像构建与扫描均通过。`main` 已开启保护，要求 1 次正式批准及上述三项检查。 | [合并前 CI](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44043187194) · [主干 CI](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44045260010) |
+
+本次本人复核记录覆盖 Windows 新目录启动与门禁。课程四步演示的手机端实测、三位真实使用者反馈及其他组员签名仍按实际进度记录。下方保留各历史批次的实测与结论。
+
+### 教师现场复验
+
+从 `main` 克隆到干净目录，按 [README 教师验收入口](../README.md#教师验收入口) 准备本机环境与作业附件 `第一章 空间立体几何_备课资料包.zip`。空库可检验服务启动、`/health` 和登录页。[演示清单](demo-checklist.md#教师验收智能备课) 说明如何创建合成账号，再用同一份讲义复验备课、命题、作业初批和学科问答。真实模型调用需现场配置自己的模型 Key。现有应用的学生提交返回 200，教师触发初批返回 202，详见 [角色分步实测](boot-reproduce.md#四h5-等价链路同一-api--角色分步)。
+
+组内交接包包含数据库、上传文件和本机 `.env`，通过组内私有渠道保管。现场如需固定数据快照，使用经核对的纯合成或脱敏演示数据，环境密钥由验收者本机生成。
+
 ## 一、结论
 
 | 维度 | 结论 | 依据 |

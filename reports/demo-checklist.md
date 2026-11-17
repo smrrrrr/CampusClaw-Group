@@ -31,6 +31,40 @@
 - **GitHub Actions 远端实跑（2026-11-16）**：Draft PR #3 触发两次。首次因 `@openspec/cli` npm 404 失败；修复 `fca85f7` 后 run `43826707775` 的 `make check` 在远端 Ubuntu **41/41 通过**，`make check-security` **RED**（Next critical + 5 个未登记 npm 包；容器账本 blocked），`images` 按 `needs` 跳过。故远端没有镜像、Trivy 或 digest，也不构成受控绿版本。证据 `reports/lesson-10/20261116T075000Z-remote-ci/`。这是“另一台机器”，不是“另一个人”。
 - **独立分支故障重放（7.3，2026-11-16）**：在 `ci-fault-replay` 分支故意写错 M2 断言，Draft PR #4 的 run `43828237591` 中 `make check` **失败**、`images` **跳过**；本机退出码 1。验证后已关闭 PR、删除分支。required check 未配置，不能宣称“已阻止合入”。证据 `reports/lesson-10/20261116T080640Z-ci-fault-replay/`。
 
+### 教师验收：智能备课
+
+1. 在干净目录按 [README 快速开始](../README.md#快速开始)准备本机 `.env`。演示使用 `CAMPUSCLAW_DATA_DIR=./data` 的新空库。启动前配置有效的 `DEEPSEEK_API_KEY`，用于现场 AI 生成。
+2. 在项目根目录用 [第 10 课合成夹具](../scripts/lesson10_seed_fixture.py)创建演示账号。以下命令需要 Python 3.12 和 uv，数据库路径与 Compose 的数据目录对应。
+
+   Bash
+
+   ```bash
+   mkdir -p data
+   DATABASE_URL=sqlite:///./data/campusclaw.db uv run --project backend --locked python scripts/lesson10_seed_fixture.py
+   ```
+
+   PowerShell
+
+   ```powershell
+   New-Item -ItemType Directory -Path data -Force | Out-Null
+   $env:DATABASE_URL = 'sqlite:///./data/campusclaw.db'
+   uv run --project backend --locked python scripts/lesson10_seed_fixture.py
+   ```
+
+3. 用 `docker compose up -d --build` 启动。用数学教师 `T10A` 登录，在 **教研中心 → 教研组资料 → 导入组内资料** 直接选择作业附件 `第一章 空间立体几何_备课资料包.zip`，打开原稿并检查公式和几何图。演示账号 `T10A` 和 `S10A` 的合成密码见夹具里的 `PASSWORD`。
+4. 到 **智能备课**，选择讲义和演示一班，填写课题「空间立体几何」，点击 **生成新的教师教案**。在 **备课依据与原文核对** 中检查引用能回到刚导入的讲义，并检查正文预览中引用的配图。
+5. 核对正文后点击 **审阅通过 → 确认定稿 → 生成配套学生稿**。确认学生讲义及配图无答案、教师解析和提示，发布到演示一班。用学生 `S10A` 登录核对讲义可打开。若发布后提示索引失败，先在班级资料中重新索引再验收问答。
+
+#### 用同一份讲义继续演示
+
+| 功能 | 操作 | 通过信号 |
+| --- | --- | --- |
+| 智能命题 | 用 `T10A` 打开 **智能命题 → 生成命题**，选择同一份教师版资料及「立体几何」知识点。逐题复核后组卷、定稿，发布为演示一班的作业。 | 教师可核对题目和评分依据，`S10A` 在「交作业」能看到新作业。 |
+| 作业批改 | 用 `S10A` 提交新作业，用 `T10A` 在「作业与改分」触发 AI 初批。 | 可看到异步任务状态和结果，批改依据为出卷时保存的参考答案及评分标准。 |
+| 学科问答 | 用 `S10A` 对演示一班已发布、已索引的讲义提问，选择讲义里实际讲过的知识点。 | 回答引用可打开并核对已发布的学生讲义。 |
+
+记录实际结果与失败提示。模型服务可用时现场验证生成、批改和问答的真实响应。
+
 ## 三、六份必交报告核对
 
 | 报告 | 路径 | 当前状态 |

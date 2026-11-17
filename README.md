@@ -67,9 +67,11 @@
 需要 Docker Desktop。
 
 ```bash
-git clone https://github.com/smrrrrr/CampusClaw-Group.git
+git clone -c core.autocrlf=false https://github.com/smrrrrr/CampusClaw-Group.git
 cd CampusClaw-Group
-cp .env.example .env    # 必填 JWT_SECRET_KEY（至少 32 字符：openssl rand -base64 32）；需要 AI 生成时再填模型 Key
+cp .env.example .env
+# 在 .env 填写 JWT_SECRET_KEY（至少 32 字符）和 GRADING_BROKER_PASSWORD，可用 openssl rand -base64 32 分别生成。
+# 要演示 AI 生成，再在 .env 填写有效的 DEEPSEEK_API_KEY。
 docker compose up -d --build
 ```
 
@@ -91,6 +93,12 @@ curl -s http://localhost:8080/health
 - **空库**：运行一次种子脚本，创建演示账号。
 
 两种方式的具体步骤、环境变量、数据备份和本地开发方法都在 [DEPLOYMENT.md](DEPLOYMENT.md)。**已有数据的库不要运行种子脚本**，它会重置学生账号。
+
+## 教师验收入口
+
+准备作业附件 `第一章 空间立体几何_备课资料包.zip`，其中包含 Markdown 讲义和配图。按[教师验收步骤](reports/demo-checklist.md#教师验收智能备课)在空库创建演示账号并启动服务，然后在教师端进入 **教研中心 → 教研组资料 → 导入组内资料**，直接选择 ZIP。
+
+同一份讲义可用于智能备课和智能命题。把学生版讲义发布到演示班便可验收学科问答，把定稿试卷发布为作业便可验收学生提交和教师 AI 初批。
 
 ## 目录结构
 
