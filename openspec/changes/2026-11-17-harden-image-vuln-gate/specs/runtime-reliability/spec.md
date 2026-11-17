@@ -9,6 +9,13 @@ CI MUST 提交 backend、frontend 和 mcp-tools 的三份镜像扫描报告。�
 - **WHEN** 提交包含镜像标识的合法 Trivy 报告，结果为空或省略且没有未获准的漏洞
 - **THEN** 门禁退出 0
 
+#### Scenario: 特定镜像中验证 infocmp 已移除
+
+- **WHEN** 后端或 MCP 的镜像报告仍标记 `ncurses-bin` 的 `CVE-2025-69720`，且命中登记版本和有效期内的例外
+- **THEN** 门禁仅在受检镜像与扫描镜像 ID 一致、确认 `infocmp` 不在运行文件系统的已知路径或 PATH 时允许继续
+- **WHEN** 镜像 ID 不一致、检查无法完成或程序仍存在
+- **THEN** 门禁退出 1，Trivy 原始报告保留
+
 #### Scenario: 报告缺失或无效
 
 - **WHEN** 指定报告缺失、格式不符，或提交了同一镜像的重复报告

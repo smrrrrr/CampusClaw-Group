@@ -82,11 +82,12 @@
       "packages": [
         "libncursesw6",
         "libtinfo6",
-        "ncurses-base"
+        "ncurses-base",
+        "ncurses-bin"
       ],
       "installed": "6.5+20250216-2",
       "fixed": "",
-      "reason": "debian 13.7 无修复版本。ncurses 终端能力处理，应用为无 TTY 的 FastAPI 服务，不解析不可信 terminfo 数据。",
+      "reason": "Debian trixie 无修复版本。漏洞在 infocmp。ncurses-bin 限登记版本且仅在 backend、mcp-tools 运行镜像经门禁核验已移除 infocmp 后适用。Trivy 原始报告保留。Debian 跟踪：https://security-tracker.debian.org/tracker/CVE-2025-69720",
       "review_after": "2026-12-15"
     },
     {

@@ -225,6 +225,8 @@ jobs:
         run: |
           set -o pipefail
           python3 scripts/trivy_os_gate.py \
+            --verify-infocmp-in "campusclaw-backend:${{ steps.rev.outputs.sha }}" \
+            --verify-infocmp-in "campusclaw-mcp-tools:${{ steps.rev.outputs.sha }}" \
             reports/lesson-10/ci/trivy-backend.json \
             reports/lesson-10/ci/trivy-frontend.json \
             reports/lesson-10/ci/trivy-mcp-tools.json \

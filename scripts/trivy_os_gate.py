@@ -20,11 +20,14 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
 
 DEFAULT_EXCEPTIONS = "reports/security-evidence/os-vuln-exceptions.json"
 SEVERITIES = {"UNKNOWN", "LOW", "MEDIUM", "HIGH", "CRITICAL"}
+INFOCMP_CVE = "CVE-2025-69720"
 
 
 def parse_date(value: str) -> dt.date:
@@ -34,6 +37,31 @@ def parse_date(value: str) -> dt.date:
 def load_json(path: Path) -> dict:
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def infocmp_absent(image: str, image_id: str | None) -> bool:
+    """在 Trivy 扫过的本地运行镜像中验证 infocmp 已移除。"""
+    if not re.fullmatch(r"campusclaw-(backend|mcp-tools):[0-9a-f]{40}", image):
+        return False
+    if not isinstance(image_id, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", image_id):
+        return False
+    try:
+        inspected = subprocess.run(
+            ["docker", "image", "inspect", "--format", "{{.Id}}", image],
+            capture_output=True, text=True, timeout=15, check=True,
+        )
+        if inspected.stdout.strip() != image_id:
+            return False
+        check = subprocess.run(
+            ["docker", "run", "--rm", "--pull=never", "--network=none", "--read-only",
+             "--entrypoint", "/bin/sh", image_id, "-ec",
+             "test ! -e /usr/bin/infocmp && test ! -L /usr/bin/infocmp && "
+             "! command -v infocmp >/dev/null 2>&1"],
+            capture_output=True, timeout=30,
+        )
+        return check.returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
 
 
 def collect_findings(report_path: Path) -> tuple[str, list[dict]]:
@@ -46,6 +74,8 @@ def collect_findings(report_path: Path) -> tuple[str, list[dict]]:
     artifact = report.get("ArtifactName")
     if not isinstance(artifact, str) or not artifact.strip():
         raise ValueError("缺少镜像名 ArtifactName")
+    metadata = report.get("Metadata")
+    image_id = metadata.get("ImageID") if isinstance(metadata, dict) else None
 
     # Trivy 在没有结果或漏洞时可以省略相应数组。
     results = report.get("Results", [])
@@ -73,6 +103,7 @@ def collect_findings(report_path: Path) -> tuple[str, list[dict]]:
             findings.append(
                 {
                     "image": artifact,
+                    "image_id": image_id,
                     "cve": cve,
                     "severity": severity.upper(),
                     "package": package,
@@ -87,6 +118,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="镜像 OS 层漏洞门禁")
     parser.add_argument("reports", nargs="+", help="Trivy JSON 报告路径")
     parser.add_argument("--exceptions", default=DEFAULT_EXCEPTIONS, help="书面例外表")
+    parser.add_argument(
+        "--verify-infocmp-in", action="append", default=[], metavar="IMAGE",
+        help="核验刚构建并扫描的 backend 或 mcp-tools 镜像中没有 infocmp",
+    )
     parser.add_argument(
         "--today", default=dt.date.today().isoformat(), help="用于判定例外是否过期的日期"
     )
@@ -109,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         exceptions[cve] = {
             "review_after": parse_date(entry["review_after"]),
-            "reason": entry.get("reason", ""),
+            "installed": entry.get("installed", ""),
             "packages": packages,
         }
 
@@ -133,6 +168,7 @@ def main(argv: list[str] | None = None) -> int:
 
     blocked: list[str] = []
     excepted_hits: dict[str, int] = {}
+    verified_mitigations: set[str] = set()
 
     for item in findings:
         image = item["image"]
@@ -162,6 +198,14 @@ def main(argv: list[str] | None = None) -> int:
                 f"{entry['review_after'].isoformat()} 过期，需重新评估）"
             )
             continue
+        if item["cve"] == INFOCMP_CVE and item["package"] == "ncurses-bin":
+            if (image not in args.verify_infocmp_in or item["installed"] != entry["installed"]
+                    or item["fixed"] or not infocmp_absent(image, item["image_id"])):
+                blocked.append(
+                    f"HIGH {INFOCMP_CVE} ncurses-bin（{image}，未满足运行镜像缓解条件）"
+                )
+                continue
+            verified_mitigations.add(image)
         summary["excepted"] += 1
         excepted_hits[item["cve"]] = excepted_hits.get(item["cve"], 0) + 1
 
@@ -172,6 +216,9 @@ def main(argv: list[str] | None = None) -> int:
             f"  {image}: HIGH={s.get('HIGH', 0)} CRITICAL={s.get('CRITICAL', 0)} "
             f"其中例外放行={s.get('excepted', 0)}"
         )
+
+    for image in sorted(verified_mitigations):
+        print(f"  已核验缓解：{image} {INFOCMP_CVE} ncurses-bin，运行镜像无 infocmp")
 
     unused = sorted(set(exceptions) - set(excepted_hits))
     if unused:

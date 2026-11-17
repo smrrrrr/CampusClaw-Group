@@ -5,14 +5,17 @@
   失败：CRITICAL、HIGH 未登记、例外过期 → 非零
   边界：无效或重复报告 → exit 2；合法空报告和当前书面例外仍可通过
 
-只读本地文件，不联网、不调用 trivy。
+只读本地文件，不联网。Docker 核验使用测试替身。
 """
 
 import json
 import subprocess
 import sys
 import tempfile
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 GATE = ROOT / "scripts" / "trivy_os_gate.py"
@@ -36,8 +39,10 @@ def vuln(cve, severity, pkg="util-linux", installed="2.41.5-0+deb13u1", fixed=""
     }
 
 
-def write_report(path: Path, image: str, vulns: list | None) -> None:
+def write_report(path: Path, image: str, vulns: list | None, image_id: str | None = None) -> None:
     report = {"SchemaVersion": 2, "ArtifactType": "container_image", "ArtifactName": image}
+    if image_id is not None:
+        report["Metadata"] = {"ImageID": image_id}
     if vulns is not None:
         report["Results"] = [{"Target": f"{image} (debian 13.7)", "Vulnerabilities": vulns}]
     path.write_text(json.dumps(report), encoding="utf-8")
@@ -180,6 +185,42 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     result = run(["--exceptions", str(REAL_EXCEPTIONS), "--today", "2026-11-16", str(report)])
     check("有修复版本但未升级的包仍判失败（不因 FixedVersion 非空而放行）", result.returncode == 1)
 
+    sys.path.insert(0, str(GATE.parent))
+    import trivy_os_gate as gate
+
+    image = "campusclaw-backend:" + "a" * 40
+    image_id = "sha256:" + "b" * 64
+    ncurses = vuln("CVE-2025-69720", "HIGH", pkg="ncurses-bin", installed="6.5+20250216-2")
+    write_report(report, image, [ncurses], image_id)
+    args = ["--exceptions", str(REAL_EXCEPTIONS), "--today", "2026-11-17", str(report)]
+    check("未启用运行镜像核验时 ncurses-bin 仍失败", run(args).returncode == 1)
+
+    args += ["--verify-infocmp-in", image]
+    same_image = subprocess.CompletedProcess([], 0, stdout=image_id + "\n")
+    with patch.object(gate.subprocess, "run", side_effect=[same_image, subprocess.CompletedProcess([], 0)]) as docker:
+        with redirect_stdout(StringIO()) as output:
+            rc = gate.main(args)
+        command = docker.call_args.args[0]
+    check("相同扫描镜像且 infocmp 已移除才放行",
+          rc == 0 and "已核验缓解" in output.getvalue() and image_id in command and "--pull=never" in command)
+
+    with patch.object(gate.subprocess, "run", side_effect=[same_image, subprocess.CompletedProcess([], 1)]):
+        with redirect_stdout(StringIO()):
+            rc = gate.main(args)
+    check("infocmp 仍存在时拒绝放行", rc == 1)
+
+    other_image = subprocess.CompletedProcess([], 0, stdout="sha256:" + "c" * 64)
+    with patch.object(gate.subprocess, "run", return_value=other_image) as docker:
+        with redirect_stdout(StringIO()):
+            rc = gate.main(args)
+    check("扫描镜像 ID 不匹配时拒绝放行", rc == 1 and docker.call_count == 1)
+
+    write_report(report, image, [dict(ncurses, FixedVersion="6.6+deb13u1")], image_id)
+    with patch.object(gate.subprocess, "run") as docker:
+        with redirect_stdout(StringIO()):
+            rc = gate.main(args)
+    check("存在可升级的修复版本时拒绝放行", rc == 1 and docker.call_count == 0)
+
     # 回归：CI 里门禁步骤必须带 pipefail，否则退出码取自 tee，判失败也会显示通过
     # （run 43884238012 实际踩过：脚本 exit 1，job 仍 success）
     workflow = (ROOT / ".github" / "workflows" / "lesson10.yml").read_text(encoding="utf-8")
@@ -189,6 +230,9 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     check("workflow 门禁显式要求三份报告",
           all(f"reports/lesson-10/ci/trivy-{image}.json" in gate_args
               for image in ("backend", "frontend", "mcp-tools")))
+    check("workflow 门禁核验两个含 ncurses-bin 的运行镜像",
+          all(f'--verify-infocmp-in "campusclaw-{service}:${{{{ steps.rev.outputs.sha }}}}"' in gate_args
+              for service in ("backend", "mcp-tools")))
 
 passed = sum(1 for _, p in checks if p)
 total = len(checks)

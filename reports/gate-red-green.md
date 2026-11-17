@@ -126,4 +126,10 @@ backend/.venv/Scripts/python.exe -u scripts/check.py --json .review/image-vuln-r
 backend/.venv/Scripts/python.exe apitest/check_os_vuln_gate.py
 ```
 
-历史 Trivy 报告复核中，新规则在 backend 和 mcp-tools 的旧镜像样本中检出 `CVE-2025-69720` 的 `ncurses-bin` 软件包超出例外范围。保留现有例外表。最新镜像须由修复版 CI 重新扫描以确认当前结果。
+### PR #5 的运行镜像缓解
+
+[PR #5 首次镜像门禁](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165/job/133835370477) 拦下 backend 和 mcp-tools 各一条 `CVE-2025-69720` HIGH。两份 Trivy 报告均记录 `ncurses-bin 6.5+20250216-2`，修复版本为空。两个 Dockerfile 移除服务不使用的 `/usr/bin/infocmp`，仍保存软件包记录和 Trivy 原始报告。门禁仅在登记版本、复查日期及实际扫描镜像核验均满足时通过这一条缓解项。[Debian 安全追踪](https://security-tracker.debian.org/tracker/CVE-2025-69720)
+
+本机普通门禁 **43/43**，镜像门禁回归 **31/31**，退出码均为 **0**。用同一条合成漏洞记录、分别关联实际镜像 ID 的方式复跑，旧镜像 `977bcde` 退出 **1**，两个软件包均被拦截。修复工作树重建的两个镜像退出 **0**，均打印 `已核验缓解`。新镜像在独立网络中启动后，`GET /api/health` 返回 **200**，数据库和 MCP 均为 `ok`。
+
+从 PR 的 `build-and-scan` 检查可下载远端完整 Trivy 报告和 `os-vuln-gate.txt`，后者记录是否核验了这两份实际运行镜像。
