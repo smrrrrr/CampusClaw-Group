@@ -1,0 +1,312 @@
+{
+  "started": "2026-11-17T07:04:12.944990+00:00",
+  "finished": "2026-11-17T07:05:32.159542+00:00",
+  "git_head": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+  "steps": [
+    {
+      "name": "openspec-validate",
+      "status": "PASS",
+      "seconds": 1.58,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:14.522882+00:00"
+    },
+    {
+      "name": "layering",
+      "status": "PASS",
+      "seconds": 0.21,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:14.729615+00:00"
+    },
+    {
+      "name": "secret-scan",
+      "status": "PASS",
+      "seconds": 2.94,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:17.674103+00:00"
+    },
+    {
+      "name": "fe-typecheck",
+      "status": "PASS",
+      "seconds": 1.15,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:18.827468+00:00"
+    },
+    {
+      "name": "check_analytics",
+      "status": "PASS",
+      "seconds": 2.54,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:21.367727+00:00"
+    },
+    {
+      "name": "check_analytics_units",
+      "status": "PASS",
+      "seconds": 1.13,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:22.501281+00:00"
+    },
+    {
+      "name": "check_apitest_harness",
+      "status": "PASS",
+      "seconds": 0.42,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:22.923394+00:00"
+    },
+    {
+      "name": "check_assignment_history",
+      "status": "PASS",
+      "seconds": 3.92,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:26.842354+00:00"
+    },
+    {
+      "name": "check_async_grading",
+      "status": "PASS",
+      "seconds": 2.83,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:29.674803+00:00"
+    },
+    {
+      "name": "check_audit_field_bounds",
+      "status": "PASS",
+      "seconds": 0.96,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:30.639044+00:00"
+    },
+    {
+      "name": "check_baseline",
+      "status": "PASS",
+      "seconds": 5.29,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:35.932608+00:00"
+    },
+    {
+      "name": "check_formula_retrieval",
+      "status": "PASS",
+      "seconds": 1.13,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:37.061125+00:00"
+    },
+    {
+      "name": "check_frontend_image_safety",
+      "status": "PASS",
+      "seconds": 0.08,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:37.141782+00:00"
+    },
+    {
+      "name": "check_homework",
+      "status": "PASS",
+      "seconds": 2.05,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:39.195714+00:00"
+    },
+    {
+      "name": "check_injection",
+      "status": "PASS",
+      "seconds": 2.48,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:41.675325+00:00"
+    },
+    {
+      "name": "check_lesson10_ops",
+      "status": "PASS",
+      "seconds": 1.04,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:42.713052+00:00"
+    },
+    {
+      "name": "check_lesson10_p0_scenarios",
+      "status": "PASS",
+      "seconds": 0.87,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:43.587912+00:00"
+    },
+    {
+      "name": "check_lesson10_review",
+      "status": "PASS",
+      "seconds": 7.24,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:50.831267+00:00"
+    },
+    {
+      "name": "check_lesson10_scenario_gaps",
+      "status": "PASS",
+      "seconds": 1.59,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:52.417579+00:00"
+    },
+    {
+      "name": "check_lesson10_scenarios",
+      "status": "PASS",
+      "seconds": 0.77,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:53.187743+00:00"
+    },
+    {
+      "name": "check_lesson10_skills",
+      "status": "PASS",
+      "seconds": 1.14,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:54.328937+00:00"
+    },
+    {
+      "name": "check_lesson_prep",
+      "status": "PASS",
+      "seconds": 4.12,
+      "exit": 0,
+      "finished": "2026-11-17T07:04:58.444803+00:00"
+    },
+    {
+      "name": "check_lessons_2_5",
+      "status": "PASS",
+      "seconds": 8.13,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:06.575542+00:00"
+    },
+    {
+      "name": "check_mcp_server",
+      "status": "PASS",
+      "seconds": 0.55,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:07.124542+00:00"
+    },
+    {
+      "name": "check_mcp_tools",
+      "status": "PASS",
+      "seconds": 3.64,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:10.765098+00:00"
+    },
+    {
+      "name": "check_mistake",
+      "status": "PASS",
+      "seconds": 2.04,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:12.805066+00:00"
+    },
+    {
+      "name": "check_model_json",
+      "status": "PASS",
+      "seconds": 0.07,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:12.873469+00:00"
+    },
+    {
+      "name": "check_os_vuln_gate",
+      "status": "FAIL",
+      "seconds": 0.17,
+      "exit": 1,
+      "finished": "2026-11-17T07:05:13.045130+00:00"
+    },
+    {
+      "name": "check_question_bank",
+      "status": "PASS",
+      "seconds": 4.03,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:17.074161+00:00"
+    },
+    {
+      "name": "check_quiz_homework",
+      "status": "PASS",
+      "seconds": 2.08,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:19.158373+00:00"
+    },
+    {
+      "name": "check_research_materials",
+      "status": "PASS",
+      "seconds": 3.49,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:22.652307+00:00"
+    },
+    {
+      "name": "check_security_gate",
+      "status": "PASS",
+      "seconds": 1.51,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:24.159111+00:00"
+    },
+    {
+      "name": "check_security_review",
+      "status": "PASS",
+      "seconds": 3.32,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:27.476723+00:00"
+    },
+    {
+      "name": "check_sqlite_storage",
+      "status": "PASS",
+      "seconds": 1.57,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:29.047595+00:00"
+    },
+    {
+      "name": "check_assignment_history_ui",
+      "status": "PASS",
+      "seconds": 0.23,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:29.278274+00:00"
+    },
+    {
+      "name": "check_grading_feedback",
+      "status": "PASS",
+      "seconds": 0.25,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:29.531615+00:00"
+    },
+    {
+      "name": "check_markdown_blanks",
+      "status": "PASS",
+      "seconds": 0.2,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:29.727709+00:00"
+    },
+    {
+      "name": "check_markdown_images",
+      "status": "PASS",
+      "seconds": 0.36,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:30.090916+00:00"
+    },
+    {
+      "name": "check_question_rendering",
+      "status": "PASS",
+      "seconds": 0.52,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:30.611044+00:00"
+    },
+    {
+      "name": "check_recent_history",
+      "status": "PASS",
+      "seconds": 0.24,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:30.846462+00:00"
+    },
+    {
+      "name": "check_route_guard",
+      "status": "PASS",
+      "seconds": 0.3,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:31.147709+00:00"
+    },
+    {
+      "name": "check_security_review_rendering",
+      "status": "PASS",
+      "seconds": 0.48,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:31.627755+00:00"
+    },
+    {
+      "name": "check_teacher_navigation",
+      "status": "PASS",
+      "seconds": 0.53,
+      "exit": 0,
+      "finished": "2026-11-17T07:05:32.159542+00:00"
+    }
+  ],
+  "exit": 1,
+  "failed": [
+    "check_os_vuln_gate"
+  ]
+}

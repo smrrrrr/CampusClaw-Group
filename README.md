@@ -75,6 +75,8 @@ docker compose up -d --build
 
 启动前先确认 Docker Desktop 的 Linux 容器引擎已运行。Windows 使用组内数据包时，先恢复数据，再补齐恢复脚本未生成的两项 MCP 密钥；本机有旧部署时还要设置独立项目名和未占用端口。完整 PowerShell 步骤、日常启动方法及本次验证结果见 [Windows 本机搭建记录](docs/local-setup-2026-11-04.md)。
 
+第 10 课 10.2 换人复验可按 [Windows 本人启动指南](docs/lesson10-windows-fresh-start.md) 从新目录启动。指南的克隆命令会为 Docker 入口脚本保留 LF 换行，并提供验收记录模板。
+
 确认启动成功（免登录）：
 
 ```bash

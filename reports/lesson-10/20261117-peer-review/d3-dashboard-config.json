@@ -1,0 +1,30 @@
+{
+  "scope": "Dashboard configuration inspection",
+  "panels": [
+    {
+      "title": "三个技能的调用量（来自已记录事件）",
+      "queries": [
+        "sum by (skill, status) (rate(skill_invocations_total[5m]))"
+      ]
+    },
+    {
+      "title": "各技能失败率（failed/(succeeded+failed)，5m）",
+      "queries": [
+        "sum by (skill) (rate(skill_invocations_total{status=\"failed\"}[5m])) / clamp_min(sum by (skill) (rate(skill_invocations_total{status=~\"succeeded|failed\"}[5m])), 1e-9)"
+      ]
+    },
+    {
+      "title": "三技能对应接口 P95（完整请求；SSE 仅首包）",
+      "queries": [
+        "histogram_quantile(0.95, sum by (le, path) (rate(http_request_duration_seconds_bucket[5m])))"
+      ]
+    },
+    {
+      "title": "批改队列深度（ready/重试）",
+      "queries": [
+        "sum(grading_tasks{status=~\"pending|retrying\"})",
+        "sum(grading_tasks{status=~\"running\"})"
+      ]
+    }
+  ]
+}

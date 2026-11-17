@@ -1,0 +1,5 @@
+接口探针退出码=0（1表示观察到红项，2表示执行未完成）
+密钥扫描：疑似泄漏=False，范围完整=True
+课程高危判据：npm high+critical=0；pip 未判级且有漏洞=[]
+安全自查=PASS，有待验范围=False；reports/security-evidence/run.json
+用户终端截图所示退出码：0
