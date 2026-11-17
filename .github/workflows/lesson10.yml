@@ -224,7 +224,10 @@ jobs:
         # 门禁判失败而 job 仍显示通过——这正是 run 43884238012 暴露过的问题。
         run: |
           set -o pipefail
-          python3 scripts/trivy_os_gate.py reports/lesson-10/ci/trivy-*.json \
+          python3 scripts/trivy_os_gate.py \
+            reports/lesson-10/ci/trivy-backend.json \
+            reports/lesson-10/ci/trivy-frontend.json \
+            reports/lesson-10/ci/trivy-mcp-tools.json \
             | tee reports/lesson-10/ci/os-vuln-gate.txt
       - name: 归档镜像证据
         if: always()

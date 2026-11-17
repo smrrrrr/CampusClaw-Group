@@ -3,7 +3,7 @@
 覆盖三类：
   正常：HIGH 命中未过期例外、无 CRITICAL → 通过；例外未命中只告警
   失败：CRITICAL、HIGH 未登记、例外过期 → 非零
-  边界：报告缺失 → 输入错（exit 2）；真实例外表与当前 12 个 CVE 一致
+  边界：无效或重复报告 → exit 2；合法空报告和当前书面例外仍可通过
 
 只读本地文件，不联网、不调用 trivy。
 """
@@ -36,16 +36,11 @@ def vuln(cve, severity, pkg="util-linux", installed="2.41.5-0+deb13u1", fixed=""
     }
 
 
-def write_report(path: Path, image: str, vulns: list) -> None:
-    path.write_text(
-        json.dumps(
-            {
-                "ArtifactName": image,
-                "Results": [{"Target": f"{image} (debian 13.7)", "Vulnerabilities": vulns}],
-            }
-        ),
-        encoding="utf-8",
-    )
+def write_report(path: Path, image: str, vulns: list | None) -> None:
+    report = {"SchemaVersion": 2, "ArtifactType": "container_image", "ArtifactName": image}
+    if vulns is not None:
+        report["Results"] = [{"Target": f"{image} (debian 13.7)", "Vulnerabilities": vulns}]
+    path.write_text(json.dumps(report), encoding="utf-8")
 
 
 def write_exceptions(path: Path, entries: list) -> None:
@@ -54,9 +49,9 @@ def write_exceptions(path: Path, entries: list) -> None:
 
 def run(args):
     return subprocess.run(
-        [sys.executable, "-I", "-B", str(GATE), *args],
+        [sys.executable, "-I", "-X", "utf8", "-B", str(GATE), *args],
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         cwd=str(ROOT),
     )
 
@@ -76,6 +71,38 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     result = run(["--exceptions", str(exceptions), "--today", "2026-11-16", str(report)])
     check("HIGH 命中未过期例外 → exit 0", result.returncode == 0)
     check("汇总行包含镜像与计数", "campusclaw-backend:t" in result.stdout and "HIGH=1" in result.stdout)
+
+    write_report(report, "campusclaw-backend:t", [
+        vuln("CVE-2026-76642", "HIGH", pkg="unlisted-package", fixed="3.0.0"),
+    ])
+    result = run(["--exceptions", str(exceptions), "--today", "2026-11-16", str(report)])
+    check("同 CVE 的未登记软件包 → exit 1",
+          result.returncode == 1 and "unlisted-package" in result.stdout)
+
+    report.write_text("{}", encoding="utf-8")
+    result = run(["--exceptions", str(exceptions), str(report)])
+    check("缺少 Trivy 元数据的空对象 → exit 2", result.returncode == 2)
+
+    write_report(report, "campusclaw-backend:t", None)
+    result = run(["--exceptions", str(exceptions), str(report)])
+    check("合法 Trivy 报告省略空 Results → exit 0", result.returncode == 0)
+    write_report(report, "campusclaw-backend:t", [])
+    result = run(["--exceptions", str(exceptions), str(report)])
+    check("合法 Trivy 报告有空的漏洞数组 → exit 0", result.returncode == 0)
+    duplicate = tmp / "trivy-duplicate.json"
+    write_report(duplicate, "campusclaw-backend:t", None)
+    result = run(["--exceptions", str(exceptions), str(report), str(duplicate)])
+    check("两份报告来自同一镜像 → exit 2", result.returncode == 2)
+
+    invalid = json.loads(report.read_text(encoding="utf-8"))
+    invalid["Results"] = {}
+    report.write_text(json.dumps(invalid), encoding="utf-8")
+    result = run(["--exceptions", str(exceptions), str(report)])
+    check("Results 结构错误 → exit 2", result.returncode == 2)
+
+    write_report(report, "campusclaw-backend:t", [vuln("CVE-2026-76642", "", pkg="util-linux")])
+    result = run(["--exceptions", str(exceptions), str(report)])
+    check("漏洞严重度字段为空 → exit 2", result.returncode == 2)
 
     # 失败：CRITICAL 一律否决（即使登记了例外）
     write_report(report, "campusclaw-backend:t", [vuln("CVE-2026-0001", "CRITICAL")])
@@ -121,7 +148,7 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     result = run(["--exceptions", str(exceptions), str(tmp / "nope.json")])
     check("报告缺失 → exit 2", result.returncode == 2)
 
-    # 边界：真实例外表可解析，且覆盖当前 12 个 CVE
+    # 边界：真实例外表可解析，且覆盖当前 11 个 CVE
     data = json.loads(REAL_EXCEPTIONS.read_text(encoding="utf-8"))
     cves = {e["cve"] for e in data["entries"]}
     check("真实例外表含 11 条", len(data["entries"]) == 11)
@@ -129,7 +156,7 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
           all(e.get("reason") and e.get("review_after") for e in data["entries"]))
     check("可修复的 CVE-2026-76844 未登记为例外", "CVE-2026-76844" not in cves)
 
-    # 边界：用真实例外表跑一遍当前 12 个 CVE 的报告 → 通过
+    # 边界：用真实例外表跑一遍当前 11 个 CVE 的报告 → 通过
     current = [
         vuln("CVE-2026-76642", "HIGH"),
         vuln("CVE-2026-78408", "HIGH"),
@@ -158,6 +185,10 @@ with tempfile.TemporaryDirectory(prefix="os-gate-") as tmp:
     workflow = (ROOT / ".github" / "workflows" / "lesson10.yml").read_text(encoding="utf-8")
     check("workflow 门禁步骤启用 pipefail", "set -o pipefail" in workflow)
     check("workflow 门禁步骤调用 trivy_os_gate.py", "scripts/trivy_os_gate.py" in workflow)
+    gate_args = workflow.partition("python3 scripts/trivy_os_gate.py")[2].partition("| tee")[0]
+    check("workflow 门禁显式要求三份报告",
+          all(f"reports/lesson-10/ci/trivy-{image}.json" in gate_args
+              for image in ("backend", "frontend", "mcp-tools")))
 
 passed = sum(1 for _, p in checks if p)
 total = len(checks)
