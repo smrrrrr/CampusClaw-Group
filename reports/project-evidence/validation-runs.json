@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-11-17T11:09:28.655970+00:00",
+  "base_commit": "5cca99761cf9eb2290685a0c504b45dab9aaf4f3",
+  "working_tree": "documentation changes; tested business code unchanged",
+  "environment": {
+    "os": "Windows",
+    "python": "3.12.13",
+    "model": "offline test double; no provider calls",
+    "database": "temporary SQLite per check"
+  },
+  "runs": [
+    {
+      "name": "async",
+      "command": "python apitest/check_async_grading.py",
+      "exit": 0,
+      "started": "2026-11-17T11:09:20.509830+00:00",
+      "finished": "2026-11-17T11:09:23.177457+00:00"
+    },
+    {
+      "name": "security-probe",
+      "command": "python apitest/probe_security_precheck.py --output reports/project-evidence/security-probe.json",
+      "exit": 0,
+      "started": "2026-11-17T11:09:23.177457+00:00",
+      "finished": "2026-11-17T11:09:26.915329+00:00"
+    },
+    {
+      "name": "image-gate",
+      "command": "python apitest/check_os_vuln_gate.py",
+      "exit": 0,
+      "started": "2026-11-17T11:09:26.915329+00:00",
+      "finished": "2026-11-17T11:09:28.655970+00:00"
+    }
+  ],
+  "sha256": {
+    "backend/grading_service.py": "edcd057208f32777deadab66c600c9652ca0ef1fe24845e3e22c02aaf18fac20",
+    "backend/models.py": "a25fca11bfc03d3bee6ebd3b49394f96a463a73dad4425ccad03fb4df5b60c40",
+    "backend/routers/materials.py": "bcfaf9f852ae5f3bcf0cedf4ebfd8dd21ac482187da9a1352f9fb5411a465cf8",
+    "backend/mcp_orchestrator.py": "9ee8585a96674f56fc9066194d44c863b78f9503a6bc32767182c407d35ed26e",
+    "scripts/trivy_os_gate.py": "7949f7b367b058db948d6ecbfbe13c94efcad77a59002fc96465dd116a579ff4",
+    "apitest/check_async_grading.py": "56becccc0389c4b66bced1b345d125ad4a912ea97340fed9da5751f70d62092d",
+    "apitest/probe_security_precheck.py": "57e16d23c9b1901c3a1815be70369affb65bbb7db112b7c8f4dbbd5e056675b0",
+    "apitest/check_os_vuln_gate.py": "3eaf2a3e59f727b28bd33c1248f653a301b25adb72890baa9331e3b2ca9308a2",
+    "backend/uv.lock": "43430b3300b3329c652b2ed7737afeb099ffa3b42009f1f1dca4b434d9869ac7",
+    "frontend/package-lock.json": "c488ed74cb27b989ef4946eede6052a0c23f44f01054296719c8b3cd62e7d24d"
+  }
+}

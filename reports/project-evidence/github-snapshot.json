@@ -1,0 +1,184 @@
+{
+  "observed_at": "2026-11-17T11:06:00.3388404Z",
+  "repository": "smrrrrr/CampusClaw-Group",
+  "main": "89642008b1a65ef0e73a31a5754f3286fc496873",
+  "protection": {
+    "checks": [
+      "make check",
+      "make check-security",
+      "build-and-scan"
+    ],
+    "approvals": 1,
+    "enforce_admins": true,
+    "allow_force_pushes": false,
+    "allow_deletions": false
+  },
+  "pull_requests": [
+    {
+      "number": 3,
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/pull/3",
+      "author": "hexzun1",
+      "state": "closed",
+      "merged": true,
+      "merged_at": "2026-11-17T08:15:57Z",
+      "head": "ca66b9a9e22db8d04fd234778290660fa7586690",
+      "base": "main",
+      "merge_commit": "89642008b1a65ef0e73a31a5754f3286fc496873",
+      "reviews": [
+        {
+          "reviewer": "smrrrrr",
+          "state": "APPROVED",
+          "commit": "ca66b9a9e22db8d04fd234778290660fa7586690",
+          "submitted_at": "2026-11-17T08:14:22Z",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/pull/3#pullrequestreview-5935012549"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/pull/5",
+      "author": "smrrrrr",
+      "state": "closed",
+      "merged": true,
+      "merged_at": "2026-11-17T08:01:01Z",
+      "head": "3da68c5792f1e4503e032635d5a64a499328edcf",
+      "base": "deps/upgrade-a-b",
+      "merge_commit": "ca66b9a9e22db8d04fd234778290660fa7586690",
+      "reviews": []
+    },
+    {
+      "number": 6,
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/pull/6",
+      "author": "smrrrrr",
+      "state": "open",
+      "merged": false,
+      "merged_at": null,
+      "head": "5cca99761cf9eb2290685a0c504b45dab9aaf4f3",
+      "base": "main",
+      "merge_commit": "f51e2a1c464bc1be62cf4c6ab28cf5551ba522d2",
+      "reviews": []
+    }
+  ],
+  "runs": [
+    {
+      "id": "44022376165",
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165",
+      "head": "b068cb912f55bd14d9322cae99f5838b13680fab",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "name": "make check-security",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165/job/133834601659"
+        },
+        {
+          "name": "make check",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165/job/133834602072"
+        },
+        {
+          "name": "build-and-scan",
+          "conclusion": "failure",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165/job/133835370477"
+        }
+      ]
+    },
+    {
+      "id": "44042306967",
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44042306967",
+      "head": "3da68c5792f1e4503e032635d5a64a499328edcf",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "make check-security",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44042306967/job/133899552922"
+        },
+        {
+          "name": "make check",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44042306967/job/133899553251"
+        },
+        {
+          "name": "build-and-scan",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44042306967/job/133900465934"
+        }
+      ]
+    },
+    {
+      "id": "44043187194",
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44043187194",
+      "head": "ca66b9a9e22db8d04fd234778290660fa7586690",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "make check-security",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44043187194/job/133902444712"
+        },
+        {
+          "name": "make check",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44043187194/job/133902445282"
+        },
+        {
+          "name": "build-and-scan",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44043187194/job/133903327404"
+        }
+      ]
+    },
+    {
+      "id": "44045260010",
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44045260010",
+      "head": "89642008b1a65ef0e73a31a5754f3286fc496873",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "make check-security",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44045260010/job/133909244598"
+        },
+        {
+          "name": "make check",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44045260010/job/133909245070"
+        },
+        {
+          "name": "build-and-scan",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44045260010/job/133910145228"
+        }
+      ]
+    },
+    {
+      "id": "44053944407",
+      "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44053944407",
+      "head": "5cca99761cf9eb2290685a0c504b45dab9aaf4f3",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "make check-security",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44053944407/job/133938338338"
+        },
+        {
+          "name": "make check",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44053944407/job/133938338469"
+        },
+        {
+          "name": "build-and-scan",
+          "conclusion": "success",
+          "url": "https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44053944407/job/133939246870"
+        }
+      ]
+    }
+  ]
+}
