@@ -4,7 +4,9 @@
 
 **演示视频下载地址**：待录制并上传百度网盘或北大网盘后填写。
 
-**成员与分工**：Jackler / hexzun1 负责 MCP 集成、依赖升级与运行验证（`backend/mcp_client.py`、PR #3）。Grey_Wolf_King 负责作业批改、学情、错题与跨班访问修复（`e10c81b`、`76be9f2`）。smrrrrr 负责异步初批、镜像门禁修复及交叉评审（`backend/grading_service.py`、PR #5、PR #3 的 Review）。提交依据见 [reports/contributions.md](reports/contributions.md)。
+**成员与分工**。Jackler / hexzun1 上线智能命题与 MCP，建立健康检查和 CI，复核安全修复，完成检索压测优化、依赖和镜像升级（`13c1cd2`、`4b005e1`、PR #3）。
+Grey_Wolf_King 新增批改、学情与错题，修复跨班访问和 XSS，加入七列审计、工具授权与 CSRF 防御，补安全反例和交接（`e10c81b`、`4cfaa15`、`efbfb67`）。
+smrrrrr 上线智能备课与讲义发布（`642242e`）、异步初批，补作业历史和错题同步（`6bb70e1`、`68acf9a`），完成安全预检、Windows 复验、交叉评审和镜像门禁修复。[reports/contributions.md](reports/contributions.md)
 
 ## 1. 一句话介绍
 
@@ -12,7 +14,7 @@ CampusClaw 面向中学教师和学生，把讲义导入、备课、命题、作
 
 ## 2. AI 写了什么
 
-代码与规约按课程约定由 AI 起草，经脚本检查和组员审核。可核实的开发和自审记录使用 Codex。代码与规约之外的 AI 产出如下。
+代码与规约由 AI 起草，开发与自审使用 Codex，并经脚本和组员复核。其他 AI 产出如下。
 
 - **规则、用例**：`AGENTS.md` 写明规则入口和七类核查。`apitest/check_async_grading.py` 覆盖幂等和回滚，`apitest/probe_security_precheck.py` 覆盖跨班拒绝。
 - **评审与三查**：`reports/review-04.md`、`reports/review-05.md`、`reports/review-06.md` 归档发现、判据和修复。并发、事务、权限各有一份复跑记录，见第 4 节。
@@ -33,15 +35,13 @@ CampusClaw 面向中学教师和学生，把讲义导入、备课、命题、作
 
 ## 3. 审核记录
 
-以下三份记录均说明手段、对象、判据、结果及修复，发现来自 AI 自审或脚本，有历史原始证据和本次复跑：
-
 | 记录 | 发现、判据与结果 |
 | --- | --- |
 | [reports/review-04.md](reports/review-04.md) | 合成扫描反例发现空报告及同 CVE 未登记包被放行；要求无效报告退出 2、未登记 HIGH 退出 1。修复 `cc5b0fc`，当时 19/25 转 25/25，本次扩展回归 31/31。 |
 | [reports/review-05.md](reports/review-05.md) | AI 源码核查配合隔离探针发现写工具上下文缺失、权限分类丢失；学生必须被拒且不得写分。修复 `97ba0f5`；本次安全探针 41/41，0 红项。 |
 | [reports/review-06.md](reports/review-06.md) | 远端镜像扫描拦下两份镜像的 ncurses-bin HIGH；保留原始告警，移除不用的 infocmp，并核验实际镜像。修复 `3da68c5` 后 CI 转绿，期限与版本受例外表约束。 |
 
-smrrrrr 在 PR #3 复核并正式批准，发现固化为 `apitest/check_os_vuln_gate.py` 中的空报告、同 CVE 不同软件包和缺报告反例。[reports/peer-review.md](reports/peer-review.md)
+在 PR #3 复核并正式批准，发现固化为 `apitest/check_os_vuln_gate.py` 中的空报告、同 CVE 不同软件包和缺报告反例。[reports/peer-review.md](reports/peer-review.md)
 
 ## 4. 高风险三查
 

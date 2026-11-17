@@ -4,11 +4,17 @@
 
 | 时间 | 讲什么 | 打开什么 | 建议承接者 |
 | --- | --- | --- | --- |
-| 0:00–0:30 | 系统面向谁，以及如何把备课、命题、批改和答疑串起来。 | `report.md` 第 1 节 | Jackler / hexzun1 |
-| 0:30–1:10 | Codex、AI 产出的文件类型、七类核查各怎样检查。 | `AGENTS.md` 七类表 | Jackler / hexzun1 |
-| 1:10–2:00 | 三份评审各讲一个发现、判据和对应修复。 | `reports/review-04.md`、`reports/review-05.md`、`reports/review-06.md` | Grey_Wolf_King |
-| 2:00–3:10 | 并发只生成一条任务、写入故障整批回滚、同一讲义本班 200 和跨班 404。 | `report.md` 第 4 节 | Grey_Wolf_King 与 smrrrrr |
-| 3:10–4:20 | PR #5 的一红一绿、主干保护、录屏中三条验证命令及批改结果。 | `reports/project-gate.md`、录屏下载链接 | smrrrrr |
+| 0:00–0:30 | 产品面向谁，智能命题如何支持出题，MCP 如何接入学生助手。 | `report.md` 第 1 节 | Jackler / hexzun1 |
+| 0:30–1:10 | 工程基线、Codex 和七类核查，用实际健康检查、场景回归或检索压测举例。 | `AGENTS.md`、`reports/bench.md` | Jackler / hexzun1 |
+| 1:10–2:00 | 作业批改、学情和错题功能的第一版；安全修复中的七列审计、工具执行授权和注入反例；指出后续评审发现。 | `reports/security-fix-log.md`、`reports/review-05.md` | Grey_Wolf_King |
+| 2:00–3:10 | 先讲同一讲义本班 200、跨班 404，再讲试卷发布后怎样进入异步初批，如何验证并发去重与回滚。 | `report.md` 第 4 节 | Grey_Wolf_King 讲权限，smrrrrr 讲并发与事务 |
+| 3:10–4:20 | CI 如何连到普通、安全、镜像三项检查；PR #3 如何交叉复验，PR #5 如何从红到绿；指出录屏的命令和结果。 | `reports/project-gate.md`、录屏下载链接 | Jackler / hexzun1 讲 CI，smrrrrr 讲复验和红绿证据 |
 | 4:20–5:00 | 镜像门禁为什么返工，改两份运行镜像和重扫三份镜像付出了什么成本。 | `report.md` 第 6 节 | smrrrrr |
 
 组员可以按实际参与调整时间和顺序。讲跨班 404 时指出用的是同一份真实存在的合成讲义；讲门禁时指出 OS HIGH 按书面例外处置。报告中的分工使用 Git 署名，提交前按课程平台所需补齐姓名或组号。
+
+三位成员各准备一条能打开证据的讲述线。
+
+- **Jackler / hexzun1** 从智能命题和工具接入讲到工程基线，再展示三接口压测、检索改进和进入 CI 的交付检查。[贡献与证据](contributions.md#jackler--hexzun1-的贡献明细)
+- **Grey_Wolf_King** 从作业批改、学情和错题讲到跨班隔离和工具授权，展示一组修复前后对照和一条常驻回归。[贡献与证据](contributions.md#grey_wolf_king-的贡献明细)
+- **smrrrrr** 讲智能备课与讲义发布、试卷发布后的异步初批，以及镜像门禁发现的扫描缺口。[贡献与证据](contributions.md#smrrrrr-的贡献明细)
