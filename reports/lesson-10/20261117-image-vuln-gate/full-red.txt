@@ -1,0 +1,60 @@
+[PASS] openspec-validate  (0.9s)
+[PASS] layering  (0.2s)
+[PASS] secret-scan  (3.1s)
+[PASS] fe-typecheck  (1.1s)
+[PASS] check_analytics  (2.2s)
+[PASS] check_analytics_units  (0.9s)
+[PASS] check_apitest_harness  (0.5s)
+[PASS] check_assignment_history  (4.3s)
+[PASS] check_async_grading  (3.3s)
+[PASS] check_audit_field_bounds  (0.9s)
+[PASS] check_baseline  (5.4s)
+[PASS] check_formula_retrieval  (1.4s)
+[PASS] check_frontend_image_safety  (0.1s)
+[PASS] check_homework  (2.5s)
+[PASS] check_injection  (2.6s)
+[PASS] check_lesson10_ops  (1.3s)
+[PASS] check_lesson10_p0_scenarios  (0.7s)
+[PASS] check_lesson10_review  (8.2s)
+[PASS] check_lesson10_scenario_gaps  (1.7s)
+[PASS] check_lesson10_scenarios  (0.8s)
+[PASS] check_lesson10_skills  (1.0s)
+[PASS] check_lesson_prep  (4.8s)
+[PASS] check_lessons_2_5  (8.6s)
+[PASS] check_mcp_server  (0.9s)
+[PASS] check_mcp_tools  (4.4s)
+[PASS] check_mistake  (2.1s)
+[PASS] check_model_json  (0.1s)
+[FAIL] check_os_vuln_gate  (1.2s)
+          ✓ 未登记项列出包名
+          ✓ 例外过期 → exit 1
+          ✓ 过期提示含日期
+          ✓ MEDIUM 不影响判定，未命中例外只告警 → exit 0
+          ✓ 报告缺失 → exit 2
+          ✓ 真实例外表含 11 条
+          ✓ 真实例外表均带 reason 与 review_after
+          ✓ 可修复的 CVE-2026-76844 未登记为例外
+          ✓ 真实例外表覆盖当前 11 个 CVE → exit 0
+          ✓ 有修复版本但未升级的包仍判失败（不因 FixedVersion 非空而放行）
+          ✓ workflow 门禁步骤启用 pipefail
+          ✓ workflow 门禁步骤调用 trivy_os_gate.py
+          ✗ workflow 门禁显式要求三份报告
+
+        结果：19/25 通过
+[PASS] check_question_bank  (4.6s)
+[PASS] check_quiz_homework  (2.7s)
+[PASS] check_research_materials  (3.8s)
+[PASS] check_security_gate  (1.6s)
+[PASS] check_security_review  (3.7s)
+[PASS] check_sqlite_storage  (1.7s)
+[PASS] check_assignment_history_ui  (0.8s)
+[PASS] check_grading_feedback  (0.3s)
+[PASS] check_markdown_blanks  (0.2s)
+[PASS] check_markdown_images  (1.6s)
+[PASS] check_question_rendering  (1.0s)
+[PASS] check_recent_history  (0.3s)
+[PASS] check_route_guard  (0.3s)
+[PASS] check_security_review_rendering  (0.6s)
+[PASS] check_teacher_navigation  (0.7s)
+
+门禁未通过：check_os_vuln_gate

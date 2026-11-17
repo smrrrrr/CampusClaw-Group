@@ -31,6 +31,9 @@ RUN apt-get update \
     && apt-get -y upgrade \
     && rm -rf /var/lib/apt/lists/*
 
+# CVE-2025-69720 位于当前 trixie 的 infocmp，运行服务不使用这个程序。
+RUN rm -f /usr/bin/infocmp
+
 COPY --from=builder /app/.venv /app/.venv
 COPY . .
 
