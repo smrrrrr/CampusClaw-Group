@@ -25,10 +25,10 @@ from reportlab.platypus import (
 from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
-REPO = "https://github.com/smrrrrr/CampusClaw-Group/blob/main/"
+REPO = "https://github.com/smrrrrr/CampusClaw-Group"
 
 
-def inline(text: str) -> str:
+def inline(text: str, link_base: str) -> str:
     """Small renderer for this report's links, bold text and inline paths."""
     pattern = r"(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)"
     parts = []
@@ -37,7 +37,7 @@ def inline(text: str) -> str:
             match = re.fullmatch(r"\[([^\]]+)\]\(([^)]+)\)", token)
             if match:
                 label, target = match.groups()
-                url = target if target.startswith("https://") else REPO + quote(target, safe="/#")
+                url = target if target.startswith("https://") else link_base + quote(target, safe="/#")
                 parts.append(f'<link href="{escape(url, quote=True)}" color="#185477">{escape(label)}</link>')
                 continue
         if token.startswith("**") and token.endswith("**"):
@@ -53,7 +53,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "output/pdf/CampusClaw-project-report.pdf")
     parser.add_argument("--font", type=Path, help="Chinese TrueType font, e.g. simsun.ttc")
+    parser.add_argument("--ref", default="main", help="GitHub branch or commit for relative report links")
     args = parser.parse_args()
+    link_base = f"{REPO}/blob/{quote(args.ref, safe='/')}/"
     source = ROOT / "report.md"
     raw = source.read_bytes()
     digest = hashlib.sha256(raw).hexdigest()
@@ -76,6 +78,8 @@ def main() -> None:
 
     common = dict(fontName=regular, wordWrap="CJK", splitLongWords=True, alignment=TA_LEFT)
     body = ParagraphStyle("body", fontSize=10.1, leading=14.2, spaceAfter=5, **common)
+    bullet = ParagraphStyle("bullet", fontSize=9.5, leading=12.5, leftIndent=10, bulletIndent=1,
+                            spaceAfter=2, **common)
     meta = ParagraphStyle("meta", fontSize=9.1, leading=12.5, spaceAfter=7, textColor=colors.HexColor("#425164"), **common)
     cell = ParagraphStyle("cell", fontSize=9.6, leading=13.3, spaceAfter=0, **common)
     heading = ParagraphStyle("heading", fontSize=11.8, leading=16, spaceBefore=9, spaceAfter=5, keepWithNext=True,
@@ -93,14 +97,14 @@ def main() -> None:
             idx += 1
             continue
         if line.startswith("# "):
-            story.append(Paragraph(inline(line[2:]), title))
+            story.append(Paragraph(inline(line[2:], link_base), title))
             idx += 1
             continue
         if line.startswith("## "):
             if line.startswith("## 4."):
                 story.append(PageBreak())
             before_first_section = False
-            story.append(Paragraph(inline(line[3:]), heading))
+            story.append(Paragraph(inline(line[3:], link_base), heading))
             idx += 1
             continue
         if line.startswith("|"):
@@ -108,7 +112,7 @@ def main() -> None:
             while idx < len(lines) and lines[idx].strip().startswith("|"):
                 row = [p.strip() for p in lines[idx].strip().strip("|").split("|")]
                 if not all(re.fullmatch(r":?-+:?", p) for p in row):
-                    rows.append([Paragraph(inline(p), cell) for p in row])
+                    rows.append([Paragraph(inline(p, link_base), cell) for p in row])
                 idx += 1
             table_label = rows[0][0].getPlainText()
             first_col = 58 if "类别" in table_label else 175 if "检查与记录" in table_label else 146
@@ -125,12 +129,16 @@ def main() -> None:
             ]))
             story.extend([table, Spacer(1, 5)])
             continue
+        if line.startswith("- "):
+            story.append(Paragraph(inline(line, link_base), bullet))
+            idx += 1
+            continue
         paragraph = [line]
         idx += 1
         while idx < len(lines) and lines[idx].strip() and not lines[idx].startswith(("#", "|")):
             paragraph.append(lines[idx].strip())
             idx += 1
-        story.append(Paragraph(inline(" ".join(paragraph)), meta if before_first_section else body))
+        story.append(Paragraph(inline(" ".join(paragraph), link_base), meta if before_first_section else body))
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
 

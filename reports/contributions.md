@@ -27,3 +27,15 @@ git show --stat 3da68c5
 本次材料整理与脚本复核使用 Codex，直接读取 `AGENTS.md` 与相应规范。仓库另有 `CLAUDE.md`、`.trae/rules/project_rules.md`、`.cursor/rules/project_rules.mdc` 入口；存在配置不等于本次实际运行过这些 Harness。历史每次对话的模型版本没有完整运行记录，报告不编造统一模型名称。
 
 正式交作业前，如平台要求真实姓名/学号/组号，由成员提供后映射到以上署名；当前报告用已核实的仓库署名。
+
+## 代码与规约之外的 AI 产出
+
+| 仓库位置 | 写了什么 |
+| --- | --- |
+| `AGENTS.md` | 规则入口、七类核查问题、步骤、通过与失败信号。 |
+| `apitest/check_async_grading.py`、`apitest/probe_security_precheck.py`、`apitest/check_os_vuln_gate.py` | 并发去重、第二条插入失败回滚、跨班资料拒绝、镜像报告完整性等自动检查。 |
+| `reports/review-04.md`、`reports/review-05.md`、`reports/review-06.md` | 整理空扫描报告、MCP 写工具授权、镜像缓解三次发现及可核验证据。交叉评审的本人操作见 `reports/peer-review.md`。 |
+| `reports/risk-concurrency.md`、`reports/risk-transaction.md`、`reports/risk-authz.md` | 分项记录风险检查的手段、对象、判据与实跑结果。 |
+| `scripts/lesson10_api_bench.py`、`apitest/load/lesson10.py`、`reports/bench.md` | 用同参复测对照 P95、吞吐和错误率，标注模型、数据与负载范围。 |
+| `Makefile`、`scripts/check.py`、`.github/workflows/lesson10.yml` | 编排规约、静态、类型、离线回归、密钥和安全检查。 |
+| `README.md`、`report.md`、`reports/demo-recording.md`、`reports/presentation-notes.md` | 整理启动、项目报告、三分钟录屏与五分钟汇报。 |

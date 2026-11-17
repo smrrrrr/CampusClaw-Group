@@ -24,4 +24,4 @@
 
 历史红 CI 和当前 required checks 分别证实检查能失败、现行主干要求这些检查；本次没有再次创建故障 PR 或尝试强行合并红灯，不能声称验证过 GitHub 对某次红提交的具体拒绝响应。PR #5 先合入源分支，API 中无该 PR 的正式 Review；不得伪造额外评审人。
 
-新报告基于 PR #6 文档内容，尚未推送或合入 main。本次文档检查不代表新报告已经完成另一名组员批准。合并前应针对最终提交重新核对保护、检查和 Review，不能复用旧 SHA 的绿灯。
+新报告在草稿 PR #7 上讨论，承接 PR #6 的文档内容。PR #7 初稿的三项 CI 已成功，合并前需针对最终提交重新核对检查和 Review。[草稿 PR #7](https://github.com/smrrrrr/CampusClaw-Group/pull/7) · [初稿 CI 44076286023](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44076286023)

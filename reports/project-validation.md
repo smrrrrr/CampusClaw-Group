@@ -21,7 +21,7 @@
 
 - 根报告恰好六节，AGENTS清单恰好七类，每类含问题、手段、判据与证据；三份独立评审与三查文件存在。
 - 本次新增/修改Markdown的本地链接逐一核对，未发现文件目标缺失；统计见 [document-checks.json](project-evidence/document-checks.json)。代码围栏不作为Markdown链接解析。
-- `reports/live-demo.md` 的PowerShell片段经PowerShell解析器检查，无语法错误；仅做静态检查，没有外部环境执行结果，见 [demo-syntax.json](project-evidence/demo-syntax.json)。
+- 新版录屏顺序采用已经实跑的两条三查命令和完整普通门禁。旧版现场演示脚本的语法结果仍保留为历史证据，见 [demo-syntax.json](project-evidence/demo-syntax.json)。
 - `scripts/render_project_report.py` 通过Python语法检查，实际生成两页PDF；PDF全文提取与Markdown正文（剔除标记）一致，元数据的SHA-256与源文件字节一致。
 - 用Poppler渲染两页并逐页查看，确认中文、长路径、表格、页脚清楚，无重叠或裁切。PDF是阅读副本，输出在 `output/pdf/`，不把它当第二份提交报告。
 - 版面及证据整理后未变更业务代码，无需以重复全量测试代替文档验证。完整门禁记录仍使用上述实际时间，不改成最后文档编辑时间。
@@ -30,10 +30,10 @@
 
 2026-11-17重新只读查询GitHub，PR #3已合并，main与PR #6相关CI均成功；PR #6仍Open无正式Review；main保护要求一次批准及三项检查。见 [github-snapshot.json](project-evidence/github-snapshot.json)。未把旧CI叫作本次工作区的新CI。
 
-镜像扫描沿用带提交号的远端结果。本次未重新执行联网依赖审计、实际镜像构建/扫描、真实RabbitMQ故障实验、真实模型或公网演示。安全探针通过不等于完整安全门禁本轮通过。
+镜像扫描沿用带提交号的远端结果。安全探针使用替身；联网依赖审计与实际镜像扫描以对应 CI 为准。[CI 44076286023](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44076286023)
 
 ## 待办与范围
 
-- 教师提供外部地址后，补 `reports/deployment-verification.md` 与报告第五节。
-- 新报告分支尚未推送、评审或合入main，不能引用旧批准冒充新批准。
+- 录制并上传视频后，补 `reports/demo-recording-evidence.md` 与报告开头的网盘下载地址。
+- 新报告供组内讨论并待正式评审。[草稿 PR #7](https://github.com/smrrrrr/CampusClaw-Group/pull/7)
 - 真实姓名/学号如平台要求，由本人提供；三名用户、手机等历史验收项仍按原证据，不代签或扩大。

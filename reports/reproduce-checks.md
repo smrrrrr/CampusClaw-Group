@@ -57,7 +57,7 @@ Linux:   make check-security
 
 ## 结果解释
 
-完整普通门禁、离线三查、联网安全门禁、镜像扫描是不同证据。各自通过只证明其覆盖范围。测试数据与耗时不是实际学生反馈或供应商模型质量，外部部署还需按 [live-demo.md](live-demo.md) 现场验证。
+完整普通门禁、离线三查、联网安全门禁与镜像扫描各有对应结果。课堂录屏需要录到命令执行和结果，以及登录后的核心业务演示。[demo-recording.md](demo-recording.md)
 
 ## 重生成报告阅读副本
 
@@ -67,4 +67,4 @@ Linux:   make check-security
 uv run --no-project --with reportlab --with pypdf python scripts/render_project_report.py
 ```
 
-Windows默认使用系统宋体/黑体；其他系统可用 `--font /path/to/chinese-font.ttf` 指定已有中文TrueType字体。输出为 `output/pdf/CampusClaw-project-report.pdf`，脚本检查恰好两页，元数据和页脚记录源文件摘要。修改正文后重新生成并逐页检查，不能交旧PDF配新Markdown。本次实际由Codex捆绑的作者环境生成，内容一致性证据在 `reports/project-evidence/document-checks.json`。
+Windows 默认使用系统宋体和黑体，其他系统可用 `--font` 指定中文 TrueType 字体。还在草稿分支时可加 `--ref docs/project-report` 让 PDF 中的文件链接指向该分支。输出为 `output/pdf/CampusClaw-project-report.pdf`，脚本检查恰好两页，元数据和页脚记录源文件摘要。修改正文后重新生成并逐页检查，内容核验见 `reports/project-evidence/document-checks.json`。

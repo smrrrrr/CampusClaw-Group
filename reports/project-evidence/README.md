@@ -11,7 +11,7 @@
 | `image-gate.txt` | `apitest/check_os_vuln_gate.py`原始输出，31条逻辑回归；Docker核验使用替身。 |
 | `check.json`、`check.txt` | 完整普通门禁43/43、退出0，记录各子项和起止时间。 |
 | `document-checks.json` | 六节、七类、相对链接、PDF两页及正文一致性、文件摘要。 |
-| `demo-syntax.json` | 现场演示PowerShell片段的静态语法检查，不是远端执行记录。 |
+| `demo-syntax.json` | 历史记录，旧版现场演示 PowerShell 片段的静态语法检查。新版录屏指引在 `reports/demo-recording.md`。 |
 
 完整普通门禁与文档检查的范围、PDF来源核对见上一级 [project-validation.md](../project-validation.md)。
 

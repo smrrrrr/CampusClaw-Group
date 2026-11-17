@@ -8,7 +8,7 @@
 
 项目报告在根目录 [report.md](report.md)，按六节说明用户、AI 辅助开发、评审、高风险三查、门禁与演示、复盘。详细证据统一在 [reports/README.md](reports/README.md)。报告核查以 `main@8964200` 的业务代码为基线，文档补充继承 PR #6。
 
-核验命令见 [复跑指引](reports/reproduce-checks.md)，外部环境现场四步见 [演示步骤](reports/live-demo.md)。部署地址等待教师提供，现有本机和 CI 结果不代替外部演示。汇报前的具体待办见 [提交核对表](reports/submission-readiness.md)。
+核验命令见 [复跑指引](reports/reproduce-checks.md)。按 [演示录屏步骤](reports/demo-recording.md) 提前录制三分钟以内的视频，再按 [五分钟汇报提纲](reports/presentation-notes.md) 准备课堂讲解。[提交核对表](reports/submission-readiness.md)
 
 教研中心当前保留“教研组资料、智能备课、智能命题”；已移除教研问答和课例分析两个占位入口，旧链接进入智能备课。
 

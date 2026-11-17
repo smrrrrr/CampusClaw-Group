@@ -1,8 +1,8 @@
 {
-  "observed_at": "2026-11-17T11:29:31.744096+00:00",
+  "observed_at": "2026-11-17T12:17:48.770415+00:00",
   "report_sections": [
     "1. 一句话介绍",
-    "2. AI 用在了哪里",
+    "2. AI 写了什么",
     "3. 审核记录",
     "4. 高风险三查",
     "5. 门禁与演示",
@@ -17,19 +17,18 @@
     "安全",
     "性能"
   ],
-  "local_links_checked": 175,
+  "local_links_checked": 104,
   "broken_local_links": [],
   "pdf_pages": 2,
   "pdf_full_source_text_matches": true,
-  "report_sha256": "64556c39165237fd7d0c7997546a117bb5d892cac1f23ec6e07bde0b64b11648",
-  "pdf_sha256": "2875b61cb745c5ed1842d3daf51107bf9f12ab70576a2aa80672e9ffbcb0888f",
+  "report_sha256": "5894720b13340a447907d5d2418d4bcc22abbc6fb801dbeca418e00213916a0c",
+  "pdf_sha256": "4f8b018e2ec46ebefe655e35530aef8570e2951399981624b31baa5f8e8db82f",
   "renderer_python_syntax": "PASS",
   "full_check": {
     "steps": 43,
     "exit": 0
   },
-  "scope": "new/modified Markdown links; no live external demo",
-  "final_document_check_at": "2026-11-17T11:32:06.520910+00:00",
+  "scope": "revised project report and recording guide; recording remains pending",
   "tested_source_hashes_unchanged": true,
-  "report_bytes_match_git_blob": true
+  "pdf_github_ref": "docs/project-report"
 }

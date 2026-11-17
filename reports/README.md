@@ -10,8 +10,8 @@
 - 三份具体评审：[扫描报告完整性](review-04.md)、[MCP写工具授权](review-05.md)、[运行镜像风险缓解](review-06.md)
 - [人工交叉评审来源](peer-review.md)、[成员贡献与AI范围](contributions.md)
 - [门禁保护与先红后绿时间线](project-gate.md)、[脱敏原始证据](project-evidence/README.md)
-- [外部环境现场四步](live-demo.md)、[部署结果待验项](deployment-verification.md)
-- [八分钟汇报与问答提纲](presentation-notes.md)、[提交核对表](submission-readiness.md)
+- [三分钟录屏步骤](demo-recording.md)、[录屏提交状态](demo-recording-evidence.md)
+- [五分钟汇报提纲](presentation-notes.md)、[提交核对表](submission-readiness.md)
 
 ## 历史与专项证据
 
