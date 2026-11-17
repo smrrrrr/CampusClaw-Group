@@ -73,12 +73,12 @@ async def main():
             check('same subject colleagues share source',len(r.json()['items'])==1)
             r=await req('GET','/api/teacher/research-materials','TP')
             check('other subject sees no source',r.json()['items']==[])
-            check('cross subject read denied',(await req('GET',prefix,'TP')).status_code==403)
+            check('cross subject read denied',(await req('GET',prefix,'TP')).status_code==404)
             check('student library list denied',(await req('GET','/api/teacher/research-materials','S1')).status_code==403)
             check('student source read denied',(await req('GET',prefix,'S1')).status_code==403)
             check('student source generation denied',(await req('POST',prefix+'/student-preview','S1')).status_code==403)
             check('source image teacher only',(await req('GET',prefix+'/assets?name=lesson.assets/figure.png','S1')).status_code==403)
-            check('cross subject source image denied',(await req('GET',prefix+'/assets?name=lesson.assets/figure.png','TP')).status_code==403)
+            check('cross subject source image denied',(await req('GET',prefix+'/assets?name=lesson.assets/figure.png','TP')).status_code==404)
             r=await req('GET',prefix+'/assets?name=lesson.assets/figure.png','TC')
             check('same subject source image exact',r.status_code==200 and r.content==png)
             r=await req('POST',prefix+'/student-preview')
@@ -112,14 +112,14 @@ async def main():
             r=await req('GET','/api/materials','S1')
             published=next(row for row in r.json()['items'] if row['id']==mid)
             check('published list includes knowledge topic and edition',published['tags']==['数学','一元二次方程','学生版'])
-            check('other class cannot see published version',(await req('GET',f'/api/materials/{mid}/preview','S2')).status_code==403)
+            check('other class cannot see published version',(await req('GET',f'/api/materials/{mid}/preview','S2')).status_code==404)
             r=await req('GET',f'/api/materials/{mid}/assets?name=lesson.assets/figure.png','S1')
             check('published image exact',r.status_code==200 and r.content==png)
-            check('cross class image denied',(await req('GET',f'/api/materials/{mid}/assets?name=lesson.assets/figure.png','S2')).status_code==403)
+            check('cross class image denied',(await req('GET',f'/api/materials/{mid}/assets?name=lesson.assets/figure.png','S2')).status_code==404)
             r=await req('GET',f'/api/materials/{mid}/bundle','S1')
             with zipfile.ZipFile(io.BytesIO(r.content)) as z:
                 check('student bundle contains only student md and original figure',len(z.namelist())==2 and any(z.read(n)==student.encode() for n in z.namelist()) and z.read('lesson.assets/figure.png')==png)
-            check('cross class bundle denied',(await req('GET',f'/api/materials/{mid}/bundle','S2')).status_code==403)
+            check('cross class bundle denied',(await req('GET',f'/api/materials/{mid}/bundle','S2')).status_code==404)
             for name,content in [('bad.md','![image](missing.png)'),('bad.zip',pack([('../escape.md','# bad')]))]:
                 r=await req('POST','/api/teacher/research-materials',files={'file':(name,content,'application/octet-stream')})
                 check('invalid import '+name,r.status_code==400)
@@ -140,7 +140,7 @@ async def main():
             with SessionLocal() as db:
                 check('multi class copies use distinct files',db.get(Material,mids[0]).file_path!=db.get(Material,mids[1]).file_path and db.query(MaterialAsset).count()==2)
             check('second class sees own student copy',(await req('GET',f'/api/materials/{mids[1]}/preview','S2')).status_code==200)
-            check('first class cannot read second class copy',(await req('GET',f'/api/materials/{mids[1]}/preview','S1')).status_code==403)
+            check('first class cannot read second class copy',(await req('GET',f'/api/materials/{mids[1]}/preview','S1')).status_code==404)
         print(json.dumps({'passed':len(checks),'failed':0,'checks':[name for name,_ in checks]},ensure_ascii=True))
 
 

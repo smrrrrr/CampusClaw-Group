@@ -1,0 +1,67 @@
+ Image campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 818B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.54kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 0.0s
+
+#4 [internal] load metadata for ghcr.io/astral-sh/uv:0.13.5
+#4 DONE 3.2s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 303B done
+#5 DONE 0.0s
+
+#6 FROM ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff
+#6 resolve ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff done
+#6 DONE 0.0s
+
+#7 [builder 1/5] FROM docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
+#7 resolve docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 25.65kB done
+#8 DONE 0.0s
+
+#9 [builder 3/5] COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
+#9 CACHED
+
+#10 [builder 4/5] COPY pyproject.toml uv.lock ./
+#10 CACHED
+
+#11 [builder 5/5] RUN uv sync --locked --no-dev
+#11 CACHED
+
+#12 [builder 2/5] WORKDIR /app
+#12 CACHED
+
+#13 [runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#13 CACHED
+
+#14 [runtime 4/5] COPY . .
+#14 DONE 0.0s
+
+#15 [runtime 5/5] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#15 DONE 1.5s
+
+#16 exporting to image
+#16 exporting layers
+#16 exporting layers 2.9s done
+#16 exporting manifest sha256:65fa6c2381ef843c85f68b4fca43c264b4d808cc31dd9618ab0862af4b59656f done
+#16 exporting config sha256:b6afd2b9f9a3df6282bf8414b890097ac939f278d32a89375f89dc0cbab3f683 done
+#16 exporting attestation manifest sha256:82c6efdf3050c2e0c79f90ebd9c8e18f46942d55fe984623a788e564fcdcbe3a done
+#16 exporting manifest list sha256:7c8559e312fd1a284c2574ed54db3bd3920622a149dae34592e8748a744bf530 done
+#16 naming to docker.io/library/campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d done
+#16 unpacking to docker.io/library/campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d
+#16 unpacking to docker.io/library/campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d 0.5s done
+#16 DONE 3.5s
+
+#17 resolving provenance for metadata file
+#17 DONE 0.0s
+ Image campusclaw-backend:de035b8d7242a3cb46965de220dea708de7b377d Built

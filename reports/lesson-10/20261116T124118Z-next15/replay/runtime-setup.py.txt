@@ -1,0 +1,23 @@
+import json,pathlib,subprocess,os,socket,secrets,hashlib
+s=json.loads(pathlib.Path('<private-temp>').read_text()); temp=pathlib.Path(s['temp']); root=pathlib.Path(s['root']); batch=pathlib.Path(s['batch'])
+for name in ['data','uploads','fixtures']: (temp/name).mkdir(exist_ok=True)
+def port():
+ with socket.socket() as sock: sock.bind(('127.0.0.1',0)); return sock.getsockname()[1]
+s['nginx_port']=port();s['frontend_port']=port(); s['backend_image']='campusclaw-backend:984c4c8cc6963bf315bd3f0820c4965043beed23';s['mcp_image']='campusclaw-mcp-tools:984c4c8cc6963bf315bd3f0820c4965043beed23'
+synthetic={'JWT_SECRET_KEY':secrets.token_hex(32),'GRADING_BROKER_PASSWORD':secrets.token_hex(20),'MCP_AUTH_TOKEN':secrets.token_hex(20),'DEEPSEEK_API_KEY':'','CAMPUSCLAW_PORT':str(s['nginx_port']),'CAMPUSCLAW_DATA_DIR':str(temp/'data'),'COMPOSE_PROJECT_NAME':s['project']}
+(temp/'.env').write_text(''.join(f'{k}={v}\n' for k,v in synthetic.items()));os.chmod(temp/'.env',0o600)
+env={**os.environ,**synthetic}; config=json.loads(subprocess.check_output(['docker','compose','--env-file',str(temp/'.env'),'-f',str(root/'docker-compose.yml'),'config','--format','json'],env=env,text=True)); config['name']=s['project'];config['networks']={'default':{'name':s['project']+'_default'}}
+for name,service in config['services'].items():
+ service.pop('build',None);service['restart']='no'
+ if name in ['backend','grading-worker','grading-dispatcher']:
+  service['image']=s['backend_image'];service['volumes']=[{'type':'bind','source':str(temp/'data'),'target':'/app/data'},{'type':'bind','source':str(temp/'uploads'),'target':'/app/uploads'}]
+  service['environment'].update(UPLOAD_DIR='/app/uploads',DEEPSEEK_API_KEY='synthetic-local-model-only',DEEPSEEK_BASE_URL='http://fake-model:9000/v1')
+ if name=='frontend': service['image']=s['image'];service['ports']=[{'target':3000,'published':str(s['frontend_port']),'host_ip':'127.0.0.1','protocol':'tcp'}]
+ if name=='mcp-tools': service['image']=s['mcp_image']
+ if name=='nginx': service['ports']=[{'target':80,'published':str(s['nginx_port']),'host_ip':'127.0.0.1','protocol':'tcp'}]
+config['volumes']={'grading-broker':{'name':s['project']+'_grading-broker'}}
+config['services']['fake-model']={'image':s['backend_image'],'command':['/app/.venv/bin/python','/fixtures/fake_model.py'],'volumes':[{'type':'bind','source':str(temp/'fixtures'),'target':'/fixtures','read_only':True}],'restart':'no','networks':{'default':None}}
+(temp/'compose.json').write_text(json.dumps(config,indent=2));os.chmod(temp/'compose.json',0o600)
+pathlib.Path('<private-temp>').write_text(json.dumps(s))
+summary={'project':s['project'],'ports':{'nginx':s['nginx_port'],'frontend_rewrite':s['frontend_port']},'services':{n:{'image':v['image'],'volumes':v.get('volumes',[])} for n,v in config['services'].items()},'synthetic_only':True,'backend_source_fingerprint_matches':True,'no_dev_seed':True,'env_file':'<private temporary .env>'};(batch/'runtime-isolation.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps({'project':s['project'],'nginx_port':s['nginx_port'],'frontend_port':s['frontend_port']}))

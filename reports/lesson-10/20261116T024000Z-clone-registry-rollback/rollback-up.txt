@@ -1,0 +1,4 @@
+ Container campusclaw-rollback-024334-backend-1 Healthy 
+ Container campusclaw-rollback-024334-frontend-1 Healthy 
+ Container campusclaw-rollback-024334-nginx-1 Starting 
+ Container campusclaw-rollback-024334-nginx-1 Started 

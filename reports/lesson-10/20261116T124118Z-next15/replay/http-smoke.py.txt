@@ -1,0 +1,29 @@
+import json,pathlib,time,httpx,hashlib
+s=json.loads(pathlib.Path('<private-temp>').read_text()); batch=pathlib.Path(s['batch']); rows=[]
+def record(name,expected,actual,passed):
+ rows.append({'case':name,'expected':expected,'actual':actual,'passed':bool(passed)})
+for port,via in [(s['nginx_port'],'nginx'),(s['frontend_port'],'frontend-rewrite')]:
+ with httpx.Client(base_url=f'http://127.0.0.1:{port}',trust_env=False,timeout=20) as client:
+  for path in (['/health','/login','/api/health'] if via=='nginx' else ['/login','/api/health']):
+   r=client.get(path); record(via+' GET '+path,200,r.status_code,r.status_code==200)
+  r=client.post('/api/auth/login',json={'identifier':'INIT','password':'<synthetic-password>'}); initial=r.json(); token=initial.get('access_token'); record(via+' first login requires password change',True,initial.get('must_change_password'),r.status_code==200 and initial.get('must_change_password') is True)
+  r=client.get('/api/teacher/students?class_id=101',headers={'Authorization':'Bearer '+token}); record(via+' first login protected API blocked',403,r.status_code,r.status_code==403)
+  r=client.post('/api/auth/login',json={'identifier':'<demo-teacher-1>','password':'<synthetic-password>'}); data=r.json();token=data.get('access_token',''); cookie=r.headers.get('set-cookie',''); record(via+' normal login + HttpOnly cookie',{'status':200,'httponly':True},{'status':r.status_code,'httponly':'httponly' in cookie.lower()},r.status_code==200 and 'httponly' in cookie.lower()); expected={k:data['user'][k] for k in ['role','subject','teaching_classes','homeroom_class_id','must_change_password']}
+  r=client.post('/api/auth/refresh'); refreshed=r.json(); actual={k:refreshed.get(k) for k in expected};record(via+' refresh restores full teacher session',expected,actual,r.status_code==200 and actual==expected)
+  for cid in [101,102]:
+   r=client.get('/api/teacher/students',params={'class_id':cid},headers={'Authorization':'Bearer '+refreshed.get('access_token','')});record(via+f' teacher class {cid} API',200,r.status_code,r.status_code==200)
+  r=client.post('/api/auth/logout',headers={'Authorization':'Bearer '+refreshed.get('access_token','')}); clear=r.headers.get('set-cookie',''); r2=client.post('/api/auth/refresh');record(via+' logout clears cookie then refresh denied',{'logout':200,'cleared':True,'refresh':401},{'logout':r.status_code,'cleared':'max-age=0' in clear.lower(),'refresh':r2.status_code},r.status_code==200 and 'max-age=0' in clear.lower() and r2.status_code==401)
+  r=client.post('/api/auth/login',json={'identifier':'<demo-student-1>','password':'<synthetic-password>'}); token=r.json()['access_token']; headers={'Authorization':'Bearer '+token}
+  for mid,want in [(1,200),(2,403)]:
+   r=client.get(f'/api/materials/{mid}/preview',headers=headers); record(via+f' student material {mid}',want,{'status':r.status_code,'other_body_leaked':'合成数学讲义' in r.text if mid==2 else False},r.status_code==want and (mid==1 or '合成数学讲义' not in r.text))
+  r=client.get('/api/materials/1/assets',params={'name':'probe.png'},headers=headers); record(via+' authenticated image',{'status':200,'png':True},{'status':r.status_code,'png':r.content.startswith(b'\x89PNG')},r.status_code==200 and r.content.startswith(b'\x89PNG'))
+  r=client.get('/api/materials/1/assets',params={'name':'probe.png'});record(via+' image without login denied',401,r.status_code,r.status_code==401)
+  r=client.post('/api/student/conversations',json={'title':'合成冒烟','subject':'math'},headers=headers);cid=r.json()['id']; chunks=[];start=time.monotonic()
+  with client.stream('POST',f'/api/student/conversations/{cid}/chat',json={'question':'合成公式测试'},headers=headers) as response:
+   content_type=response.headers.get('content-type','');status=response.status_code
+   for line in response.iter_lines():
+    if line.startswith('data:'):
+     event=json.loads(line[5:]);chunks.append({'type':event.get('type'),'ms':round((time.monotonic()-start)*1000,1),'chars':len(event.get('content',''))})
+  types=[c['type'] for c in chunks]; delta=[c['ms'] for c in chunks if c['type']=='delta']; record(via+' student SSE receives separated chunks and done',{'status':200,'deltas':3,'done':True,'separation_ms':'>=500'}, {'status':status,'content_type':content_type,'events':chunks},status==200 and 'text/event-stream' in content_type and types.count('delta')==3 and types[-1]=='done' and delta[-1]-delta[0]>=500)
+result={'project':s['project'],'model':'local synthetic SSE server; no real provider','rows':rows,'passed':sum(x['passed'] for x in rows),'failed':sum(not x['passed'] for x in rows),'browser_verified':False,'browser_blocker':'Browser access host unavailable; native Safari access not approved'};(batch/'http-smoke.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');print(json.dumps({'passed':result['passed'],'failed':result['failed'],'failures':[r for r in rows if not r['passed']]},ensure_ascii=False,indent=2))
+p=pathlib.Path('openspec/changes/2026-11-16-upgrade-next-15-5-28/tasks.md');p.write_text(p.read_text().replace('- [ ] 3.1','- [x] 3.1'))

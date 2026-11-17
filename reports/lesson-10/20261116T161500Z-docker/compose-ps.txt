@@ -1,0 +1,11 @@
+campusclaw-group-alertmanager-1	Up 6 minutes
+campusclaw-group-backend-1	Up 5 minutes (healthy)
+campusclaw-group-collector-1	Up 6 minutes
+campusclaw-group-frontend-1	Up 8 minutes (healthy)
+campusclaw-group-grading-dispatcher-1	Up 5 minutes
+campusclaw-group-grading-worker-1	Up 5 minutes
+campusclaw-group-grafana-1	Up 6 minutes
+campusclaw-group-mcp-tools-1	Up 8 minutes (healthy)
+campusclaw-group-nginx-1	Up 5 minutes
+campusclaw-group-prometheus-1	Up 6 minutes
+campusclaw-group-rabbitmq-1	Up 10 minutes (healthy)

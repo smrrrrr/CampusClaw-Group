@@ -1,0 +1,6 @@
+{
+  "mode": "SQLite mode=ro; no passwords or hashes queried",
+  "identities": [],
+  "db_path": null,
+  "blocked": "四个演示身份未全部在本地库中找到"
+}

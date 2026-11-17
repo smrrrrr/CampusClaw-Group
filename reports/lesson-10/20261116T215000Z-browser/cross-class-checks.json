@@ -1,0 +1,9 @@
+{
+  "stack": "ccnext15-browser (127.0.0.1:55890, synthetic DB)",
+  "student": "S10A (class 201)",
+  "own_list": 200,
+  "tampered_class_param_class_202": 403,
+  "tampered_body_contains_other_class_text": false,
+  "by_id_other_class_material_2": 404,
+  "spec_basis": "class-data-isolation: 学生篡改 class_id 参数 -> 403；按 ID fetch-then-check 一律 404 不泄露存在性，代码注释与 research-materials/agent-assistant 的 404 防枚举一致"
+}

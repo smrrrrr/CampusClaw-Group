@@ -361,9 +361,9 @@ export const api = {
     apiRequest<QuizPaperDTO>(`/api/teacher/quiz/papers/${id}/copy`, { method: "POST" }),
   deleteQuizPaper: (id: number) =>
     apiRequest<{ message: string; id: number }>(`/api/teacher/quiz/papers/${id}`, { method: "DELETE" }),
-  publishQuizPaper: (id: number, revision: number, classIds: number[]) =>
-    apiRequest<{ message: string; material_ids: number[]; class_ids: number[] }>(
-      `/api/teacher/quiz/papers/${id}/publish`, { method: "POST", body: { revision, reviewed: true, class_ids: classIds } }),
+  publishQuizPaper: (id: number, revision: number, classIds: number[], dueAt: string) =>
+    apiRequest<{ message: string; homework_ids: number[]; class_ids: number[]; assignments: { class_id: number; homework_id: number }[] }>(
+      `/api/teacher/quiz/papers/${id}/publish`, { method: "POST", body: { revision, reviewed: true, class_ids: classIds, due_at: dueAt } }),
   quizPaperPreviewUrl: (id: number) => `/api/teacher/quiz/papers/${id}/preview`,
   quizPaperAnswerKeyUrl: (id: number) => `/api/teacher/quiz/papers/${id}/answer-key`,
   listQuizEvents: () => apiRequest<{ items: QuizEventDTO[] }>("/api/teacher/quiz/events"),
@@ -380,8 +380,14 @@ export const api = {
     apiRequest<{ id: number; status: string }>(`/api/teacher/homeworks/${id}/close`, { method: "PUT" }),
   listHomeworkSubmissions: (homeworkId: number) =>
     apiRequest<HomeworkSubmissionDTO[]>(`/api/teacher/homeworks/${homeworkId}/submissions`),
+  getTeacherHomework: (homeworkId: number) =>
+    apiRequest<TeacherHomeworkDetailDTO>(`/api/teacher/homeworks/${homeworkId}`),
+  homeworkAssetUrl: (homeworkId: number, src: string, role: "student" | "teacher") =>
+    `/api/${role}/homeworks/${homeworkId}/assets?name=${encodeURIComponent(src)}`,
   aiGradeHomework: (homeworkId: number) =>
-    apiRequest<{ graded_count: number }>(`/api/teacher/homeworks/${homeworkId}/ai-grade`, { method: "POST" }),
+    apiRequest<{ task_ids: number[]; created_count: number; existing_count: number; skipped_count: number }>(`/api/teacher/homeworks/${homeworkId}/ai-grade`, { method: "POST" }),
+  listGradeTasks: (homeworkId: number) => apiRequest<GradeTaskDTO[]>(`/api/teacher/homeworks/${homeworkId}/grade-tasks`),
+  retryGradeTask: (id: number) => apiRequest<GradeTaskDTO>(`/api/teacher/grade-tasks/${id}/retry`, { method: "POST" }),
   gradeSubmission: (submissionId: number, score: number, feedback: string | null) =>
     apiRequest<{ id: number; teacher_score: number; teacher_feedback: string; status: string }>(
       `/api/teacher/submissions/${submissionId}/grade`, { method: "PUT", body: { score, feedback } }),
@@ -442,11 +448,46 @@ export interface ResearchMaterialDetailDTO extends ResearchMaterialDTO {
 export interface TeacherHomeworkDTO {
   id: number;
   title: string;
+  source_type: "manual" | "quiz";
   due_at: string | null;
   status: string;
   submitted_count: number;
   total_count: number;
   created_at: string;
+}
+
+export interface HomeworkContentDTO {
+  stem?: string;
+  format?: "text" | "markdown";
+  original_total?: number | null;
+}
+
+export interface TeacherHomeworkDetailDTO {
+  id: number;
+  class_id: number;
+  subject: string;
+  title: string;
+  source_type: "manual" | "quiz";
+  status: string;
+  due_at: string | null;
+  content: HomeworkContentDTO;
+  grading: { total_score: number; questions: { number: number; score: number; answer: unknown; explanation: string }[] } | null;
+}
+
+export interface GradeTaskDTO {
+  id: number;
+  homework_id: number;
+  submission_id: number;
+  status: "pending" | "running" | "retrying" | "succeeded" | "skipped" | "dead";
+  attempts: number;
+  execution_count: number;
+  max_attempts: number;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+  next_attempt_at: string;
 }
 
 export interface HomeworkSubmissionDTO {
@@ -465,9 +506,13 @@ export interface StudentHomeworkDTO {
   id: number;
   title: string;
   subject: string;
-  content: { stem?: string; [k: string]: unknown };
+  source_type: "manual" | "quiz";
+  content: HomeworkContentDTO;
   due_at: string | null;
   status: string;
+  homework_status: string;
+  answer_text: string | null;
+  submitted_at: string | null;
   submission_id: number | null;
   final_score: number | null;
   feedback: string | null;

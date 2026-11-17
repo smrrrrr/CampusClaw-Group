@@ -1,0 +1,11 @@
+Container campusclaw-group-backend-1 Healthy
+Container campusclaw-group-backend-1 Started
+Container campusclaw-group-frontend-1 Healthy
+Container campusclaw-group-frontend-1 Started
+Container campusclaw-group-grading-dispatcher-1 Started
+Container campusclaw-group-grading-worker-1 Started
+Container campusclaw-group-mcp-tools-1 Started
+Container campusclaw-group-nginx-1 Started
+Container campusclaw-group-rabbitmq-1 Healthy
+Container campusclaw-group-rabbitmq-1 Started
+curl: (56) Recv failure: Connection reset by peer

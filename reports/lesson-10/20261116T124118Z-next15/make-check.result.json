@@ -1,0 +1,9 @@
+{
+  "command": [
+    "make",
+    "check"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 42.38
+}

@@ -1,0 +1,2 @@
+error: Could not create temporary file
+  cause: Operation not permitted (os error 1) at path "<user-home>/.local/share/uv/tools/.tmpM0VkIO"

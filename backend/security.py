@@ -1,13 +1,18 @@
 """安全工具：密码哈希、密码策略、初始密码、JWT 签发与解析。"""
 
 import re
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from jose import JWTError, jwt
+import jwt as pyjwt
+from jwt import PyJWTError
 from passlib.context import CryptContext
 
 from config import settings
+
+# 保留 security.JWTError 导出，调用方（main/deps/routers）无需改动。
+JWTError = PyJWTError
 
 # ---------------------------------------------------------------------------
 # 密码哈希（bcrypt 加盐）
@@ -84,7 +89,7 @@ def _create_token(
         "exp": now + expires_delta,
         "jti": uuid.uuid4().hex,
     }
-    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+    return pyjwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 
 def create_access_token(
@@ -141,9 +146,53 @@ def create_refresh_token(
     )
 
 
+# 旧 python-jose 的时间判据是整数秒：exp 用 `当前秒 > exp` 判过期（exp==当前秒仍有效），
+# iat 只要求可转整数（不拒绝未来时间），nbf 用 `nbf > 当前秒`。PyJWT 默认在相等秒即判过期，
+# 且拒绝未来 iat。这里关闭 PyJWT 的时间校验，由 _validate_legacy_time_claims 完整复刻旧语义，
+# 避免替换库改变既有 token 的边界行为；签名与算法白名单仍由 PyJWT 执行。
+_LEGACY_DECODE_OPTIONS = {
+    "verify_exp": False,
+    "verify_iat": False,
+    "verify_nbf": False,
+    "verify_aud": False,
+    "require": [],
+}
+
+
+def _as_int_claim(claims: dict, name: str) -> int | None:
+    if name not in claims:
+        return None
+    try:
+        return int(claims[name])
+    except (TypeError, ValueError):
+        raise JWTError(f"{name} must be an integer")
+
+
+def _validate_legacy_time_claims(claims: dict) -> None:
+    now = int(time.time())
+    exp = _as_int_claim(claims, "exp")
+    if exp is not None and now > exp:
+        raise JWTError("Signature has expired")
+    nbf = _as_int_claim(claims, "nbf")
+    if nbf is not None and nbf > now:
+        raise JWTError("The token is not yet valid (nbf)")
+    # iat 只做可转整数校验，允许未来时间，与旧库一致。
+    _as_int_claim(claims, "iat")
+
+
 def decode_token(token: str) -> dict:
-    """解析并校验 JWT，失败抛出 JWTError。"""
-    return jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+    """解析并校验 JWT，失败抛出 JWTError。
+
+    保持旧库时间边界：exp==当前整数秒仍有效；未来 iat 不拒绝；nbf 按整数秒比较。
+    """
+    claims = pyjwt.decode(
+        token,
+        settings.jwt_secret_key,
+        algorithms=[settings.jwt_algorithm],
+        options=_LEGACY_DECODE_OPTIONS,
+    )
+    _validate_legacy_time_claims(claims)
+    return claims
 
 
 __all__ = [

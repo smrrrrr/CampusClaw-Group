@@ -1,0 +1,8 @@
+{
+  "started": "2026-11-05T01:32:04.412009+00:00",
+  "finished": "2026-11-05T01:33:08.465323+00:00",
+  "command": "backend/.venv/Scripts/python.exe scripts/check.py",
+  "exit": 0,
+  "groups_passed": 27,
+  "groups_failed": 0
+}

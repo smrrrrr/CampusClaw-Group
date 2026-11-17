@@ -1,0 +1,35 @@
+Browser tab: 14, Title: "CampusClaw 校园助手", URL: "http://127.0.0.1:3009/student?view=mistakes".
+1 AXWebArea CampusClaw 校园助手, URL: 127.0.0.1:3009/student?view=mistakes
+	2 container
+		3 text S
+		4 heading CampusClaw, Value: 1
+			5 text CampusClaw
+		6 text 学习平台 · 学生端
+		7 container 主导航
+			8 text 学生端
+			9 button 本班首页
+			10 button 讲义与检索
+			11 button 助手对话
+			12 button 交作业
+			13 button 错题
+			14 button 学情分析
+		15 text 学习空间 · 学习数据仅本人可见
+	16 container
+		17 text 高二（1）班 生 合成学生
+		18 button 登 出
+	19 container
+		20 heading 错题, Value: 2
+			21 text 错题
+		22 text 判错的题目会进入这里，可按学科筛选、标记已掌握，或请 AI 分析错因。
+		23 pop up button (collapsed, settable) Value: 全部学科, Secondary Actions: Expand
+			24 menu
+				25 (selected) 全部学科
+				26 数学
+				27 语文
+				28 英语
+				29 物理
+				30 化学
+		31 checkbox (settable, integer) Description: 仅未掌握, Value: 0
+		32 text 暂无错题记录。
+
+The focused UI element is 13 button 错题

@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-11-04T14:01:27.147202+00:00",
+  "full_gate_groups": 27,
+  "navigation": {
+    "passed": 35,
+    "scenarios": [
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "model_calls": 0,
+    "database_writes": 0
+  },
+  "red_old_implementation": "R1 actual 5 research entries != expected 3; process exit 1",
+  "planning_validation_fix": "Retained existing scenario title; separated R1-R3 into new requirement to avoid old pending deltas dropping them",
+  "first_gate_issue": "Spec mismatch stopped gate; Windows GBK could not print failure symbol. Corrected delta/main structure and reran with PYTHONIOENCODING=utf-8, without changing gate/assertions.",
+  "final_strict": "33 passed, 0 failed; strict-check.txt",
+  "final_secret_scan": "exit 0, no findings",
+  "final_git_diff_check": "exit 0; pre-existing uv.lock line-ending warning",
+  "browser": "Synthetic teacher: home, both legacy redirects, library and quiz; saved visible research-menu screenshot",
+  "qa_services": "Stopped verified temporary processes after screenshots"
+}

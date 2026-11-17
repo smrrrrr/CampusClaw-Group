@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "frontend",
+    "ci",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 2.81
+}

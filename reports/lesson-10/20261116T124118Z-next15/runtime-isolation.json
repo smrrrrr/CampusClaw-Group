@@ -1,0 +1,100 @@
+{
+  "project": "<redacted>",
+  "ports": {
+    "nginx": 55788,
+    "frontend_rewrite": 55789
+  },
+  "services": {
+    "backend": {
+      "image": "campusclaw-backend:984c4c8cc6963bf315bd3f0820c4965043beed23",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "<redacted>",
+          "target": "/app/data"
+        },
+        {
+          "type": "bind",
+          "source": "<private-temp>/uploads",
+          "target": "/app/uploads"
+        }
+      ]
+    },
+    "frontend": {
+      "image": "campusclaw-frontend:next15-20261116t124118z",
+      "volumes": []
+    },
+    "grading-dispatcher": {
+      "image": "campusclaw-backend:984c4c8cc6963bf315bd3f0820c4965043beed23",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "<redacted>",
+          "target": "/app/data"
+        },
+        {
+          "type": "bind",
+          "source": "<private-temp>/uploads",
+          "target": "/app/uploads"
+        }
+      ]
+    },
+    "grading-worker": {
+      "image": "campusclaw-backend:984c4c8cc6963bf315bd3f0820c4965043beed23",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "<redacted>",
+          "target": "/app/data"
+        },
+        {
+          "type": "bind",
+          "source": "<private-temp>/uploads",
+          "target": "/app/uploads"
+        }
+      ]
+    },
+    "mcp-tools": {
+      "image": "campusclaw-mcp-tools:984c4c8cc6963bf315bd3f0820c4965043beed23",
+      "volumes": []
+    },
+    "nginx": {
+      "image": "nginx:1.27-alpine",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "<user-home>/Documents/\u5b66\u4e60/\u7814\u4e00/\u4e92\u8054\u7f51\u8f6f\u4ef6\u5f00\u53d1/campusgroup/CampusClaw-Group-review/deploy/nginx.conf",
+          "target": "/etc/nginx/nginx.conf",
+          "read_only": true,
+          "bind": {}
+        }
+      ]
+    },
+    "rabbitmq": {
+      "image": "rabbitmq:4.2-management@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "grading-broker",
+          "target": "/var/lib/rabbitmq",
+          "volume": {}
+        }
+      ]
+    },
+    "fake-model": {
+      "image": "campusclaw-backend:984c4c8cc6963bf315bd3f0820c4965043beed23",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "<private-temp>/fixtures",
+          "target": "/fixtures",
+          "read_only": true
+        }
+      ]
+    }
+  },
+  "synthetic_only": true,
+  "backend_source_fingerprint_matches": true,
+  "no_dev_seed": true,
+  "env_file": "<private temporary .env>"
+}

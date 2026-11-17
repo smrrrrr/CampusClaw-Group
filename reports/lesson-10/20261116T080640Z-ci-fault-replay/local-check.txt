@@ -1,0 +1,3 @@
+local exit code: 1
+[FAIL] check_lesson10_ops  (0.2s)
+门禁未通过：check_lesson10_ops

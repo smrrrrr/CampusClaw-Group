@@ -1,0 +1,44 @@
+{
+  "dependencies": [
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "vulns": [
+        {"id": "GHSA-certifi-1", "description": "CA certificate bundle advisory"},
+        {"id": "GHSA-certifi-2", "description": "CA certificate bundle advisory"}
+      ]
+    },
+    {
+      "name": "ecdsa",
+      "version": "0.19.2",
+      "vulns": [
+        {"id": "GHSA-ecdsa-1", "description": "ECDSA implementation advisory"},
+        {"id": "GHSA-ecdsa-2", "description": "ECDSA implementation advisory"}
+      ]
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0",
+      "vulns": [
+        {"id": "GHSA-pillow-1", "description": "Pillow image parser advisory"}
+      ]
+    },
+    {
+      "name": "pyasn1",
+      "version": "0.6.4",
+      "vulns": [
+        {"id": "GHSA-pyasn1-1", "description": "ASN.1 parser advisory"},
+        {"id": "GHSA-pyasn1-2", "description": "ASN.1 parser advisory"},
+        {"id": "GHSA-pyasn1-3", "description": "ASN.1 parser advisory"},
+        {"id": "GHSA-pyasn1-4", "description": "ASN.1 parser advisory"}
+      ]
+    },
+    {
+      "name": "python-jose",
+      "version": "3.5.0",
+      "vulns": [
+        {"id": "GHSA-jose-1", "description": "JWT algorithm confusion advisory"}
+      ]
+    }
+  ]
+}

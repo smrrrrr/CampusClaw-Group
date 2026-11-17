@@ -52,8 +52,9 @@ def _get_mistake_or_404(db: Session, mistake_id: int) -> MistakeNote:
 
 
 def _assert_student_owns_mistake(ctx: UserContext, note: MistakeNote) -> None:
+    # fetch-then-check：非本人错题 → 404，不泄露存在性
     if note.student_id != ctx.user_id:
-        raise MistakeServiceError(403, "无权查看他人错题")
+        raise MistakeServiceError(404, "错题不存在")
 
 
 def _note_to_dict(note: MistakeNote, homework_title: str | None = None) -> dict:

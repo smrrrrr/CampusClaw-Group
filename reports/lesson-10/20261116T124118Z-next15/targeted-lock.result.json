@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "install",
+    "--package-lock-only",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund",
+    "--registry=https://registry.npmjs.org"
+  ],
+  "cwd": "frontend",
+  "exit": 0,
+  "seconds": 27.88
+}

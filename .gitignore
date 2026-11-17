@@ -46,9 +46,35 @@ venv/
 # ---- 自动化测试报告（不入库）----
 apitest/reports/
 apitest/**/report.html
-reports/
+# 根reports保留脱敏课程证据；运行时私有数据仍放.review或apitest/reports。
+reports/*
+!reports/*.md
+!reports/security-evidence/
+reports/security-evidence/*
+!reports/security-evidence/*.json
+!reports/security-evidence/*.txt
+!reports/async-grading/
+reports/async-grading/*
+!reports/async-grading/*.md
+!reports/async-grading/*.json
+!reports/async-grading/*.txt
+!reports/async-grading/*.png
+!reports/remove-research-pages/
+reports/remove-research-pages/*
+!reports/remove-research-pages/*.md
+!reports/remove-research-pages/*.json
+!reports/remove-research-pages/*.txt
+!reports/remove-research-pages/*.png
+# 第10课原始证据：只保留脱敏的文本/JSON，二进制与私有数据仍不入库
+!reports/lesson-10/
+!reports/lesson-10/**
+reports/lesson-10/**/*.png
+reports/lesson-10/**/*.db
+reports/lesson-10/**/*.env
 
 # ---- 日志与本地临时文件 ----
+# 第10课观测 overlay 的共享日志目录（运行时产物）
+logs/
 .review/
 *.log
 .DS_Store

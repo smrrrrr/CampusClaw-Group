@@ -1,0 +1,57 @@
+{
+  "source": "npm registry security audit API; pip-audit default PyPI vulnerability service",
+  "time": "2026-11-16T12:47:56.248272+00:00",
+  "commands": [
+    {
+      "name": "npm",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "audit",
+        "--omit=dev",
+        "--json",
+        "--registry=https://registry.npmjs.org"
+      ],
+      "exit": 1,
+      "seconds": 2.13
+    },
+    {
+      "name": "backend-export",
+      "exit": 0,
+      "seconds": 0.139
+    },
+    {
+      "name": "backend",
+      "exit": 2,
+      "seconds": 0.008
+    },
+    {
+      "name": "mcp-export",
+      "exit": 0,
+      "seconds": 0.01
+    },
+    {
+      "name": "mcp",
+      "exit": 2,
+      "seconds": 0.007
+    }
+  ],
+  "locks": {
+    "frontend/package-lock.json": "b94a745eb47dba3c6bbd6eef9de92faaeec583999808a411352b180c60134608",
+    "backend/uv.lock": "f596d3dbee2feba9228192560d57766a7e410c0f433f04f29e874b51cbfb1d09",
+    "mcp-server/uv.lock": "04af13d99e382a22c571f81f688304547d1744c634f2fb98646aa4c78c2ab827"
+  },
+  "versions": {
+    "npm": {
+      "exit": 0,
+      "version": "11.12.1"
+    },
+    "uv": {
+      "exit": 0,
+      "version": "uv 0.13.5 (Homebrew 2026-10-22 aarch64-apple-darwin)"
+    },
+    "pip-audit": {
+      "exit": 2,
+      "version": ""
+    }
+  }
+}

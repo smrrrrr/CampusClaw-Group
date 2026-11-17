@@ -8,11 +8,14 @@
 前提：backend 下执行过 uv sync（含 dev 依赖），frontend 下执行过 npm ci，已安装 openspec CLI。
 """
 
+import argparse
+import json
 import os
 import shutil
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -58,12 +61,18 @@ def missing_prerequisites() -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="一键门禁；--json 额外写脱敏执行记录供命令盘点/CI 归档。")
+    parser.add_argument("--json", metavar="PATH", help="把本次各子项状态、起止时间与退出码写到指定 JSON")
+    args = parser.parse_args()
+
     missing = missing_prerequisites()
     if missing:
         print("门禁无法运行，缺少：" + "；".join(missing))
         return 2
 
     failed = []
+    records = []
+    batch_started = datetime.now(timezone.utc)
     for name, command, extra_env in steps():
         env = {**os.environ, **extra_env} if extra_env else None
         started = time.time()
@@ -71,11 +80,27 @@ def main() -> int:
         elapsed = time.time() - started
         status = "PASS" if result.returncode == 0 else "FAIL"
         print(f"[{status}] {name}  ({elapsed:.1f}s)")
+        records.append({"name": name, "status": status, "seconds": round(elapsed, 2),
+                        "exit": result.returncode,
+                        "finished": datetime.now(timezone.utc).isoformat()})
         if result.returncode != 0:
             failed.append(name)
             tail = (result.stdout + result.stderr).strip().splitlines()[-15:]
             for line in tail:
                 print("        " + line)
+
+    batch_finished = datetime.now(timezone.utc)
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps({
+            "started": batch_started.isoformat(),
+            "finished": batch_finished.isoformat(),
+            "git_head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip(),
+            "steps": records,
+            "exit": 0 if not failed else 1,
+            "failed": failed,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if failed:
         print(f"\n门禁未通过：{', '.join(failed)}")

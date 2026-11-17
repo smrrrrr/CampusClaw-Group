@@ -30,18 +30,18 @@ with tempfile.TemporaryDirectory(prefix='sqlite-storage-test-') as tmp:
         engine.dispose()
         settings.sqlite_journal_mode = mode
         with engine.connect() as connection:
-            check(mode+' journal active', connection.exec_driver_sql('PRAGMA journal_mode').scalar().upper() == mode)
-            check(mode+' synchronous safe', connection.exec_driver_sql('PRAGMA synchronous').scalar() == (2 if mode == 'DELETE' else 1))
-            check(mode+' busy timeout', connection.exec_driver_sql('PRAGMA busy_timeout').scalar() == 15000)
+            check(f'{mode} journal active', connection.exec_driver_sql('PRAGMA journal_mode').scalar().upper() == mode)
+            check(f'{mode} synchronous safe', connection.exec_driver_sql('PRAGMA synchronous').scalar() == (2 if mode == 'DELETE' else 1))
+            check(f'{mode} busy timeout', connection.exec_driver_sql('PRAGMA busy_timeout').scalar() == 15000)
         def commit_value(index):
             with engine.begin() as connection:
                 connection.execute(text('INSERT INTO storage_probe(id) VALUES (:id)'), {'id': index+offset})
                 return connection.execute(text('SELECT count(*) FROM storage_probe')).scalar() > 0
         with ThreadPoolExecutor(max_workers=4) as pool:
-            check(mode+' parallel commits', all(pool.map(commit_value, range(20))))
+            check(f'{mode} parallel commits', all(pool.map(commit_value, range(20))))
         with engine.connect() as connection:
-            check(mode+' rows persisted', connection.exec_driver_sql('SELECT count(*) FROM storage_probe').scalar() == offset+20)
-            check(mode+' integrity', connection.exec_driver_sql('PRAGMA integrity_check').scalar() == 'ok')
+            check(f'{mode} rows persisted', connection.exec_driver_sql('SELECT count(*) FROM storage_probe').scalar() == offset+20)
+            check(f'{mode} integrity', connection.exec_driver_sql('PRAGMA integrity_check').scalar() == 'ok')
     with TestClient(main.app) as client:
         check('healthy database HTTP 200', client.get('/api/health').status_code == 200)
         original = main.engine

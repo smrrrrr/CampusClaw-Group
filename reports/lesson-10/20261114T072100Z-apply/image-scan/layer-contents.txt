@@ -1,0 +1,18 @@
+== backend ==
+uv=absent
+gcc=absent
+py_files=47
+tests=0
+uid=0
+== frontend ==
+server.js=yes
+src_ts=0
+node_modules=22.8M	/app/node_modules
+== mcp ==
+uv=absent
+py_files=1
+0
+root
+Uid:	10001	10001	10001	10001
+Gid:	10001	10001	10001	10001
+/app/.venv/bin/python

@@ -1,0 +1,5 @@
+接口探针退出码=0（1表示观察到红项，2表示执行未完成）
+密钥扫描：疑似泄漏=False，范围完整=True
+未登记的漏洞包：['npm:katex', 'npm:micromark-extension-math', 'npm:next', 'npm:rehype-katex', 'npm:remark-math']
+课程高危判据：npm high+critical=1；pip 未判级且有漏洞=[]
+安全自查=RED，有待验范围=True；reports/security-evidence/run.json

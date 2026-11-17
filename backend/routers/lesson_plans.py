@@ -85,11 +85,17 @@ def actor(db, current, class_ids=()):
 
 def owned(db, plan_id, current):
     plan = db.get(LessonPlan, plan_id, populate_existing=True)
+    # fetch-then-check：不存在 OR 非本人/非本学科/非任教班级 → 一律 404，不泄露存在性
     if not plan:
         raise HTTPException(404, '教案不存在')
-    teacher, _ = actor(db, current, [plan.class_id])
+    try:
+        teacher, _ = actor(db, current, [plan.class_id])
+    except HTTPException as e:
+        if e.status_code == 403:
+            raise HTTPException(404, '教案不存在')
+        raise
     if plan.teacher_id != teacher.id or plan.subject != teacher.subject:
-        raise HTTPException(403, '只能访问本人本学科的教案')
+        raise HTTPException(404, '教案不存在')
     return plan
 
 

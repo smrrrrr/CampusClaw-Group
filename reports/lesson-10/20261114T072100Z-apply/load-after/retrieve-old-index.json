@@ -1,0 +1,17 @@
+{
+  "scenario": "retrieve",
+  "concurrency": 3,
+  "duration_seconds": 10.06,
+  "requests": 371,
+  "accepted": 371,
+  "business_rejected_429": 0,
+  "failed": 0,
+  "throughput_rps": 36.87,
+  "error_rate": 0.0,
+  "p95_ms": 123.2,
+  "mean_ms": 81.32,
+  "status_counts": {
+    "200": 371
+  },
+  "utc": "2026-11-14T09:41:59.493344+00:00"
+}

@@ -75,7 +75,7 @@ export default function MarkdownAnswer({ text, imageUrl }: { text: string; image
   } } : undefined, [imageUrl]);
   return (
     <div className="markdown-body" style={{ lineHeight: 1.8, fontSize: 14 }}>
-      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
+      <ReactMarkdown skipHtml remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
         {normalizeLatex(protectFillBlanks(imageUrl ? normalizeMarkdownImagePaths(text) : text))}
       </ReactMarkdown>
     </div>

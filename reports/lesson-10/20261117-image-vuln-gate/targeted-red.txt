@@ -1,0 +1,27 @@
+  ✓ HIGH 命中未过期例外 → exit 0
+  ✓ 汇总行包含镜像与计数
+  ✗ 同 CVE 的未登记软件包 → exit 1
+  ✗ 缺少 Trivy 元数据的空对象 → exit 2
+  ✓ 合法 Trivy 报告省略空 Results → exit 0
+  ✓ 合法 Trivy 报告有空的漏洞数组 → exit 0
+  ✗ 两份报告来自同一镜像 → exit 2
+  ✗ Results 结构错误 → exit 2
+  ✗ 漏洞严重度字段为空 → exit 2
+  ✓ CRITICAL → exit 1
+  ✓ CRITICAL 不接受例外
+  ✓ HIGH 未登记 → exit 1
+  ✓ 未登记项列出包名
+  ✓ 例外过期 → exit 1
+  ✓ 过期提示含日期
+  ✓ MEDIUM 不影响判定，未命中例外只告警 → exit 0
+  ✓ 报告缺失 → exit 2
+  ✓ 真实例外表含 11 条
+  ✓ 真实例外表均带 reason 与 review_after
+  ✓ 可修复的 CVE-2026-76844 未登记为例外
+  ✓ 真实例外表覆盖当前 11 个 CVE → exit 0
+  ✓ 有修复版本但未升级的包仍判失败（不因 FixedVersion 非空而放行）
+  ✓ workflow 门禁步骤启用 pipefail
+  ✓ workflow 门禁步骤调用 trivy_os_gate.py
+  ✗ workflow 门禁显式要求三份报告
+
+结果：19/25 通过

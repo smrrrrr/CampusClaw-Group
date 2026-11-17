@@ -103,6 +103,13 @@ class AuditLog(Base):
     method: Mapped[str] = mapped_column(String(10), nullable=False)
     status_code: Mapped[int] = mapped_column(Integer, nullable=False)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # SEC-07：操作类型与对象标识，便于审计回查
+    action: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    object_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    # SEC-07：技能执行上下文（非技能操作可空）
+    skill_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (Index("ix_audit_log_created_at", "created_at"),)
@@ -396,13 +403,18 @@ class MaterialChunk(Base):
 
     __table_args__ = (
         Index("ix_material_chunk_material_id", "material_id"),
-        # 加速"查询某班已索引材料分块"的检索过滤
-        Index("ix_material_chunk_class_material", "class_id", "material_id"),
+        # 第10课：检索同时按 class_id 过滤、按 (material_id, chunk_index) 排序并只取 id/序号；
+        # 该索引是原 (class_id, material_id) 的超集，覆盖过滤、排序与投影。
+        Index("ix_material_chunk_class_material_chunk", "class_id", "material_id", "chunk_index"),
     )
 
 
 class Homework(Base):
-    """作业布置表。"""
+    """班级作业：manual 手工或 quiz 命题来源；draft → published → closed。
+
+    content_json 仅含学生题面；grading_snapshot_json 含教师答案，严禁学生序列化。
+    命题作业发布快照不可变，原卷版本只用于追溯，不参与发布去重。
+    """
 
     __tablename__ = "homeworks"
 
@@ -416,6 +428,11 @@ class Homework(Base):
     )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     content_json: Mapped[str] = mapped_column(Text, nullable=False)
+    source_type: Mapped[str] = mapped_column(String(16), nullable=False, default="manual", server_default="manual")
+    source_paper_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("question_papers.id"), nullable=True)
+    source_paper_revision: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_fingerprint: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    grading_snapshot_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     due_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="draft")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
@@ -426,7 +443,24 @@ class Homework(Base):
     __table_args__ = (
         Index("ix_homework_class_id", "class_id"),
         Index("ix_homework_class_subject", "class_id", "subject"),
+        Index("uq_homework_paper_class_snapshot", "source_paper_id", "class_id", "source_fingerprint", unique=True),
     )
+
+
+class HomeworkAsset(Base):
+    """命题作业学生题面原图副本；归属班级/作业，不存答案独用图片。"""
+
+    __tablename__ = "homework_assets"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    homework_id: Mapped[int] = mapped_column(Integer, ForeignKey("homeworks.id"), nullable=False)
+    class_id: Mapped[int] = mapped_column(Integer, ForeignKey("classes.id"), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(500), nullable=False)
+    file_path: Mapped[str] = mapped_column(String(500), nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    file_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    __table_args__ = (UniqueConstraint("homework_id", "name", name="uq_homework_asset_name"),)
 
 
 class HomeworkSubmission(Base):
@@ -459,6 +493,46 @@ class HomeworkSubmission(Base):
         Index("ix_homework_submission_class_id", "class_id"),
         Index("ix_homework_submission_homework_id", "homework_id"),
         UniqueConstraint("homework_id", "student_id", name="uq_homework_student"),
+    )
+
+
+class GradeTask(Base):
+    """一份提交版本的AI初批任务，同时是持久发件箱。
+
+    pending→running→succeeded/skipped/retrying/dead；retrying到期再次领取。
+    input_json含私有评分输入，禁止进入公开序列化、消息与日志。
+    attempts为消息处理累计次数；execution_count为当前人工重试周期的模型执行数。
+    claim_token为写回栅栏，last_published_at/dead_published_at仅在代理确认后记录。
+    """
+
+    __tablename__ = "grade_tasks"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    submission_id: Mapped[int] = mapped_column(ForeignKey("homework_submissions.id"), nullable=False)
+    homework_id: Mapped[int] = mapped_column(ForeignKey("homeworks.id"), nullable=False)
+    class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"), nullable=False)
+    subject: Mapped[str] = mapped_column(String(32), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    input_fingerprint: Mapped[str] = mapped_column(String(64), nullable=False)
+    input_json: Mapped[str] = mapped_column(Text, nullable=False)
+    request_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="pending", nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    execution_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False)
+    error: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    claim_token: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    last_published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    dead_published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, onupdate=_utcnow, nullable=False)
+    __table_args__ = (
+        UniqueConstraint("submission_id", "input_fingerprint", name="uq_grade_submission_version"),
+        Index("ix_grade_dispatch", "status", "next_attempt_at", "last_published_at"),
+        Index("ix_grade_homework", "homework_id", "id"),
     )
 
 
@@ -535,6 +609,8 @@ class McpTool(Base):
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     input_schema: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # SEC-08：未知权限按可写处理；旧缓存还需通过宿主只读清单复核。
+    writable: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     discovered_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (
@@ -588,6 +664,10 @@ class McpToolCall(Base):
     conversation_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     round: Mapped[int | None] = mapped_column(Integer, nullable=True)
     detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # SEC-07：技能标识、耗时、token 用量
+    skill_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (

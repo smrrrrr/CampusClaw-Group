@@ -1,0 +1,15 @@
+换目录二次启动复验（2026-11-16）
+方式：git archive HEAD 导出当前提交到全新空目录；独立 .env（随机密钥）；不同 compose 项目名；端口 8097；临时数据目录。
+结果：7/7 服务 Up（backend/frontend/mcp-tools/rabbitmq healthy）；/health 200；/login 200；三业务镜像 .py=0；OCI revision 均为当前提交。
+边界：这是“换目录 + 新项目名 + 新端口”，不是“换机”，不能替代另一人/另一台机器的复验。
+campusclaw-clone-024109-backend-1	Up 11 seconds (healthy)
+campusclaw-clone-024109-frontend-1	Up 5 seconds (healthy)
+campusclaw-clone-024109-grading-dispatcher-1	Up 5 seconds
+campusclaw-clone-024109-grading-worker-1	Up 5 seconds
+campusclaw-clone-024109-mcp-tools-1	Up 11 seconds (healthy)
+campusclaw-clone-024109-nginx-1	Up Less than a second
+campusclaw-clone-024109-rabbitmq-1	Up 11 seconds (healthy)
+backend py=0 rev=984c4c8cc6963bf315bd3f0820c4965043beed23
+mcp-tools py=0 rev=984c4c8cc6963bf315bd3f0820c4965043beed23
+frontend py=0 rev=984c4c8cc6963bf315bd3f0820c4965043beed23
+{"status":"ok","version":"1.2.0","time":"2026-11-16T02:41:44Z","dependencies":{"database":"ok","mcp_tools":"ok","model":"not_configured"}}

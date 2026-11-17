@@ -1,0 +1,11 @@
+clone=/var/folders/t3/b194x9v94bjg7l5_dyy0ljvr0000gn/T/lesson10-boot2
+commit=a89ce7096ed17707f17908816f5ddc472f51db0e
+project=lesson10-newdir port=8087
+lesson10-newdir-nginx-1	nginx:1.27-alpine	Up 23 seconds
+lesson10-newdir-grading-dispatcher-1	lesson10-newdir-grading-dispatcher	Up 29 seconds
+lesson10-newdir-grading-worker-1	lesson10-newdir-grading-worker	Up 29 seconds
+lesson10-newdir-frontend-1	campusclaw-frontend:a89ce7096ed17707f17908816f5ddc472f51db0e	Up 29 seconds (healthy)
+lesson10-newdir-rabbitmq-1	rabbitmq:4.2-management	Up 34 seconds (healthy)
+lesson10-newdir-backend-1	campusclaw-backend:a89ce7096ed17707f17908816f5ddc472f51db0e	Up 34 seconds (healthy)
+lesson10-newdir-mcp-tools-1	campusclaw-mcp-tools:a89ce7096ed17707f17908816f5ddc472f51db0e	Up 34 seconds (healthy)
+health={"status":"ok","version":"1.2.0","time":"2026-11-14T09:40:42Z","dependencies":{"database":"ok","mcp_tools":"ok","model":"not_configured"}}

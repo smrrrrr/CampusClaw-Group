@@ -1,0 +1,7 @@
+{
+  "compose_down_exit": 0,
+  "remaining_project_containers": 0,
+  "exclusive_volume_removed": true,
+  "existing_stack_mutated": false,
+  "synthetic_db_retained_privately": true
+}

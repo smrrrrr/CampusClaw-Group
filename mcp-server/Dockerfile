@@ -1,14 +1,48 @@
-FROM python:3.12-slim
+# ---- 依赖构建层 ----
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# 安装 uv（与后端镜像一致，锁定依赖版本）
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
 
 COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev
 
+# ---- 运行层：只保留锁定运行依赖与入口，不含 uv/构建缓存 ----
+FROM python:3.12-slim AS runtime
+
+ARG GIT_SHA=unknown
+LABEL org.opencontainers.image.title="campusclaw-mcp-tools" \
+      org.opencontainers.image.revision="${GIT_SHA}" \
+      org.opencontainers.image.source="campusclaw"
+
+WORKDIR /app
+
+# 系统层安全更新：与 backend 运行层同一处置——装进基础镜像发布后新增的安全补丁。
+# 无修复版本的包由 reports/security-evidence/os-vuln-exceptions.json 登记书面例外。
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && rm -rf /var/lib/apt/lists/*
+
+# CVE-2025-69720 位于当前 trixie 的 infocmp，MCP 服务不使用这个程序。
+RUN rm -f /usr/bin/infocmp
+
+COPY --from=builder /app/.venv /app/.venv
 COPY main.py ./
+
+# 第10课 6.1：与后端一致，镜像 0 源码。递归编译应用、.venv 与系统标准库为 .pyc 后删除所有 .py，
+# 并清理基础镜像 GCC 的 gdb 调试辅助脚本；末尾断言 .py 计数为 0。
+# .pyc 可反编译，不等于代码加密。
+RUN /app/.venv/bin/python -m compileall -b -q /app /usr/local/lib/python3.12 >/dev/null 2>&1 \
+    && find /app /usr/local/lib/python3.12 -name "*.py" -delete \
+    && { find /usr/share/gdb /usr/share/gcc -name "*.py" -delete 2>/dev/null || true; } \
+    && test "$(find / -name '*.py' -not -path '/proc/*' 2>/dev/null | wc -l)" -eq 0
+
+RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+ENV PATH="/app/.venv/bin:${PATH}" \
+    PYTHONDONTWRITEBYTECODE=1
 
 # 仅 Compose 内网可达；不映射宿主机端口
 EXPOSE 8090

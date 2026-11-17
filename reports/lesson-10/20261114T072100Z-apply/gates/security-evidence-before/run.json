@@ -1,0 +1,21 @@
+{
+  "started": "2026-11-11T06:35:56.364988+00:00",
+  "dependency_evidence_reused": true,
+  "business_changes": false,
+  "git_head": "55d18d36d6aec194e549271658e7f7d15d683a0f",
+  "tools": {
+    "scripts/security_precheck.py": "74f802aa76255c9a7948126769a99aa9ab94c2863f9a87d15e8827be5d0cc6c2",
+    "scripts/secret_scan.py": "977417583f7c01a8b5b723bf996243101a2d12de4a9353ea379f6379151840f1",
+    "apitest/probe_security_precheck.py": "33ef8a06e7d6f726a710e6267190ba406c744835ea139137a7f38e5741ccde9c"
+  },
+  "probe_exit": 0,
+  "finished": "2026-11-11T06:38:35.459881+00:00",
+  "source_unchanged": true,
+  "secret_leak_detected": false,
+  "secret_scope_complete": true,
+  "unregistered_vulns": [],
+  "expired_exceptions": [],
+  "exit": 0,
+  "status": "PASS",
+  "has_blocked_scope": false
+}

@@ -251,10 +251,11 @@ def reset_password(
         )
 
     # 重置密码属于班级管理权限，任课身份本身不授予此权限。
+    # fetch-then-check：学生不属于本人带班 → 404，不泄露学生存在性
     if student.class_id is None or student.class_id != current.homeroom_class_id:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="仅该班班主任可重置学生密码",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="学生账号不存在",
         )
 
     initial_password = generate_initial_password(student.identifier)
@@ -369,6 +370,12 @@ class AuditLogItem(BaseModel):
     method: str
     status_code: int
     ip_address: str | None = None
+    action: str | None = None
+    object_id: str | None = None
+    skill_id: str | None = None
+    duration_ms: int | None = None
+    # 决策轮用量，上游未返回或无模型调用时为 null。
+    tokens: int | None = None
     created_at: datetime
 
 
@@ -426,6 +433,11 @@ def query_audit_logs(
                 method=r.method,
                 status_code=r.status_code,
                 ip_address=r.ip_address,
+                action=r.action,
+                object_id=r.object_id,
+                skill_id=r.skill_id,
+                duration_ms=r.duration_ms,
+                tokens=r.tokens,
                 created_at=r.created_at,
             )
             for r in rows

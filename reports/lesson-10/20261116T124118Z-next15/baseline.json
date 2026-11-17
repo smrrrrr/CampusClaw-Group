@@ -1,0 +1,99 @@
+{
+  "utc": "20261116T124118Z",
+  "head": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+  "status": "?? openspec/changes/2026-11-16-upgrade-next-15-5-28/\n",
+  "sha256": {
+    "frontend/package.json": "8cd73cae72b51a236d8c9e20ff5440fa1b6b58863b8c0be7c149b09ace73a98a",
+    "frontend/package-lock.json": "232d9474a8a2c12e5653011e022b4b76e23beaedae2212123c89151aac262855",
+    "reports/security-evidence/dependency-exceptions.json": "87684259be4a1ca945302e3da0c5078d9fb08169b79bba1d6d8d403e88006ca6",
+    "scripts/security_precheck.py": "d7c264c4c6009e4a6ce3f19e9ba112b9cdf897ee5f4ac82ee2dc0393e64ed06c"
+  },
+  "frontend_images": [
+    {
+      "Id": "sha256:8b5778d9ac1dcdc05d273af33a5c26d4d8fc4f9ce44c63649567c8b36aac23f5",
+      "RepoTags": [
+        "campusclaw-frontend:984c4c8cc6963bf315bd3f0820c4965043beed23",
+        "ghcr.io/hexzun1/campusclaw-frontend:984c4c8cc6963bf315bd3f0820c4965043beed23"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:8b5778d9ac1dcdc05d273af33a5c26d4d8fc4f9ce44c63649567c8b36aac23f5",
+        "ghcr.io/hexzun1/campusclaw-frontend@sha256:8b5778d9ac1dcdc05d273af33a5c26d4d8fc4f9ce44c63649567c8b36aac23f5"
+      ],
+      "Created": "2026-11-16T02:41:31.37718418Z"
+    },
+    {
+      "Id": "sha256:4cb5ffd0e2566114d85b718b7d0a53cdeac255d1056e4054a901383469f1040c",
+      "RepoTags": [
+        "campusclaw-frontend:37aecf9b52cc9663c6572f657ab05e8ad7f5a2d8"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:4cb5ffd0e2566114d85b718b7d0a53cdeac255d1056e4054a901383469f1040c"
+      ],
+      "Created": "2026-11-16T02:30:37.451627086Z"
+    },
+    {
+      "Id": "sha256:5fa554cb3d8b4d17791a632c79bdbe47e61e5151171cf24acb39a433149b0a47",
+      "RepoTags": [
+        "campusclaw-frontend:6ca88c47200b2b84553e02786276ebe1d21efab0"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:5fa554cb3d8b4d17791a632c79bdbe47e61e5151171cf24acb39a433149b0a47"
+      ],
+      "Created": "2026-11-14T10:50:03.631031293Z"
+    },
+    {
+      "Id": "sha256:b0d903f15016738324b8e90d7946a028989a318873a0ee9dc35d43aeafb0f9a4",
+      "RepoTags": [
+        "campusclaw-frontend:04088626787c1ca5dcb99b771d407d1c63e6153c"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:b0d903f15016738324b8e90d7946a028989a318873a0ee9dc35d43aeafb0f9a4"
+      ],
+      "Created": "2026-11-14T10:50:03.631031293Z"
+    },
+    {
+      "Id": "sha256:656733dab69a334e4111a42a97b103cec6fd3733561f09ad548c29e25f2706c7",
+      "RepoTags": [
+        "campusclaw-frontend:a89ce7096ed17707f17908816f5ddc472f51db0e"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:656733dab69a334e4111a42a97b103cec6fd3733561f09ad548c29e25f2706c7"
+      ],
+      "Created": "2026-11-14T09:37:28.251262926Z"
+    },
+    {
+      "Id": "sha256:7e7835ff247b342813791f343d77e52691beca5c6f9da025c21b984ba6d19c5a",
+      "RepoTags": [
+        "campusclaw-frontend:de035b8d7242a3cb46965de220dea708de7b377d"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:7e7835ff247b342813791f343d77e52691beca5c6f9da025c21b984ba6d19c5a"
+      ],
+      "Created": "2026-11-14T09:37:28.251262926Z"
+    },
+    {
+      "Id": "sha256:78abc977a9a2d2c2703624c964fb224ccaf15f33c4631f8f7110d1601cdcc38a",
+      "RepoTags": [
+        "campusclaw-frontend:local"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:78abc977a9a2d2c2703624c964fb224ccaf15f33c4631f8f7110d1601cdcc38a"
+      ],
+      "Created": "2026-11-14T07:35:24.733987754Z"
+    },
+    {
+      "Id": "sha256:42764a1c281e0f2295744125db274f045388cde5a38f08a4587c8eaa9335b908",
+      "RepoTags": [
+        "campusclaw-frontend:fe227a1c8e513c5b2ecb7b04a9fd41fde27beccb"
+      ],
+      "RepoDigests": [
+        "campusclaw-frontend@sha256:42764a1c281e0f2295744125db274f045388cde5a38f08a4587c8eaa9335b908"
+      ],
+      "Created": "2026-11-14T07:35:24.733987754Z"
+    }
+  ],
+  "toolchain": {
+    "node": "v25.9.0",
+    "npm": "11.12.1"
+  }
+}

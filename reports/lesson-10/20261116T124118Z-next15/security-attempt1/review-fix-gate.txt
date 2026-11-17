@@ -1,0 +1,26 @@
+{"ts": "2026-11-12T07:49:56.596Z", "level": "info", "module": "access", "request_id": "7e0d4f9c31474bfea50a1376fa4a8830", "method": "GET", "path": "/api/materials", "status": 401, "duration_ms": 14.3}
+{"ts": "2026-11-12T07:49:56.602Z", "level": "error", "module": "mcp_orchestrator", "request_id": null, "msg": "audit_write_failed"}
+{"ts": "2026-11-12T07:49:56.602Z", "level": "error", "module": "services", "request_id": null, "msg": "audit_write_failed"}
+PASS P1-3 失败：npm critical/high未登记必须红
+PASS P1-3 正常：精确版本通告含传递引用可匹配
+PASS P1-3 边界：version=9.9.9不放行
+PASS P1-3 边界：advisories=['GHSA-aaaa-bbbb-cccc']不放行
+PASS P1-3 边界：review_after=2000-01-01不放行
+PASS P1-3 边界：review_after=invalid不放行
+PASS P1-3 边界：review_after=不放行
+PASS P1-3 失败：旧计数summary不得静默跳过
+PASS P1-3 失败：锁文件无版本阻断
+PASS P1-3 边界：循环via不放行
+PASS P0-5 正常/边界：真实发现分类保守且不信远端只读声明
+PASS P0-5 失败：同名外部工具不能伪装内置只读
+PASS P0-5 边界：未知DiscoveredTool默认可写
+PASS P1-2 决策轮用量：{'total_tokens': 37}
+PASS P1-2 决策轮用量：None
+PASS P1-2 决策轮用量：{'total_tokens': True}
+PASS P1-2 决策轮用量：{'total_tokens': -1}
+PASS P1-2 决策轮用量：{'total_tokens': '37'}
+PASS P1-2 决策轮用量：{'total_tokens': 0}
+PASS R2 审计异步：401响应正文发出后再写入
+PASS 审计故障：工具存储回滚且不中断
+PASS 审计故障：请求存储回滚且不中断
+PASS 审计故障：告警可见且不泄露异常原文

@@ -14,6 +14,7 @@ import re
 import tempfile
 import threading
 import time
+from datetime import datetime, timedelta, timezone
 
 
 async def main():
@@ -69,8 +70,10 @@ async def main():
 
         # ---- 虚构 stream_chat ----
         fake_output = {"value": ""}
+        fake_calls = {"n": 0}
 
         async def fake_stream(messages, **kw):
+            fake_calls["n"] += 1
             for i in range(0, len(fake_output["value"]), 20):
                 hook = fake_output.pop("hook", None)  # 模拟生成期间发生的外部变化
                 if hook:
@@ -99,7 +102,10 @@ async def main():
                 r = await client.post("/api/auth/login", json={"identifier": who, "password": "Test@2026"})
                 headers[who] = {"Authorization": "Bearer " + r.json()["access_token"]}
 
+            publish_due = (datetime.now(timezone.utc) + timedelta(days=2)).isoformat()
             async def req(method, path, who="TM", **kw):
+                if method == "POST" and path.endswith("/publish"):
+                    kw["json"] = {"due_at": publish_due, **kw.get("json", {})}
                 return await client.request(method, "/api/teacher/quiz" + path, headers=headers[who], **kw)
 
             # === 知识点词表（1.2）===
@@ -114,6 +120,29 @@ async def main():
                    "difficulty_counts": {"easy": 3, "medium": 3, "hard": 1}}
             r = await req("POST", "/generations", json=bad)
             check("题型/难度合计不等 400", r.status_code == 400)
+
+            # === 配比越界：总题数 0/21、单题型 11（规约三处边界）===
+            from fastapi import HTTPException
+            def rejected_counts(type_counts, difficulty_counts):
+                try:
+                    quiz_router._validate_generation_request(
+                        quiz_router.GenerationRequest(
+                            research_material_ids=[math_rm_id], knowledge_points=["立体几何"],
+                            type_counts=type_counts, difficulty_counts=difficulty_counts),
+                        "math")
+                    return None
+                except HTTPException as exc:
+                    return exc
+            zero = rejected_counts({}, {})
+            check("配比越界：总题数为 0 返回 400", zero is not None and zero.status_code == 400
+                  and "1–20" in zero.detail)
+            too_many = rejected_counts({"single_choice": 10, "fill_blank": 10, "short_answer": 1},
+                                       {"easy": 11, "medium": 10})
+            check("配比越界：总题数为 21 返回 400", too_many is not None and too_many.status_code == 400
+                  and "1–20" in too_many.detail)
+            per_type = rejected_counts({"single_choice": 11}, {"medium": 11})
+            check("配比越界：某题型数为 11 返回 400", per_type is not None and per_type.status_code == 400
+                  and "0–10" in per_type.detail)
 
             # === 生成：词表外知识点 400 ===
             bad2 = {"research_material_ids": [math_rm_id], "knowledge_points": ["不存在的知识点"],
@@ -454,19 +483,21 @@ async def main():
             p = (await req("GET", f"/papers/{paper['id']}")).json()
             rr = await req("POST", f"/papers/{paper['id']}/publish", json={"revision": p["revision"],
                     "reviewed": True, "class_ids": [101, 102]})
-            check("发布到两个班 200", rr.status_code == 200 and len(rr.json()["material_ids"]) == 2)
-            mids = rr.json()["material_ids"]
+            check("发布到两个班 200", rr.status_code == 200 and len(rr.json()["homework_ids"]) == 2)
+            mids = rr.json()["homework_ids"]
+            from models import Homework
             with SessionLocal() as db:
-                mats = db.query(Material).filter(Material.id.in_(mids)).all()
-                check("发布资料 is_indexed=False", all(m.is_indexed is False for m in mats))
-                check("发布资料标签含试卷", all("试卷" in m.tags for m in mats))
-                check("发布写入 quiz_publications", db.query(QuizPublication).count() == 2)
+                assignments = db.query(Homework).filter(Homework.id.in_(mids)).all()
+                check("发布生成已发布命题作业", len(assignments) == 2 and all(h.source_type == "quiz" and h.status == "published" for h in assignments))
+                check("作业学生版只含题面与分值", all(set(json.loads(h.content_json)) == {"stem", "format", "original_total"}
+                      and json.loads(h.content_json)["original_total"] == p["total_score"] for h in assignments))
+                check("新发布不写入 quiz_publications 或资料", db.query(QuizPublication).count() == 0 and db.query(Material).count() == 0)
 
             # === 重复发布复用 ===
             p = (await req("GET", f"/papers/{paper['id']}")).json()
             rr2 = await req("POST", f"/papers/{paper['id']}/publish", json={"revision": p["revision"],
                     "reviewed": True, "class_ids": [101]})
-            check("重复发布复用资料", rr2.status_code == 200 and set(rr2.json()["material_ids"]).issubset(set(mids)))
+            check("重复发布复用作业", rr2.status_code == 200 and set(rr2.json()["homework_ids"]).issubset(set(mids)))
 
             # === 答案卷 ===
             r = await req("GET", f"/papers/{paper['id']}/answer-key")
@@ -630,9 +661,9 @@ async def main():
                     "reviewed": True, "class_ids": [101]})
             check("含图试卷发布 200", rr.status_code == 200)
             if rr.status_code == 200:
-                from models import MaterialAsset
+                from models import HomeworkAsset
                 with SessionLocal() as db:
-                    assets = db.query(MaterialAsset).filter_by(material_id=rr.json()["material_ids"][0]).all()
+                    assets = db.query(HomeworkAsset).filter_by(homework_id=rr.json()["homework_ids"][0]).all()
                     check("发布复制原图且指纹一致", len(assets) == 1 and assets[0].sha256 == digest(png)
                           and assets[0].name == f"sources/{img_rm_id}/fig 1.png")
 
@@ -666,6 +697,26 @@ async def main():
                   and r2.json()["modified_in_review"] is True)
             with SessionLocal() as db:
                 check("修改事件后指纹等于题目当前指纹", db.get(QuestionItem, fp_id).content_sha256 == mods[1]["after"])
+
+            # === 继承的审计 Scenario：逐题历史与删除后追溯不能被发布改造削弱 ===
+            audit_done = await generate_one([q(stem="审计追溯专用题")], {"single_choice": 1}, {"medium": 1})
+            audit_id = audit_done["accepted_ids"][0]
+            audit_item = (await req("GET", f"/items/{audit_id}")).json()
+            edited = await req("PUT", f"/items/{audit_id}", json={
+                "revision": audit_item["revision"], "stem": audit_item["stem"], "options": audit_item["options"],
+                "answer": audit_item["answer"], "explanation": "核对后的解析", "knowledge_points": audit_item["knowledge_points"],
+                "source_refs": [source["ref"] for source in audit_item["sources"]]})
+            await req("POST", f"/items/{audit_id}/approve", json={"revision": edited.json()["revision"], "confirmed": True})
+            history = (await req("GET", f"/items/{audit_id}", "TM2")).json()["events"]
+            check("查看入库题目的复核历史", [event["action"] for event in history] == ["generate", "modify", "approve"]
+                  and all(event["actor_id"] == 1 and event["created_at"] for event in history)
+                  and history[1]["detail"]["before"] != history[1]["detail"]["after"])
+            removed = await req("DELETE", f"/items/{rej_pid}")
+            missing = await req("GET", f"/items/{rej_pid}")
+            retained = [event for event in (await req("GET", "/events?limit=500")).json()["items"]
+                        if event["target_type"] == "item" and event["target_id"] == rej_pid]
+            check("删除候选题后追溯", removed.status_code == 200 and missing.status_code == 404
+                  and {event["action"] for event in retained} == {"generate", "reject", "delete"})
 
             # === 生成后核对资料指纹：生成期间资料变化则整批作废 ===
             def counts():
@@ -925,6 +976,10 @@ async def main():
             # === 事件 ===
             r = await req("GET", "/events")
             check("本人事件记录非空", r.status_code == 200 and len(r.json()["items"]) > 0)
+
+            # === 无 Key 环境运行验收脚本（占位 test-key + 进程内虚构模型）===
+            check("无 Key 环境运行验收脚本：虚构模型完成生成且无外部模型请求",
+                  fake_calls["n"] > 0 and quiz_router.stream_chat is fake_stream)
 
         print(f"\n结果：{sum(1 for _, ok in checks if ok)}/{len(checks)} 通过")
         failed = [n for n, ok in checks if not ok]

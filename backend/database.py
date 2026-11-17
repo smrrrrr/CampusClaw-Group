@@ -73,11 +73,55 @@ def run_simple_migrations() -> None:
         ainfo = conn.execute(text("PRAGMA table_info(audit_logs)")).fetchall()
         if ainfo:
             acols = {row[1] for row in ainfo}
+            audit_changed = False
             if "subject" not in acols:
                 conn.execute(text("ALTER TABLE audit_logs ADD COLUMN subject VARCHAR(32)"))
+                audit_changed = True
             if "class_id" not in acols:
                 conn.execute(text("ALTER TABLE audit_logs ADD COLUMN class_id INTEGER"))
-            if "subject" not in acols or "class_id" not in acols:
+                audit_changed = True
+            # SEC-07：操作类型、对象标识、技能上下文
+            if "action" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN action VARCHAR(64)"))
+                audit_changed = True
+            if "object_id" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN object_id VARCHAR(128)"))
+                audit_changed = True
+            if "skill_id" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN skill_id VARCHAR(64)"))
+                audit_changed = True
+            if "duration_ms" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN duration_ms INTEGER"))
+                audit_changed = True
+            if "tokens" not in acols:
+                conn.execute(text("ALTER TABLE audit_logs ADD COLUMN tokens INTEGER"))
+                audit_changed = True
+            if audit_changed:
+                conn.commit()
+
+        # mcp_tool_calls 表增列：SEC-07 技能标识、耗时、token 用量
+        minfo = conn.execute(text("PRAGMA table_info(mcp_tool_calls)")).fetchall()
+        if minfo:
+            mcols = {row[1] for row in minfo}
+            mcp_changed = False
+            if "skill_id" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN skill_id VARCHAR(64)"))
+                mcp_changed = True
+            if "duration_ms" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN duration_ms INTEGER"))
+                mcp_changed = True
+            if "tokens" not in mcols:
+                conn.execute(text("ALTER TABLE mcp_tool_calls ADD COLUMN tokens INTEGER"))
+                mcp_changed = True
+            if mcp_changed:
+                conn.commit()
+
+        # mcp_tools 表增列：SEC-08 写入类工具标记
+        tinfo = conn.execute(text("PRAGMA table_info(mcp_tools)")).fetchall()
+        if tinfo:
+            tcols = {row[1] for row in tinfo}
+            if "writable" not in tcols:
+                conn.execute(text("ALTER TABLE mcp_tools ADD COLUMN writable BOOLEAN DEFAULT 0 NOT NULL"))
                 conn.commit()
 
         # 保留旧配置，解除 class_id 单列唯一，改为每班/学科/教师独立。
@@ -125,6 +169,21 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE homeworks ADD COLUMN updated_at DATETIME"))
             conn.commit()
 
+        # 命题作业：旧作业保留 manual 默认来源；列与索引均可重复迁移。
+        if hw_cols:
+            for column, definition in {
+                "source_type": "VARCHAR(16) NOT NULL DEFAULT 'manual'",
+                "source_paper_id": "INTEGER REFERENCES question_papers(id)",
+                "source_paper_revision": "INTEGER",
+                "source_fingerprint": "VARCHAR(64)",
+                "grading_snapshot_json": "TEXT",
+            }.items():
+                if column not in hw_cols:
+                    conn.execute(text(f"ALTER TABLE homeworks ADD COLUMN {column} {definition}"))
+            conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS uq_homework_paper_class_snapshot "
+                              "ON homeworks(source_paper_id, class_id, source_fingerprint)"))
+            conn.commit()
+
         # homework_submissions 骨架表增列
         hws_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(homework_submissions)"))}
         if hws_cols:
@@ -167,6 +226,15 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN mastered INTEGER NOT NULL DEFAULT 0"))
             if "mastered_at" not in mn_cols:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN mastered_at DATETIME"))
+            conn.commit()
+
+        # 第10课：分块检索覆盖索引。先建超集索引，再移除被完全覆盖的旧索引。
+        # 重复执行幂等；纯索引变更不搬行数据，旧列与数据均不动。
+        chunk_cols = {r[1] for r in conn.execute(text("PRAGMA table_info(material_chunks)"))}
+        if chunk_cols:
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_material_chunk_class_material_chunk "
+                              "ON material_chunks(class_id, material_id, chunk_index)"))
+            conn.execute(text("DROP INDEX IF EXISTS ix_material_chunk_class_material"))
             conn.commit()
 
 

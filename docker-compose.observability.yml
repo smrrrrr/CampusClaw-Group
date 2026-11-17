@@ -1,0 +1,92 @@
+# 第10课观测 overlay：独立 profile，不替换现有七服务。
+# 用法：
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile observability up -d
+# 只读：采集器对 SQLite 使用只读连接，日志目录只读挂载。
+
+services:
+  backend:
+    environment:
+      LOG_FILE: /app/logs/backend.jsonl
+    volumes:
+      # 显式列全，避免 overlay 覆盖基础 Compose 的挂载
+      - ./backend/uploads:/app/uploads
+      - ${CAMPUSCLAW_DATA_DIR:-./data}:/app/data
+      - ./logs:/app/logs
+
+  collector:
+    profiles: ["observability"]
+    image: python:3.12-slim
+    working_dir: /app
+    command:
+      - python
+      - /app/scripts/observability/collect.py
+      - --serve
+      - --port
+      - "9101"
+      - --db
+      - /data/campusclaw.db
+      - --log
+      - /app/logs/backend.jsonl
+    volumes:
+      - ./scripts/observability:/app/scripts/observability:ro
+      - ${CAMPUSCLAW_DATA_DIR:-./data}:/data:ro
+      - ./logs:/app/logs:ro
+    # 仅本机可访问，不向公网暴露指标
+    ports:
+      - "127.0.0.1:9101:9101"
+    restart: unless-stopped
+
+  prometheus:
+    profiles: ["observability"]
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - ./deploy/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/observability/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on:
+      - collector
+      - alertmanager
+    restart: unless-stopped
+
+  alertmanager:
+    profiles: ["observability"]
+    image: prom/alertmanager:v0.27.0
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    volumes:
+      - ./deploy/observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    ports:
+      - "127.0.0.1:9093:9093"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    profiles: ["observability"]
+    image: grafana/grafana:11.2.0
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?请在根目录 .env 设置 GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - ./deploy/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+  grafana-data:

@@ -4,6 +4,22 @@
   padding: 0;
 }
 
+.homework-grade-feedback {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--brand-soft);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.homework-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.homework-actions .btn { white-space: nowrap; }
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Microsoft YaHei", sans-serif;

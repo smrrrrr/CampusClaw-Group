@@ -43,10 +43,9 @@ def group_subject(current):
 def source_record(db, material_id, current):
     subject = group_subject(current)
     material = db.get(ResearchMaterial, material_id)
-    if material is None:
+    # fetch-then-check：不存在 OR 学科不匹配 → 一律 404，不泄露存在性
+    if material is None or material.subject != subject:
         raise HTTPException(404, '组内资料不存在')
-    if material.subject != subject:
-        raise HTTPException(403, '无权访问其他学科组资料')
     if not resolve_abs_path(material.file_path).is_file() or digest(resolve_abs_path(material.file_path).read_bytes()) != material.source_sha256:
         raise HTTPException(409, '教师原文件已变化或丢失，请重新导入资料')
     return material

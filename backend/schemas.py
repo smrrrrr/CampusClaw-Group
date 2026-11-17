@@ -28,6 +28,7 @@ class TokenResponse(BaseModel):
     must_change_password: bool
     role: str
     user: UserInfo
+    csrf_token: str | None = None
 
 
 # --- 改密 ---

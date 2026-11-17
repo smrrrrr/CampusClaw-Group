@@ -1,0 +1,69 @@
+{
+ "passed": 7,
+ "total": 10,
+ "rows": [
+  {
+   "case": "login page renders",
+   "expected": true,
+   "actual": true,
+   "passed": true
+  },
+  {
+   "case": "first login redirects to change-password",
+   "expected": true,
+   "actual": true,
+   "passed": true
+  },
+  {
+   "case": "teacher login lands on /teacher",
+   "expected": true,
+   "actual": true,
+   "passed": true
+  },
+  {
+   "case": "reload restores session (not /login)",
+   "expected": true,
+   "actual": true,
+   "passed": "http://127.0.0.1:55890/teacher/lesson-prep"
+  },
+  {
+   "case": "teacher switch class 201->202",
+   "expected": "class_id=202",
+   "actual": "http://127.0.0.1:55890/teacher/lesson-prep?workspace=teaching&class_id=202&view=students",
+   "passed": true
+  },
+  {
+   "case": "markdown+KaTeX rendered in preview",
+   "expected": ".katex>0",
+   "actual": {
+    "katex": 2,
+    "hasFormulaText": true
+   },
+   "passed": true
+  },
+  {
+   "case": "logout returns to /login",
+   "expected": true,
+   "actual": "http://127.0.0.1:55890/materials?workspace=teaching&class_id=201",
+   "passed": false
+  },
+  {
+   "case": "after logout reload stays /login",
+   "expected": true,
+   "actual": "http://127.0.0.1:55890/materials?workspace=teaching&class_id=201",
+   "passed": false
+  },
+  {
+   "case": "student own-class material 1 preview",
+   "expected": 200,
+   "actual": 200,
+   "passed": true
+  },
+  {
+   "case": "student other-class material 2 preview",
+   "expected": "spec expects 403",
+   "actual": 404,
+   "passed": false
+  }
+ ]
+}

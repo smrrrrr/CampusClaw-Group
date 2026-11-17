@@ -1,0 +1,13 @@
+{
+  "image": "campusclaw-frontend:next15-20261116t124118z",
+  "image_id": "sha256:14fa8ebe9f6b6654f01d6dc683e14c36a8565030bcf67dcf0fce976c4b36cbf2",
+  "repo_digests": [
+    "campusclaw-frontend@sha256:14fa8ebe9f6b6654f01d6dc683e14c36a8565030bcf67dcf0fce976c4b36cbf2"
+  ],
+  "revision": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+  "head": "01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+  "py_count": 0,
+  "exit": 0,
+  "worktree_dependency_sha256": "b94a745eb47dba3c6bbd6eef9de92faaeec583999808a411352b180c60134608",
+  "note": "revision marks base commit; dependency changes remain uncommitted"
+}

@@ -45,6 +45,14 @@ def embed_text(text: str) -> list[float]:
     return vec
 
 
+def vector_norm(vec: list[float]) -> float:
+    """返回向量 L2 范数；空向量为 0。"""
+    total = 0.0
+    for x in vec:
+        total += x * x
+    return math.sqrt(total)
+
+
 def cosine_similarity(a: list[float], b: list[float]) -> float:
     """计算两向量余弦相似度（单位向量自相似度为 1，正交为 0，零向量为 0）。"""
     if not a or not b or len(a) != len(b):
@@ -57,6 +65,24 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
         na += x * x
         nb += y * y
     denom = math.sqrt(na) * math.sqrt(nb)
+    if denom == 0.0:
+        return 0.0
+    return dot / denom
+
+
+def cosine_similarity_with_norm(a: list[float], norm_a: float, b: list[float]) -> float:
+    """已知左向量范数时的余弦相似度；用于同一查询对多个分块重复比较。
+
+    与 cosine_similarity 的累加顺序一致，只省去重复计算查询范数。
+    """
+    if not a or not b or len(a) != len(b):
+        return 0.0
+    dot = 0.0
+    nb = 0.0
+    for x, y in zip(a, b):
+        dot += x * y
+        nb += y * y
+    denom = norm_a * math.sqrt(nb)
     if denom == 0.0:
         return 0.0
     return dot / denom

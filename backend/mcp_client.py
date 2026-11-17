@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -30,8 +31,8 @@ INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(the\s+)?(previous|above|prior)\s+(instructions?|prompts?|rules?)", re.I),
     re.compile(r"(你现在是|从现在开始你(是|将)|扮演|你的新角色)", re.I),
     re.compile(r"(system\s*prompt|系统提示词|系统提示|初始指令)", re.I),
-    re.compile(r"(输出|泄露|打印|告诉我?)(你的)?(提示词|密钥|api\s*key|token)", re.I),
-    re.compile(r"(reveal|print|output|show)\s+(your\s+)?(system\s+prompt|api\s*key|secret|token)", re.I),
+    re.compile(r"(输出|泄露|打印|告诉我?)(你的)?(提示词|密钥|api[_\s]*key|token)", re.I),
+    re.compile(r"(reveal|print|output|show)\s+(your\s+)?(system\s+prompt|api[_\s]*key|secret|token)", re.I),
 ]
 
 
@@ -44,6 +45,17 @@ class DiscoveredTool:
     name: str
     description: str
     input_schema: dict
+    writable: bool = True
+
+
+def tool_requires_write(base_url: str, name: str) -> bool:
+    """宿主已审阅的只读清单；远端提示不能授予只读权限。"""
+    url = urlsplit(base_url)
+    return not (
+        url.scheme == "http" and url.netloc == "mcp-tools:8090"
+        and url.path in ("", "/") and not url.query and not url.fragment
+        and name in {"formula_hint", "unit_convert"}
+    )
 
 
 def looks_like_injection(text: str) -> bool:
@@ -191,7 +203,15 @@ class McpClient:
                 if looks_like_injection(description):
                     excluded.append(name)
                     continue
-                tools.append(DiscoveredTool(name=name, description=description, input_schema=schema))
+                annotations = item.get("annotations")
+                readonly = isinstance(annotations, dict) and annotations.get("readOnlyHint") is True
+                writable = tool_requires_write(self.mcp_url.removesuffix("/mcp"), name)
+                # 未声明的内置工具沿用宿主分类；远端明确声明可写时只收紧。
+                if isinstance(annotations, dict) and "readOnlyHint" in annotations and not readonly:
+                    writable = True
+                if item.get("writable") is True:
+                    writable = True
+                tools.append(DiscoveredTool(name=name, description=description, input_schema=schema, writable=writable))
                 if len(tools) >= MAX_TOOLS:
                     break
             cursor = result.get("nextCursor")

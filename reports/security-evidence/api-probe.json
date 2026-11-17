@@ -1,0 +1,404 @@
+{
+  "time": "2026-11-16T12:57:11.455055+00:00",
+  "scope": "temporary SQLite + fake LLM/MCP; no production writes",
+  "mutation": {
+    "material_access": false,
+    "tool_authorization": false
+  },
+  "checks": [
+    {
+      "case": "PRE 登录 <demo-teacher-1>",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 <demo-teacher-2>",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 <demo-student-1>",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "PRE 登录 <demo-student-2>",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/materials",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/student/homeworks",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/students?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/agent-config?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/teacher/skills?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/mcp/servers?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-01 GET /api/mcp/tool-calls?class_id=101",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "case": "SEC-02 本班资料正例",
+      "expected": "200且含A班正文",
+      "actual": {
+        "http": 200,
+        "own_body": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 跨班资料项目合同",
+      "expected": "404、无B班正文、有审计",
+      "actual": {
+        "http": 404,
+        "body_leaked": false,
+        "audited": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 跨班资料课程口径",
+      "expected": 404,
+      "actual": 404,
+      "passed": true
+    },
+    {
+      "case": "SEC-02 检索 <demo-student-1>",
+      "expected": "本班1命中，他班2为空",
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          1
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 检索 <demo-student-2>",
+      "expected": "本班2命中，他班1为空",
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          2
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 A班独有知识 <demo-student-1>",
+      "expected": [
+        1
+      ],
+      "actual": {
+        "http": 200,
+        "material_ids": [
+          1
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-02 A班独有知识 <demo-student-2>",
+      "expected": [],
+      "actual": {
+        "http": 200,
+        "material_ids": []
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 PUT /api/teacher/agent-config",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 POST /api/teacher/skills",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 PUT /api/teacher/skills/1",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-03 POST /api/mcp/servers",
+      "expected": "403且业务状态不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-04 PUT /api/teacher/submissions/1/grade",
+      "expected": "403、分数和任务不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-04 POST /api/teacher/homeworks/1/ai-grade",
+      "expected": "403、分数和任务不变",
+      "actual": {
+        "http": 403,
+        "unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-07 实际合成技能执行",
+      "expected": "执行一次且日志actor/status正确",
+      "actual": {
+        "calls": 1,
+        "meta_skill": {
+          "name": "合成公式提示"
+        },
+        "log_count": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-07 持久日志字段",
+      "expected": "actor、skill、status、duration、usage齐全",
+      "actual": {
+        "persisted_rows": 1,
+        "response_fields": [
+          "conversation_id",
+          "created_at",
+          "detail",
+          "duration_ms",
+          "id",
+          "round",
+          "server_name",
+          "skill_id",
+          "status",
+          "tokens",
+          "tool_ref",
+          "user_id"
+        ],
+        "model_fields": [
+          "id",
+          "class_id",
+          "subject",
+          "server_id",
+          "server_name",
+          "tool_name",
+          "tool_ref",
+          "status",
+          "user_id",
+          "conversation_id",
+          "round",
+          "detail",
+          "skill_id",
+          "duration_ms",
+          "tokens",
+          "created_at"
+        ],
+        "missing": []
+      },
+      "passed": true
+    },
+    {
+      "case": "R2 正常：技能审计字段查询与范围",
+      "expected": "技能、会话、耗时、决策轮用量37",
+      "actual": [
+        {
+          "id": 15,
+          "user_id": 3,
+          "role": "student",
+          "request_path": "/api/student/conversations/{conversation_id}/chat",
+          "method": "POST",
+          "status_code": 200,
+          "ip_address": null,
+          "action": "skill.invoke",
+          "object_id": "5",
+          "skill_id": "1",
+          "duration_ms": 0,
+          "tokens": 37,
+          "created_at": "2026-11-16T12:57:11.397893"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "R2 失败：未登录请求留匿名审计",
+      "expected": "至少7条匿名401，班主任看不到",
+      "actual": {
+        "anonymous": 7
+      },
+      "passed": true
+    },
+    {
+      "case": "R2 失败：学生不可查看审计",
+      "expected": 403,
+      "actual": 403,
+      "passed": true
+    },
+    {
+      "case": "R2 边界：他班班主任不可见技能审计",
+      "expected": "无101班技能日志",
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "SEC-08 边界：发现重连保留权限",
+      "expected": {
+        "formula_hint": false,
+        "write_score": true,
+        "unknown_tool": true
+      },
+      "actual": {
+        "formula_hint": false,
+        "write_score": true,
+        "unknown_tool": true
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-08 失败：学生写入拒绝且SSE完整",
+      "expected": "零调用、业务不变、denied、done",
+      "actual": {
+        "http": 200,
+        "events": [
+          "meta",
+          "delta",
+          "done"
+        ],
+        "denial": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "SEC-08 正常：教师写入执行对照",
+      "expected": "执行一次且ok",
+      "actual": [
+        {
+          "ref": "write_score@campus-tools",
+          "status": "ok",
+          "reason": "合成公式提示数据"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "SEC-08 失败：他科教师不能借技能执行",
+      "expected": "零调用且denied",
+      "actual": [
+        {
+          "ref": "write_score@campus-tools",
+          "status": "denied",
+          "reason": "教师无权执行该工具"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "SEC-08 边界：旧缓存未知工具默认拒绝",
+      "expected": "零调用且denied",
+      "actual": [
+        {
+          "ref": "unknown_tool@campus-tools",
+          "status": "denied",
+          "reason": "学生无权执行写入或未知权限工具"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-直接注入：候选集外调用被拒",
+      "expected": "零调用、denied、done",
+      "actual": [
+        "meta",
+        "delta",
+        "done"
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-间接注入：工具结果被丢弃",
+      "expected": "危险正文不进模型、error、done",
+      "actual": [
+        "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+      ],
+      "passed": true
+    },
+    {
+      "case": "实验-外泄：工具结果被丢弃",
+      "expected": "危险正文不进模型、error、done",
+      "actual": [
+        "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+      ],
+      "passed": true
+    },
+    {
+      "case": "R3 正常：历史Markdown逐字保真",
+      "expected": "持久化原文",
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "case": "R3 失败：他人历史不可见",
+      "expected": 404,
+      "actual": 404,
+      "passed": true
+    },
+    {
+      "case": "R3 失败：未登录历史不可见",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    }
+  ],
+  "passed": 41,
+  "failed": 0
+}

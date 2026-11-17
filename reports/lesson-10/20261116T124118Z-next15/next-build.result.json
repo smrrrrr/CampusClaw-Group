@@ -1,0 +1,10 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "cwd": "frontend",
+  "exit": 0,
+  "seconds": 14.99
+}

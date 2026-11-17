@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "ls",
+    "next",
+    "react",
+    "react-dom",
+    "postcss",
+    "source-map-js"
+  ],
+  "cwd": "frontend",
+  "exit": 0,
+  "seconds": 0.38
+}

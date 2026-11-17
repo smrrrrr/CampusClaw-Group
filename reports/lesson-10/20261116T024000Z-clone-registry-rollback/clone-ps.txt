@@ -1,0 +1,7 @@
+campusclaw-clone-024109-backend-1	Up 11 seconds (healthy)
+campusclaw-clone-024109-frontend-1	Up 5 seconds (healthy)
+campusclaw-clone-024109-grading-dispatcher-1	Up 5 seconds
+campusclaw-clone-024109-grading-worker-1	Up 5 seconds
+campusclaw-clone-024109-mcp-tools-1	Up 11 seconds (healthy)
+campusclaw-clone-024109-nginx-1	Up Less than a second
+campusclaw-clone-024109-rabbitmq-1	Up 11 seconds (healthy)

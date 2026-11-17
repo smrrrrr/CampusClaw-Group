@@ -1,0 +1,53 @@
+✓ change/2026-10-28-engineering-baseline
+  ℹ [INFO] file: skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted
+✓ change/2026-11-04-add-async-homework-grading
+✓ change/2026-11-04-fix-teacher-class-switch-guard
+✓ change/2026-11-04-publish-quiz-as-homework
+✓ change/2026-11-04-refine-grading-and-assignment-history
+✓ change/2026-11-04-remove-unused-research-pages
+✓ change/2026-11-04-strengthen-lesson07-standards
+✓ change/add-agent-assistant
+✓ change/add-homework-grading
+✓ change/add-learning-diagnostics
+✓ change/add-mistake-notebook
+✓ change/add-smart-lesson-prep
+✓ spec/agent-assistant
+✓ change/align-teacher-student-workspaces
+✓ spec/async-homework-grading
+✓ spec/class-data-isolation
+✓ change/harden-foundation-and-align-specs
+✓ change/harden-runtime-reliability
+✓ spec/login-and-account-system
+✓ spec/material-upload
+✓ spec/mcp-tool-integration
+✓ spec/quiz-homework-publication
+✓ spec/rag-search
+✓ spec/rbac-role-permissions
+✓ spec/research-materials
+✓ change/rework-account-permissions
+✓ spec/runtime-reliability
+✓ spec/smart-lesson-prep
+✓ spec/smart-question-generation
+✓ spec/student-workspace
+✓ change/subject-teacher-assistants
+✓ spec/teacher-identity-and-permissions
+✓ spec/teacher-workspace
+Totals: 33 passed, 0 failed (33 items)
+  ℹ [INFO] agent-assistant/spec.md: Archive would refuse this delta: agent-assistant ADDED failed for header "### Requirement: SSE 流式回答" - already exists
+  ℹ [INFO] smart-lesson-prep/spec.md: Archive would refuse this delta: smart-lesson-prep ADDED failed for header "### Requirement: 从定稿生成两种学生稿" - already exists
+  ℹ [INFO] requirements[4]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[8]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[9]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[0]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[1]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] teacher-identity-and-permissions/spec.md: Archive would refuse this delta: teacher-identity-and-permissions ADDED failed for header "### Requirement: 教研资料按学科隔离" - already exists
+  ℹ [INFO] requirements[6]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[0]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[2]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[4]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[6]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[7]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[11]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] requirements[12]: Requirement text is very long (>500 characters). Consider breaking it down.
+  ℹ [INFO] agent-assistant/spec.md: Archive would refuse this delta: agent-assistant MODIFIED failed for header "### Requirement: 高级助手控件的预览边界" - not found
+  ℹ [INFO] requirements[4]: Requirement text is very long (>500 characters). Consider breaking it down.

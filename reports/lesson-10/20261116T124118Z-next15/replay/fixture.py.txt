@@ -1,0 +1,21 @@
+import os,json,pathlib,sys,hashlib,base64
+s=json.loads(pathlib.Path('<private-temp>').read_text()); temp=pathlib.Path(s['temp']); root=pathlib.Path(s['root']);sys.path.insert(0,str(root/'backend'))
+os.environ.update(DATABASE_URL='sqlite:///'+str(temp/'data/campusclaw.db'),UPLOAD_DIR=str(temp/'uploads'),JWT_SECRET_KEY='synthetic-fixture-only-not-a-production-key',DEEPSEEK_API_KEY='')
+from database import Base,engine,SessionLocal
+from models import Class,User,Material,MaterialAsset,LessonPlan
+from security import hash_password
+Base.metadata.create_all(engine)
+with SessionLocal() as db:
+ assert db.query(User).count()==0
+ db.add_all([Class(id=101,name='合成一班'),Class(id=102,name='合成二班')]);db.flush()
+ for ident,role,cid,subject,classes,initial in [('<demo-teacher-1>','teacher',None,'math','[101,102]',False),('<demo-teacher-2>','teacher',None,'physics','[102]',False),('<demo-student-1>','student',101,None,None,False),('<demo-student-2>','student',102,None,None,False),('INIT','teacher',None,'math','[101]',True)]:
+  db.add(User(identifier=ident,role=role,class_id=cid,subject=subject,teaching_classes=classes,name=ident,password_hash=hash_password('<synthetic-password>'),must_change_password=initial))
+ db.flush(); tid=db.query(User).filter_by(identifier='<demo-teacher-1>').one().id
+ png=base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aX1sAAAAASUVORK5CYII=')
+ for mid,cid in [(1,101),(2,102)]:
+  text='# 合成数学讲义\n\n**合成强调**\n\n公式 $x^2+1$\n\n![合成配图](probe.png)\n'; rel=f'{cid}/lesson.md'; path=temp/'uploads'/rel;path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text); image_rel=f'{cid}/probe.png';(temp/'uploads'/image_rel).write_bytes(png)
+  db.add(Material(id=mid,class_id=cid,uploader_id=tid,filename=f'合成{cid}讲义.md',file_path=rel,file_type='text/markdown',file_size=len(text.encode()),source_sha256=hashlib.sha256(text.encode()).hexdigest(),is_indexed=False));db.flush();db.add(MaterialAsset(material_id=mid,name='probe.png',file_path=image_rel,sha256=hashlib.sha256(png).hexdigest(),file_type='image/png'))
+ db.add(LessonPlan(teacher_id=tid,subject='math',class_id=101,title='合成公式教案',duration=45,requirements_json='{}',resources_json=json.dumps({'references':[],'assets':[],'source_ids':[],'source_hashes':{}}),content='# 合成教案\n\n**合成重点**\n\n$x^2+1$\n',status='draft',student_lesson='',student_handout=''))
+ db.commit()
+print(json.dumps({'synthetic_users':5,'classes':[101,102],'materials':2,'lesson_plans':1,'existing_db_refused':True}))
+engine.dispose()

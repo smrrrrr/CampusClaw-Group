@@ -1,0 +1,12 @@
+---
+description: CampusClaw 项目规则入口
+alwaysApply: true
+---
+
+本项目的唯一总纲是仓库根 `AGENTS.md`。所有约束、门禁、技能入口与第10课七类核查责任表都以该文件为准，本文件不复制第二套规则。
+
+- 无规约不写代码：行为变更先写 OpenSpec。
+- 合并前跑 `make check`；安全任务另跑 `make check-security`。
+- 提交信息末尾写 `Change:` / `Verify:` / `Evidence:`。
+- 已有数据的库不运行 `backend/dev_seed.py`。
+- `.env`、数据库、`backend/uploads/` 与组内数据包不进 Git。

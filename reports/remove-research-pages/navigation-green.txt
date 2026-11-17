@@ -1,0 +1,36 @@
+PASS R1 正常：/teacher / 带班101教研菜单恰好三项
+PASS R1 正常：/teacher / 带班null教研菜单恰好三项
+PASS R1 正常：/teacher/library / 带班101教研菜单恰好三项
+PASS R1 正常：/teacher/library / 带班null教研菜单恰好三项
+PASS R1 正常：/teacher/lesson-prep / 带班101教研菜单恰好三项
+PASS R1 正常：/teacher/lesson-prep / 带班null教研菜单恰好三项
+PASS R1 正常：/teacher/quiz / 带班101教研菜单恰好三项
+PASS R1 正常：/teacher/quiz / 带班null教研菜单恰好三项
+PASS R1 正常：/teacher/upload / 带班101教研菜单恰好三项
+PASS R1 正常：/teacher/upload / 带班null教研菜单恰好三项
+PASS R1 正常：/materials / 带班101教研菜单恰好三项
+PASS R1 正常：/materials / 带班null教研菜单恰好三项
+PASS R1 边界：没有任教班级仍只有三项教研入口
+PASS R2 失败路径：旧research-qa / teaching / 101归一到既有备课跳转
+PASS R2 失败路径：旧research-qa / teaching / 102归一到既有备课跳转
+PASS R2 失败路径：旧research-qa / homeroom / 101归一到既有备课跳转
+PASS R2 失败路径：旧research-qa / homeroom / 102归一到既有备课跳转
+PASS R2 失败路径：旧case-analysis / teaching / 101归一到既有备课跳转
+PASS R2 失败路径：旧case-analysis / teaching / 102归一到既有备课跳转
+PASS R2 失败路径：旧case-analysis / homeroom / 101归一到既有备课跳转
+PASS R2 失败路径：旧case-analysis / homeroom / 102归一到既有备课跳转
+PASS R3 边界：其他view保持原值 "tools"
+PASS R3 边界：其他view保持原值 "students"
+PASS R3 边界：其他view保持原值 "agent"
+PASS R3 边界：其他view保持原值 "subject-analysis"
+PASS R3 边界：其他view保持原值 "lesson-prep"
+PASS R3 边界：其他view保持原值 "lesson-quiz"
+PASS R3 边界：其他view保持原值 "unknown"
+PASS R3 边界：其他view保持原值 ""
+PASS R3 边界：其他view保持原值 null
+PASS R3 正常：资料、备课、命题点击仍到原路径，移除项不再可导航
+PASS R3 正常：切班保留现有页面行为 /teacher?workspace=teaching&view=tools&class_id=101
+PASS R3 正常：切班保留现有页面行为 /teacher?workspace=teaching&view=agent&class_id=101
+PASS R3 正常：切班保留现有页面行为 /materials?workspace=teaching&class_id=101
+PASS R3 正常：切班保留现有页面行为 /teacher?workspace=homeroom&view=home&class_id=101
+{"passed":35,"scenarios":["R1","R2","R3"],"model_calls":0,"database_writes":0}

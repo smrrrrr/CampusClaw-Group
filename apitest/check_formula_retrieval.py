@@ -40,9 +40,9 @@ with tempfile.TemporaryDirectory(prefix='formula-retrieval-', ignore_cleanup_err
         question='已知空间向量 a=(1,2,-2), b=(2,-1,2)，求两向量夹角的余弦值'
         for mode in ['keyword','hybrid']:
             hits=retrieve_top_k(db,[101],question,subject='math',mode=mode)
-            check(mode+' formula recalled despite coordinate distractor',any(h['content']==formula for h in hits))
-            check(mode+' class and subject retained',all(h['material_id']==1 for h in hits))
-            check(mode+' raw excerpts unchanged',all(h['content'] in pieces for h in hits))
+            check(f'{mode} formula recalled despite coordinate distractor',any(h['content']==formula for h in hits))
+            check(f'{mode} class and subject retained',all(h['material_id']==1 for h in hits))
+            check(f'{mode} raw excerpts unchanged',all(h['content'] in pieces for h in hits))
         _,candidates=_retrieve_context(db,101,question,'math')
         match=next(c for c in candidates if c.excerpt==formula)
         answer,used=validate_references(f'根据讲义的夹角余弦公式[{match.reference_id}]，先计算数量积。',candidates)

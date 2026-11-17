@@ -1,0 +1,8 @@
+collector metrics:
+collector_last_scan_timestamp_seconds 1794759343
+collector_status{source="database"} 1
+collector_status{source="access_log"} 1
+prometheus targets:
+[('campusclaw-collector', 'up')]
+rules:
+[('SkillFailureRateHigh', 'inactive'), ('CollectorDown', 'inactive')]

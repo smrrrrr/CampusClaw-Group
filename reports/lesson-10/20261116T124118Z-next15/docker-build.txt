@@ -1,0 +1,122 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.38kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 80B done
+#3 DONE 0.0s
+
+#4 [deps 1/4] FROM docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914
+#4 resolve docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 516.62kB 0.0s done
+#5 DONE 0.0s
+
+#6 [deps 2/4] WORKDIR /app
+#6 CACHED
+
+#7 [deps 3/4] COPY package*.json ./
+#7 DONE 0.0s
+
+#8 [deps 4/4] RUN npm ci
+#8 12.42 
+#8 12.42 added 137 packages, and audited 138 packages in 12s
+#8 12.42 
+#8 12.42 91 packages are looking for funding
+#8 12.42   run `npm fund` for details
+#8 12.42 
+#8 12.42 4 low severity vulnerabilities
+#8 12.42 
+#8 12.42 To address all issues (including breaking changes), run:
+#8 12.42   npm audit fix --force
+#8 12.42 
+#8 12.42 Run `npm audit` for details.
+#8 12.42 npm notice
+#8 12.42 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#8 12.42 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#8 12.42 npm notice To update run: npm install -g npm@12.2.2
+#8 12.42 npm notice
+#8 DONE 13.6s
+
+#9 [builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#9 DONE 3.8s
+
+#10 [builder 4/5] COPY . .
+#10 DONE 0.1s
+
+#11 [builder 5/5] RUN npm run build
+#11 0.587 
+#11 0.587 > campusclaw-frontend@0.1.0 build
+#11 0.587 > next build
+#11 0.587 
+#11 1.144    ▲ Next.js 15.5.28
+#11 1.145 
+#11 1.165    Creating an optimized production build ...
+#11 9.649  ✓ Compiled successfully in 6.7s
+#11 9.652    Linting and checking validity of types ...
+#11 12.15    Collecting page data ...
+#11 13.15    Generating static pages (0/14) ...
+#11 13.46    Generating static pages (3/14) 
+#11 13.46    Generating static pages (6/14) 
+#11 13.56    Generating static pages (10/14) 
+#11 13.56  ✓ Generating static pages (14/14)
+#11 13.85    Finalizing page optimization ...
+#11 13.85    Collecting build traces ...
+#11 21.28 
+#11 21.29 Route (app)                                 Size  First Load JS
+#11 21.29 ┌ ○ /                                       2 kB         109 kB
+#11 21.29 ├ ○ /_not-found                            991 B         104 kB
+#11 21.29 ├ ○ /403                                   548 B         103 kB
+#11 21.29 ├ ○ /change-password                     2.43 kB         109 kB
+#11 21.29 ├ ○ /login                               2.47 kB         109 kB
+#11 21.29 ├ ○ /materials                           8.67 kB         238 kB
+#11 21.29 ├ ○ /student                             13.9 kB         239 kB
+#11 21.29 ├ ○ /teacher                             12.7 kB         245 kB
+#11 21.29 ├ ○ /teacher/lesson-prep                 10.1 kB         239 kB
+#11 21.29 ├ ○ /teacher/library                     6.85 kB         236 kB
+#11 21.29 ├ ○ /teacher/quiz                        9.72 kB         242 kB
+#11 21.29 └ ○ /teacher/upload                      3.49 kB         115 kB
+#11 21.29 + First Load JS shared by all             103 kB
+#11 21.29   ├ chunks/255-b1e2483a7e02feee.js       46.6 kB
+#11 21.29   ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+#11 21.29   └ other shared chunks (total)          1.94 kB
+#11 21.29 
+#11 21.29 
+#11 21.29 ƒ Middleware                             34.2 kB
+#11 21.29 
+#11 21.29 ○  (Static)  prerendered as static content
+#11 21.29 
+#11 21.34 npm notice
+#11 21.34 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#11 21.34 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#11 21.34 npm notice To update run: npm install -g npm@12.2.2
+#11 21.34 npm notice
+#11 DONE 21.5s
+
+#12 [runner 3/5] COPY --from=builder /app/.next/standalone ./
+#12 DONE 0.3s
+
+#13 [runner 4/5] COPY --from=builder /app/.next/static ./.next/static
+#13 DONE 0.0s
+
+#14 [runner 5/5] RUN rm -rf /usr/local/lib/node_modules /usr/local/share/doc/node/lldb_commands.py     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack     && test "$(find / -name '*.py' -not -path '/proc/*' 2>/dev/null | wc -l)" -eq 0
+#14 DONE 0.4s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 1.1s done
+#15 exporting manifest sha256:7c3f3b9f881be2da3fbfb612ca7ebda00cc221acb3c135ffc6a962ff78721465 done
+#15 exporting config sha256:5f66f17db52f0c520376bd20d0b9ee92973813a08e376fdad4317d347cff0217 done
+#15 exporting attestation manifest sha256:4f6f09e42617cfe47409be48ac5533c270f8fb8751b24e29aaaa61497ad49ff6 done
+#15 exporting manifest list sha256:14fa8ebe9f6b6654f01d6dc683e14c36a8565030bcf67dcf0fce976c4b36cbf2 done
+#15 naming to docker.io/library/campusclaw-frontend:next15-20261116t124118z done
+#15 unpacking to docker.io/library/campusclaw-frontend:next15-20261116t124118z
+#15 unpacking to docker.io/library/campusclaw-frontend:next15-20261116t124118z 0.3s done
+#15 DONE 1.4s

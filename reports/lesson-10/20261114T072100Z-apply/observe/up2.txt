@@ -1,0 +1,568 @@
+ Image grafana/grafana:11.2.0 Pulling
+ Image campusclaw-backend:local Pulling
+ Image prom/alertmanager:v0.27.0 Pulling
+ Image campusclaw-frontend:local Pulling
+ Image prom/prometheus:v2.55.1 Pulling
+ Image campusclaw-mcp-tools:local Pulling
+ Image campusclaw-mcp-tools:local pull access denied for campusclaw-mcp-tools, repository does not exist or may require 'docker login'
+ Image campusclaw-frontend:local pull access denied for campusclaw-frontend, repository does not exist or may require 'docker login'
+ 4f4fb700ef54 Pulling fs layer 0B
+ b5b59f771a43 Pulling fs layer 0B
+ 6ce8b87a9754 Pulling fs layer 0B
+ d2f8aae8d80e Pulling fs layer 0B
+ 6406ba3e82e4 Pulling fs layer 0B
+ 3a8e3de09d42 Pulling fs layer 0B
+ 780823308ea3 Pulling fs layer 0B
+ 4f4fb700ef54 Already exists 0B
+ 4f4fb700ef54 Pull complete 0B
+ f19c5058b1fc Pulling fs layer 0B
+ 69fa3b5a7f08 Pulling fs layer 0B
+ b02fdcbdc5f3 Pulling fs layer 0B
+ b34c7a683469 Pulling fs layer 0B
+ c93ae5152267 Pulling fs layer 0B
+ d0079b8baf74 Pulling fs layer 0B
+ ba920d0bcda2 Pulling fs layer 0B
+ 04d7bae2d3ad Pulling fs layer 0B
+ ac6d534529e8 Pulling fs layer 0B
+ d2f8aae8d80e Pulling fs layer 0B
+ ad3ca08ab6e2 Pulling fs layer 0B
+ 6ce8b87a9754 Pulling fs layer 0B
+ Image campusclaw-backend:local pull access denied for campusclaw-backend, repository does not exist or may require 'docker login'
+ 780823308ea3 Download complete 0B
+ d2f8aae8d80e Download complete 0B
+ b5b59f771a43 Downloading 1.049MB
+ d2f8aae8d80e Download complete 0B
+ b5b59f771a43 Downloading 1.049MB
+ b5b59f771a43 Downloading 1.049MB
+ b5b59f771a43 Downloading 2.097MB
+ b5b59f771a43 Downloading 2.097MB
+ b5b59f771a43 Downloading 3.146MB
+ b5b59f771a43 Downloading 4.194MB
+ b5b59f771a43 Downloading 5.243MB
+ 6406ba3e82e4 Download complete 0B
+ b5b59f771a43 Downloading 7.34MB
+ b5b59f771a43 Downloading 8.389MB
+ b5b59f771a43 Downloading 9.437MB
+ b5b59f771a43 Downloading 11.53MB
+ b5b59f771a43 Download complete 0B
+ 6ce8b87a9754 Download complete 0B
+ 6ce8b87a9754 Download complete 0B
+ 6ce8b87a9754 Extracting 1B
+ d2f8aae8d80e Extracting 1B
+ 6ce8b87a9754 Pull complete 0B
+ d2f8aae8d80e Pull complete 0B
+ 6ce8b87a9754 Extracting 1B
+ b5b59f771a43 Extracting 1B
+ 6ce8b87a9754 Extracting 1B
+ b5b59f771a43 Pull complete 0B
+ 3a8e3de09d42 Downloading 1.049MB
+ 6ce8b87a9754 Extracting 1B
+ 3a8e3de09d42 Downloading 1.049MB
+ 3a8e3de09d42 Downloading 2.097MB
+ 3a8e3de09d42 Downloading 2.097MB
+ 3a8e3de09d42 Downloading 3.146MB
+ 3a8e3de09d42 Downloading 4.194MB
+ 3a8e3de09d42 Downloading 5.243MB
+ 3a8e3de09d42 Downloading 6.291MB
+ 69fa3b5a7f08 Download complete 0B
+ 3a8e3de09d42 Downloading 8.389MB
+ 3a8e3de09d42 Downloading 9.437MB
+ 3a8e3de09d42 Downloading 10.49MB
+ 3a8e3de09d42 Downloading 12.58MB
+ 3a8e3de09d42 Downloading 13.63MB
+ 3a8e3de09d42 Downloading 15.73MB
+ 3a8e3de09d42 Download complete 0B
+ d0079b8baf74 Download complete 0B
+ 3a8e3de09d42 Extracting 1B
+ 780823308ea3 Pull complete 0B
+ 6406ba3e82e4 Pull complete 0B
+ 3a8e3de09d42 Pull complete 0B
+ Image prom/alertmanager:v0.27.0 Pulled
+ b02fdcbdc5f3 Download complete 0B
+ b34c7a683469 Download complete 0B
+ f19c5058b1fc Downloading 1.049MB
+ c93ae5152267 Download complete 0B
+ f19c5058b1fc Downloading 1.049MB
+ f19c5058b1fc Downloading 1.049MB
+ ac6d534529e8 Download complete 0B
+ f19c5058b1fc Downloading 2.097MB
+ f19c5058b1fc Downloading 2.097MB
+ f19c5058b1fc Downloading 3.146MB
+ f19c5058b1fc Downloading 4.194MB
+ f19c5058b1fc Downloading 5.243MB
+ f19c5058b1fc Downloading 6.291MB
+ f19c5058b1fc Downloading 8.389MB
+ f19c5058b1fc Downloading 9.437MB
+ f19c5058b1fc Downloading 11.53MB
+ f19c5058b1fc Downloading 12.58MB
+ 04d7bae2d3ad Download complete 0B
+ f19c5058b1fc Downloading 13.63MB
+ f19c5058b1fc Downloading 15.73MB
+ f19c5058b1fc Downloading 17.83MB
+ f19c5058b1fc Downloading 18.87MB
+ f19c5058b1fc Downloading 19.92MB
+ f19c5058b1fc Downloading 22.02MB
+ f19c5058b1fc Downloading 23.07MB
+ f19c5058b1fc Downloading 24.12MB
+ ba920d0bcda2 Download complete 0B
+ f19c5058b1fc Downloading 26.21MB
+ f19c5058b1fc Downloading 27.26MB
+ f19c5058b1fc Downloading 29.36MB
+ f19c5058b1fc Downloading 30.41MB
+ f19c5058b1fc Downloading 31.46MB
+ ad3ca08ab6e2 Downloading 1.049MB
+ f19c5058b1fc Downloading 33.55MB
+ ad3ca08ab6e2 Downloading 1.049MB
+ f19c5058b1fc Downloading 34.6MB
+ ad3ca08ab6e2 Downloading 1.049MB
+ f19c5058b1fc Downloading 36.7MB
+ f19c5058b1fc Downloading 37.75MB
+ ad3ca08ab6e2 Downloading 2.097MB
+ f19c5058b1fc Downloading 39.85MB
+ ad3ca08ab6e2 Downloading 2.097MB
+ f19c5058b1fc Downloading 40.89MB
+ ad3ca08ab6e2 Downloading 3.146MB
+ f19c5058b1fc Downloading 41.94MB
+ ad3ca08ab6e2 Downloading 3.146MB
+ f19c5058b1fc Downloading 44.04MB
+ ad3ca08ab6e2 Downloading 4.194MB
+ ad3ca08ab6e2 Downloading 5.243MB
+ f19c5058b1fc Downloading 45.09MB
+ f19c5058b1fc Downloading 46.14MB
+ ad3ca08ab6e2 Downloading 6.291MB
+ ad3ca08ab6e2 Downloading 7.34MB
+ f19c5058b1fc Downloading 47.19MB
+ f19c5058b1fc Downloading 48.23MB
+ ad3ca08ab6e2 Downloading 9.437MB
+ f19c5058b1fc Downloading 49.28MB
+ ad3ca08ab6e2 Downloading 10.49MB
+ f19c5058b1fc Downloading 51.03MB
+ ad3ca08ab6e2 Downloading 11.53MB
+ 27a3c8ebdfbf Pulling fs layer 0B
+ 35ffea0c044a Pulling fs layer 0B
+ bca4290a9639 Pulling fs layer 0B
+ 15e31fbe4904 Pulling fs layer 0B
+ fbbaca673c19 Pulling fs layer 0B
+ 73d7d01a1d2c Pulling fs layer 0B
+ f257bec43f81 Pulling fs layer 0B
+ 1e825da9c63a Pulling fs layer 0B
+ 8ff0366d982d Pulling fs layer 0B
+ ffca16271da6 Pulling fs layer 0B
+ f19c5058b1fc Download complete 0B
+ ad3ca08ab6e2 Downloading 13.63MB
+ ad3ca08ab6e2 Downloading 14.68MB
+ ad3ca08ab6e2 Downloading 16.78MB
+ ad3ca08ab6e2 Downloading 17.83MB
+ ad3ca08ab6e2 Downloading 18.87MB
+ ad3ca08ab6e2 Downloading 20.97MB
+ ad3ca08ab6e2 Downloading 22.02MB
+ 35ffea0c044a Download complete 0B
+ ad3ca08ab6e2 Downloading 23.07MB
+ ad3ca08ab6e2 Downloading 26.21MB
+ ad3ca08ab6e2 Downloading 27.26MB
+ ad3ca08ab6e2 Downloading 28.31MB
+ 27a3c8ebdfbf Download complete 0B
+ ad3ca08ab6e2 Downloading 30.41MB
+ ad3ca08ab6e2 Downloading 31.46MB
+ ad3ca08ab6e2 Downloading 32.51MB
+ ad3ca08ab6e2 Downloading 34.6MB
+ ffca16271da6 Download complete 0B
+ ad3ca08ab6e2 Downloading 35.65MB
+ ad3ca08ab6e2 Downloading 36.7MB
+ ad3ca08ab6e2 Downloading 38.8MB
+ ad3ca08ab6e2 Downloading 39.85MB
+ ad3ca08ab6e2 Downloading 41.94MB
+ ad3ca08ab6e2 Downloading 42.99MB
+ ad3ca08ab6e2 Downloading 44.04MB
+ ad3ca08ab6e2 Downloading 46.14MB
+ ad3ca08ab6e2 Downloading 47.19MB
+ ad3ca08ab6e2 Downloading 49.28MB
+ ad3ca08ab6e2 Downloading 50.33MB
+ ad3ca08ab6e2 Downloading 52.43MB
+ ad3ca08ab6e2 Downloading 53.48MB
+ ad3ca08ab6e2 Downloading 55.57MB
+ ad3ca08ab6e2 Download complete 0B
+ ad3ca08ab6e2 Extracting 1B
+ 15e31fbe4904 Download complete 0B
+ ad3ca08ab6e2 Extracting 1B
+ ad3ca08ab6e2 Extracting 1B
+ ad3ca08ab6e2 Extracting 1B
+ bca4290a9639 Downloading 1.049MB
+ f19c5058b1fc Extracting 1B
+ ad3ca08ab6e2 Pull complete 0B
+ bca4290a9639 Downloading 1.049MB
+ f19c5058b1fc Extracting 1B
+ bca4290a9639 Downloading 1.049MB
+ f19c5058b1fc Extracting 1B
+ 69fa3b5a7f08 Pull complete 0B
+ d0079b8baf74 Pull complete 0B
+ b02fdcbdc5f3 Pull complete 0B
+ b34c7a683469 Pull complete 0B
+ c93ae5152267 Pull complete 0B
+ ac6d534529e8 Pull complete 0B
+ 04d7bae2d3ad Pull complete 0B
+ ba920d0bcda2 Pull complete 0B
+ f19c5058b1fc Pull complete 0B
+ bca4290a9639 Downloading 2.097MB
+ Image prom/prometheus:v2.55.1 Pulled
+ 73d7d01a1d2c Download complete 0B
+ bca4290a9639 Downloading 2.097MB
+ bca4290a9639 Downloading 2.097MB
+ bca4290a9639 Download complete 0B
+ 35ffea0c044a Pull complete 0B
+ bca4290a9639 Pull complete 0B
+ f257bec43f81 Download complete 0B
+ 8ff0366d982d Downloading 1.049MB
+ fbbaca673c19 Downloading 1.049MB
+ 8ff0366d982d Downloading 2.097MB
+ fbbaca673c19 Downloading 1.049MB
+ 8ff0366d982d Downloading 3.146MB
+ fbbaca673c19 Downloading 1.049MB
+ 8ff0366d982d Downloading 5.243MB
+ fbbaca673c19 Downloading 2.097MB
+ fbbaca673c19 Downloading 2.097MB
+ 8ff0366d982d Downloading 6.291MB
+ 8ff0366d982d Downloading 8.389MB
+ fbbaca673c19 Download complete 0B
+ fbbaca673c19 Extracting 1B
+ 8ff0366d982d Downloading 9.437MB
+ 15e31fbe4904 Pull complete 0B
+ 73d7d01a1d2c Pull complete 0B
+ f257bec43f81 Pull complete 0B
+ fbbaca673c19 Pull complete 0B
+ 8ff0366d982d Downloading 11.53MB
+ 8ff0366d982d Downloading 12.58MB
+ 8ff0366d982d Downloading 13.63MB
+ 8ff0366d982d Downloading 15.73MB
+ 8ff0366d982d Downloading 16.78MB
+ 8ff0366d982d Downloading 18.87MB
+ 8ff0366d982d Downloading 19.92MB
+ 8ff0366d982d Downloading 22.02MB
+ 1e825da9c63a Downloading 1.049MB
+ 8ff0366d982d Downloading 23.07MB
+ 1e825da9c63a Downloading 1.049MB
+ 8ff0366d982d Downloading 24.12MB
+ 1e825da9c63a Downloading 1.049MB
+ 8ff0366d982d Downloading 26.21MB
+ 1e825da9c63a Downloading 1.049MB
+ 8ff0366d982d Downloading 27.26MB
+ 1e825da9c63a Downloading 2.097MB
+ 8ff0366d982d Downloading 28.31MB
+ 8ff0366d982d Downloading 30.41MB
+ 1e825da9c63a Downloading 2.097MB
+ 1e825da9c63a Downloading 3.146MB
+ 8ff0366d982d Downloading 31.46MB
+ 1e825da9c63a Downloading 3.146MB
+ 8ff0366d982d Downloading 32.51MB
+ 1e825da9c63a Downloading 4.194MB
+ 8ff0366d982d Downloading 34.6MB
+ 1e825da9c63a Downloading 4.194MB
+ 8ff0366d982d Downloading 35.65MB
+ 1e825da9c63a Downloading 4.194MB
+ 8ff0366d982d Downloading 36.7MB
+ 1e825da9c63a Downloading 5.243MB
+ 8ff0366d982d Downloading 38.8MB
+ 1e825da9c63a Downloading 7.34MB
+ 8ff0366d982d Downloading 39.85MB
+ 1e825da9c63a Downloading 8.389MB
+ 8ff0366d982d Downloading 40.89MB
+ 1e825da9c63a Downloading 8.389MB
+ 8ff0366d982d Downloading 42.99MB
+ 8ff0366d982d Downloading 44.04MB
+ 1e825da9c63a Downloading 10.49MB
+ 1e825da9c63a Downloading 11.53MB
+ 8ff0366d982d Downloading 46.14MB
+ 1e825da9c63a Downloading 12.58MB
+ 8ff0366d982d Downloading 47.19MB
+ 1e825da9c63a Downloading 13.63MB
+ 8ff0366d982d Downloading 48.23MB
+ 1e825da9c63a Downloading 14.68MB
+ 8ff0366d982d Downloading 49.28MB
+ 1e825da9c63a Downloading 15.73MB
+ 8ff0366d982d Downloading 50.33MB
+ 1e825da9c63a Downloading 16.78MB
+ 8ff0366d982d Downloading 52.43MB
+ 1e825da9c63a Downloading 17.83MB
+ 8ff0366d982d Downloading 53.48MB
+ 1e825da9c63a Downloading 18.87MB
+ 8ff0366d982d Downloading 54.53MB
+ 1e825da9c63a Downloading 19.92MB
+ 8ff0366d982d Downloading 55.57MB
+ 1e825da9c63a Downloading 20.97MB
+ 8ff0366d982d Downloading 56.62MB
+ 1e825da9c63a Downloading 22.02MB
+ 8ff0366d982d Downloading 57.67MB
+ 1e825da9c63a Downloading 24.12MB
+ 8ff0366d982d Downloading 59.77MB
+ 1e825da9c63a Downloading 24.12MB
+ 8ff0366d982d Downloading 60.82MB
+ 1e825da9c63a Downloading 26.21MB
+ 8ff0366d982d Download complete 0B
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 27.26MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 28.31MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 30.41MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 31.46MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 32.51MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 34.6MB
+ 8ff0366d982d Extracting 1B
+ 1e825da9c63a Downloading 35.65MB
+ 8ff0366d982d Pull complete 0B
+ 1e825da9c63a Downloading 36.7MB
+ 1e825da9c63a Downloading 38.8MB
+ 1e825da9c63a Downloading 39.85MB
+ 1e825da9c63a Downloading 40.89MB
+ 1e825da9c63a Downloading 41.94MB
+ 1e825da9c63a Downloading 44.04MB
+ 1e825da9c63a Downloading 45.09MB
+ 1e825da9c63a Downloading 46.14MB
+ 1e825da9c63a Downloading 48.23MB
+ 1e825da9c63a Downloading 49.28MB
+ 1e825da9c63a Downloading 50.33MB
+ 1e825da9c63a Download complete 0B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 1B
+ 1e825da9c63a Extracting 2B
+ 1e825da9c63a Extracting 2B
+ 1e825da9c63a Extracting 2B
+ 27a3c8ebdfbf Pull complete 0B
+ ffca16271da6 Pull complete 0B
+ 1e825da9c63a Pull complete 0B
+ Image grafana/grafana:11.2.0 Pulled
+ Image campusclaw-frontend:local Building
+ Image campusclaw-mcp-tools:local Building
+ Image campusclaw-backend:local Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 3.38kB done
+#1 DONE 0.0s
+
+#2 [backend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.54kB done
+#2 DONE 0.0s
+
+#3 [frontend internal] load build definition from Dockerfile
+#3 transferring dockerfile: 934B done
+#3 DONE 0.0s
+
+#4 [mcp-tools internal] load build definition from Dockerfile
+#4 transferring dockerfile: 931B done
+#4 DONE 0.0s
+
+#5 [mcp-tools internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.0s
+
+#6 [frontend internal] load metadata for docker.io/library/node:22-alpine
+#6 DONE 0.0s
+
+#7 [frontend internal] load .dockerignore
+#7 transferring context: 80B done
+#7 DONE 0.0s
+
+#8 [frontend deps 1/4] FROM docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914
+#8 resolve docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 done
+#8 DONE 0.0s
+
+#9 [frontend internal] load build context
+#9 transferring context: 2.29kB done
+#9 DONE 0.0s
+
+#10 [frontend runner 3/4] COPY --from=builder /app/.next/standalone ./
+#10 CACHED
+
+#11 [frontend builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [frontend deps 3/4] COPY package*.json ./
+#12 CACHED
+
+#13 [frontend builder 5/5] RUN npm run build
+#13 CACHED
+
+#14 [frontend deps 2/4] WORKDIR /app
+#14 CACHED
+
+#15 [frontend deps 4/4] RUN npm ci
+#15 CACHED
+
+#16 [frontend builder 4/5] COPY . .
+#16 CACHED
+
+#17 [frontend runner 4/4] COPY --from=builder /app/.next/static ./.next/static
+#17 CACHED
+
+#18 [frontend] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:acf0fff532a12d1c5200b31bf936dc767e2803ec37c6645222228a7e8f5eb5d9 done
+#18 exporting config sha256:797e511dc19bbf2f9f1e728421e0bbd9e05508e3056c91be126c36d5c10a88ec done
+#18 exporting attestation manifest sha256:32e9a17d11f0dbca3cde0ea564f79576fdcfa1f74f57304b641afc0344962961 done
+#18 exporting manifest list sha256:78abc977a9a2d2c2703624c964fb224ccaf15f33c4631f8f7110d1601cdcc38a done
+#18 naming to docker.io/library/campusclaw-frontend:local done
+#18 unpacking to docker.io/library/campusclaw-frontend:local done
+#18 DONE 0.0s
+
+#19 [frontend] resolving provenance for metadata file
+#19 DONE 0.0s
+
+#20 [mcp-tools internal] load metadata for ghcr.io/astral-sh/uv:0.13.5
+#20 DONE 2.6s
+
+#21 [backend internal] load .dockerignore
+#21 transferring context: 303B done
+#21 DONE 0.0s
+
+#22 [mcp-tools internal] load .dockerignore
+#22 transferring context: 71B done
+#22 DONE 0.0s
+
+#23 [mcp-tools builder 1/5] FROM docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
+#23 resolve docker.io/library/python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 done
+#23 DONE 0.0s
+
+#24 [mcp-tools] FROM ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff
+#24 resolve ghcr.io/astral-sh/uv:0.13.5@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff done
+#24 DONE 0.0s
+
+#25 [mcp-tools internal] load build context
+#25 transferring context: 92B done
+#25 DONE 0.0s
+
+#26 [backend internal] load build context
+#26 transferring context: 2.00kB done
+#26 DONE 0.0s
+
+#27 [mcp-tools runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#27 CACHED
+
+#28 [mcp-tools builder 4/5] COPY pyproject.toml uv.lock ./
+#28 CACHED
+
+#29 [mcp-tools builder 5/5] RUN uv sync --locked --no-dev
+#29 CACHED
+
+#30 [backend builder 4/5] COPY pyproject.toml uv.lock ./
+#30 CACHED
+
+#31 [backend builder 2/5] WORKDIR /app
+#31 CACHED
+
+#32 [backend builder 3/5] COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
+#32 CACHED
+
+#33 [backend runtime 3/5] COPY --from=builder /app/.venv /app/.venv
+#33 CACHED
+
+#34 [backend runtime 4/5] COPY . .
+#34 CACHED
+
+#35 [backend builder 5/5] RUN uv sync --locked --no-dev
+#35 CACHED
+
+#36 [mcp-tools runtime 4/5] COPY main.py ./
+#36 CACHED
+
+#37 [backend runtime 5/5] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/uploads     && chown -R appuser:appuser /app
+#37 CACHED
+
+#38 [backend] exporting to image
+#38 exporting layers done
+#38 exporting manifest sha256:4574b5b0626913cc80cbb21573d611694c2621149ca0942e9d1403f6551006a5 done
+#38 exporting config sha256:7d79169863e663105aa4c2ce61a72a5d810075f40b28d4dc2b43139b6f703752 done
+#38 exporting attestation manifest sha256:0dd76b62b2b66ac7b654408596f65438c64c5ff0ffa6065721a0e368db5f279d done
+#38 exporting manifest list sha256:40432e55d54e1a693ee26bf3f644cd18d39d1ea7174e60ad016df5cde2a9df3f done
+#38 naming to docker.io/library/campusclaw-backend:local done
+#38 unpacking to docker.io/library/campusclaw-backend:local done
+#38 DONE 0.0s
+
+#39 [backend] resolving provenance for metadata file
+#39 DONE 0.0s
+
+#40 [mcp-tools runtime 5/5] RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+#40 DONE 1.0s
+
+#41 [mcp-tools] exporting to image
+#41 exporting layers 0.7s done
+#41 exporting manifest sha256:c1f39ee55f96295b395bca6a48b08e6a9cea01c62eb95d482a4e2316c0668e57 done
+#41 exporting config sha256:8047d5e0ed6df77aa33cef225d909cf4446e39b4f77baffeb412e9995b3c80d6 done
+#41 exporting attestation manifest sha256:fa69c5fe9abf478c3954871df3c0f6cd26f82366886ac5fc6c83de077c01dd4a done
+#41 exporting manifest list sha256:4d6e4b7dd6e25381ab8dc7461e6cd259e4d826820d2154f314ccee829a7727b1 done
+#41 naming to docker.io/library/campusclaw-mcp-tools:local done
+#41 unpacking to docker.io/library/campusclaw-mcp-tools:local 0.1s done
+#41 DONE 0.9s
+
+#42 [mcp-tools] resolving provenance for metadata file
+#42 DONE 0.0s
+ Image campusclaw-backend:local Built
+ Image campusclaw-frontend:local Built
+ Image campusclaw-mcp-tools:local Built
+ Container campusclaw-group-grading-dispatcher-1 Running
+ Container campusclaw-group-rabbitmq-1 Running
+ Container campusclaw-group-grading-worker-1 Running
+ Container campusclaw-group-nginx-1 Running
+ Volume campusclaw-group_alertmanager-data Creating
+ Container campusclaw-group-collector-1 Creating
+ Volume campusclaw-group_prometheus-data Creating
+ Volume campusclaw-group_grafana-data Creating
+ Volume campusclaw-group_alertmanager-data Creating
+ Volume campusclaw-group_grafana-data Creating
+ Volume campusclaw-group_prometheus-data Creating
+ Container campusclaw-group-backend-1 Recreate
+ Container campusclaw-group-mcp-tools-1 Recreate
+ Volume campusclaw-group_alertmanager-data Created
+ Volume campusclaw-group_alertmanager-data Created
+ Container campusclaw-group-alertmanager-1 Creating
+ Volume campusclaw-group_prometheus-data Created
+ Volume campusclaw-group_prometheus-data Created
+ Volume campusclaw-group_grafana-data Created
+ Volume campusclaw-group_grafana-data Created
+ Container campusclaw-group-alertmanager-1 Created
+ Container campusclaw-group-collector-1 Created
+ Container campusclaw-group-prometheus-1 Creating
+ Container campusclaw-group-prometheus-1 Created
+ Container campusclaw-group-grafana-1 Creating
+ Container campusclaw-group-grafana-1 Created
+ Container campusclaw-group-mcp-tools-1 Recreated
+ Container campusclaw-group-backend-1 Recreated
+ Container campusclaw-group-frontend-1 Recreate
+ Container campusclaw-group-frontend-1 Recreated
+ Container campusclaw-group-mcp-tools-1 Starting
+ Container campusclaw-group-backend-1 Starting
+ Container campusclaw-group-collector-1 Starting
+ Container campusclaw-group-alertmanager-1 Starting
+ Container campusclaw-group-mcp-tools-1 Started
+ Container campusclaw-group-backend-1 Started
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-rabbitmq-1 Waiting
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-rabbitmq-1 Waiting
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-collector-1 Started
+ Container campusclaw-group-alertmanager-1 Started
+ Container campusclaw-group-prometheus-1 Starting
+ Container campusclaw-group-prometheus-1 Started
+ Container campusclaw-group-grafana-1 Starting
+ Container campusclaw-group-grafana-1 Started
+ Container campusclaw-group-rabbitmq-1 Healthy
+ Container campusclaw-group-rabbitmq-1 Healthy
+ Container campusclaw-group-backend-1 Healthy
+ Container campusclaw-group-backend-1 Healthy
+ Container campusclaw-group-backend-1 Healthy
+ Container campusclaw-group-frontend-1 Starting
+ Container campusclaw-group-frontend-1 Started
+ Container campusclaw-group-frontend-1 Waiting
+ Container campusclaw-group-backend-1 Waiting
+ Container campusclaw-group-backend-1 Healthy
+ Container campusclaw-group-frontend-1 Healthy
+EXIT=0

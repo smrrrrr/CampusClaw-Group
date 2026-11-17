@@ -1,0 +1,74 @@
+{
+  "time": "2026-11-12T08:04:12.313968+00:00",
+  "scope": "temporary SQLite + fake LLM/MCP; no production writes",
+  "limitation": "强制假模型决策的宿主防线实验；不是在线模型安全评测",
+  "groups": [
+    {
+      "group": "实验-直接注入",
+      "passed": true,
+      "checks": [
+        {
+          "case": "实验-直接注入：候选集外调用被拒",
+          "expected": "零调用、denied、done",
+          "actual": [
+            "meta",
+            "delta",
+            "done"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    {
+      "group": "实验-间接注入",
+      "passed": true,
+      "checks": [
+        {
+          "case": "实验-间接注入：工具结果被丢弃",
+          "expected": "危险正文不进模型、error、done",
+          "actual": [
+            "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    {
+      "group": "实验-外泄",
+      "passed": true,
+      "checks": [
+        {
+          "case": "实验-外泄：工具结果被丢弃",
+          "expected": "危险正文不进模型、error、done",
+          "actual": [
+            "该工具返回的内容未通过安全检查，已丢弃；请依据已有信息继续作答。"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    {
+      "group": "SEC-08 失败：学生写入拒绝且SSE完整",
+      "passed": true,
+      "checks": [
+        {
+          "case": "SEC-08 失败：学生写入拒绝且SSE完整",
+          "expected": "零调用、业务不变、denied、done",
+          "actual": {
+            "http": 200,
+            "events": [
+              "meta",
+              "delta",
+              "done"
+            ],
+            "denial": 1
+          },
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "passed": 4,
+  "failed": 0,
+  "probe_exit": 0
+}

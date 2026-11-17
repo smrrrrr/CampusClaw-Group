@@ -1,0 +1,12 @@
+login 200
+{"status":"ok","version":"1.2.0","time":"2026-11-16T02:44:00Z","dependencies":{"database":"ok","mcp_tools":"ok","model":"not_configured"}}
+campusclaw-rollback-024334-backend-1	Up 11 seconds (healthy)
+campusclaw-rollback-024334-frontend-1	Up 5 seconds (healthy)
+campusclaw-rollback-024334-grading-dispatcher-1	Up 5 seconds
+campusclaw-rollback-024334-grading-worker-1	Up 5 seconds
+campusclaw-rollback-024334-mcp-tools-1	Up 11 seconds (healthy)
+campusclaw-rollback-024334-nginx-1	Up Less than a second
+campusclaw-rollback-024334-rabbitmq-1	Up 11 seconds (healthy)
+backend py=0 rev=37aecf9b52cc9663c6572f657ab05e8ad7f5a2d8
+mcp-tools py=0 rev=37aecf9b52cc9663c6572f657ab05e8ad7f5a2d8
+frontend py=0 rev=37aecf9b52cc9663c6572f657ab05e8ad7f5a2d8

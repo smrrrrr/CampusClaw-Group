@@ -1,0 +1,63 @@
+node:assert:95
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+... Skipped lines
+
+  [
+    [
+      'research-materials',
+      '教研组资料',
+      '/teacher/library'
+...
+    ],
++   [
++     'research-qa',
++     '教研问答',
++     '/teacher?workspace=homeroom&view=research-qa&class_id=101'
++   ],
++   [
++     'case-analysis',
++     '课例分析',
++     '/teacher?workspace=homeroom&view=case-analysis&class_id=101'
++   ]
+  ]
+
+    at C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\apitest\check_teacher_navigation.cjs:40:14
+    at check (C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\apitest\check_teacher_navigation.cjs:9:28)
+    at Object.<anonymous> (C:\Users\17424\Desktop\CampusClawv3\CampusClaw-Group\apitest\check_teacher_navigation.cjs:38:5)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    [ 'research-materials', '教研组资料', '/teacher/library' ],
+    [ 'lesson-prep', '智能备课', '/teacher/lesson-prep' ],
+    [ 'lesson-quiz', '智能命题', '/teacher/quiz' ],
+    [
+      'research-qa',
+      '教研问答',
+      '/teacher?workspace=homeroom&view=research-qa&class_id=101'
+    ],
+    [
+      'case-analysis',
+      '课例分析',
+      '/teacher?workspace=homeroom&view=case-analysis&class_id=101'
+    ]
+  ],
+  expected: [
+    [ 'research-materials', '教研组资料', '/teacher/library' ],
+    [ 'lesson-prep', '智能备课', '/teacher/lesson-prep' ],
+    [ 'lesson-quiz', '智能命题', '/teacher/quiz' ]
+  ],
+  operator: 'deepStrictEqual'
+}
+
+Node.js v22.16.0

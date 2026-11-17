@@ -12,6 +12,7 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from agent_service import SUBJECT_NAMES
@@ -118,16 +119,21 @@ def _validate_tool_refs(db: Session, current: CurrentUser, class_id: int, parsed
             raise HTTPException(status_code=400, detail=f"引用「{ref}」的工具不在服务器最近一次发现清单中")
 
 
-def _check_name_unique(db: Session, current: CurrentUser, class_id: int, subject: str, name: str, exclude_id: int | None = None) -> None:
-    query = db.query(AssistantSkill).filter(
-        AssistantSkill.teacher_id == current.user_id,
+def _name_taken(db: Session, teacher_id: int, class_id: int, subject: str, name: str,
+                exclude_id: int | None = None) -> bool:
+    query = db.query(AssistantSkill.id).filter(
+        AssistantSkill.teacher_id == teacher_id,
         AssistantSkill.class_id == class_id,
         AssistantSkill.subject == subject,
         AssistantSkill.name == name,
     )
     if exclude_id is not None:
         query = query.filter(AssistantSkill.id != exclude_id)
-    if query.first() is not None:
+    return query.first() is not None
+
+
+def _check_name_unique(db: Session, current: CurrentUser, class_id: int, subject: str, name: str, exclude_id: int | None = None) -> None:
+    if _name_taken(db, current.user_id, class_id, subject, name, exclude_id):
         raise HTTPException(status_code=400, detail="本班本科目下已存在同名技能")
 
 
@@ -191,7 +197,15 @@ def create_skill(
         source=parsed.raw,
     )
     db.add(skill)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # 并发创建时两个请求都可能通过前置查重，唯一约束才是最终判定；仍按规约返回 400。
+        db.rollback()
+        detail = ("本班本科目下已存在同名技能"
+                  if _name_taken(db, current.user_id, body.class_id, subject, parsed.name)
+                  else "技能保存失败，请检查输入")
+        raise HTTPException(status_code=400, detail=detail) from None
     db.refresh(skill)
     return _serialize(skill)
 
@@ -210,13 +224,22 @@ def update_skill(
     parsed = _parse_or_400(body.source, skill.subject)
     _check_name_unique(db, current, skill.class_id, skill.subject, parsed.name, exclude_id=skill.id)
     _validate_tool_refs(db, current, skill.class_id, parsed)
+    owner_id, class_id, subject = current.user_id, skill.class_id, skill.subject
     skill.name = parsed.name
     skill.trigger = parsed.trigger
     skill.tools = json.dumps(parsed.tools, ensure_ascii=False)
     skill.enabled = parsed.enabled
     skill.description = parsed.description
     skill.source = parsed.raw
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # 并发改写为同一名称时同样以唯一约束为准，不把数据库异常暴露为 500。
+        db.rollback()
+        detail = ("本班本科目下已存在同名技能"
+                  if _name_taken(db, owner_id, class_id, subject, parsed.name, exclude_id=skill_id)
+                  else "技能保存失败，请检查输入")
+        raise HTTPException(status_code=400, detail=detail) from None
     db.refresh(skill)
     return _serialize(skill)
 

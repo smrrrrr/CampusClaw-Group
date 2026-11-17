@@ -1,0 +1,15 @@
+{
+  "command": [
+    "docker",
+    "build",
+    "--progress=plain",
+    "--build-arg",
+    "GIT_SHA=01f47cc5cd1a440b547e8abbf53bddedf11277b2",
+    "-t",
+    "campusclaw-frontend:next15-20261116t124118z",
+    "./frontend"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 42.35
+}

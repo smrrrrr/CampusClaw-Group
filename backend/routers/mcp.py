@@ -82,6 +82,7 @@ class ToolItem(BaseModel):
     name: str
     description: str
     input_schema: dict
+    writable: bool
 
 
 class ToolsResponse(BaseModel):
@@ -103,6 +104,10 @@ class ToolCallItem(BaseModel):
     conversation_id: int | None = None
     round: int | None = None
     detail: str | None = None
+    skill_id: str | None = None
+    duration_ms: int | None = None
+    # 决策轮用量；同轮多调用共享，不可求和；上游未返回时为 null。
+    tokens: int | None = None
     created_at: str
 
 
@@ -363,6 +368,7 @@ def connect_server(
                     name=tool.name,
                     description=tool.description,
                     input_schema=json.dumps(tool.input_schema, ensure_ascii=False),
+                    writable=tool.writable,
                 )
             )
         server.connected = True
@@ -413,7 +419,7 @@ def list_server_tools(
     server = _owned_server(db, server_id, current)
     rows = db.query(McpTool).filter(McpTool.server_id == server.id).order_by(McpTool.name.asc()).all()
     items = [
-        ToolItem(name=t.name, description=t.description, input_schema=json.loads(t.input_schema or "{}"))
+        ToolItem(name=t.name, description=t.description, input_schema=json.loads(t.input_schema or "{}"), writable=t.writable)
         for t in rows
     ]
     return ToolsResponse(connected=server.connected, items=items)
@@ -461,6 +467,9 @@ def list_tool_calls(
                 conversation_id=r.conversation_id,
                 round=r.round,
                 detail=r.detail,
+                skill_id=r.skill_id,
+                duration_ms=r.duration_ms,
+                tokens=r.tokens,
                 created_at=r.created_at.isoformat() if r.created_at else "",
             )
             for r in rows

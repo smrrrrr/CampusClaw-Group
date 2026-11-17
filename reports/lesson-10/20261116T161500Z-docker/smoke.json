@@ -1,0 +1,55 @@
+{
+  "utc": "2026-11-15T16:16:02.421018+00:00",
+  "base": "http://127.0.0.1:8086",
+  "steps": [
+    {
+      "step": "学生提交",
+      "status": 200,
+      "expected": 200,
+      "ms": 10.9,
+      "submission_id": 1
+    },
+    {
+      "step": "教师触发初批",
+      "status": 202,
+      "expected": 202,
+      "ms": 5.4,
+      "task_ids": [
+        2
+      ]
+    },
+    {
+      "step": "任务状态",
+      "seen": [
+        "pending",
+        "retrying",
+        "dead"
+      ],
+      "final": "dead",
+      "exit": "模型调用失败或评分格式无效，请检查模型配置后重试"
+    },
+    {
+      "step": "学生查本人结果",
+      "status": 200,
+      "expected": 200,
+      "ms": 2.6,
+      "teacher_score": null
+    },
+    {
+      "step": "跨班/本班资料",
+      "cross": [
+        {
+          "material_id": 2,
+          "status": 404,
+          "detail": "材料不存在"
+        }
+      ],
+      "own": [
+        {
+          "material_id": 1,
+          "status": 200
+        }
+      ]
+    }
+  ]
+}

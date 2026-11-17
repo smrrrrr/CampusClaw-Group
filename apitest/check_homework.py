@@ -110,7 +110,7 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
             check("S1 正常：发布作业 200", r.status_code == 200 and r.json()["status"] == "published")
 
             r = client.put(f"/api/teacher/homeworks/{hw_id}/publish", headers=oh)
-            check("S1 失败：非作者发布 → 403", r.status_code == 403)
+            check("S1 失败：学生越权发布 → 403", r.status_code == 403)
 
             # ---------- S4 学生查看作业 ----------
             r = client.get("/api/student/homeworks", headers=sh)
@@ -129,11 +129,13 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
             check("S3 正常：重复提交覆盖", r.status_code == 200 and r.json()["id"] == sub_id)
 
             r = client.post(f"/api/student/homeworks/{hw_id}/submit", headers=oh, json={"answer_text": "越权"})
-            check("S3 失败：跨班提交 → 403", r.status_code == 403)
+            check("S3 失败：跨班提交 → 404", r.status_code == 404)
 
             # ---------- S6 AI 初批 ----------
             r = client.post(f"/api/teacher/homeworks/{hw_id}/ai-grade", headers=th)
-            check("S4 正常：AI 初批返回批改数", r.status_code == 200 and r.json()["graded_count"] == 1)
+            from grading_driver import complete_tasks
+            result = complete_tasks(client, r, th)
+            check("S4 正常：异步初批202且消费后批改数正确", r.status_code == 202 and result["graded_count"] == 1)
 
             r = client.get(f"/api/teacher/homeworks/{hw_id}/submissions", headers=th)
             subs = r.json()
@@ -170,11 +172,11 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
             check("S6 正常：学生看到最终分（教师分优先）", r.status_code == 200 and r.json()["final_score"] == 50 and r.json()["feedback"] == "计算错误")
 
             r = client.get(f"/api/student/submissions/{sub_id}", headers=oh)
-            check("S6 失败：学生查看他人提交 → 403", r.status_code == 403)
+            check("S6 失败：学生查看他人提交 → 404", r.status_code == 404)
 
             # ---------- S10 教师越权批改 ----------
             r = client.put(f"/api/teacher/submissions/{sub_id}/grade", headers=oh, json={"score": 90, "feedback": "越权"})
-            check("S8 失败：非任教教师改分 → 403", r.status_code == 403)
+            check("S8 失败：学生越权改分 → 403", r.status_code == 403)
 
             # ---------- S11 关闭作业 ----------
             r = client.put(f"/api/teacher/homeworks/{hw_id}/close", headers=th)
@@ -207,6 +209,7 @@ with tempfile.TemporaryDirectory(prefix="homework-test-") as tmp:
             client.put(f"/api/teacher/homeworks/{fail_hw_id}/publish", headers=th)
             client.post(f"/api/student/homeworks/{fail_hw_id}/submit", headers=sh, json={"answer_text": "ans"})
             r = client.post(f"/api/teacher/homeworks/{fail_hw_id}/ai-grade", headers=th)
+            complete_tasks(client, r, th)
             subs = client.get(f"/api/teacher/homeworks/{fail_hw_id}/submissions", headers=th).json()
             check("S4 失败：AI 返回无效 JSON 不写入分数", subs[0]["ai_score"] is None and subs[0]["status"] == "pending")
 

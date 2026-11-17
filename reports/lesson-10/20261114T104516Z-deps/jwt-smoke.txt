@@ -1,0 +1,7 @@
+login 200 keys ['access_token', 'csrf_token', 'must_change_password', 'role', 'token_type', 'user']
+protected 200 ok True
+cookies ['csrf_token', 'refresh_token']
+refresh 200 keys ['access_token', 'homeroom_class_id', 'must_change_password', 'role', 'subject', 'teaching_classes', 'token_type', 'user']
+protected_after_refresh 200
+logout_with_csrf 401
+logout_with_bearer 200

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "openspec",
+    "validate",
+    "--all",
+    "--strict",
+    "--no-interactive"
+  ],
+  "cwd": "root",
+  "exit": 0,
+  "seconds": 2.87
+}

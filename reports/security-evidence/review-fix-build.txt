@@ -1,0 +1,40 @@
+
+> campusclaw-frontend@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.15
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/14) ...
+   Generating static pages (3/14)
+   Generating static pages (6/14)
+   Generating static pages (10/14)
+ ✓ Generating static pages (14/14)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    2.03 kB        93.5 kB
+├ ○ /_not-found                          875 B            88 kB
+├ ○ /403                                 555 B          87.7 kB
+├ ○ /change-password                     2.47 kB          94 kB
+├ ○ /login                               2.5 kB           94 kB
+├ ○ /materials                           8.54 kB         222 kB
+├ ○ /student                             13.8 kB         222 kB
+├ ○ /teacher                             12.6 kB         232 kB
+├ ○ /teacher/lesson-prep                 9.95 kB         223 kB
+├ ○ /teacher/library                     6.74 kB         220 kB
+├ ○ /teacher/quiz                        9.66 kB         229 kB
+└ ○ /teacher/upload                      3.49 kB        99.3 kB
++ First Load JS shared by all            87.1 kB
+  ├ chunks/117-bd95ea458d1120ed.js       31.6 kB
+  ├ chunks/fd9d1056-04b354420cb0981c.js  53.7 kB
+  └ other shared chunks (total)          1.9 kB
+
+
+ƒ Middleware                             26.3 kB
+
+○  (Static)  prerendered as static content
