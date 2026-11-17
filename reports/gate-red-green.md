@@ -99,3 +99,31 @@ fake_key = "sk-" + "abcdefghijklmnopqrstuvwxyz012345"  # 拼接形式，扫描�
 - 证据：`reports/lesson-10/20261114T072100Z-apply/gate-red-green/security-mutation-red.txt`、`security-mutation-green.txt`。
 
 说明：完整 `make check-security` 当前仍为 RED，原因是依赖漏洞与扫描范围，不是因为假 Key；安全反例只证明密钥扫描子项能检出并恢复。
+
+---
+
+## 2026-11-17 PR #3 镜像漏洞门禁修复
+
+基线是 `977bcde028b24892ac58466b5612e844bd5b2ecb`。复验使用 Windows、Python 3.12.13 和同一工作区。先加入回归与 UTF-8 子进程配置，在旧的判定脚本和 CI 工作流上执行，再应用实际修复。两次使用相同测试，测试文件的 Git blob 为 `6424bd22da9c5ddb83aae68c56134ee45cf7bfbc`。
+
+| 证据 | 实测 |
+| --- | --- |
+| 问题位置 | `scripts/trivy_os_gate.py` 将缺少扫描元数据的空对象视为零漏洞，且仅用 CVE 查找 HIGH 例外。`.github/workflows/lesson10.yml` 原先用通配符传入现有报告，漏掉一份时仍可能继续。 |
+| 红 | 完整普通门禁 42/43，退出 **1**，唯一失败为 `check_os_vuln_gate`。单项 19/25，退出 **1**，包括空报告、同 CVE 的未登记软件包、重复镜像、无效结构和 CI 缺显式报告路径。见[完整红灯](lesson-10/20261117-image-vuln-gate/full-red.txt)、[退出码与时间](lesson-10/20261117-image-vuln-gate/full-red.json)、[单项红灯](lesson-10/20261117-image-vuln-gate/targeted-red.txt)。 |
+| 修复提交 | `cc5b0fc22b7755fbb2fb843ee9fd0b056a0be3d6`，作者 `smrrrrr`。校验 Trivy 报告并拒绝重复镜像，要求三份指定报告，按 CVE、软件包和复查日期判定 HIGH。 |
+| 绿 | 完整普通门禁 **43/43**，退出 **0**。单项 **25/25**，退出 **0**。合法零漏洞报告仍通过。见[完整绿灯](lesson-10/20261117-image-vuln-gate/full-green.txt)、[退出码与时间](lesson-10/20261117-image-vuln-gate/full-green.json)、[单项绿灯](lesson-10/20261117-image-vuln-gate/targeted-green.txt)。 |
+
+安全专项也在运行中的隔离 Compose 环境成功复跑，退出 **0**，本次重新查询依赖漏洞库。见[安全结果](lesson-10/20261117-image-vuln-gate/security-green.json)。门禁 JSON 的 `git_head` 记录的是执行时的基线 HEAD，绿色执行使用随后写入修复提交的工作树。
+
+### 复跑
+
+在独立副本检出修复提交，按 README 准备依赖及 OpenSpec。执行下列命令，预期退出 0。复现红灯时，可在同一副本将 `scripts/trivy_os_gate.py` 和 `.github/workflows/lesson10.yml` 恢复为 `977bcde` 的内容，保留修复提交中的回归脚本，执行同样命令并检查退出 1。
+
+```powershell
+$env:PYTHONIOENCODING = 'utf-8'
+$env:PYTHONUTF8 = '1'
+backend/.venv/Scripts/python.exe -u scripts/check.py --json .review/image-vuln-red-green/full-check.json
+backend/.venv/Scripts/python.exe apitest/check_os_vuln_gate.py
+```
+
+历史 Trivy 报告复核中，新规则在 backend 和 mcp-tools 的旧镜像样本中检出 `CVE-2025-69720` 的 `ncurses-bin` 软件包超出例外范围。保留现有例外表。最新镜像须由修复版 CI 重新扫描以确认当前结果。
