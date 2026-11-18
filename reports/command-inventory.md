@@ -59,3 +59,9 @@
 
 - 在线接口全量 `apitest/run_all.py`：需要运行中实例、固定身份与已索引材料，尚未在隔离环境重跑。
 - 真实模型质量与真实用户会话：不属于可重复门禁，单独在技能抽查与反馈报告中记录。
+
+## 2026-11-17 Windows 双跑
+
+基线为 PR #3 提交 `977bcde`。同一机器、提交、依赖锁和测试参数运行两次。Windows 普通门禁两次均为 42/43 通过，退出 1，失败项为 `check_os_vuln_gate` 的子进程编码。安全门禁两次均在运行中的同一 Compose 项目上重新联网审计，均为 PASS、退出 0。两次对应结果分别一致，普通门禁仍待修。各子项时间和退出状态见 [普通门禁第 1 次](lesson-10/20261117-windows-replay/check-1.json)、[第 2 次](lesson-10/20261117-windows-replay/check-2.json)及[安全门禁第 1 次](lesson-10/20261117-windows-replay/security-1.json)、[第 2 次](lesson-10/20261117-windows-replay/security-2.json)。
+
+组员 smrrrrr 随后在个人新克隆目录本人复跑。普通门禁末次完成于北京时间 15:05:32，42/43、退出 1。恢复四个演示账号后，安全门禁末次完成于 15:09:25，PASS、退出 0。各次实测见 [J1 本人双跑](demo-checklist.md#八j1-本人门禁双跑2026-11-17)。

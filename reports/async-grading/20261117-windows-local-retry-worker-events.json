@@ -1,0 +1,2428 @@
+[
+  {
+    "ts": "2026-11-17T03:12:24.790Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 1,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:25.100Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 2,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:25.794Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 3,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:26.110Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 4,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:26.531Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 5,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:26.894Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 6,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:27.225Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 7,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:27.541Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 8,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:28.130Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 9,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:28.479Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 10,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:28.812Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 11,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:29.136Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 12,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:29.459Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 13,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:29.783Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 14,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:30.100Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 15,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:31.060Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 16,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:31.381Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 17,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:31.695Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 18,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:32.038Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 19,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:32.529Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "835e624ec02a4904912e9d6e6b7a1557",
+    "msg": "批改任务消息处理完成",
+    "task_id": 20,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:38.569Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "041660d5156d4c81af69063aa748abf3",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:39.342Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "041660d5156d4c81af69063aa748abf3",
+    "msg": "批改任务消息处理完成",
+    "task_id": 21,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:41.716Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "c5e905f605a148ce8a673d380b27a1e1",
+    "msg": "批改任务消息处理完成",
+    "task_id": 22,
+    "status": "deferred"
+  },
+  {
+    "ts": "2026-11-17T03:12:50.965Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "c5e905f605a148ce8a673d380b27a1e1",
+    "msg": "批改任务消息处理完成",
+    "task_id": 22,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.474Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "_AsyncBaseTransport._produce() failed, aborting connection: error=ConnectionResetError(104, 'Connection reset by peer'); sock=<socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 58292)>; Caller's stack:\nTraceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 1103, in _on_socket_writable\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 819, in _produce\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 79, in retry_sigint_wrap\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 861, in _sigint_safe_send\nConnectionResetError: [Errno 104] Connection reset by peer\n",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 1103, in _on_socket_writable\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 819, in _produce\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 79, in retry_sigint_wrap\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/utils/io_services_utils.py\", line 861, in _sigint_safe_send\nConnectionResetError: [Errno 104] Connection reset by peer"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.474Z",
+    "level": "error",
+    "module": "pika.adapters.base_connection",
+    "request_id": null,
+    "msg": "connection_lost: StreamLostError: (\"Stream connection lost: ConnectionResetError(104, 'Connection reset by peer')\",)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.475Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Unexpected connection close detected: StreamLostError: (\"Stream connection lost: ConnectionResetError(104, 'Connection reset by peer')\",)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.475Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.579Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43114)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.579Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.579Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.580Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:51.580Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.580Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.580Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.581Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.684Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43118)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.684Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.684Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.684Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:51.684Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.685Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.685Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.685Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.788Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43126)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.788Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.789Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43134)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.893Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.894Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.894Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.998Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43146)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.998Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.998Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.998Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:51.998Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.999Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.999Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:51.999Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.103Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43152)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.104Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.105Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.209Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43162)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.210Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.210Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.210Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.210Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.210Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.211Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.211Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.316Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43176)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.316Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.317Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.317Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.317Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.317Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.317Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.318Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.423Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43188)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.423Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.423Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.424Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.424Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.424Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.424Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.424Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.529Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 43200)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.531Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40340)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:52.635Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40354)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.752Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.753Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40364)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.856Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.857Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.961Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40376)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.961Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.961Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.962Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:56.962Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.962Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.962Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:56.963Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40380)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.066Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.067Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.067Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.169Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40394)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.170Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.171Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.273Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40410)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.273Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.273Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.273Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.274Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.274Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.274Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.274Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.378Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40414)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.378Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.378Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.378Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.378Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.379Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.379Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.379Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40424)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.482Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.483Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.483Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.585Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40428)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.586Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.587Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.689Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40442)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.689Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.689Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.690Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.690Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.690Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.690Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.690Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.792Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40456)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.792Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.793Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.895Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40466)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.896Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.897Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40480)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:57.999Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.000Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.000Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.102Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40486)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.103Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.104Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40492)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.207Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.208Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.319Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40508)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.319Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.320Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.320Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.320Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.320Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.320Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.321Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.426Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40516)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.427Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.428Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.530Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40528)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.531Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40534)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.634Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.635Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.737Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40546)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.738Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.841Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40556)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.841Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.841Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.841Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.841Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.842Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.842Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.842Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.944Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40568)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.945Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:58.946Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40580)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.048Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.049Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40592)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.151Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40600)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.254Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.356Z",
+    "level": "error",
+    "module": "pika.adapters.utils.io_services_utils",
+    "request_id": null,
+    "msg": "Socket failed to connect: <socket.socket fd=7, family=2, type=1, proto=6, laddr=('172.24.0.6', 40610)>; error=111 (Connection refused)"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.356Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.24.0.3', 5672))"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None."
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "error",
+    "module": "pika.adapters.utils.connection_workflow",
+    "request_id": null,
+    "msg": "AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "error",
+    "module": "pika.adapters.blocking_connection",
+    "request_id": null,
+    "msg": "Error in _create_connection().",
+    "exc": "Traceback (most recent call last):\n  File \"/app/.venv/lib/python3.12/site-packages/pika/adapters/blocking_connection.py\", line 451, in _create_connection\npika.exceptions.AMQPConnectionError"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.357Z",
+    "level": "warning",
+    "module": "__main__",
+    "request_id": null,
+    "msg": "批改队列暂不可用，将自动重连"
+  },
+  {
+    "ts": "2026-11-17T03:12:59.888Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "998a54e064e44e70bf1abe8cae3eb340",
+    "msg": "批改任务消息处理完成",
+    "task_id": 23,
+    "status": "succeeded"
+  },
+  {
+    "ts": "2026-11-17T03:13:00.628Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-17T03:13:00.629Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-17T03:13:01.278Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-17T03:13:01.278Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "retrying"
+  },
+  {
+    "ts": "2026-11-17T03:13:02.042Z",
+    "level": "warning",
+    "module": "grading_service",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务执行失败",
+    "task_id": 24,
+    "status": "dead"
+  },
+  {
+    "ts": "2026-11-17T03:13:02.042Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "dead"
+  },
+  {
+    "ts": "2026-11-17T03:13:04.792Z",
+    "level": "info",
+    "module": "__main__",
+    "request_id": "b26fa441075a46efaf13c89c0b476e8e",
+    "msg": "批改任务消息处理完成",
+    "task_id": 24,
+    "status": "succeeded"
+  }
+]

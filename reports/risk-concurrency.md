@@ -1,5 +1,18 @@
 # 高风险检查：并发
 
+## 当前复跑（2026-11-18）
+
+| 项目 | 本次记录 |
+| --- | --- |
+| 手段 | 脚本 `backend/.venv/Scripts/python.exe apitest/check_async_grading.py` 的 C1。另用 `backend/.venv/Scripts/python.exe scripts/reproduce_async_grading.py` 复跑隔离的真实 RabbitMQ。 |
+| 对象 | 20 个并发请求对同一份提交的同一版本发起初批，成功后重新投递同一消息。 |
+| 判据 | 请求返回相同任务编号且只创建一条任务。重复投递不得改写已生效评分。 |
+| 结果 | [离线检查](security-evidence/20261118-high-risk-async.json) 57/57，[真实队列](async-grading/20261118-high-risk-real-broker-result.json) 14/14，均退出 0。真实队列的 20 个请求共用任务编号 21；重投后处理次数由 1 变 2，评分仍为 70。 |
+
+源码使用提交编号和输入指纹唯一键、SQLite 短写事务以及租约校验。两个测试均使用合成数据和假模型。A1 的耗时来自顺序重复请求，C1 验幂等；两者都不能用于估算生产并发容量。
+
+## 历史记录
+
 | 项目 | 内容 |
 | --- | --- |
 | 用什么手段查 | 离线check_async_grading及真实RabbitMQ复现脚本 |

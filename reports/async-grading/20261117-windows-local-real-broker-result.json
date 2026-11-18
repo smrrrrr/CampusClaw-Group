@@ -1,0 +1,84 @@
+{
+  "started_at": "2026-11-17T03:09:14.710137+00:00",
+  "project": "cc-async-check-dfbff99797",
+  "image": "campusclaw-backend:977bcde028b24892ac58466b5612e844bd5b2ecb",
+  "model": "local synthetic HTTP model; no real provider calls",
+  "database": "new empty temporary SQLite",
+  "commands": [
+    "docker run --rm campusclaw-backend:977bcde028b24892ac58466b5612e844bd5b2ecb /app/.venv/bin/python -c import json;from pathlib import Path;print(Path('/app/.source-sha256.json').read_text())",
+    "docker image inspect campusclaw-backend:977bcde028b24892ac58466b5612e844bd5b2ecb --format {{.Id}}",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> up -d broker model",
+    "docker image inspect rabbitmq:4.2-management@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa --format {{json .RepoDigests}}",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> exec --user rabbitmq -T broker rabbitmq-diagnostics -q ping",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> exec --user rabbitmq -T broker rabbitmq-diagnostics -q ping",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> run --rm --no-deps api /app/.venv/bin/python /fixtures/async_fixture.py",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> up -d api dispatcher",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> port api 8000",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> port model 9000",
+    "docker compose -p cc-async-check-dfbff99797 -f <private-generated-compose> down --volumes --remove-orphans"
+  ],
+  "checks": [
+    {
+      "name": "A1 请求不等待执行",
+      "passed": false,
+      "observed": {
+        "requests": 20,
+        "p95": 0.2743097000056878,
+        "fake_model": 0.20561339997220784
+      }
+    }
+  ],
+  "metrics": {
+    "submission_seconds": [
+      0.2498566000140272,
+      0.01646670000627637,
+      0.016080099972896278,
+      0.017489199992269278,
+      0.016544400015845895,
+      0.018199599988292903,
+      0.043934900022577494,
+      0.3967659999616444,
+      0.1161203000228852,
+      0.08469960000365973,
+      0.2743097000056878,
+      0.011073200032114983,
+      0.009810199961066246,
+      0.010440299985930324,
+      0.009741800022311509,
+      0.010586499993223697,
+      0.010364999994635582,
+      0.00947639998048544,
+      0.011045199993532151,
+      0.010765200015157461
+    ],
+    "p95_seconds": 0.2743097000056878,
+    "synthetic_execution_seconds": 0.20561339997220784
+  },
+  "verified_image_source_sha256": {
+    "grading_service.py": "edcd057208f32777deadab66c600c9652ca0ef1fe24845e3e22c02aaf18fac20",
+    "grading_worker.py": "85617f5caee3ac44efada14ff7f96bfbb898cf9b97f34381ce62f90bd55d0478",
+    "grading_queue.py": "657e4f56e938b9b95bc36d84a3b37381c4625b989ead6dcf8479417672fccfd1",
+    "homework_service.py": "0b371bf6c9ede502f0aeeaf99630ff01d76b750e5e7c4186620b815fd1173e6d",
+    "models.py": "a25fca11bfc03d3bee6ebd3b49394f96a463a73dad4425ccad03fb4df5b60c40",
+    "config.py": "e70fc53a768a4104a3ccc39f1f5b922d960bf0e5aafe2cb4a57c68971b76e5d7",
+    "routers/homework.py": "9f86474b69f508bf60b0c4b66ce6153ccd3a2fbdf4da7fd3f4b27a05dfc6ea13"
+  },
+  "image_id": "sha256:9cfdb681886179050ae229eb1c387b4fef8bf4dd38eac869a3d4391823568bf7",
+  "broker_digest": "[\"rabbitmq@sha256:4e1c1636957aa13c2dbeb8c92606891ac0c396999bb4d7c3a7e3ba38430df7fa\"]",
+  "status": "FAIL",
+  "failure": "A1 请求不等待执行",
+  "finished_at": "2026-11-17T03:09:32.804130+00:00",
+  "source_sha256": {
+    "backend\\grading_service.py": "edcd057208f32777deadab66c600c9652ca0ef1fe24845e3e22c02aaf18fac20",
+    "backend\\grading_worker.py": "85617f5caee3ac44efada14ff7f96bfbb898cf9b97f34381ce62f90bd55d0478",
+    "backend\\grading_queue.py": "657e4f56e938b9b95bc36d84a3b37381c4625b989ead6dcf8479417672fccfd1",
+    "backend\\homework_service.py": "0b371bf6c9ede502f0aeeaf99630ff01d76b750e5e7c4186620b815fd1173e6d",
+    "backend\\models.py": "a25fca11bfc03d3bee6ebd3b49394f96a463a73dad4425ccad03fb4df5b60c40",
+    "backend\\config.py": "e70fc53a768a4104a3ccc39f1f5b922d960bf0e5aafe2cb4a57c68971b76e5d7",
+    "backend\\routers\\homework.py": "9f86474b69f508bf60b0c4b66ce6153ccd3a2fbdf4da7fd3f4b27a05dfc6ea13",
+    "scripts\\reproduce_async_grading.py": "614ac08e42f6c670e9daa7915897d30e9c94eb79854ac1349cae90f156908807",
+    "apitest\\async_fixture.py": "b487eec3c13d6aa891bff450c217b6045e697bd4bbc91b91750c1b1da17dc74a",
+    "apitest\\async_fake_model.py": "95b380849cba2240c3e9fd36c45dcd6c09ea4c05e9cfce442ce706902c1b2fbd"
+  },
+  "cleanup": "only generated isolated project removed"
+}

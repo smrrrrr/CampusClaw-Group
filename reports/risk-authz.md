@@ -1,5 +1,16 @@
 # 高风险检查：本次新增任务权限
 
+## 当前复跑（2026-11-18）
+
+| 项目 | 本次记录 |
+| --- | --- |
+| 手段 | 脚本 `backend/.venv/Scripts/python.exe apitest/probe_security_precheck.py --output .review/high-risk-probe.json`，以及 `apitest/check_async_grading.py` 的 E1。 |
+| 对象 | 本班与跨班讲义下载、学生写工具，以及不同身份调用教师初批任务接口。 |
+| 判据 | 本班下载 200；跨班下载 404、无正文且留审计。未登录访问任务为 401，学生误入教师接口为 403，他班或他科教师访问对应任务为 404。学生请求写工具不得执行或改变成绩。 |
+| 结果 | [权限探针](security-evidence/20261118-high-risk-probe.json) 41/41、退出 0。本班和跨班下载均达到判据；学生写工具零执行且有拒绝记录。[离线初批检查](security-evidence/20261118-high-risk-async.json) 57/57、退出 0，E1 的 16 个拒绝用例及审计检查均通过。另复跑 `apitest/check_mcp_tools.py` 78/78，师生独立续期和单角色登出均通过。 |
+
+## 历史记录
+
 | 项目 | 内容 |
 | --- | --- |
 | 用什么手段查 | check_async_grading的E1接口反例，临时库与合成身份 |
