@@ -6,7 +6,7 @@
 
 **成员与分工**。Jackler / hexzun1 上线智能命题与 MCP，建立健康检查和 CI，复核安全修复，完成检索压测优化、依赖和镜像升级（`13c1cd2`、`4b005e1`、PR #3）。
 Grey_Wolf_King 新增批改、学情与错题，修复跨班访问和 XSS，加入七列审计、工具授权与 CSRF 防御，补安全反例和交接（`e10c81b`、`4cfaa15`、`efbfb67`）。
-smrrrrr 上线智能备课与讲义发布（`642242e`）、异步初批，补作业历史和错题同步（`6bb70e1`、`68acf9a`），完成安全预检、Windows 复验、交叉评审和镜像门禁修复。[reports/contributions.md](reports/contributions.md)
+**smrrrrr**：同步第 2–5 课个人仓库内容，上线智能备课、讲义发布和作业异步初批，完成安全预检、Windows 部署复验及镜像门禁修复，最后人工进行项目业务语义修正并完成本地验收。[reports/contributions.md](reports/contributions.md)
 
 ## 1. 一句话介绍
 
