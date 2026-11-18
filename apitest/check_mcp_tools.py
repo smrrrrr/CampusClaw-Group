@@ -120,6 +120,18 @@ async def main():
             async def req(method, path, who="TM", **kw):
                 return await client.request(method, path, headers=headers[who], **kw)
 
+            teacher_session = await client.post("/api/auth/refresh", headers={"X-Session-Role": "teacher"})
+            student_session = await client.post("/api/auth/refresh", headers={"X-Session-Role": "student"})
+            check("同一浏览器连续登录后师生各自续期",
+                  teacher_session.status_code == 200 and teacher_session.json()["user"]["teaching_classes"] == [102]
+                  and student_session.status_code == 200 and student_session.json()["user"]["class_name"] == "Class B")
+            logged_out = await req("POST", "/api/auth/logout", "S2")
+            revoked_student = await client.post("/api/auth/refresh", headers={"X-Session-Role": "student"})
+            retained_teacher = await client.post("/api/auth/refresh", headers={"X-Session-Role": "teacher"})
+            check("退出学生只清除学生续期，教师令牌不能用于学生恢复",
+                  logged_out.status_code == 200 and revoked_student.status_code == 401
+                  and retained_teacher.status_code == 200 and retained_teacher.json()["role"] == "teacher")
+
             # === 管理接口权限 ===
             for path in ("/api/mcp/servers?class_id=101", "/api/teacher/skills?class_id=101", "/api/mcp/tool-calls?class_id=101"):
                 r = await client.get(path)
@@ -195,12 +207,37 @@ async def main():
             check("同伴删他人技能 404", r.status_code == 404)
 
             # === 调用编排：命中技能 → 模型提议调用 → ok ===
+            from routers import student as student_router
+
+            decision_inputs = []
+            answer_inputs = []
+            original_stream = student_router.stream_chat
+
+            def recording_decide(messages, tools, timeout=None):
+                decision_inputs.append(list(messages))
+                return fake_decide(messages, tools, timeout)
+
+            async def checking_stream(messages):
+                answer_inputs.append(list(messages))
+                if any(
+                    message["role"] == "tool" or "tool_calls" in message or "reasoning_content" in message
+                    for message in messages
+                ):
+                    raise LLMGenerationError("流式回答收到工具决策消息")
+                yield "用点积公式开始计算。"
+
+            mcp_orchestrator.decide_with_tools = recording_decide
+            student_router.stream_chat = checking_stream
             r = await req("POST", "/api/student/conversations", "S1", json={"title": "t", "subject": "math"})
             check("学生建会话", r.status_code == 200)
             cid = r.json()["id"]
 
             decisions.clear()
-            decisions.append(DecisionResult(content="", tool_calls=[ToolCall(id="c1", name="formula_hint", arguments={"query": "两向量夹角"})]))
+            decisions.append(DecisionResult(
+                content="",
+                tool_calls=[ToolCall(id="c1", name="formula_hint", arguments={"query": "两向量夹角"})],
+                reasoning_content="合成决策上下文",
+            ))
             FakeClient.last_calls.clear()
             r = await req("POST", f"/api/student/conversations/{cid}/chat", "S1", json={"question": "两向量夹角怎么求"})
             fr = frames(r)
@@ -211,6 +248,22 @@ async def main():
             tcs = (meta or {}).get("tool_calls") or []
             check("meta.tool_calls 记录 ok", len(tcs) == 1 and tcs[0]["status"] == "ok" and tcs[0]["ref"] == "formula_hint@campus-tools")
             check("确实带令牌调用了工具", len(FakeClient.last_calls) == 1)
+            followup = decision_inputs[-1]
+            requested = followup[-2].get("tool_calls", [])
+            check("后续模型决策收到配对的助手调用与工具结果",
+                  len(decision_inputs) == 2 and followup[-2]["role"] == "assistant"
+                  and [call["id"] for call in requested] == ["c1"]
+                  and followup[-2].get("reasoning_content") == "合成决策上下文"
+                  and followup[-1].get("tool_call_id") == "c1")
+            check("最终流式回答使用工具数据并正常结束",
+                  answer_inputs[-1][-1]["role"] == "user"
+                  and "余弦公式提示" in answer_inputs[-1][-1]["content"]
+                  and types[-1] == "done")
+            history = await req("GET", f"/api/student/conversations/{cid}/messages", "S1")
+            check("调用成功标志随流式完成和同一条历史回答返回",
+                  fr[-1].get("tool_refs") == ["formula_hint@campus-tools"]
+                  and history.json()[-1].get("tool_refs") == fr[-1]["tool_refs"]
+                  and history.json()[-2].get("tool_refs") == [])
 
             with SessionLocal() as db:
                 calls = db.query(McpToolCall).filter(McpToolCall.conversation_id == cid).all()
@@ -230,12 +283,16 @@ async def main():
             meta = next((f for f in fr if f.get("type") == "meta"), None)
             tcs = (meta or {}).get("tool_calls") or []
             check("断开后引用记 denied", any(t["ref"] == "formula_hint@campus-tools" and t["status"] == "denied" for t in tcs))
+            history = await req("GET", f"/api/student/conversations/{cid}/messages", "S1")
+            check("新一轮拒绝不会沿用上一条回答的成功标志",
+                  fr[-1].get("tool_refs") == [] and history.json()[-1].get("tool_refs") == [])
             with SessionLocal() as db:
                 denied = db.query(McpToolCall).filter(McpToolCall.conversation_id == cid, McpToolCall.status == "denied").all()
                 check("写入 denied 审计记录", len(denied) >= 1)
 
             # === 参数不合结构 → error ===
             await req("POST", f"/api/mcp/servers/{sid}/connect")
+            decision_inputs.clear()
             decisions.clear()
             decisions.append(DecisionResult(content="", tool_calls=[ToolCall(id="c2", name="formula_hint", arguments={"wrong": 1})]))
             FakeClient.last_calls.clear()
@@ -244,6 +301,15 @@ async def main():
             meta = next((f for f in fr if f.get("type") == "meta"), None)
             tcs = (meta or {}).get("tool_calls") or []
             check("参数不符记 error 且未执行", any(t["status"] == "error" for t in tcs) and len(FakeClient.last_calls) == 0)
+            failure = decision_inputs[-1]
+            check("失败结果配对回传且最终回答正常完成",
+                  len(decision_inputs) == 2 and failure[-2]["role"] == "assistant"
+                  and failure[-1].get("tool_call_id") == "c2"
+                  and "参数不符合要求" in failure[-1]["content"]
+                  and "参数不符合要求" not in answer_inputs[-1][-1]["content"]
+                  and fr[-1].get("type") == "done")
+            mcp_orchestrator.decide_with_tools = fake_decide
+            student_router.stream_chat = original_stream
             with SessionLocal() as db:
                 errs = db.query(McpToolCall).filter(McpToolCall.conversation_id == cid, McpToolCall.status == "error").all()
                 check("写入 error 审计记录", len(errs) >= 1)
@@ -335,6 +401,8 @@ async def main():
             FakeClient.call_tool = original_call_tool
 
             # === 多轮调用：循环结束后只推送一次 meta ===
+            decision_inputs.clear()
+            mcp_orchestrator.decide_with_tools = recording_decide
             decisions.clear()
             decisions.extend(
                 DecisionResult(content="", tool_calls=[ToolCall(id=f"m{i}", name="formula_hint", arguments={"query": f"夹角{i}"})])
@@ -350,6 +418,15 @@ async def main():
             check("两轮调用只推送一次 meta 且为首帧", len(metas) == 1 and types[0] == "meta")
             check("meta.tool_calls 按序含两轮 ok 记录",
                   [t["status"] for t in tcs] == ["ok", "ok"] and len(FakeClient.last_calls) == 2)
+            followup = decision_inputs[-1]
+            calls_and_results = [
+                (call["id"], followup[index + 1].get("tool_call_id"))
+                for index, message in enumerate(followup[:-1])
+                for call in message.get("tool_calls", [])
+            ]
+            check("多轮决策按顺序保留两次调用及对应结果",
+                  len(decision_inputs) == 3 and calls_and_results == [("m1", "m1"), ("m2", "m2")])
+            mcp_orchestrator.decide_with_tools = fake_decide
 
             # === 调用记录归属隔离 ===
             r = await req("GET", "/api/mcp/tool-calls?class_id=101", "TM")

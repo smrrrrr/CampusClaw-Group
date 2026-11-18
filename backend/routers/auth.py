@@ -1,14 +1,15 @@
 """认证相关路由：密码登录、Token 刷新、改密、登出。"""
 
 import json
+from typing import Literal
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from config import settings
 from database import get_db
 from deps import CurrentUser, get_authenticated_user
-from models import User
+from models import Class, User
 from schemas import (
     ChangePasswordRequest,
     LoginRequest,
@@ -35,12 +36,14 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 _REFRESH_COOKIE_MAX_AGE = settings.refresh_token_expire_days * 24 * 60 * 60
 
 
-def _user_info(user: User) -> UserInfo:
+def _user_info(db: Session, user: User) -> UserInfo:
+    classroom = db.get(Class, user.class_id) if user.class_id is not None else None
     return UserInfo(
         id=user.id,
         role=user.role.value,
         name=user.name,
         class_id=user.class_id,
+        class_name=classroom.name if classroom else None,
         must_change_password=user.must_change_password,
         teaching_classes=_parse_teaching_classes(user.teaching_classes),
         subject=user.subject,
@@ -57,6 +60,18 @@ def _parse_teaching_classes(raw: str | None) -> list[int] | None:
         return result if isinstance(result, list) else None
     except (ValueError, TypeError):
         return None
+
+
+def _role_cookie(role: str) -> str:
+    return f"{REFRESH_COOKIE_NAME}_{role}"
+
+
+def _set_refresh_cookie(response: Response, name: str, token: str) -> None:
+    response.set_cookie(
+        key=name, value=token, max_age=_REFRESH_COOKIE_MAX_AGE,
+        httponly=True, secure=settings.cookie_secure, samesite=settings.cookie_samesite,
+        path="/api/auth",
+    )
 
 
 def _issue_tokens(response: Response, user: User) -> tuple[str, str]:
@@ -81,15 +96,8 @@ def _issue_tokens(response: Response, user: User) -> tuple[str, str]:
         must_change_password=user.must_change_password,
         teaching_classes=tc,
     )
-    response.set_cookie(
-        key=REFRESH_COOKIE_NAME,
-        value=refresh_token,
-        max_age=_REFRESH_COOKIE_MAX_AGE,
-        httponly=True,
-        secure=settings.cookie_secure,
-        samesite=settings.cookie_samesite,
-        path="/api/auth",
-    )
+    _set_refresh_cookie(response, REFRESH_COOKIE_NAME, refresh_token)
+    _set_refresh_cookie(response, _role_cookie(user.role.value), refresh_token)
     csrf_token = secrets.token_urlsafe(32)
     response.set_cookie(
         key="csrf_token",
@@ -141,7 +149,7 @@ def login(body: LoginRequest, response: Response, db: Session = Depends(get_db))
         access_token=access_token,
         must_change_password=matched.must_change_password,
         role=matched.role.value,
-        user=_user_info(matched),
+        user=_user_info(db, matched),
         csrf_token=csrf_token,
     )
 
@@ -153,10 +161,13 @@ def login(body: LoginRequest, response: Response, db: Session = Depends(get_db))
 
 @router.post("/refresh", response_model=RefreshResponse)
 def refresh_token(
+    request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    refresh_token_cookie: str | None = Cookie(default=None, alias=REFRESH_COOKIE_NAME),
+    session_role: Literal["teacher", "student"] | None = Header(default=None, alias="X-Session-Role"),
 ):
+    selected = request.cookies.get(_role_cookie(session_role)) if session_role else None
+    refresh_token_cookie = selected or request.cookies.get(REFRESH_COOKIE_NAME)
     if not refresh_token_cookie:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="未提供刷新令牌")
 
@@ -172,6 +183,8 @@ def refresh_token(
     user = db.get(User, payload.get("user_id"))
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="账号不存在")
+    if session_role and (payload.get("role") != session_role or user.role.value != session_role):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="未登录此身份，请重新登录")
 
     access_token = create_access_token(
         user_id=user.id,
@@ -190,15 +203,9 @@ def refresh_token(
         must_change_password=user.must_change_password,
         teaching_classes=_parse_teaching_classes(user.teaching_classes),
     )
-    response.set_cookie(
-        key=REFRESH_COOKIE_NAME,
-        value=new_refresh,
-        max_age=_REFRESH_COOKIE_MAX_AGE,
-        httponly=True,
-        secure=settings.cookie_secure,
-        samesite=settings.cookie_samesite,
-        path="/api/auth",
-    )
+    _set_refresh_cookie(response, _role_cookie(user.role.value), new_refresh)
+    if not selected:
+        _set_refresh_cookie(response, REFRESH_COOKIE_NAME, new_refresh)
     return RefreshResponse(
         access_token=access_token,
         must_change_password=user.must_change_password,
@@ -206,7 +213,7 @@ def refresh_token(
         teaching_classes=_parse_teaching_classes(user.teaching_classes),
         subject=user.subject,
         homeroom_class_id=user.homeroom_class_id,
-        user=_user_info(user),
+        user=_user_info(db, user),
     )
 
 
@@ -243,7 +250,7 @@ def change_password(
         access_token=access_token,
         must_change_password=False,
         role=user.role.value,
-        user=_user_info(user),
+        user=_user_info(db, user),
         csrf_token=csrf_token,
     )
 
@@ -255,20 +262,27 @@ def change_password(
 
 @router.post("/logout", response_model=MessageResponse)
 def logout(
+    request: Request,
     response: Response,
     current: CurrentUser = Depends(get_authenticated_user),
 ):
-    response.delete_cookie(
-        key=REFRESH_COOKIE_NAME,
-        path="/api/auth",
-        httponly=True,
-        secure=settings.cookie_secure,
-        samesite=settings.cookie_samesite,
-    )
-    response.delete_cookie(
-        key="csrf_token",
-        path="/",
-        secure=settings.cookie_secure,
-        samesite=settings.cookie_samesite,
-    )
+    cookies_to_clear = [_role_cookie(current.role)]
+    legacy = request.cookies.get(REFRESH_COOKIE_NAME)
+    if legacy:
+        try:
+            if decode_token(legacy).get("role") == current.role:
+                cookies_to_clear.append(REFRESH_COOKIE_NAME)
+        except JWTError:
+            cookies_to_clear.append(REFRESH_COOKIE_NAME)
+    for name in cookies_to_clear:
+        response.delete_cookie(
+            key=name, path="/api/auth", httponly=True,
+            secure=settings.cookie_secure, samesite=settings.cookie_samesite,
+        )
+    other_role = "student" if current.role == "teacher" else "teacher"
+    if not request.cookies.get(_role_cookie(other_role)):
+        response.delete_cookie(
+            key="csrf_token", path="/",
+            secure=settings.cookie_secure, samesite=settings.cookie_samesite,
+        )
     return MessageResponse(message="已登出")

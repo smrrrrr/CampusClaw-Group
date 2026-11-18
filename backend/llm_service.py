@@ -165,6 +165,10 @@ def build_chat_messages(
 class LLMGenerationError(Exception):
     """DeepSeek 调用失败。"""
 
+    def __init__(self, message: str, *, status_code: int | None = None):
+        super().__init__(message)
+        self.status_code = status_code
+
 
 def generate_answer(question: str, context_block: str | None, *, system_prompt: str | None = None, tutor_enabled: bool = False) -> str | None:
     """一次性非流式生成解答。
@@ -235,6 +239,7 @@ class DecisionResult:
     tool_calls: list[ToolCall]
     # 此决策轮总用量；同轮多工具共享，不能按工具直接累加。
     tokens: int | None = None
+    reasoning_content: str | None = None
 
 
 def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float | None = None) -> DecisionResult:
@@ -293,7 +298,13 @@ def decide_with_tools(messages: list[dict], tools: list[dict], *, timeout: float
     tokens = usage.get("total_tokens") if isinstance(usage, dict) else None
     if type(tokens) is not int or tokens < 0:
         tokens = None
-    return DecisionResult(content=content, tool_calls=calls, tokens=tokens)
+    reasoning = message.get("reasoning_content")
+    return DecisionResult(
+        content=content,
+        tool_calls=calls,
+        tokens=tokens,
+        reasoning_content=reasoning if isinstance(reasoning, str) else None,
+    )
 
 
 async def stream_chat(
@@ -326,8 +337,9 @@ async def stream_chat(
         async with httpx.AsyncClient(timeout=timeout) as client:
             async with client.stream("POST", url, json=payload, headers=headers) as resp:
                 if resp.status_code != 200:
-                    body = (await resp.aread()).decode("utf-8", "ignore")
-                    raise LLMGenerationError(f"DeepSeek HTTP {resp.status_code}: {body[:200]}")
+                    raise LLMGenerationError(
+                        f"DeepSeek HTTP {resp.status_code}", status_code=resp.status_code
+                    )
                 async for line in resp.aiter_lines():
                     if not line.startswith("data:"):
                         continue

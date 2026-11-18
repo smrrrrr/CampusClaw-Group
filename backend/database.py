@@ -27,6 +27,13 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+def begin_write(db: Session) -> None:
+    """结束当前读取后，SQLite 先获取短写锁，避免并发升级读事务失败。"""
+    db.rollback()
+    if db.get_bind().dialect.name == "sqlite":
+        db.execute(text("BEGIN IMMEDIATE"))
+
+
 def run_simple_migrations() -> None:
     """轻量列迁移（dev 用）：检测 materials 骨架表并重建为完整业务表。
 
@@ -55,6 +62,12 @@ def run_simple_migrations() -> None:
             if "context" not in cols:
                 conn.execute(text("ALTER TABLE conversations ADD COLUMN context TEXT"))
                 conn.commit()
+
+        # 旧回答无工具摘要，增加可空列以保留原有消息。
+        message_cols = {row[1] for row in conn.execute(text("PRAGMA table_info(messages)"))}
+        if message_cols and "tool_refs" not in message_cols:
+            conn.execute(text("ALTER TABLE messages ADD COLUMN tool_refs TEXT"))
+            conn.commit()
 
         # users 表增列：subject（教师学科）、homeroom_class_id（班主任班级）
         uinfo = conn.execute(text("PRAGMA table_info(users)")).fetchall()
@@ -191,18 +204,24 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN homework_id INTEGER REFERENCES homeworks(id)"))
             if "answer_text" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN answer_text TEXT NOT NULL DEFAULT ''"))
+            if "item_answers_json" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN item_answers_json TEXT"))
             if "submitted_at" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN submitted_at DATETIME"))
             if "ai_score" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_score INTEGER"))
             if "ai_feedback" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_feedback TEXT"))
+            if "ai_item_results_json" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_item_results_json TEXT"))
             if "ai_graded_at" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN ai_graded_at DATETIME"))
             if "teacher_score" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_score INTEGER"))
             if "teacher_feedback" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_feedback TEXT"))
+            if "teacher_item_results_json" not in hws_cols:
+                conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_item_results_json TEXT"))
             if "teacher_graded_at" not in hws_cols:
                 conn.execute(text("ALTER TABLE homework_submissions ADD COLUMN teacher_graded_at DATETIME"))
             if "status" not in hws_cols:
@@ -216,6 +235,10 @@ def run_simple_migrations() -> None:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN subject VARCHAR(32) NOT NULL DEFAULT 'math'"))
             if "homework_id" not in mn_cols:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN homework_id INTEGER REFERENCES homeworks(id)"))
+            if "question_number" not in mn_cols:
+                conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN question_number INTEGER"))
+            conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS uq_mistake_note_homework_question "
+                              "ON mistake_notes(homework_id, student_id, question_number)"))
             if "question_stem" not in mn_cols:
                 conn.execute(text("ALTER TABLE mistake_notes ADD COLUMN question_stem TEXT NOT NULL DEFAULT ''"))
             if "student_answer" not in mn_cols:

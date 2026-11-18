@@ -281,12 +281,12 @@ def run_tool_loop(
     subject: str,
     user_id: int,
     conversation_id: int,
-) -> tuple[list[dict], list[dict], list[str]]:
+) -> tuple[list[dict], list[str]]:
     """执行决策-调用循环。
 
-    返回 (tool_calls 事件列表, 成功工具结果数据段列表, 提示信息)。
-    ``messages`` 会被就地追加 tool 消息，供后续流式作答复用。
+    返回工具事件和通过安全检查的结果。工具协议消息只用于本函数内的后续决策。
     """
+    decision_messages = list(messages)
     tool_events = [dict(d) for d in denied]
     skill_id = str(getattr(skill, "id", "")) or None
     # 初始 denied（服务器存在但未连接/工具不可用）也要写审计；服务器不存在无法归属则不写
@@ -322,11 +322,30 @@ def run_tool_loop(
         if conversation_used >= settings.mcp_max_calls_per_conversation:
             break
         try:
-            decision = decide_with_tools(messages, tool_declarations)
+            decision = decide_with_tools(decision_messages, tool_declarations)
         except LLMGenerationError:
             break
         if not decision.tool_calls:
             break
+
+        assistant_message = {
+            "role": "assistant",
+            "content": decision.content,
+            "tool_calls": [
+                {
+                    "id": call.id,
+                    "type": "function",
+                    "function": {
+                        "name": call.name,
+                        "arguments": json.dumps(call.arguments, ensure_ascii=False),
+                    },
+                }
+                for call in decision.tool_calls
+            ],
+        }
+        if decision.reasoning_content is not None:
+            assistant_message["reasoning_content"] = decision.reasoning_content
+        decision_messages.append(assistant_message)
 
         for call in decision.tool_calls:
             candidate = by_name.get(call.name)
@@ -335,7 +354,7 @@ def run_tool_loop(
                 tool_events.append(
                     {"ref": call.name, "status": "denied", "reason": "不在候选集内"}
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -359,7 +378,7 @@ def run_tool_loop(
                     conversation_id=conversation_id, round_no=round_no, detail="超出调用上限",
                     skill_id=skill_id, tokens=decision.tokens,
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -381,7 +400,7 @@ def run_tool_loop(
                     conversation_id=conversation_id, round_no=round_no, detail=f"参数不合结构：{problem}",
                     skill_id=skill_id, tokens=decision.tokens,
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -404,7 +423,7 @@ def run_tool_loop(
                     conversation_id=conversation_id, round_no=round_no, detail=reason,
                     skill_id=skill_id, tokens=decision.tokens,
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -443,7 +462,7 @@ def run_tool_loop(
                     conversation_id=conversation_id, round_no=round_no, detail=str(exc),
                     skill_id=skill_id, tokens=decision.tokens, duration_ms=duration_ms,
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -468,7 +487,7 @@ def run_tool_loop(
                     conversation_id=conversation_id, round_no=round_no, detail=reason,
                     skill_id=skill_id, tokens=decision.tokens, duration_ms=duration_ms,
                 )
-                messages.append(
+                decision_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": call.id,
@@ -491,7 +510,7 @@ def run_tool_loop(
             marker = f"[工具 {candidate['tool_name']}@{candidate['server_name']} 返回的数据]"
             results_for_answer.append(f"{marker}\n{truncated}")
             # 只作为工具消息回到模型（数据位）
-            messages.append(
+            decision_messages.append(
                 {
                     "role": "tool",
                     "tool_call_id": call.id,

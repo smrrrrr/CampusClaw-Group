@@ -8,6 +8,7 @@ import { AuthGate } from "@/components/auth-guard";
 import { AppShell } from "@/components/app-layout";
 import { LogoutButton } from "@/components/logout-button";
 import MarkdownAnswer from "@/components/markdown-answer";
+import { normalizeBackslashMath } from "@/lib/markdown-math";
 import {
   api,
   streamChat,
@@ -18,6 +19,7 @@ import {
   type StudentAssistantConfigDTO,
   type ChatMetaData,
   type StudentHomeworkDTO,
+  type ItemAnswer,
   type MistakeDTO,
   type StudentOverviewDTO,
   type StudentMasteryDTO,
@@ -31,7 +33,6 @@ import { useRecentHistory } from "@/lib/use-recent-history";
 
 type StudentView = "home" | "assistant" | "assignments" | "mistakes" | "analytics";
 
-const DEMO_SUBJECTS = ["数学", "语文", "英语", "物理", "化学"];
 const ASSISTANT_SUBJECTS: { id: AssistantSubject; name: string; icon: string }[] = [
   { id: "math", name: "数学", icon: "🔢" }, { id: "chinese", name: "语文", icon: "📖" },
   { id: "english", name: "英语", icon: "🔤" }, { id: "physics", name: "物理", icon: "⚛️" },
@@ -42,22 +43,28 @@ function StudentDashboard({
   name,
   className,
   onNavigate,
+  materialCount,
   ongoingHomework,
   pendingSubmit,
   mistakeCount,
+  statsFailed,
+  onRetryStats,
 }: {
   name: string;
   className: string;
   onNavigate: (view: string) => void;
-  ongoingHomework: number;
-  pendingSubmit: number;
-  mistakeCount: number;
+  materialCount: number | null;
+  ongoingHomework: number | null;
+  pendingSubmit: number | null;
+  mistakeCount: number | null;
+  statsFailed: boolean;
+  onRetryStats: () => void;
 }) {
   const stats = [
-    { value: "10", label: "本班讲义", tone: "red" },
-    { value: String(ongoingHomework), label: "进行中作业", tone: "blue" },
-    { value: String(pendingSubmit), label: "待提交", tone: "gold" },
-    { value: String(mistakeCount), label: "我的错题", tone: "red" },
+    { value: materialCount, label: "本班讲义", tone: "red" },
+    { value: ongoingHomework, label: "进行中作业", tone: "blue" },
+    { value: pendingSubmit, label: "待提交", tone: "gold" },
+    { value: mistakeCount, label: "我的错题", tone: "red" },
   ];
   const shortcuts = [
     { icon: "💬", title: "向助手提问", detail: "解题引导 · 流式回答 · 引用讲义来源", view: "assistant" },
@@ -75,9 +82,14 @@ function StudentDashboard({
       </div>
       <div className="student-stat-grid">
         {stats.map((stat) => <div className="student-stat-card" key={stat.label}>
-          <strong className={stat.tone}>{stat.value}</strong><span>{stat.label}</span>
+          <strong className={stat.tone}>{stat.value ?? "—"}</strong><span>{stat.label}</span>
         </div>)}
       </div>
+      {statsFailed && (
+        <p role="status" className="hint">
+          部分统计加载失败。<button type="button" className="link-like" onClick={onRetryStats}>重试</button>
+        </p>
+      )}
       <div className="student-section-title"><span />快速开始</div>
       <div className="student-shortcut-grid">
         {shortcuts.map((item) => <button className="student-shortcut-card" key={item.title} onClick={() => onNavigate(item.view)}>
@@ -100,6 +112,7 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [itemDrafts, setItemDrafts] = useState<Record<number, Record<number, string>>>({});
   const [submitting, setSubmitting] = useState<number | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [assignmentTab, setAssignmentTab] = useState<"pending" | "history">("pending");
@@ -120,7 +133,7 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
 
   useEffect(() => {
     contextVersion.current += 1;
-    setHomeworks([]); setAnswers({}); setSubmitting(null); setAssignmentTab("pending"); loadHomeworks();
+    setHomeworks([]); setAnswers({}); setItemDrafts({}); setSubmitting(null); setAssignmentTab("pending"); loadHomeworks();
     return () => { contextVersion.current += 1; loadVersion.current += 1; };
   }, [loadHomeworks]);
 
@@ -130,13 +143,11 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
     : homeworks;
   const filteredHomeworks = subjectHomeworks.filter(hw => isAssignmentHistory(hw) === (assignmentTab === "history"));
 
-  const handleSubmit = async (hw: StudentHomeworkDTO) => {
+  const handleSubmit = async (hw: StudentHomeworkDTO, answer: string | ItemAnswer[]) => {
     const context = contextVersion.current;
-    const text = answers[hw.id] ?? "";
-    if (!text.trim()) return;
     setSubmitting(hw.id);
     try {
-      await api.submitHomework(hw.id, text);
+      await api.submitHomework(hw.id, answer);
       if (context === contextVersion.current) { setAssignmentTab("history"); await loadHomeworks(); }
     } catch (e) {
       if (context === contextVersion.current) setError(e instanceof Error ? e.message : "提交失败");
@@ -168,7 +179,16 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
         {filteredHomeworks.map((hw) => {
           const submitted = hw.status !== "not_submitted";
           const overdue = isOverdue(hw.due_at);
+          const itemInputs = (hw.question_numbers ?? []).map((number) => ({
+            number,
+            answer_text: itemDrafts[hw.id]?.[number] ?? hw.item_answers?.find(item => item.number === number)?.answer_text ?? "",
+          }));
+          const answer = itemInputs.length ? itemInputs : answers[hw.id] ?? "";
+          const hasAnswer = typeof answer === "string" ? !!answer.trim() : answer.some(item => item.answer_text.trim());
           const statusLabel = submitted ? (hw.graded ? "已批改" : "待批改") : (overdue ? "已截止" : "未提交");
+          const hasMistakes = hw.graded && (hw.item_results
+            ? hw.item_results.some((item) => item.earned_score < item.max_score)
+            : (hw.final_score ?? 0) < 60);
           return (
             <article className="student-assignment-card" key={hw.id}>
               <div className="student-assignment-top">
@@ -178,7 +198,7 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
                   {hw.source_type === "quiz"
                     ? <MarkdownAnswer text={hw.content?.stem ?? hw.title} imageUrl={src => api.homeworkAssetUrl(hw.id, src, "student")} />
                     : <p>{hw.content?.stem ?? hw.title}</p>}
-                  {hw.source_type === "quiz" && <p className="hint">原卷总分 {hw.content.original_total} 分，教师终评按百分制。请按题号填写整份答案。</p>}
+                  {hw.source_type === "quiz" && <p className="hint">原卷总分 {hw.content.original_total} 分，教师终评按百分制。</p>}
                   <span className="hint">截止：{hw.due_at ? new Date(hw.due_at).toLocaleString("zh-CN", { hour12: false }) : "无"}</span>
                   {hw.homework_status === "closed" && <p className="hint">作业已关闭，历史记录保留，只可查看。</p>}
                 </div>
@@ -186,32 +206,65 @@ function StudentAssignments({ onNavigate }: { onNavigate: (view: string) => void
               </div>
               {submitted && hw.submission_id && (
                 <>
-                  <div className="student-feedback"><b>我的已提交作答</b><p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{hw.answer_text}</p>{hw.submitted_at && <small>提交于 {new Date(hw.submitted_at).toLocaleString("zh-CN", { hour12: false })}</small>}</div>
+                  <div className="student-feedback">
+                    <b>我的已提交作答</b>
+                    {hw.item_answers ? hw.item_answers.map(item => (
+                      <p key={item.number} style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>第 {item.number} 题：{item.answer_text || "未作答"}</p>
+                    )) : <p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{hw.answer_text}</p>}
+                    {hw.item_answers && <details>
+                      <summary>查看整份作答</summary>
+                      <p style={{ whiteSpace: "pre-wrap" }}>{hw.answer_text}</p>
+                    </details>}
+                    {hw.submitted_at && <small>提交于 {new Date(hw.submitted_at).toLocaleString("zh-CN", { hour12: false })}</small>}
+                  </div>
                   <div className="student-grade-row">
                     <strong className={(hw.final_score ?? 0) < 60 ? "wrong" : ""}>{hw.graded ? hw.final_score : "—"}</strong>
                     <div><b>教师终评</b><span>{hw.graded ? "已批改" : "待教师批改"}</span></div>
                   </div>
                   {hw.feedback && <div className="student-feedback">{hw.feedback}</div>}
-                  {hw.graded && (hw.final_score ?? 0) < 60 && (
+                  {hw.item_results && hw.item_results.length > 0 && (
+                    <div className="student-feedback">
+                      <b>逐题成绩（原卷分）</b>
+                      <ul>
+                        {hw.item_results.map((item) => (
+                          <li key={item.number}>
+                            第 {item.number} 题：{item.earned_score} / {item.max_score} 分
+                            {item.feedback ? ` · ${item.feedback}` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {hasMistakes && (
                     <button className="btn" style={{ width: "auto", marginTop: 12 }} onClick={() => onNavigate("mistakes")}>查看错题讲解</button>
                   )}
                 </>
               )}
               {canSubmitAssignment(hw) && (
                 <>
-                  <div className="student-answer-label">我的作答</div>
-                  <textarea
-                    className="input"
-                    style={{ width: "100%", minHeight: 80, resize: "vertical" }}
-                    placeholder={submitted ? "可修改后重新提交" : "请输入你的答案…"}
-                    value={answers[hw.id] ?? ""}
-                    onChange={(e) => setAnswers((prev) => ({ ...prev, [hw.id]: e.target.value }))}
-                  />
+                  {itemInputs.length ? itemInputs.map(item => (
+                    <label key={item.number} className="student-answer-label" style={{ display: "block" }}>
+                      第 {item.number} 题作答
+                      <textarea className="input" rows={2} style={{ width: "100%", resize: "vertical" }}
+                        value={item.answer_text} disabled={submitting === hw.id}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setItemDrafts(prev => ({ ...prev, [hw.id]: { ...prev[hw.id], [item.number]: value } }));
+                        }} />
+                    </label>
+                  )) : (
+                    <label className="student-answer-label" style={{ display: "block" }}>
+                      我的作答
+                      <textarea className="input" rows={3} style={{ width: "100%", resize: "vertical" }}
+                        value={answers[hw.id] ?? ""} disabled={submitting === hw.id}
+                        onChange={(e) => setAnswers((prev) => ({ ...prev, [hw.id]: e.target.value }))} />
+                    </label>
+                  )}
                   <button
                     className="btn"
                     style={{ width: "auto", marginTop: 8 }}
-                    onClick={() => handleSubmit(hw)}
-                    disabled={submitting === hw.id || !(answers[hw.id] ?? "").trim()}
+                    onClick={() => handleSubmit(hw, answer)}
+                    disabled={submitting !== null || !hasAnswer}
                   >
                     {submitting === hw.id ? "提交中…" : submitted ? "重新提交" : "提交作业"}
                   </button>
@@ -284,7 +337,7 @@ function StudentMistakes({ onNavigate }: { onNavigate: (view: string) => void })
     <div className="student-page">
       <div className="page-title">
         <h2>错题</h2>
-        <p>判错的题目会进入这里，可按学科筛选、标记已掌握，或请 AI 分析错因。</p>
+        <p>教师确认后，试卷未得满分的题按题收录。手工作业和旧总分记录仍按整份收录。</p>
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
         <select className="input" style={{ width: "auto" }} value={subject} onChange={(e) => setSubject(e.target.value)}>
@@ -308,14 +361,18 @@ function StudentMistakes({ onNavigate }: { onNavigate: (view: string) => void })
                 <span className={`student-status ${m.mastered ? "done" : "wrong"}`}>
                   {m.mastered ? "✓ 已掌握" : "❕ 未掌握"} · {m.subject}
                 </span>
-                {m.homework_title && <span style={{ fontSize: 12, color: "#6b7280" }}>来源：{m.homework_title}</span>}
+                {m.homework_title && <span style={{ fontSize: 12, color: "#6b7280" }}>来源：{m.homework_title}{m.question_number != null ? ` · 第 ${m.question_number} 题` : ""}</span>}
               </div>
               <div className="student-answer-label">题目</div>
-              <p>{m.question_stem}</p>
-              {m.student_answer && (
+              {m.question_number != null && m.homework_id != null
+                ? <MarkdownAnswer text={m.question_stem} imageUrl={src => api.homeworkAssetUrl(m.homework_id!, src, "student")} />
+                : <p>{m.question_stem}</p>}
+              {(m.question_number != null || m.student_answer) && (
                 <>
-                  <div className="student-answer-label">我的作答</div>
-                  <div className="student-answer-box">{m.student_answer}</div>
+                  <div className="student-answer-label">{m.question_number != null ? "我的本题作答" : "我的作答"}</div>
+                  <div className="student-answer-box" style={{ whiteSpace: "pre-wrap" }}>
+                    {m.student_answer === "" ? "未作答" : m.student_answer ?? "这份旧作答未能对应题号，可到作业历史查看原文。"}
+                  </div>
                 </>
               )}
               {m.reason && (
@@ -327,8 +384,8 @@ function StudentMistakes({ onNavigate }: { onNavigate: (view: string) => void })
               {explanations[m.id] && (
                 <>
                   <div className="student-answer-label">AI 讲解</div>
-                  <div style={{ whiteSpace: "pre-wrap", background: "#f9fafb", padding: 12, borderRadius: 8, fontSize: 14 }}>
-                    {explanations[m.id]}
+                  <div className="student-answer-box" style={{ overflowX: "auto" }}>
+                    <MarkdownAnswer text={normalizeBackslashMath(explanations[m.id])} allowImages={false} />
                   </div>
                 </>
               )}
@@ -419,6 +476,17 @@ function StudentAnalytics({ name }: { name: string }) {
   </div>;
 }
 
+function McpSuccessBadges({ refs }: { refs: string[] }) {
+  if (!refs.length) return null;
+  return (
+    <div className="student-tool-bar" data-testid="mcp-success">
+      {refs.map((ref) => (
+        <span className="student-tool-chip ok" key={ref}>MCP 调用成功 · {ref}</span>
+      ))}
+    </div>
+  );
+}
+
 function StudentHome() {
   const currentStudent = useAuthStore((s) => s.currentStudent);
   const router = useRouter();
@@ -431,7 +499,9 @@ function StudentHome() {
     ? requestedView
     : "home";
   const studentName = currentStudent?.name ?? "同学";
-  const className = currentStudent?.class_id === 101 ? "高二（1）班" : currentStudent?.class_id === 102 ? "高二（2）班" : `班级 ${currentStudent?.class_id ?? "—"}`;
+  const className = currentStudent?.class_name ?? (currentStudent?.class_id != null
+    ? `班级 ${currentStudent.class_id}`
+    : "未分配班级");
   const navigate = (key: string) => {
     const item = getStudentNavItem(key);
     if (item?.to) router.push(item.to);
@@ -440,23 +510,37 @@ function StudentHome() {
   // 班级数据隔离：未分配班级时展示空状态，不发 API 请求
   const hasClass = currentStudent?.class_id != null;
 
-  // 首页作业统计：进行中作业数、待提交数
-  const [ongoingHomework, setOngoingHomework] = useState(0);
-  const [pendingSubmit, setPendingSubmit] = useState(0);
-  const [mistakeCount, setMistakeCount] = useState(0);
+  const [materialCount, setMaterialCount] = useState<number | null>(null);
+  const [ongoingHomework, setOngoingHomework] = useState<number | null>(null);
+  const [pendingSubmit, setPendingSubmit] = useState<number | null>(null);
+  const [mistakeCount, setMistakeCount] = useState<number | null>(null);
+  const [statsFailed, setStatsFailed] = useState(false);
+  const [statsAttempt, setStatsAttempt] = useState(0);
   useEffect(() => {
-    if (!hasClass) return;
-    api.listStudentHomeworks().then((list) => {
-      const now = Date.now();
-      const ongoing = list.filter((h) => !isAssignmentHistory(h, now)).length;
-      const pending = list.filter((h) => h.status === "not_submitted" && canSubmitAssignment(h, now)).length;
-      setOngoingHomework(ongoing);
-      setPendingSubmit(pending);
-    }).catch(() => { /* 统计加载失败不阻塞 */ });
-    api.listStudentMistakes(undefined, true).then((list) => {
-      setMistakeCount(list.length);
-    }).catch(() => { /* 统计加载失败不阻塞 */ });
-  }, [hasClass, currentStudent?.id]);
+    setMaterialCount(null);
+    setOngoingHomework(null);
+    setPendingSubmit(null);
+    setMistakeCount(null);
+    setStatsFailed(false);
+    if (!hasClass || view !== "home") return;
+    let cancelled = false;
+    Promise.allSettled([
+      api.listMaterials({ limit: 1 }),
+      api.listStudentHomeworks(),
+      api.listStudentMistakes(undefined, true),
+    ]).then(([materials, homeworks, mistakes]) => {
+      if (cancelled) return;
+      if (materials.status === "fulfilled") setMaterialCount(materials.value.total);
+      if (homeworks.status === "fulfilled") {
+        const now = Date.now();
+        setOngoingHomework(homeworks.value.filter((h) => !isAssignmentHistory(h, now)).length);
+        setPendingSubmit(homeworks.value.filter((h) => h.status === "not_submitted" && canSubmitAssignment(h, now)).length);
+      }
+      if (mistakes.status === "fulfilled") setMistakeCount(mistakes.value.length);
+      setStatsFailed([materials, homeworks, mistakes].some((result) => result.status === "rejected"));
+    });
+    return () => { cancelled = true; };
+  }, [hasClass, view, currentStudent?.id, currentStudent?.class_id, statsAttempt]);
 
   // 打开/下载命中的原始文件（标注出处，可回溯原文）
   const openOriginal = (c: AnswerCitation) => {
@@ -637,6 +721,7 @@ function StudentHome() {
             role: "assistant",
             content: d.answer,
             sources: d.citations,
+            tool_refs: d.tool_refs,
             created_at: "",
           },
         ]);
@@ -647,7 +732,7 @@ function StudentHome() {
         setStreaming(false);
         loadConversations();
       },
-      onError: (m, citations) => {
+      onError: (m, citations, toolRefs) => {
         if (version !== subjectVersion.current) return;
         // 已吐出部分内容时保留为答案
         if (acc || citations !== undefined) {
@@ -658,6 +743,7 @@ function StudentHome() {
               role: "assistant",
               content: m,
               sources: citations ?? [],
+              tool_refs: toolRefs,
               created_at: "",
             },
           ]);
@@ -665,6 +751,7 @@ function StudentHome() {
         setError(citations !== undefined ? "生成未完成，已保留可核对的内容与来源。" : m);
         setStreamText("");
         setStreamCites([]);
+        setStreamMeta(null);
         setStreaming(false);
       },
     }).catch((e) => { if (version === subjectVersion.current) { setError(e instanceof Error ? e.message : "网络异常，请重试"); setStreaming(false); } });
@@ -691,7 +778,11 @@ function StudentHome() {
           <div className="student-empty panel"><h2>暂无班级</h2><p>你还未被分配到班级，请联系教师或管理员处理。</p></div>
         </div>
       ) : view === "home" ? (
-        <StudentDashboard name={studentName} className={className} onNavigate={navigate} ongoingHomework={ongoingHomework} pendingSubmit={pendingSubmit} mistakeCount={mistakeCount} />
+        <StudentDashboard
+          name={studentName} className={className} onNavigate={navigate} materialCount={materialCount}
+          ongoingHomework={ongoingHomework} pendingSubmit={pendingSubmit} mistakeCount={mistakeCount}
+          statsFailed={statsFailed} onRetryStats={() => setStatsAttempt((attempt) => attempt + 1)}
+        />
       ) : view === "assignments" ? (
         <StudentAssignments onNavigate={navigate} />
       ) : view === "mistakes" ? (
@@ -835,7 +926,7 @@ function StudentHome() {
                           >
                             {m.role === "user" ? "我" : "AI"}
                           </span>
-                          <div style={{ flex: 1 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             {m.role === "user" ? (
                               <div
                                 style={{
@@ -850,6 +941,7 @@ function StudentHome() {
                               </div>
                             ) : (
                               <>
+                                <McpSuccessBadges refs={m.tool_refs ?? []} />
                                 <div style={{ background: "#fff", padding: 8, borderRadius: 8, fontSize: 14 }}>
                                   <MarkdownAnswer text={m.content} />
                                 </div>
@@ -904,7 +996,7 @@ function StudentHome() {
                             <span className="student-tool-skill">🧩 {streamMeta.skill?.name}</span>
                             {(streamMeta.tool_calls ?? []).map((tc, i) => (
                               <span key={i} className={`student-tool-chip ${tc.status}`} title={tc.reason ?? ""}>
-                                {tc.ref} · {tc.status === "ok" ? "成功" : tc.status === "denied" ? "被拒" : "错误"}
+                                {tc.status === "ok" ? "MCP 调用成功" : tc.status === "denied" ? "被拒" : "错误"} · {tc.ref}
                               </span>
                             ))}
                           </div>

@@ -5,11 +5,11 @@ import logging
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import or_, text
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from config import settings
-from database import SessionLocal
+from database import SessionLocal, begin_write
 import homework_service as homework
 from models import GradeTask, HomeworkSubmission
 
@@ -27,13 +27,6 @@ def iso(value):
     if value.tzinfo:
         value = value.astimezone(timezone.utc).replace(tzinfo=None)
     return value.isoformat() + "Z"
-
-
-def begin_write(db: Session):
-    """SQLite先取短写锁，避免并发请求从读事务升级造成BUSY。"""
-    db.rollback()
-    if db.bind.dialect.name == "sqlite":
-        db.execute(text("BEGIN IMMEDIATE"))
 
 
 def serialize(task):
@@ -62,6 +55,9 @@ def enqueue_homework(db, ctx, homework_id, request_id):
                 continue
             snapshot = {"answer_text": sub.answer_text, "submitted_at": iso(sub.submitted_at),
                         "source_type": hw.source_type, "stem": stem, "grading": grading}
+            item_answers = homework.stored_item_answers(sub)
+            if item_answers is not None:
+                snapshot["item_answers"] = item_answers
             encoded = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             fingerprint = hashlib.sha256(encoded.encode()).hexdigest()
             task = existing_tasks.get((sub.id, fingerprint))
@@ -152,7 +148,8 @@ def recover_pending_deliveries(db):
 
 def matches(sub, snapshot):
     return (sub is not None and sub.status == "pending" and sub.answer_text == snapshot["answer_text"]
-            and iso(sub.submitted_at) == snapshot["submitted_at"])
+            and iso(sub.submitted_at) == snapshot["submitted_at"]
+            and homework.stored_item_answers(sub) == snapshot.get("item_answers"))
 
 
 def finish(db, task_id, claim, snapshot, result=None, failed=False):
@@ -170,7 +167,8 @@ def finish(db, task_id, claim, snapshot, result=None, failed=False):
         task.next_attempt_at = now() + timedelta(seconds=settings.grading_retry_base_seconds * 2 ** (task.execution_count - 1))
         task.last_published_at = None
     else:
-        sub.ai_score, sub.ai_feedback, sub.ai_graded_at = result[0], result[1], now()
+        sub.ai_score, sub.ai_feedback, sub.ai_graded_at = result.score, result.feedback, now()
+        sub.ai_item_results_json = json.dumps(result.items, ensure_ascii=False) if result.items else None
         sub.status = "ai_graded"
         task.status, task.error = "succeeded", None
     task.claim_token = task.lease_until = None

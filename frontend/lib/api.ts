@@ -17,40 +17,57 @@ interface RequestOptions {
   skipAuthRefresh?: boolean;
 }
 
-let refreshingPromise: Promise<boolean> | null = null;
+type SessionRole = "teacher" | "student";
+const SESSION_ROLE_KEY = "cc-session-role";
+const refreshing = new Map<SessionRole | undefined, Promise<boolean>>();
 
-export async function refreshAccessToken(): Promise<boolean> {
-  // 并发请求只触发一次刷新
-  if (refreshingPromise) return refreshingPromise;
+export function getTabSessionRole(): SessionRole | undefined {
+  try {
+    const value = window.sessionStorage.getItem(SESSION_ROLE_KEY);
+    if (value === "teacher" || value === "student") return value;
+  } catch { /* 本地存储不可用时按页面角色恢复 */ }
+}
 
-  refreshingPromise = (async () => {
+export async function refreshAccessToken(requestedRole?: SessionRole): Promise<boolean> {
+  const before = useAuthStore.getState();
+  const role = requestedRole ?? before.userRole ?? getTabSessionRole();
+  const inFlight = refreshing.get(role);
+  if (inFlight) return inFlight;
+
+  const promise = (async () => {
     try {
       const res = await fetch("/api/auth/refresh", {
         method: "POST",
         credentials: "include",
+        headers: role ? { "X-Session-Role": role } : undefined,
       });
       if (!res.ok) return false;
       const data = await res.json();
       const user: UserInfoDTO = data.user;
+      if (role && role !== user.role) return false;
+      if (useAuthStore.getState().accessToken !== before.accessToken) return false;
       useAuthStore.getState().setSession({
         accessToken: data.access_token,
         userRole: user.role,
         mustChangePassword: data.must_change_password,
-        currentStudent: user.role === "student" ? { id: user.id, name: user.name, class_id: user.class_id } : null,
+        currentStudent: user.role === "student"
+          ? { id: user.id, name: user.name, class_id: user.class_id, class_name: user.class_name }
+          : null,
         teachingClasses: user.teaching_classes ?? null,
         subject: user.subject ?? null,
         homeroomClassId: user.homeroom_class_id ?? null,
       });
-      setRoleCookies(user.role);
+      rememberTabSessionRole(user.role);
       return true;
     } catch {
       return false;
     } finally {
-      refreshingPromise = null;
+      refreshing.delete(role);
     }
   })();
 
-  return refreshingPromise;
+  refreshing.set(role, promise);
+  return promise;
 }
 
 export async function apiRequest<T = unknown>(
@@ -110,6 +127,7 @@ export interface UserInfoDTO {
   role: "teacher" | "student";
   name: string | null;
   class_id: number | null;
+  class_name?: string | null;
   must_change_password: boolean;
   teaching_classes?: number[] | null;
   subject?: string | null;
@@ -124,13 +142,13 @@ export interface TokenDTO {
   user: UserInfoDTO;
 }
 
-/** 设置/清除用于 middleware 路由守卫的辅助 Cookie（非 HttpOnly，仅前端路由用）。 */
-export function setRoleCookies(role: "teacher" | "student") {
-  document.cookie = `cc_role=${role}; path=/; max-age=${7 * 24 * 60 * 60}`;
-  document.cookie = "cc_has_token=1; path=/; max-age=" + 7 * 24 * 60 * 60;
+/** 标签页角色提示不包含任何凭据。 */
+export function rememberTabSessionRole(role: "teacher" | "student") {
+  try { window.sessionStorage.setItem(SESSION_ROLE_KEY, role); } catch { /* 可用页面角色恢复 */ }
 }
 
-export function clearRoleCookies() {
+export function clearTabSessionRole() {
+  try { window.sessionStorage.removeItem(SESSION_ROLE_KEY); } catch { /* 无会话提示 */ }
   document.cookie = "cc_role=; path=/; max-age=0";
   document.cookie = "cc_has_token=; path=/; max-age=0";
 }
@@ -388,18 +406,22 @@ export const api = {
     apiRequest<{ task_ids: number[]; created_count: number; existing_count: number; skipped_count: number }>(`/api/teacher/homeworks/${homeworkId}/ai-grade`, { method: "POST" }),
   listGradeTasks: (homeworkId: number) => apiRequest<GradeTaskDTO[]>(`/api/teacher/homeworks/${homeworkId}/grade-tasks`),
   retryGradeTask: (id: number) => apiRequest<GradeTaskDTO>(`/api/teacher/grade-tasks/${id}/retry`, { method: "POST" }),
-  gradeSubmission: (submissionId: number, score: number, feedback: string | null) =>
+  gradeSubmission: (submissionId: number, body: {
+    score?: number; feedback: string | null; submission_version?: string | null; item_results?: ItemGradeInput[];
+  }) =>
     apiRequest<{ id: number; teacher_score: number; teacher_feedback: string; status: string }>(
-      `/api/teacher/submissions/${submissionId}/grade`, { method: "PUT", body: { score, feedback } }),
+      `/api/teacher/submissions/${submissionId}/grade`, { method: "PUT", body }),
 
   // --- 作业批改（学生）---
   listStudentHomeworks: () =>
     apiRequest<StudentHomeworkDTO[]>("/api/student/homeworks"),
-  submitHomework: (homeworkId: number, answerText: string) =>
+  submitHomework: (homeworkId: number, answer: string | ItemAnswer[]) =>
     apiRequest<{ id: number; status: string; submitted_at: string | null }>(
-      `/api/student/homeworks/${homeworkId}/submit`, { method: "POST", body: { answer_text: answerText } }),
+      `/api/student/homeworks/${homeworkId}/submit`, {
+        method: "POST", body: typeof answer === "string" ? { answer_text: answer } : { item_answers: answer },
+      }),
   getSubmission: (submissionId: number) =>
-    apiRequest<{ id: number; answer_text: string; submitted_at: string | null; final_score: number | null; feedback: string | null; status: string }>(
+    apiRequest<{ id: number; answer_text: string; item_answers?: ItemAnswer[] | null; submitted_at: string | null; final_score: number | null; feedback: string | null; status: string; item_results?: ItemGradeResult[] | null }>(
       `/api/student/submissions/${submissionId}`),
 
   // --- 错题本（学生）---
@@ -490,15 +512,34 @@ export interface GradeTaskDTO {
   next_attempt_at: string;
 }
 
+export interface ItemGradeInput {
+  number: number;
+  earned_score: number;
+  feedback: string;
+}
+
+export interface ItemGradeResult extends ItemGradeInput {
+  max_score: number;
+}
+
+export interface ItemAnswer {
+  number: number;
+  answer_text: string;
+}
+
 export interface HomeworkSubmissionDTO {
   id: number;
   student_id: number;
   answer_text: string;
+  item_answers?: ItemAnswer[] | null;
   submitted_at: string | null;
+  submission_version: string | null;
   ai_score: number | null;
   ai_feedback: string | null;
+  ai_item_results?: ItemGradeResult[] | null;
   teacher_score: number | null;
   teacher_feedback: string | null;
+  teacher_item_results?: ItemGradeResult[] | null;
   status: string;
 }
 
@@ -512,11 +553,14 @@ export interface StudentHomeworkDTO {
   status: string;
   homework_status: string;
   answer_text: string | null;
+  question_numbers?: number[];
+  item_answers?: ItemAnswer[] | null;
   submitted_at: string | null;
   submission_id: number | null;
   final_score: number | null;
   feedback: string | null;
   graded: boolean;
+  item_results?: ItemGradeResult[] | null;
 }
 
 export interface MistakeDTO {
@@ -527,6 +571,7 @@ export interface MistakeDTO {
   reason: string | null;
   homework_id: number | null;
   homework_title: string | null;
+  question_number?: number | null;
   mastered: boolean;
   mastered_at: string | null;
   created_at: string | null;
@@ -671,6 +716,7 @@ export interface ConversationMessageDTO {
   role: "user" | "assistant";
   content: string;
   sources: AnswerCitation[];
+  tool_refs?: string[];
   created_at: string;
 }
 
@@ -678,6 +724,7 @@ export interface ChatDoneData {
   answer: string;
   citations: AnswerCitation[];
   remaining: number;
+  tool_refs?: string[];
 }
 
 // --- MCP 与技能（add-mcp-tool-integration）---
@@ -845,7 +892,7 @@ interface ChatStreamCallbacks {
   onMeta?: (data: ChatMetaData) => void;
   onDelta?: (text: string) => void;
   onDone?: (data: ChatDoneData) => void;
-  onError?: (message: string, citations?: AnswerCitation[]) => void;
+  onError?: (message: string, citations?: AnswerCitation[], toolRefs?: string[]) => void;
 }
 
 /** 向某会话发起流式提问；通过 fetch 读取 SSE，按事件分发 delta / done / error。 */
@@ -904,8 +951,8 @@ export async function streamChat(
         if (evt.type === "meta") cb.onMeta?.({ skill: evt.skill ?? { name: "" }, tool_calls: evt.tool_calls });
         else if (evt.type === "delta") cb.onDelta?.(evt.content ?? "");
         else if (evt.type === "done")
-          cb.onDone?.({ answer: evt.answer ?? "", citations: evt.citations ?? [], remaining: evt.remaining ?? 0 });
-        else if (evt.type === "error") cb.onError?.(evt.message ?? "AI 响应异常", evt.citations);
+          cb.onDone?.({ answer: evt.answer ?? "", citations: evt.citations ?? [], remaining: evt.remaining ?? 0, tool_refs: evt.tool_refs });
+        else if (evt.type === "error") cb.onError?.(evt.message ?? "AI 响应异常", evt.citations, evt.tool_refs);
       } catch {
         // 忽略非 JSON 的 SSE 行
       }

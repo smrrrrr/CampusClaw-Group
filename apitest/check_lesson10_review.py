@@ -284,13 +284,30 @@ def run(folder: Path):
 
         # ---- 学生首页班级 / 未分班空状态 / 资料班级来源 -------------------
         student_page = (ROOT / "frontend/app/student/page.tsx").read_text(encoding="utf-8")
+        with SessionLocal() as db:
+            db.get(Class, 102).name = "重命名的测试班"
+            db.commit()
+        renamed_session = client.post("/api/auth/login", json={"identifier": "S2", "password": "Test@2026"})
         check("学生首页展示本人班级：班级名取自本人会话且无班级选择器",
-              "const className = currentStudent?.class_id === 101" in student_page
+              renamed_session.json()["user"]["class_name"] == "重命名的测试班"
+              and "const className = currentStudent?.class_name" in student_page
               and "className={className}" in student_page
               and "班级选择器" not in student_page)
+        before = client.get("/api/materials?limit=1", headers=headers("S2")).json()["total"]
+        first_class = client.get("/api/materials?limit=1", headers=headers("S1")).json()["total"]
+        uploaded = upload("T1", 102)
+        after = client.get("/api/materials?limit=1", headers=headers("S2")).json()["total"]
+        check("学生首页讲义总数随本班新增资料变化且另一班不变",
+              uploaded.status_code == 200 and after == before + 1
+              and client.get("/api/materials?limit=1", headers=headers("S1")).json()["total"] == first_class
+              and "setMaterialCount(materials.value.total)" in student_page)
+        unassigned_token = login("NOCLASS")
+        unassigned_materials = client.get("/api/materials?limit=1", headers={"Authorization": "Bearer " + unassigned_token})
         check("未分班学生访问：空状态且不请求班级资料",
-              "const hasClass = currentStudent?.class_id != null;" in student_page
-              and "if (!hasClass) return;" in student_page
+              unassigned_materials.status_code == 403
+              and "const hasClass = currentStudent?.class_id != null;" in student_page
+              and student_page.index('if (!hasClass || view !== "home") return;')
+              < student_page.index("api.listMaterials({ limit: 1 })")
               and "你还未被分配到班级" in student_page)
         materials_page = (ROOT / "frontend/app/materials/page.tsx").read_text(encoding="utf-8")
         check("学生资料请求使用本人班级：学生端固定取本人 class_id，不提供跨班切换",

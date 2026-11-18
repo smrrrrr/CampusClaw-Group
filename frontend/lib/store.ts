@@ -6,6 +6,7 @@ export interface StudentInfo {
   id: number;
   name: string | null;
   class_id: number | null;
+  class_name?: string | null;
 }
 
 interface AuthState {

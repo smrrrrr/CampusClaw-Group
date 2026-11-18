@@ -22,6 +22,7 @@ from homework_service import (
     UserContext,
     close_homework,
     create_homework,
+    final_item_results,
     get_student_submission,
     get_teacher_homework,
     get_homework_asset,
@@ -29,6 +30,8 @@ from homework_service import (
     list_student_homeworks,
     list_teacher_homeworks,
     publish_homework,
+    quiz_question_numbers,
+    submission_item_answers,
     submit_homework,
     teacher_grade_submission,
 )
@@ -72,13 +75,37 @@ class CreateHomeworkRequest(BaseModel):
     due_at: datetime
 
 
+class ItemAnswer(BaseModel):
+    number: int = Field(ge=1, strict=True)
+    answer_text: str
+
+
 class SubmitHomeworkRequest(BaseModel):
-    answer_text: str = Field(..., min_length=1)
+    answer_text: str | None = Field(default=None, min_length=1)
+    item_answers: list[ItemAnswer] | None = None
+
+
+class SubmissionReceipt(BaseModel):
+    id: int
+    status: str
+    submitted_at: str | None
+
+
+class ItemGradeRequest(BaseModel):
+    number: int = Field(ge=1, strict=True)
+    earned_score: float = Field(ge=0, strict=True, allow_inf_nan=False)
+    feedback: str = Field(default="", max_length=300)
+
+
+class ItemGradeResult(ItemGradeRequest):
+    max_score: float
 
 
 class GradeSubmissionRequest(BaseModel):
-    score: int = Field(..., ge=0, le=100, strict=True)
+    score: int | None = Field(default=None, ge=0, le=100, strict=True)
     feedback: str | None = None
+    item_results: list[ItemGradeRequest] | None = Field(default=None, max_length=200)
+    submission_version: str | None = None
 
 
 class HomeworkContent(BaseModel):
@@ -109,11 +136,22 @@ class StudentHomeworkItem(BaseModel):
     status: str
     homework_status: str
     answer_text: str | None
+    question_numbers: list[int]
+    item_answers: list[ItemAnswer] | None
     submitted_at: str | None
     submission_id: int | None
     final_score: int | None
     feedback: str | None
     graded: bool
+    item_results: list[ItemGradeResult] | None = None
+
+
+class StudentSubmissionDetail(SubmissionReceipt):
+    answer_text: str
+    item_answers: list[ItemAnswer] | None
+    final_score: int | None
+    feedback: str | None
+    item_results: list[ItemGradeResult] | None
 
 
 class AiGradeResult(BaseModel):
@@ -304,7 +342,9 @@ def api_grade_submission(
 ):
     try:
         sub = teacher_grade_submission(
-            db, _teacher_ctx(current), submission_id, req.score, req.feedback
+            db, _teacher_ctx(current), submission_id, req.score, req.feedback,
+            item_results=[item.model_dump() for item in req.item_results] if req.item_results is not None else None,
+            submission_version=req.submission_version,
         )
     except HomeworkServiceError as e:
         _raise(e)
@@ -315,6 +355,7 @@ def api_grade_submission(
         "id": sub.id,
         "teacher_score": sub.teacher_score,
         "teacher_feedback": sub.teacher_feedback,
+        "item_results": final_item_results(sub),
         "status": sub.status,
     }
 
@@ -351,7 +392,7 @@ def api_student_homework_asset(homework_id: int, name: str = Query(min_length=1,
         _raise(e)
 
 
-@router.post("/student/homeworks/{homework_id}/submit")
+@router.post("/student/homeworks/{homework_id}/submit", response_model=SubmissionReceipt, summary="提交本人作业")
 def api_submit_homework(
     homework_id: int,
     req: SubmitHomeworkRequest,
@@ -359,7 +400,8 @@ def api_submit_homework(
     db: Session = Depends(get_db),
 ):
     try:
-        sub = submit_homework(db, _student_ctx(current), homework_id, req.answer_text)
+        answers = [item.model_dump() for item in req.item_answers] if req.item_answers is not None else None
+        sub = submit_homework(db, _student_ctx(current), homework_id, req.answer_text, answers)
     except HomeworkServiceError as e:
         _raise(e)
     return {
@@ -369,21 +411,23 @@ def api_submit_homework(
     }
 
 
-@router.get("/student/submissions/{submission_id}")
+@router.get("/student/submissions/{submission_id}", response_model=StudentSubmissionDetail, summary="读取本人作答与批改结果")
 def api_get_submission(
     submission_id: int,
     current: CurrentUser = Depends(get_current_student),
     db: Session = Depends(get_db),
 ):
     try:
-        sub = get_student_submission(db, _student_ctx(current), submission_id)
+        sub, hw = get_student_submission(db, _student_ctx(current), submission_id)
     except HomeworkServiceError as e:
         _raise(e)
     return {
         "id": sub.id,
         "answer_text": sub.answer_text,
+        "item_answers": submission_item_answers(sub, quiz_question_numbers(hw)),
         "submitted_at": sub.submitted_at.isoformat() if sub.submitted_at else None,
         "final_score": sub.teacher_score if sub.teacher_score is not None else sub.ai_score,
         "feedback": sub.teacher_feedback if sub.teacher_feedback is not None else sub.ai_feedback,
+        "item_results": final_item_results(sub),
         "status": sub.status,
     }

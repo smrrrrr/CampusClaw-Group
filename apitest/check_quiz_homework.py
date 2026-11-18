@@ -222,12 +222,20 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
         captured = []
         def fake_grade(question, context, **kwargs):
             captured.append(question)
-            return json.dumps({"earned_score": 64, "feedback": "作答基本正确"})
+            return json.dumps({"items": [
+                {"number": 1, "earned_score": 24, "feedback": "部分正确"},
+                {"number": 2, "earned_score": 40, "feedback": "正确"},
+            ], "feedback": "作答基本正确"})
         hs.generate_answer = fake_grade
         response = run_grade(h1)
         check("H/AI 使用发布时的评分依据", response["graded_count"] == 1
               and "PRIVATE_ANSWER_TOKEN" in captured[0] and "PRIVATE_RUBRIC_TOKEN" in captured[0])
         check("H/非百分制原卷折算", request("GET", f"/api/teacher/homeworks/{h1}/submissions").json()[0]["ai_score"] == 80)
+        ai_record = next(row for row in request("GET", f"/api/teacher/homeworks/{h1}/submissions").json() if row["id"] == submission)
+        not_final = request("GET", f"/api/student/submissions/{submission}", "s1").json()
+        check("逐题 AI 建议持久化，未确认时学生看不到逐题终评",
+              [row["earned_score"] for row in ai_record["ai_item_results"]] == [24, 40]
+              and not_final["item_results"] is None)
         for raw, expected in ((0, 0), (0.4, 1), (80, 100)):
             check("H/分数折算边界：" + str(raw), hs.quiz_percentage_score(raw, 80) == expected)
         for invalid in (-1, 81, True, "64", float("nan"), float("inf")):
@@ -255,6 +263,138 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
             check("H/教师直接评分并联动错题学情", note.student_answer == "错误答案"
                   and request("GET", "/api/student/analytics/overview", "s3").json()["accuracy"] == 55)
         check("H/手工作业仍可人工评分", grade(submit(manual).json()["id"], 90).status_code == 200)
+        three = make_paper("三题逐题批改", count=3)
+        three_hw = publish(three).json()["homework_ids"][0]
+        graded_id = submit(three_hw, "1.B 2.B 3.1/2").json()["id"]
+        version = request("GET", f"/api/teacher/homeworks/{three_hw}/submissions").json()[0]["submission_version"]
+        grade_path = f"/api/teacher/submissions/{graded_id}/grade"
+        items = [
+            {"number": 1, "earned_score": 0, "feedback": "核对垂直条件"},
+            {"number": 2, "earned_score": 5, "feedback": ""},
+            {"number": 3, "earned_score": 5, "feedback": ""},
+        ]
+        item_payload = {"item_results": items, "submission_version": version, "feedback": "请复习第一题"}
+        for label, invalid_items in (
+            ("缺题", items[:-1]),
+            ("重号", [items[0], items[0], items[2]]),
+            ("未知题号", [{**items[0], "number": 4}, *items[1:]]),
+            ("越界", [{**items[0], "earned_score": 6}, *items[1:]]),
+        ):
+            rejected = request("PUT", grade_path, json={**item_payload, "item_results": invalid_items})
+            check("逐题终评拒绝" + label, rejected.status_code == 400)
+        check("逐题终评沿用班级与学科授权",
+              all(request("PUT", grade_path, who, json=item_payload).status_code == 404 for who in ("outsider", "physics")))
+        check("拒绝后不保存任何成绩",
+              request("GET", f"/api/student/submissions/{graded_id}", "s1").json()["final_score"] is None)
+        from sqlalchemy import event
+        from sqlalchemy.exc import SQLAlchemyError
+
+        def fail_mistake_insert(conn, cursor, statement, parameters, context, many):
+            if statement.startswith("INSERT INTO mistake_notes"):
+                raise SQLAlchemyError("合成错题写入失败")
+
+        event.listen(engine, "before_cursor_execute", fail_mistake_insert)
+        try:
+            failed_save = request("PUT", grade_path, json=item_payload)
+        finally:
+            event.remove(engine, "before_cursor_execute", fail_mistake_insert)
+        check("错题写入失败时逐题终评和总分同事务回滚",
+              failed_save.status_code == 503
+              and request("GET", f"/api/student/submissions/{graded_id}", "s1").json()["final_score"] is None)
+        confirmed = request("PUT", grade_path, json=item_payload)
+        repeated = request("PUT", grade_path, json=item_payload)
+        detail_after = request("GET", f"/api/student/submissions/{graded_id}", "s1").json()
+        own_work = next(row for row in request("GET", "/api/student/homeworks", "s1").json() if row["id"] == three_hw)
+        check("教师确认0、5、5折算67且学生列表和详情逐题一致",
+              confirmed.status_code == 200 and repeated.status_code == 200
+              and detail_after["final_score"] == 67 and detail_after["item_results"] == own_work["item_results"]
+              and [item["earned_score"] for item in own_work["item_results"]] == [0, 5, 5])
+        check("其他学生无法读取逐题成绩，学生响应不含私有答案",
+              request("GET", f"/api/student/submissions/{graded_id}", "s2").status_code == 404
+              and "PRIVATE_ANSWER_TOKEN" not in json.dumps(own_work))
+
+        def three_mistakes():
+            notes = request("GET", "/api/student/mistakes", "s1").json()
+            return [note for note in notes if note["homework_id"] == three_hw]
+
+        notes = three_mistakes()
+        check("及格试卷只收录第一题，重复确认不重复，旧整份清理忽略逐题记录",
+              len(notes) == 1 and notes[0]["question_number"] == 1 and notes[0]["reason"] == "核对垂直条件"
+              and "PRIVATE_ANSWER_TOKEN" not in notes[0]["question_stem"])
+        with SessionLocal() as db:
+            db.get(MistakeNote, notes[0]["id"]).student_answer = "1.B 2.B 3.1/2"
+            db.commit()
+        check("旧错题的整份文本只取对应题号，历史仍保留原文",
+              three_mistakes()[0]["student_answer"] == "B" and detail_after["answer_text"] == "1.B 2.B 3.1/2"
+              and [item["answer_text"] for item in own_work["item_answers"]] == ["B", "B", "1/2"])
+        with SessionLocal() as db:
+            check("旧整份错题清理不会误删及格试卷的逐题错题",
+                  all(note.homework_id != three_hw for note in hs.resolved_homework_mistakes(db)))
+        full = [{**items[0], "earned_score": 5}, *items[1:]]
+        check("第1题改成满分后移除错题",
+              request("PUT", grade_path, json={**item_payload, "item_results": full}).json()["teacher_score"] == 100
+              and three_mistakes() == [])
+        check("学生重交后旧页面逐题终评被拒",
+              submit(three_hw, "订正后的答案").status_code == 200
+              and request("PUT", grade_path, json=item_payload).status_code == 409
+              and request("GET", f"/api/student/submissions/{graded_id}", "s1").json()["item_results"] is None)
+        check("旧作答题号不明确时保留原文，不猜测对应题",
+              request("GET", f"/api/student/submissions/{graded_id}", "s1").json()["item_answers"] is None
+              and request("GET", f"/api/student/submissions/{graded_id}", "s1").json()["answer_text"] == "订正后的答案")
+
+        submit_path = f"/api/student/homeworks/{three_hw}/submit"
+        read_path = f"/api/student/submissions/{graded_id}"
+        teacher_path = f"/api/teacher/homeworks/{three_hw}/submissions"
+        answers = [{"number": 1, "answer_text": "第一题答案\n第二行"},
+                   {"number": 2, "answer_text": ""}, {"number": 3, "answer_text": "C"}]
+        receipt = request("POST", submit_path, "s1", json={"item_answers": answers[::-1]})
+        check("提交并读取逐题作答", receipt.status_code == 200 and receipt.json()["id"] == graded_id
+              and request("GET", read_path, "s1").json()["item_answers"] == answers
+              and request("GET", teacher_path).json()[0]["item_answers"] == answers)
+        student_homework = next(row for row in request("GET", "/api/student/homeworks", "s1").json() if row["id"] == three_hw)
+        with SessionLocal() as db:
+            check("学生历史显示冻结题号与数据库保存的答案",
+                  student_homework["question_numbers"] == [1, 2, 3] and student_homework["item_answers"] == answers
+                  and json.loads(db.get(HomeworkSubmission, graded_id).item_answers_json) == answers)
+        for label, malformed in (
+            ("漏题", answers[:2]), ("重号", [answers[0], answers[0], answers[2]]),
+            ("错误题号", [*answers[:2], {"number": 5, "answer_text": "D"}]),
+            ("全部空白", [{"number": i, "answer_text": " "} for i in range(1, 4)]),
+        ):
+            check("拒绝逐题提交：" + label,
+                  request("POST", submit_path, "s1", json={"item_answers": malformed}).status_code == 400)
+        check("逐题作答沿用认证、班级和本人隔离",
+              request("POST", submit_path, None, json={"item_answers": answers}).status_code == 401
+              and request("POST", submit_path, "s2", json={"item_answers": answers}).status_code == 404
+              and request("GET", read_path, "s3").status_code == 404
+              and request("GET", read_path, "s1").json()["item_answers"] == answers)
+
+        model_answers = []
+        def model_for_items(question, *args, **kwargs):
+            model_answers.append(json.loads(question)["student_answer"])
+            return json.dumps({"items": [{**item, "earned_score": 0} if item["number"] == 2 else item
+                                         for item in items]})
+        hs.generate_answer = model_for_items
+        check("初批冻结逐题作答，保留未答题", run_grade(three_hw)["graded_count"] == 1 and model_answers == [answers])
+        version = request("GET", teacher_path).json()[0]["submission_version"]
+        two_wrong = [items[0], {**items[1], "earned_score": 0}, items[2]]
+        result = request("PUT", grade_path, json={"submission_version": version, "item_results": two_wrong})
+        saved_notes = {note["question_number"]: note for note in three_mistakes()}
+        check("按题查看错题作答及未作答状态", result.status_code == 200 and set(saved_notes) == {1, 2}
+              and saved_notes[1]["student_answer"] == answers[0]["answer_text"] and saved_notes[2]["student_answer"] == "")
+        import mistake_service
+        explanation_inputs = []
+        saved_generate = mistake_service.generate_answer
+        def explain_with_fixture(question, *_args, **_kwargs):
+            explanation_inputs.append(question)
+            return "合成讲解"
+        mistake_service.generate_answer = explain_with_fixture
+        try:
+            explanation = request("POST", f"/api/student/mistakes/{saved_notes[1]['id']}/explain", "s1")
+        finally:
+            mistake_service.generate_answer = saved_generate
+        check("错题讲解只输入当前题作答", explanation.status_code == 200 and len(explanation_inputs) == 1
+              and explanation_inputs[0].split("学生作答：", 1)[1].split("\n教师评语", 1)[0] == answers[0]["answer_text"])
         twelve = make_paper("12题排版", count=12)
         twelve_hw = publish(twelve).json()["homework_ids"][0]
         twelve_text = request("GET", f"/api/teacher/homeworks/{twelve_hw}").json()["content"]["stem"]
@@ -266,7 +406,7 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
                 sub.answer_text = "新答案"
                 sub.submitted_at = datetime.now(timezone.utc)
                 db.commit()
-            return '{"earned_score":30,"feedback":"旧结果"}'
+            return json.dumps({"items": [{"number": i, "earned_score": 2.5} for i in range(1, 13)], "feedback": "旧结果"})
         hs.generate_answer = resubmit_during_grade
         check("H/初批期间提交被更新或教师改分：重交", run_grade(twelve_hw)["skipped_count"] == 1)
         def teacher_during_grade(*args, **kwargs):
@@ -274,7 +414,7 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
                 sub = db.get(HomeworkSubmission, moving)
                 sub.status, sub.teacher_score = "teacher_graded", 91
                 db.commit()
-            return '{"earned_score":30,"feedback":"旧结果"}'
+            return json.dumps({"items": [{"number": i, "earned_score": 2.5} for i in range(1, 13)], "feedback": "旧结果"})
         hs.generate_answer = teacher_during_grade
         check("H/初批期间提交被更新或教师改分：教师终评", run_grade(twelve_hw)["skipped_count"] == 1
               and request("GET", f"/api/student/submissions/{moving}", "s1").json()["final_score"] == 91)
@@ -382,6 +522,11 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
     scores_before = old.execute("SELECT id,answer_text,teacher_score,ai_score FROM homework_submissions ORDER BY id").fetchall()
     accounts_before = old.execute("SELECT id,identifier,password_hash FROM users ORDER BY id").fetchall()
     material_before = old.execute("SELECT id,file_path,filename FROM materials ORDER BY id").fetchall()
+    old.execute("DROP INDEX uq_mistake_note_homework_question")
+    old.execute("ALTER TABLE mistake_notes DROP COLUMN question_number")
+    old.execute("ALTER TABLE homework_submissions DROP COLUMN ai_item_results_json")
+    old.execute("ALTER TABLE homework_submissions DROP COLUMN teacher_item_results_json")
+    old.execute("ALTER TABLE homework_submissions DROP COLUMN item_answers_json")
     old.execute("DROP TABLE homework_assets")
     old.execute("DROP TABLE homeworks")
     old.execute("CREATE TABLE homeworks(id INTEGER PRIMARY KEY,class_id INTEGER NOT NULL,subject TEXT NOT NULL,"
@@ -405,6 +550,9 @@ with tempfile.TemporaryDirectory(prefix="quiz-homework-test-", ignore_cleanup_er
               and migrated.execute("SELECT id,answer_text,teacher_score,ai_score FROM homework_submissions ORDER BY id").fetchall() == scores_before
               and migrated.execute("SELECT id,identifier,password_hash FROM users ORDER BY id").fetchall() == accounts_before
               and migrated.execute("SELECT id,file_path,filename FROM materials ORDER BY id").fetchall() == material_before
+              and migrated.execute("SELECT COUNT(*) FROM homework_submissions WHERE ai_item_results_json IS NOT NULL OR teacher_item_results_json IS NOT NULL").fetchone()[0] == 0
+              and migrated.execute("SELECT COUNT(*) FROM homework_submissions WHERE item_answers_json IS NOT NULL").fetchone()[0] == 0
+              and migrated.execute("SELECT COUNT(*) FROM sqlite_master WHERE name='uq_mistake_note_homework_question'").fetchone()[0] == 1
               and migrated.execute("SELECT COUNT(*) FROM homeworks WHERE source_type<>'manual'").fetchone()[0] == 0)
     engine.dispose()
 

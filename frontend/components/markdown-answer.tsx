@@ -67,7 +67,11 @@ function normalizeLatex(text: string): string {
  * 渲染 AI 回答 / 资料预览：Markdown（加粗/列表） + KaTeX（LaTeX 数学公式）。
  * 用于学生端 AI 解题助手与讲义预览，让公式以真正的数学符号展示而非源码。
  */
-export default function MarkdownAnswer({ text, imageUrl }: { text: string; imageUrl?: (src: string) => string }) {
+export default function MarkdownAnswer({ text, imageUrl, allowImages = true }: {
+  text: string;
+  imageUrl?: (src: string) => string;
+  allowImages?: boolean;
+}) {
   const components = useMemo(() => imageUrl ? { img: ({ src, alt }: { src?: string; alt?: string }) => {
     if (!src) return null;
     try { return <AuthenticatedImage url={imageUrl(src)} alt={alt ?? "讲义配图"} />; }
@@ -75,7 +79,8 @@ export default function MarkdownAnswer({ text, imageUrl }: { text: string; image
   } } : undefined, [imageUrl]);
   return (
     <div className="markdown-body" style={{ lineHeight: 1.8, fontSize: 14 }}>
-      <ReactMarkdown skipHtml remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
+      <ReactMarkdown skipHtml disallowedElements={allowImages ? undefined : ["img"]}
+        remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
         {normalizeLatex(protectFillBlanks(imageUrl ? normalizeMarkdownImagePaths(text) : text))}
       </ReactMarkdown>
     </div>
