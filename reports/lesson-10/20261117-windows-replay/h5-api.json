@@ -1,0 +1,42 @@
+{
+  "utc": "2026-11-17T03:11:22.071824+00:00",
+  "history": [
+    "pending",
+    "running",
+    "succeeded"
+  ],
+  "cors": {
+    "allowed": 200,
+    "matches_origin": true,
+    "foreign": 400,
+    "foreign_has_cors_header": false
+  },
+  "csrf": {
+    "cookie_only_missing_header": 403,
+    "expected_reason": true
+  },
+  "submit": 200,
+  "teacher_queue": 202,
+  "own_result": 200,
+  "other_class_material": 404,
+  "recent_audit_rows": [
+    {
+      "method": "GET",
+      "status": 404,
+      "has_actor": true,
+      "has_event": true
+    },
+    {
+      "method": "POST",
+      "status": 403,
+      "has_actor": false,
+      "has_event": true
+    },
+    {
+      "method": "GET",
+      "status": 404,
+      "has_actor": true,
+      "has_event": true
+    }
+  ]
+}

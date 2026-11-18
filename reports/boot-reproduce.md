@@ -119,3 +119,52 @@ rabbitmq            running  Up (healthy)
 - 清理：独立项目 `down -v`，临时目录删除，无残留容器/卷。
 - **边界**：这证明“空目录 + 新项目名 + 新端口”可以按 README 用当前提交重建并启动；它不是“换机”，不能替代另一人/另一台机器的复验，也不覆盖主机、内核、Docker 版本差异。
 - 证据：`reports/lesson-10/20261116T024000Z-clone-registry-rollback/`（`clone-build.txt`、`clone-up.txt`、`clone-ps.txt`、`clone-health.json`、`clone-no-source.txt`、`clone-summary.txt`）。
+
+## 九、Windows 干净目录复验（2026-11-17）
+
+PR #3 提交 `977bcde` 在 Windows 空目录克隆后构建。首次启动因 Docker 入口脚本在 Git 检出时转换为 CRLF 失败。工作树恢复为提交中的 LF 后，七个服务运行，四个有健康探针的服务显示 healthy，`/health`、`/api/health`、`/login` 均返回 200。三个应用容器的 OCI revision 与基线一致，均为 0 个 `.py`。本次运行命令、环境、启动诊断和业务预验收见 [Windows 本地复验](lesson-10/20261117-windows-replay/README.md)。此记录由 Codex 辅助执行，组员本人签名待补。
+
+## 十、10.2 本人启动复验（2026-11-17）
+
+- 执行人 **smrrrrr**。提交号和 HTTP 结果来自本人 PowerShell 终端截图，容器状态与镜像标记在启动后补采。
+- 环境为 Windows 10.0.26200.0、Windows PowerShell 5.1、Docker Engine 29.8.0、Compose 5.5.1。同一台电脑上的新目录 `campusclaw-10-personal`，使用独立 Compose 项目与空 SQLite 数据目录。
+- 复验对象为 PR #3 的 `deps/upgrade-a-b`，提交 `977bcde028b24892ac58466b5612e844bd5b2ecb`。
+- 健康检查记录时间为北京时间 2026-11-17 14:45:01（UTC+08:00）。Compose 显示镜像构建约 177 秒。
+
+### 实际命令与卡点
+
+1. 第一次直接从 GitHub 克隆时出现 `Connection was reset`。使用 Windows 系统代理重试后克隆成功。克隆时设置 `core.autocrlf=false` 保留容器入口脚本的 LF 换行。
+2. 在新仓库根目录按 [Windows 本人启动指南](../docs/lesson10-windows-fresh-start.md) 生成本机 `.env`。使用端口 `18092`、空数据目录 `./data`，并把 `GIT_SHA` 设为被验收的提交。模型 Key 留空。
+3. 执行一键启动命令。Compose 显示 `up 14/14`，七个服务全部就绪。
+4. 使用两条 HTTP 请求验证健康页和登录入口。
+
+```powershell
+Set-Location -LiteralPath ([Environment]::GetFolderPath('Desktop'))
+$proxy = [Net.WebRequest]::GetSystemWebProxy().GetProxy([uri]'https://github.com/')
+git -c "http.proxy=$($proxy.AbsoluteUri)" -c http.version=HTTP/1.1 clone -c core.autocrlf=false -b deps/upgrade-a-b https://github.com/smrrrrr/CampusClaw-Group.git campusclaw-10-personal
+Set-Location -LiteralPath 'campusclaw-10-personal'
+git log -1 --oneline
+# 在此按指南生成本次验收的 .env
+docker compose -p campusclaw-lesson10-personal up -d --build --wait --wait-timeout 180
+curl.exe -sS -w " HTTP %{http_code}\n" http://127.0.0.1:18092/health
+curl.exe -sS -o NUL -w "HTTP %{http_code}\n" http://127.0.0.1:18092/login
+```
+
+### 实测结果
+
+| 检查 | 结果 |
+| --- | --- |
+| `GET /health` | HTTP 200，`status=ok`，应用版本 `1.2.0`，`database=ok`，`mcp_tools=ok`，`model=not_configured` |
+| `GET /login` | HTTP 200 |
+
+| 服务 | 容器状态 | 镜像 ID 前 12 位 | OCI revision |
+| --- | --- | --- | --- |
+| backend | running，healthy | `b4a52b9ff502` | `977bcde` |
+| frontend | running，healthy | `1be523b3cd5d` | `977bcde` |
+| mcp-tools | running，healthy | `03445d3dd535` | `977bcde` |
+| rabbitmq | running，healthy | `4e1c1636957a` | 未标记 |
+| nginx | running | `65645c7bb6a0` | 未标记 |
+| grading-dispatcher | running | `372c06daca10` | `unknown` |
+| grading-worker | running | `38dcd5d8bfc6` | `unknown` |
+
+**验收结论：** 另一名组员在 Windows 新目录按指南亲自完成启动，七服务就绪，健康检查和登录入口均返回 200。记录覆盖本机启动和 HTTP 可达性。

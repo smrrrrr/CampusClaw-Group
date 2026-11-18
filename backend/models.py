@@ -215,6 +215,8 @@ class Message(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     # 溯源引用 JSON 数组（assistant）；user 消息为空
     sources: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # 仅保存本轮真实成功的工具引用 JSON 数组；旧回答和 user 消息为空。
+    tool_refs: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     __table_args__ = (Index("ix_message_conversation", "conversation_id", "id"),)
@@ -479,12 +481,18 @@ class HomeworkSubmission(Base):
         Integer, ForeignKey("homeworks.id"), nullable=False
     )
     answer_text: Mapped[str] = mapped_column(Text, nullable=False)
+    # 命题作业按冻结题号保存作答，空串表示该题未答；旧文本提交为 NULL。
+    item_answers_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     ai_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     ai_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # 命题作业每题的建议分、满分和评语；旧提交没有逐题记录。
+    ai_item_results_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     ai_graded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     teacher_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     teacher_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # 教师确认的逐题结果。前端展示总分由这组结果折算。
+    teacher_item_results_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     teacher_graded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
@@ -552,6 +560,8 @@ class MistakeNote(Base):
     homework_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("homeworks.id"), nullable=True
     )
+    # 发布试卷中的冻结题号；手工或历史整份错题为空。
+    question_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     question_stem: Mapped[str] = mapped_column(Text, nullable=False)
     student_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -561,7 +571,10 @@ class MistakeNote(Base):
     mastered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
-    __table_args__ = (Index("ix_mistake_note_class_id", "class_id"),)
+    __table_args__ = (
+        Index("ix_mistake_note_class_id", "class_id"),
+        Index("uq_mistake_note_homework_question", "homework_id", "student_id", "question_number", unique=True),
+    )
 
 
 # ---------------------------------------------------------------------------

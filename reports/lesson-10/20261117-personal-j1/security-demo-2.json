@@ -1,0 +1,16 @@
+{
+  "started": "2026-11-17T07:09:13.631675+00:00",
+  "finished": "2026-11-17T07:09:25.878974+00:00",
+  "git_head": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+  "status": "PASS",
+  "exit": 0,
+  "probe_exit": 0,
+  "dependency_evidence_reused": false,
+  "secret_scope_complete": true,
+  "secret_leak_detected": false,
+  "course_high_critical": {
+    "npm": 0,
+    "pip_unknown_severity": []
+  },
+  "has_blocked_scope": false
+}

@@ -6,6 +6,15 @@
 
 ## Requirements
 
+### Requirement: 回答保留真实工具成功标志
+
+助手回答的 `tool_refs` MUST 保存同轮成功执行并通过安全检查的工具引用。流式结束事件和本人会话历史 MUST 返回相同的标志。
+
+#### Scenario: 恢复回答工具标志
+
+- **WHEN** 学生收到含成功工具调用的回答后重新打开会话
+- **THEN** 同一条回答显示真实的成功工具，旧记录和其他轮次按各自记录显示
+
 ### Requirement: 自建 MCP 工具服务
 
 项目 MUST 在同一仓库的 `mcp-server/` 中提供独立工具服务，并由 `docker-compose.yml` 一并构建启动；该服务 MUST 只在 Compose 内网暴露，不映射宿主机端口。服务 MUST 提供 `GET /health`（无需令牌）与 `POST /mcp`（JSON-RPC 2.0），至少实现 `initialize`、`tools/list`、`tools/call` 三个方法。

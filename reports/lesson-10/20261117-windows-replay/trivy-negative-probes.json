@@ -1,0 +1,10 @@
+{
+  "empty-object": {
+    "exit": 0,
+    "gate_reports_pass": true
+  },
+  "excepted-cve-other-package": {
+    "exit": 0,
+    "gate_reports_pass": true
+  }
+}

@@ -16,6 +16,7 @@ class UserInfo(BaseModel):
     role: str
     name: str | None = None
     class_id: int | None = None
+    class_name: str | None = None
     must_change_password: bool
     teaching_classes: list[int] | None = None
     subject: str | None = None

@@ -30,7 +30,7 @@ for (const route of ['/teacher', '/teacher/quiz', '/student', '/student?view=ass
 }
 check('伪造角色提示不赋予页面权限：提示仅允许启动校验', () => assert.equal(bootstrap('/student', { cc_role: 'teacher', cc_has_token: '0' }).action, 'next'));
 
-const { isRoleAllowed } = load('frontend/lib/route-access.ts');
+const { getRouteRole, isRoleAllowed } = load('frontend/lib/route-access.ts');
 for (const [route, role, allowed] of [
   ['/teacher', 'teacher', true], ['/teacher/quiz', 'teacher', true], ['/teacher', 'student', false],
   ['/student', 'student', true], ['/student/child', 'teacher', false], ['/materials', 'teacher', true],
@@ -39,10 +39,11 @@ for (const [route, role, allowed] of [
 ]) check(`角色目录按完整路径边界判断：${route} / ${role}`, () => assert.equal(isRoleAllowed(route, role), allowed));
 
 function session(role, overrides = {}) { return { accessToken: 'check-only-in-memory-token', userRole: role, mustChangePassword: false, ...overrides }; }
-function harness(state, route, { ready: initialReady = true, refresh = null } = {}) {
+function harness(state, route, { ready: initialReady = true, refresh = null, tabRole } = {}) {
   let ready = initialReady;
   let effects = [];
   const redirects = [];
+  const refreshRoles = [];
   const calls = { refresh: 0, reset: 0, clear: 0 };
   const store = selector => selector(state);
   store.getState = () => ({ reset: () => { calls.reset += 1; Object.assign(state, { accessToken: null, userRole: null }); } });
@@ -53,13 +54,19 @@ function harness(state, route, { ready: initialReady = true, refresh = null } = 
     'react/jsx-runtime': { jsx, jsxs: jsx, Fragment: 'fragment' },
     'next/navigation': { usePathname: () => route, useRouter: () => router },
     '@/lib/store': { useAuthStore: store },
-    '@/lib/route-access': { isRoleAllowed },
+    '@/lib/route-access': { getRouteRole, isRoleAllowed },
     '@/lib/api': {
-      clearRoleCookies: () => { calls.clear += 1; },
-      refreshAccessToken: async () => { calls.refresh += 1; if (refresh) Object.assign(state, refresh); return Boolean(refresh); },
+      clearTabSessionRole: () => { calls.clear += 1; },
+      getTabSessionRole: () => tabRole,
+      refreshAccessToken: async (role) => {
+        calls.refresh += 1;
+        refreshRoles.push(role);
+        if (refresh) Object.assign(state, refresh);
+        return Boolean(refresh);
+      },
     },
   });
-  return { redirects, calls,
+  return { redirects, calls, refreshRoles,
     render: () => { effects = []; return AuthGate({ children: 'PRIVATE_BUSINESS' }); },
     flush: async () => { for (const effect of effects.splice(0)) effect(); await Promise.resolve(); await Promise.resolve(); },
   };
@@ -107,6 +114,14 @@ async function main() {
       assert.deepEqual(gate.redirects, role === 'teacher' ? [] : ['/403']);
     });
   }
+  const teacherReload = harness(session(null, { accessToken: null }), '/teacher/quiz');
+  teacherReload.render(); await teacherReload.flush();
+  const studentMaterials = harness(session(null, { accessToken: null }), '/materials', { tabRole: 'student' });
+  studentMaterials.render(); await studentMaterials.flush();
+  check('刷新按教师页面或通用页面的本标签页角色选择会话', () => {
+    assert.deepEqual(teacherReload.refreshRoles, ['teacher']);
+    assert.deepEqual(studentMaterials.refreshRoles, ['student']);
+  });
   const firstLogin = harness(session('student', { mustChangePassword: true }), '/teacher');
   assert.equal(containsBusiness(firstLogin.render()), false); await firstLogin.flush();
   check('身份恢复前不显示业务内容：首次改密优先', () => assert.deepEqual(firstLogin.redirects, ['/change-password']));

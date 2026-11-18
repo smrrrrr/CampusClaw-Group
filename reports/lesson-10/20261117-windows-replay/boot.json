@@ -1,0 +1,77 @@
+{
+  "utc": "2026-11-17T03:10:01.973983+00:00",
+  "windows": "10.0.26200",
+  "docker": "29.8.0",
+  "compose": "5.5.1",
+  "git": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+  "services": {
+    "backend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "frontend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "grading-dispatcher": {
+      "state": "running",
+      "health": null
+    },
+    "grading-worker": {
+      "state": "running",
+      "health": null
+    },
+    "mcp-tools": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "nginx": {
+      "state": "running",
+      "health": null
+    },
+    "rabbitmq": {
+      "state": "running",
+      "health": "healthy"
+    }
+  },
+  "http": {
+    "/health": {
+      "status": 200,
+      "health": "ok",
+      "dependencies": {
+        "database": "ok",
+        "mcp_tools": "ok",
+        "model": "not_configured"
+      }
+    },
+    "/api/health": {
+      "status": 200,
+      "health": "ok",
+      "dependencies": {
+        "database": "ok",
+        "mcp_tools": "ok",
+        "model": "not_configured"
+      }
+    },
+    "/login": {
+      "status": 200
+    }
+  },
+  "images": {
+    "backend": {
+      "local_image_id": "sha256:9cfdb681886179050ae229eb1c387b4fef8bf4dd38eac869a3d4391823568bf7",
+      "revision": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+      "py_files": 0
+    },
+    "mcp-tools": {
+      "local_image_id": "sha256:308b0e39122fcec0228b65c32fbc89f915800df8e790fb039154376756c0e972",
+      "revision": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+      "py_files": 0
+    },
+    "frontend": {
+      "local_image_id": "sha256:4417c3b11b1b32e3ee3c791e0fe9861faacd786d230a2d9e7d804cd1e420ecab",
+      "revision": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+      "py_files": 0
+    }
+  }
+}

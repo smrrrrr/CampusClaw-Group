@@ -3,8 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
-import { clearRoleCookies, refreshAccessToken } from "@/lib/api";
-import { isRoleAllowed } from "@/lib/route-access";
+import { clearTabSessionRole, getTabSessionRole, refreshAccessToken } from "@/lib/api";
+import { getRouteRole, isRoleAllowed } from "@/lib/route-access";
 
 /**
  * 客户端路由守卫：
@@ -26,10 +26,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     if (!accessToken || !userRole) {
       setReady(false);
-      refreshAccessToken().then((ok) => {
+      refreshAccessToken(getTabSessionRole() ?? getRouteRole(pathname)).then((ok) => {
         if (cancelled || ok) return;
         useAuthStore.getState().reset();
-        clearRoleCookies();
+        clearTabSessionRole();
         router.replace("/login");
       });
       return () => { cancelled = true; };

@@ -1,6 +1,6 @@
 "use client";
 
-import { TokenDTO, setRoleCookies } from "./api";
+import { TokenDTO, rememberTabSessionRole } from "./api";
 import { useAuthStore } from "./store";
 
 /** 将 TokenDTO 应用到全局会话（登录 / 改密后共用）。 */
@@ -18,11 +18,12 @@ export function applyTokenSession(
             id: data.user.id,
             name: data.user.name,
             class_id: data.user.class_id,
+            class_name: data.user.class_name,
           }
         : null,
     teachingClasses: data.user.teaching_classes ?? null,
     subject: data.user.subject ?? null,
     homeroomClassId: data.user.homeroom_class_id ?? null,
   });
-  setRoleCookies(data.role);
+  rememberTabSessionRole(data.role);
 }

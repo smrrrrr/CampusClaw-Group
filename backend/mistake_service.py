@@ -9,10 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from llm_service import generate_answer
-from models import Homework, MistakeNote
+from homework_service import quiz_question_numbers, submission_item_answers
+from models import Homework, HomeworkSubmission, MistakeNote
 
 MISTAKE_EXPLAIN_SYSTEM_PROMPT = (
     "你是一名耐心的学科辅导老师。学生给你一道他做错的题目、他的作答和老师的评语。"
@@ -57,19 +59,47 @@ def _assert_student_owns_mistake(ctx: UserContext, note: MistakeNote) -> None:
         raise MistakeServiceError(404, "错题不存在")
 
 
-def _note_to_dict(note: MistakeNote, homework_title: str | None = None) -> dict:
+def _note_to_dict(note: MistakeNote, homework_title: str | None, student_answer: str | None) -> dict:
     return {
         "id": note.id,
         "subject": note.subject,
         "question_stem": note.question_stem,
-        "student_answer": note.student_answer,
+        "student_answer": student_answer,
         "reason": note.reason,
         "homework_id": note.homework_id,
         "homework_title": homework_title,
+        "question_number": note.question_number,
         "mastered": bool(note.mastered),
         "mastered_at": note.mastered_at.isoformat() if note.mastered_at else None,
         "created_at": note.created_at.isoformat() if note.created_at else None,
     }
+
+
+def _describe_notes(db: Session, ctx: UserContext, notes: list[MistakeNote]) -> list[dict]:
+    homework_ids = {note.homework_id for note in notes if note.homework_id is not None}
+    rows = (
+        db.query(Homework, HomeworkSubmission)
+        .outerjoin(HomeworkSubmission, and_(HomeworkSubmission.homework_id == Homework.id,
+                                            HomeworkSubmission.class_id == Homework.class_id,
+                                            HomeworkSubmission.student_id == ctx.user_id))
+        .filter(Homework.id.in_(homework_ids))
+        .all()
+    ) if homework_ids else []
+    homework_by_id = {hw.id: (hw, sub) for hw, sub in rows}
+    answers_by_id = {}
+    result = []
+    for note in notes:
+        hw, sub = homework_by_id.get(note.homework_id, (None, None))
+        answer = note.student_answer
+        if note.question_number is not None:
+            answer = None
+            if hw is not None and sub is not None and hw.class_id == note.class_id and hw.subject == note.subject:
+                if hw.id not in answers_by_id:
+                    answers = submission_item_answers(sub, quiz_question_numbers(hw)) or []
+                    answers_by_id[hw.id] = {item["number"]: item["answer_text"] for item in answers}
+                answer = answers_by_id[hw.id].get(note.question_number)
+        result.append(_note_to_dict(note, hw.title if hw is not None else None, answer))
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -96,14 +126,7 @@ def list_student_mistakes(
         .all()
     )
 
-    # 批量取作业标题，避免 N+1
-    homework_ids = {n.homework_id for n in notes if n.homework_id is not None}
-    title_map: dict[int, str] = {}
-    if homework_ids:
-        rows = db.query(Homework.id, Homework.title).filter(Homework.id.in_(homework_ids)).all()
-        title_map = {hid: title for hid, title in rows}
-
-    return [_note_to_dict(n, title_map.get(n.homework_id)) for n in notes]
+    return _describe_notes(db, ctx, notes)
 
 
 # ---------------------------------------------------------------------------
@@ -115,12 +138,7 @@ def get_mistake_detail(db: Session, ctx: UserContext, mistake_id: int) -> dict:
     note = _get_mistake_or_404(db, mistake_id)
     _assert_student_owns_mistake(ctx, note)
 
-    homework_title = None
-    if note.homework_id is not None:
-        hw = db.get(Homework, note.homework_id)
-        homework_title = hw.title if hw else None
-
-    return _note_to_dict(note, homework_title)
+    return _describe_notes(db, ctx, [note])[0]
 
 
 # ---------------------------------------------------------------------------
@@ -139,12 +157,7 @@ def toggle_mastered(
     db.commit()
     db.refresh(note)
 
-    homework_title = None
-    if note.homework_id is not None:
-        hw = db.get(Homework, note.homework_id)
-        homework_title = hw.title if hw else None
-
-    return _note_to_dict(note, homework_title)
+    return _describe_notes(db, ctx, [note])[0]
 
 
 # ---------------------------------------------------------------------------
@@ -160,8 +173,9 @@ def explain_mistake(
     _assert_student_owns_mistake(ctx, note)
 
     question_parts = [f"题目：{note.question_stem}"]
-    if note.student_answer:
-        question_parts.append(f"学生作答：{note.student_answer}")
+    answer = _describe_notes(db, ctx, [note])[0]["student_answer"]
+    if answer is not None:
+        question_parts.append(f"学生作答：{answer or '未作答'}")
     if note.reason:
         question_parts.append(f"教师评语/错因：{note.reason}")
     question = "\n".join(question_parts)

@@ -10,7 +10,7 @@ import { ClassSelector } from "@/components/class-selector";
 import MarkdownAnswer from "@/components/markdown-answer";
 import { LogoutButton } from "@/components/logout-button";
 import { formatGradeReceipt, formatGradingAttempts, syncSubmissionCount } from "@/lib/grading-feedback";
-import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO, type ClassAnalyticsDTO } from "@/lib/api";
+import { api, ApiError, type AgentConfigDTO, type McpServerDTO, type McpToolDTO, type McpToolCallDTO, type SkillDTO, type ClassAnalyticsDTO, type HomeworkSubmissionDTO } from "@/lib/api";
 
 interface StudentRow {
   id: number;
@@ -19,6 +19,24 @@ interface StudentRow {
   class_id: number | null;
   class_name: string | null;
   phone: string | null;
+}
+
+type ItemGradeDraft = { score: string; feedback: string };
+type GradeDraft = ItemGradeDraft & {
+  version: string | null;
+  items: Record<number, ItemGradeDraft>;
+};
+
+function gradeDraft(sub: HomeworkSubmissionDTO): GradeDraft {
+  const items = sub.teacher_item_results ?? sub.ai_item_results ?? [];
+  return {
+    version: sub.submission_version,
+    score: String(sub.teacher_score ?? sub.ai_score ?? ""),
+    feedback: sub.teacher_feedback ?? sub.ai_feedback ?? "",
+    items: Object.fromEntries(items.map((item) => [item.number, {
+      score: String(item.earned_score), feedback: item.feedback,
+    }])),
+  };
 }
 
 function TeacherHome() {
@@ -57,7 +75,7 @@ function TeacherHome() {
   const [hwNotices, setHwNotices] = useState<Record<number, { text: string; error: boolean }>>({});
   const [hwRetrying, setHwRetrying] = useState<number | null>(null);
   const hwDirtyForms = useRef(new Set<number>());
-  const [hwGradeForm, setHwGradeForm] = useState<Record<number, { score: string; feedback: string }>>({});
+  const [hwGradeForm, setHwGradeForm] = useState<Record<number, GradeDraft>>({});
   const [hwGradingId, setHwGradingId] = useState<number | null>(null);
   const [hwDetails, setHwDetails] = useState<Record<number, Awaited<ReturnType<typeof api.getTeacherHomework>>>>({});
   const hwListVersion = useRef(0);
@@ -167,10 +185,7 @@ function TeacherHome() {
       setHwSubmissions(subs);
       setHwList(rows => syncSubmissionCount(rows, hwId, subs.length));
       setHwDetails(previous => ({ ...previous, [hwId]: detail }));
-      setHwGradeForm(Object.fromEntries(subs.map(sub => [sub.id, {
-        score: sub.teacher_score !== null ? String(sub.teacher_score) : sub.ai_score !== null ? String(sub.ai_score) : "",
-        feedback: sub.teacher_feedback ?? sub.ai_feedback ?? "",
-      }])));
+      setHwGradeForm(Object.fromEntries(subs.map(sub => [sub.id, gradeDraft(sub)])));
     } catch (e) {
       if (context === hwContextVersion.current && selectedHomework.current === hwId) setHwError(e instanceof ApiError ? e.message : "加载提交失败");
     } finally {
@@ -219,10 +234,7 @@ function TeacherHome() {
           setHwSubmissions(subs);
           setHwList(rows => syncSubmissionCount(rows, hwId, subs.length));
           setHwGradeForm(forms => Object.fromEntries(subs.map(sub => [sub.id,
-            hwDirtyForms.current.has(sub.id) && forms[sub.id] ? forms[sub.id] : {
-              score: sub.teacher_score !== null ? String(sub.teacher_score) : sub.ai_score !== null ? String(sub.ai_score) : "",
-              feedback: sub.teacher_feedback ?? sub.ai_feedback ?? "",
-            }])));
+            hwDirtyForms.current.has(sub.id) && forms[sub.id] ? forms[sub.id] : gradeDraft(sub)])));
         }
         previous = signature;
       } catch (e) {
@@ -257,17 +269,44 @@ function TeacherHome() {
     const homeworkId = selectedHomework.current;
     const form = hwGradeForm[subId];
     if (!form) return;
-    const score = parseInt(form.score, 10);
-    if (isNaN(score) || score < 0 || score > 100) return;
+    const questions = homeworkId === null ? [] : hwDetails[homeworkId]?.grading?.questions ?? [];
+    const itemResults = questions.map((question) => ({
+      number: question.number,
+      earned_score: form.items[question.number]?.score.trim() ? Number(form.items[question.number].score) : NaN,
+      feedback: form.items[question.number]?.feedback ?? "",
+    }));
+    const score = form.score.trim() ? Number(form.score) : NaN;
+    if (questions.length
+      ? itemResults.some((item, index) => !Number.isFinite(item.earned_score) || item.earned_score < 0 || item.earned_score > questions[index].score)
+      : !Number.isInteger(score) || score < 0 || score > 100) {
+      setHwError(questions.length ? "请按每题满分填写所有得分。" : "请输入 0–100 的整数分数。");
+      return;
+    }
+    setHwError("");
     setHwGradingId(subId);
     try {
-      await api.gradeSubmission(subId, score, form.feedback || null);
+      await api.gradeSubmission(subId, questions.length
+        ? { item_results: itemResults, submission_version: form.version, feedback: form.feedback || null }
+        : { score, feedback: form.feedback || null });
       if (context === hwContextVersion.current && homeworkId !== null && selectedHomework.current === homeworkId) await loadSubmissions(homeworkId);
     } catch (e) {
       if (context === hwContextVersion.current) setHwError(e instanceof ApiError ? e.message : "改分失败");
     } finally {
       if (context === hwContextVersion.current) setHwGradingId(null);
     }
+  };
+
+  const editGrade = (sub: HomeworkSubmissionDTO, patch: Partial<ItemGradeDraft>, number?: number) => {
+    hwDirtyForms.current.add(sub.id);
+    setHwGradeForm((forms) => {
+      const previous = forms[sub.id] ?? gradeDraft(sub);
+      const next = number === undefined
+        ? { ...previous, ...patch }
+        : { ...previous, items: { ...previous.items, [number]: {
+          ...(previous.items[number] ?? { score: "", feedback: "" }), ...patch,
+        } } };
+      return { ...forms, [sub.id]: next };
+    });
   };
 
   const hasClasses = classId !== null;
@@ -840,18 +879,42 @@ function TeacherHome() {
                             ) : hwSubmissions.map((sub) => (
                               <div key={sub.id} style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}>
                                 <div className="hint">学生 #{sub.student_id} · {sub.status}</div>
-                                <div style={{ margin: "6px 0", whiteSpace: "pre-wrap" }}>{sub.answer_text}</div>
+                                {!sub.item_answers && <div style={{ margin: "6px 0", whiteSpace: "pre-wrap" }}>{sub.answer_text}</div>}
                                 {sub.ai_score !== null && <div className="hint">AI 评分：{sub.ai_score} · {sub.ai_feedback}</div>}
                                 {sub.teacher_score !== null && <div style={{ fontWeight: 700 }}>教师评分：{sub.teacher_score} · {sub.teacher_feedback}</div>}
+                                {hwDetails[hw.id]?.grading?.questions.length ? (
+                                  <fieldset style={{ marginTop: 10, padding: 10, border: "1px solid var(--line)" }}>
+                                    <legend>逐题确认</legend>
+                                    <p className="hint">按原卷分值填写。确认后系统折算百分制，未得满分的题自动收录到错题本。</p>
+                                    {hwDetails[hw.id].grading!.questions.map((question) => (
+                                      <div key={question.number} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 6 }}>
+                                        <label>
+                                          第 {question.number} 题（满分 {question.score}）
+                                          <input className="input" type="number" min={0} max={question.score} step="any"
+                                            style={{ width: 85, marginLeft: 8 }}
+                                            value={hwGradeForm[sub.id]?.items[question.number]?.score ?? ""}
+                                            onChange={(e) => editGrade(sub, { score: e.target.value }, question.number)} />
+                                        </label>
+                                        {sub.item_answers && <div style={{ flexBasis: "100%", whiteSpace: "pre-wrap" }}>
+                                          学生作答：{sub.item_answers.find(item => item.number === question.number)?.answer_text || "未作答"}
+                                        </div>}
+                                        <input className="input" aria-label={`第 ${question.number} 题评语`} placeholder="评语或错因"
+                                          maxLength={300} style={{ flex: 1, minWidth: 120 }}
+                                          value={hwGradeForm[sub.id]?.items[question.number]?.feedback ?? ""}
+                                          onChange={(e) => editGrade(sub, { feedback: e.target.value }, question.number)} />
+                                      </div>
+                                    ))}
+                                  </fieldset>
+                                ) : null}
                                 <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
-                                  <input className="input" type="number" min={0} max={100} placeholder="分数" style={{ width: 80 }}
+                                  {!hwDetails[hw.id]?.grading?.questions.length && <input className="input" type="number" min={0} max={100} placeholder="分数" style={{ width: 80 }}
                                     value={hwGradeForm[sub.id]?.score ?? sub.ai_score ?? ""}
-                                    onChange={(e) => { hwDirtyForms.current.add(sub.id); setHwGradeForm((p) => ({ ...p, [sub.id]: { score: e.target.value, feedback: p[sub.id]?.feedback ?? sub.ai_feedback ?? "" } })); }} />
+                                    onChange={(e) => editGrade(sub, { score: e.target.value })} />}
                                   <input className="input" placeholder="评语" style={{ flex: 1 }}
                                     value={hwGradeForm[sub.id]?.feedback ?? ""}
-                                    onChange={(e) => { hwDirtyForms.current.add(sub.id); setHwGradeForm((p) => ({ ...p, [sub.id]: { score: p[sub.id]?.score ?? "", feedback: e.target.value } })); }} />
+                                    onChange={(e) => editGrade(sub, { feedback: e.target.value })} />
                                   <button className="btn" style={{ width: "auto", padding: "4px 12px" }} onClick={() => handleGradeSub(sub.id)} disabled={hwGradingId === sub.id}>
-                                    {hwGradingId === sub.id ? "…" : "改分"}
+                                    {hwGradingId === sub.id ? "…" : hwDetails[hw.id]?.grading?.questions.length ? "确认逐题成绩" : "改分"}
                                   </button>
                                 </div>
                               </div>

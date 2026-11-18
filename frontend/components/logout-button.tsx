@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, clearRoleCookies } from "@/lib/api";
+import { api, clearTabSessionRole } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
 
 export function LogoutButton() {
@@ -17,7 +17,7 @@ export function LogoutButton() {
     } catch {
       // 即使后端清除 Cookie 失败，前端仍清除本地状态
     } finally {
-      clearRoleCookies();
+      clearTabSessionRole();
       reset();
       router.replace("/login");
     }

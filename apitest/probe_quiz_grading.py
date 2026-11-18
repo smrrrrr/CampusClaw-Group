@@ -38,12 +38,12 @@ for name, total, stems, answers, answer, expected in cases:
         prompt = AI_GRADE_PROMPT
         question = "题目：" + "\n".join(stems) + "\n\n学生作答：" + answer + "\n\n请评分。"
     else:
-        from homework_service import QUIZ_GRADE_PROMPT, quiz_percentage_score
+        from homework_service import QUIZ_GRADE_PROMPT, validate_quiz_item_grades
         prompt = QUIZ_GRADE_PROMPT
         question = json.dumps({"grading": snapshot, "student_answer": answer}, ensure_ascii=False)
     raw = generate_answer(question, None, system_prompt=prompt)
     obj, _ = load_model_json(raw or "")
-    observed = obj.get("score") if args.phase == "before" else quiz_percentage_score(obj.get("earned_score"), total)
+    observed = obj.get("score") if args.phase == "before" else validate_quiz_item_grades(snapshot, obj.get("items"))[0]
     records.append({"case": name, "expected_percent": expected, "observed_percent": observed,
         "matches_expected": observed == expected, "invented_citation": bool(re.search(r"\[\d+\]", obj.get("feedback", ""))),
         "elapsed_seconds": round(time.monotonic() - started, 2)})

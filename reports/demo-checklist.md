@@ -31,6 +31,32 @@
 - **GitHub Actions 远端实跑（2026-11-16）**：Draft PR #3 触发两次。首次因 `@openspec/cli` npm 404 失败；修复 `fca85f7` 后 run `43826707775` 的 `make check` 在远端 Ubuntu **41/41 通过**，`make check-security` **RED**（Next critical + 5 个未登记 npm 包；容器账本 blocked），`images` 按 `needs` 跳过。故远端没有镜像、Trivy 或 digest，也不构成受控绿版本。证据 `reports/lesson-10/20261116T075000Z-remote-ci/`。这是“另一台机器”，不是“另一个人”。
 - **独立分支故障重放（7.3，2026-11-16）**：在 `ci-fault-replay` 分支故意写错 M2 断言，Draft PR #4 的 run `43828237591` 中 `make check` **失败**、`images` **跳过**；本机退出码 1。验证后已关闭 PR、删除分支。required check 未配置，不能宣称“已阻止合入”。证据 `reports/lesson-10/20261116T080640Z-ci-fault-replay/`。
 
+### 教师验收：智能备课
+
+1. 在干净目录按 [README 快速开始](../README.md#快速开始)准备本机 `.env`。演示使用 `CAMPUSCLAW_DATA_DIR=./data` 的新空库。启动前配置有效的 `DEEPSEEK_API_KEY`，用于现场生成教案和学生稿。
+2. 在项目根目录用 [第 10 课合成夹具](../scripts/lesson10_seed_fixture.py)创建演示账号。以下命令需要 Python 3.12 和 uv，数据库路径与 Compose 的数据目录对应。
+
+   Bash
+
+   ```bash
+   mkdir -p data
+   DATABASE_URL=sqlite:///./data/campusclaw.db uv run --project backend --locked python scripts/lesson10_seed_fixture.py
+   ```
+
+   PowerShell
+
+   ```powershell
+   New-Item -ItemType Directory -Path data -Force | Out-Null
+   $env:DATABASE_URL = 'sqlite:///./data/campusclaw.db'
+   uv run --project backend --locked python scripts/lesson10_seed_fixture.py
+   ```
+
+3. 用 `docker compose up -d --build` 启动。用数学教师 `T10A` 登录，在 **教研中心 → 教研组资料 → 导入组内资料** 直接导入随作业提供的《第一章 空间立体几何》备课资料包。打开原稿，检查公式与几何图能正常显示。演示账号 `T10A` 和 `S10A` 的合成密码见夹具里的 `PASSWORD`。
+4. 到 **智能备课**，选中该讲义和演示一班。课题可填「空间立体几何」，点击 **生成新的教师教案**。打开 **备课依据与原文核对**，检查引用能回到刚导入的讲义，并在教案预览中检查所引用的配图。
+5. 核对正文后点击 **审阅通过 → 确认定稿 → 生成配套学生稿**。在配套学生讲义页检查正文和图片，确认学生稿无答案、教师解析和提示，再发布到演示一班。用学生 `S10A` 登录，在班级资料中核对新讲义。
+
+通过信号为讲义配图可预览、教师教案可保存并查到原文出处、发布后演示学生可打开讲义。现场生成需模型服务可用。记录实际结果与失败提示。
+
 ## 三、六份必交报告核对
 
 | 报告 | 路径 | 当前状态 |
@@ -97,5 +123,38 @@
 
 ## 七、边界
 
-- 本清单只备料，不代表任何一项已由第二人完成。
+- 上方为演示准备与历史结果。换人执行的实测见第八、九节。
 - 不得代签、不得把「本机通过」写成「独立演示通过」、不得在等价未认可时宣称课程验收完成。
+
+## 八、J1 本人门禁双跑（2026-11-17）
+
+执行人 **smrrrrr**，在 Windows 新克隆目录 `campusclaw-10-personal` 的 PowerShell 5.1 中运行。两对检查都使用 PR #3 的提交 `977bcde028b24892ac58466b5612e844bd5b2ecb`。以下时间为北京时间。
+
+| 检查 | 第 1 轮 | 第 2 轮 | 对照 |
+| --- | --- | --- | --- |
+| 普通门禁 `scripts/check.py` | 15:01:59–15:03:38，42/43 通过，退出 1 | 15:04:12–15:05:32，42/43 通过，退出 1 | 两轮各子项及退出状态一致。唯一失败是 `check_os_vuln_gate` 在 Windows 上读取中文输出时发生编码错误。 |
+| 安全门禁 `scripts/security_precheck.py`，恢复演示库以后 | PASS，退出 0 | 15:09:13–15:09:25，PASS，退出 0 | 两轮接口探针与密钥扫描均通过，npm 高危和严重漏洞为 0，待验范围为空。 |
+
+首次安全双跑使用空库，两轮均为 BLOCKED、退出 2。补入交接包中的四个演示账号后，重启独立 Compose 项目 `campusclaw-lesson10-personal`，用同一演示库执行上表的两次安全扫描。普通门禁使用脚本自己的离线测试夹具，保留原结果。Windows 编码失败也与[此前的本地复验](lesson-10/20261117-windows-replay/README.md)一致。补丁 PR #5 含这项编码修复，被验收的 PR #3 提交仍是 `977bcde`。
+
+证据见 [普通第 1 轮](lesson-10/20261117-personal-j1/check-1.json)、[普通第 2 轮](lesson-10/20261117-personal-j1/check-2.json)、[安全第 1 轮](lesson-10/20261117-personal-j1/security-demo-1.txt)、[安全第 2 轮](lesson-10/20261117-personal-j1/security-demo-2.txt) 和 [末次安全报告](lesson-10/20261117-personal-j1/security-demo-2.json)。
+
+**J1 结论：** 两次普通结果一致，仍有一个失败。两次安全结果一致，均通过。[J2 本人启动记录](boot-reproduce.md#十102-本人启动复验2026-11-17)已另行归档。
+
+## 九、smrrrrr 对 PR #3 的交叉验收汇总（2026-11-17）
+
+评审基线为 PR #3 的 `977bcde028b24892ac58466b5612e844bd5b2ecb`。本人执行结果、Codex 技术复验和先前项目证据按实际来源填写。
+
+| 项目 | 状态与证据 |
+| --- | --- |
+| J1 双跑 | **本人完成。** 两次普通门禁均 42/43、退出 1，两次安全专项均 PASS、退出 0。普通门禁失败是可复现的 Windows 编码问题。见本报告第八节。 |
+| J2 新目录启动 | **本人完成。** 七服务就绪，健康页与登录入口均返回 200。见[本人启动记录](boot-reproduce.md#十102-本人启动复验2026-11-17)。 |
+| J3 线上反查 | **待线上目标。** GitHub 仓库的部署列表为空，交接报告也未提供线上 URL，当前只能核对本地镜像标记和历史 CI。见[流水线与反查](pipeline.md)。 |
+| J4 60 秒窗口 | **技术复验已执行。** Codex 在北京时间 15:09–15:10 的窗口读取本地演示库，三个技能均显示无样本，约 0.16 秒返回。再用同长度的临时合成库验证，作业批改两次成功、一次失败，失败率 33.33%，窗口结束时刻的测试记录未计入。无分母的错题讲解返回 null。见[窗口原始结果](lesson-10/20261117-peer-review/j4-window.json)。 |
+| D1 先红后绿 | 已复核课程的[终评保护故障演练](gate-red-green.md)。本次门禁修复另有[真实缺陷回归](https://github.com/smrrrrr/CampusClaw-Group/blob/b068cb912f55bd14d9322cae99f5838b13680fab/reports/gate-red-green.md)，普通门禁从退出 1 恢复为退出 0。 |
+| D2 一键启动 | **本人完成。** 同 J2。 |
+| D3 面板 | 已核对[当前 Grafana 配置](lesson-10/20261117-peer-review/d3-dashboard-config.json)，覆盖技能调用量、失败率、对应接口 P95 和批改队列深度。P95 与队列深度分两个面板。现场页面操作待录；P95 的课程口径见[课程决定](course-decisions-2026-11-14.md)。 |
+| D4 异步链路 | 复核已保存的[本地 HTTP 结果](lesson-10/20261117-peer-review/d4-assisted-http.json)。Codex 用合成账号和假模型观察到学生提交 200、教师初批 202、任务 pending → running → succeeded、本人结果 200、跨班 404。手机实机待验。 |
+| D5 压测对比 | 已复核[历史两轮数据](bench.md)。并发 10 的 P95 从 677.25 ms 降为 516.37 ms，下降 23.8%。并发 3 的 P95 上升 7.6%，保留原记录。 |
+
+**评审结论：** 本人启动通过，双跑结果一致，原版普通门禁仍有一个失败。已核对的现场证据、辅助复验与历史证据可供课堂复查。补丁 PR #5 的普通及安全门禁已通过，镜像检查拦下后端与 MCP 镜像中未登记的软件包 `ncurses-bin`。线上反查、现场待验项与镜像问题保持开放。见 [PR #3 复验评论](https://github.com/smrrrrr/CampusClaw-Group/pull/3#issuecomment-6939322783)和 [#5 镜像检查](https://github.com/smrrrrr/CampusClaw-Group/actions/runs/44022376165/job/133835370477)。

@@ -1,0 +1,63 @@
+{
+  "commit": "977bcde028b24892ac58466b5612e844bd5b2ecb",
+  "execution": "Codex technical verification",
+  "local_demo": {
+    "window": {
+      "start": "2026-11-17T07:09:00+00:00",
+      "end": "2026-11-17T07:10:00+00:00"
+    },
+    "utc_now": "2026-11-17T07:29:17.487427+00:00",
+    "skills": {
+      "tutor_guidance": {
+        "succeeded": 0,
+        "unknown": 0,
+        "failure_rate": null,
+        "formula": "无样本"
+      },
+      "homework_grading": {
+        "succeeded": 0,
+        "failed": 0,
+        "skipped": 0,
+        "unknown": 0,
+        "failure_rate": null,
+        "formula": "无样本"
+      },
+      "mistake_explanation": {
+        "failure_rate": null,
+        "formula": "无样本"
+      }
+    },
+    "error": "",
+    "elapsed_seconds": 0.157
+  },
+  "synthetic": {
+    "window": {
+      "start": "2026-11-17T07:09:00+00:00",
+      "end": "2026-11-17T07:10:00+00:00"
+    },
+    "utc_now": "2026-11-17T07:29:17.674568+00:00",
+    "skills": {
+      "tutor_guidance": {
+        "succeeded": 1,
+        "unknown": 1,
+        "failure_rate": 0.0,
+        "formula": "failed/(succeeded+failed)"
+      },
+      "homework_grading": {
+        "succeeded": 2,
+        "failed": 1,
+        "skipped": 0,
+        "unknown": 0,
+        "failure_rate": 0.3333,
+        "formula": "failed/(succeeded+failed)"
+      },
+      "mistake_explanation": {
+        "denied": 1,
+        "failure_rate": null,
+        "formula": "无样本"
+      }
+    },
+    "error": "",
+    "elapsed_seconds": 0.172
+  }
+}

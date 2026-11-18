@@ -37,6 +37,11 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
     # 先造出旧索引结构，模拟已有教学库升级。
     Base.metadata.create_all(bind=engine)
     with engine.begin() as conn:
+        conn.exec_driver_sql("ALTER TABLE messages DROP COLUMN tool_refs")
+        conn.exec_driver_sql(
+            "INSERT INTO messages (id, conversation_id, role, content, sources, created_at) "
+            "VALUES (1, 1, 'assistant', 'old answer', '[]', '2026-11-14 07:00:00')"
+        )
         conn.exec_driver_sql("DROP INDEX IF EXISTS ix_material_chunk_class_material_chunk")
         conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_material_chunk_class_material ON material_chunks(class_id, material_id)")
         conn.exec_driver_sql("INSERT INTO classes (id, name, created_at) VALUES (101, '检查一班', '2026-11-14 07:00:00')")
@@ -56,6 +61,7 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
             "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='material_chunks'"
         )}
         chunk_rows = conn.exec_driver_sql("SELECT COUNT(*) FROM material_chunks").scalar()
+        old_message = conn.exec_driver_sql("SELECT content, sources, tool_refs FROM messages WHERE id=1").one()
         plan = [row[-1] for row in conn.exec_driver_sql(
             "EXPLAIN QUERY PLAN SELECT id, material_id, chunk_index FROM material_chunks "
             "WHERE class_id = 101 AND material_id = 1 ORDER BY material_id, chunk_index"
@@ -63,6 +69,7 @@ with tempfile.TemporaryDirectory(prefix="lesson10-ops-", ignore_cleanup_errors=T
     check("M1 正常：重复迁移两次后新覆盖索引存在、旧索引移除", "ix_material_chunk_class_material_chunk" in names
           and "ix_material_chunk_class_material" not in names)
     check("M2 边界：纯索引迁移不改分块数据", chunk_rows == 1)
+    check("旧回答升级两次，正文和出处保留，工具标志为空", tuple(old_message) == ("old answer", "[]", None))
     check("M3 正常：检索计划使用覆盖索引", any("COVERING INDEX" in line and "class_material_chunk" in line for line in plan))
 
     # 合成技能事件：直接写库，验证采集口径而非业务写入路径。
