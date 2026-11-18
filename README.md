@@ -4,6 +4,12 @@
 
 当前版本：**v1.2.0**（2026-10-28），见文末[版本记录](#版本记录)。
 
+## 项目报告与核验
+
+项目报告在根目录 [report.md](report.md)，按六节说明用户、AI 辅助开发、评审、高风险三查、门禁与演示、复盘。详细证据统一在 [reports/README.md](reports/README.md)。报告核查以 `main@8964200` 的业务代码为基线，文档补充继承 PR #6。
+
+核验命令见 [复跑指引](reports/reproduce-checks.md)。按 [演示录屏步骤](reports/demo-recording.md) 提前录制三分钟以内的视频，再按 [五分钟汇报提纲](reports/presentation-notes.md) 准备课堂讲解。[提交核对表](reports/submission-readiness.md)
+
 教研中心当前保留“教研组资料、智能备课、智能命题”；已移除教研问答和课例分析两个占位入口，旧链接进入智能备课。
 
 ## 作业历史与错题同步
@@ -57,7 +63,7 @@
 | 部分   | 技术                                                 |
 | ---- | -------------------------------------------------- |
 | 后端   | Python 3.12、FastAPI、SQLAlchemy、SQLite，依赖用 uv 管理    |
-| 前端   | Next.js 14、React 18、Zustand、react-markdown + KaTeX |
+| 前端   | Next.js 15.5.28、React 18.3.1、Zustand、react-markdown + KaTeX |
 | 模型   | OpenAI 兼容接口，默认 DeepSeek，也可配置为课程网关                  |
 | 工具服务 | 自建 MCP 服务（JSON-RPC 2.0），见 `mcp-server/`            |
 | 部署   | Docker Compose，Nginx 作为唯一对外入口                      |

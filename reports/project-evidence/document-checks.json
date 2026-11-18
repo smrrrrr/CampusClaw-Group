@@ -1,0 +1,41 @@
+{
+  "observed_at": "2026-11-17T13:33:44.765344+00:00",
+  "report_sections": [
+    "1. 一句话介绍",
+    "2. AI 写了什么",
+    "3. 审核记录",
+    "4. 高风险三查",
+    "5. 门禁与演示",
+    "6. 复盘"
+  ],
+  "seven_checklist_categories": [
+    "接口入口",
+    "业务逻辑",
+    "数据库",
+    "公共函数",
+    "错误处理",
+    "安全",
+    "性能"
+  ],
+  "local_links_checked": 37,
+  "broken_local_links": [],
+  "pdf_pages": 2,
+  "pdf_full_source_text_matches": true,
+  "report_sha256": "f7a7205f632735ff1e5109d5fae20731596f3fa96be93044257c3d896e37902f",
+  "pdf_sha256": "23bb54ec6ea30a3fa912893cb312e9f6c1f72bcc9057bf2a7a660ddc58c19aa1",
+  "renderer_python_syntax": "PASS",
+  "full_check": {
+    "steps": 43,
+    "exit": 0
+  },
+  "scope": "report wording supplied by the user; recording remains pending",
+  "tested_source_hashes_unchanged": true,
+  "pdf_github_ref": "docs/project-report",
+  "contribution_commit_references_checked": 34,
+  "contribution_file_references_checked": 46,
+  "contribution_rows_by_member": {
+    "Jackler / hexzun1": 7,
+    "Grey_Wolf_King": 7,
+    "smrrrrr": 7
+  }
+}

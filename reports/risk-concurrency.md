@@ -1,5 +1,18 @@
 # 高风险检查：并发
 
+## 当前复核（2026-11-17）
+
+| 四项 | 本次记录 |
+| --- | --- |
+| 手段 | `python apitest/check_async_grading.py`，Windows / Python 3.12.13，临时 SQLite、线程池、内存队列与假模型。 |
+| 对象 | 同一份提交的同一版本并发调用初批 20 次；同一消息重复消费。 |
+| 判据 | 20 次返回同一任务编号且数据库只有一条任务；再次消费不改变已生效评分和时间。测试还检查请求不等待模型。 |
+| 结果 | 57/57，退出 0，其中 `C1 边界：20并发数据库唯一幂等` 和 `C1 边界：重复消息attempts增加而评分和时间不变` 均通过。20 请求 P95=0.005829秒，假执行=0.200423秒。 |
+
+原始证据：[project-evidence/async.json](project-evidence/async.json)、[时间与源码摘要](project-evidence/validation-runs.json)。解释器准备见 [reproduce-checks.md](reproduce-checks.md)。这次没有重跑真实 RabbitMQ；不能把内存队列或假模型耗时当生产容量。保证有效结果一次，不保证模型外呼最多一次。
+
+下文为历史检查，保留原始日期与结果。
+
 | 项目 | 内容 |
 | --- | --- |
 | 用什么手段查 | 离线check_async_grading及真实RabbitMQ复现脚本 |

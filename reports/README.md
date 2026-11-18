@@ -2,6 +2,19 @@
 
 此目录只放脱敏记录，不能放.env、数据库、上传资料、真实学生正文或令牌。运行时私有配置与临时数据库放被忽略的.review。
 
+## 当前项目报告入口（2026-11-17）
+
+正式六节报告是根目录 [report.md](../report.md)，历史长篇交付索引保留在 [project-history.md](project-history.md)。以下是本次整理的可核验材料：
+
+- [三查与门禁复跑命令](reproduce-checks.md)、[本次验证范围与结果](project-validation.md)
+- 三份具体评审：[扫描报告完整性](review-04.md)、[MCP写工具授权](review-05.md)、[运行镜像风险缓解](review-06.md)
+- [人工交叉评审来源](peer-review.md)、[成员贡献与AI范围](contributions.md)
+- [门禁保护与先红后绿时间线](project-gate.md)、[脱敏原始证据](project-evidence/README.md)
+- [三分钟录屏步骤](demo-recording.md)、[录屏提交状态](demo-recording-evidence.md)
+- [五分钟汇报提纲](presentation-notes.md)、[提交核对表](submission-readiness.md)
+
+## 历史与专项证据
+
 本次提交顺序、验证和伙伴评审步骤见 [2026-11-05交付说明](submission-2026-11-05.md)。
 
 - [异步作业AI初批：操作、复现与证据](async-grading/README.md)
@@ -21,4 +34,4 @@
 - [远端 CI 原始证据（Draft PR #3，run 43826707775）](lesson-10/20261116T075000Z-remote-ci/README.md)
 - [独立分支故障重放（任务 7.3，PR #4 已关闭）](lesson-10/20261116T080640Z-ci-fault-replay/README.md)
 
-根目录report.md的正式课程报告尚未编写。这里的本机自检、真实队列+假模型结果，不代替另一成员复现、真实模型质量、外网部署或人工交叉评审。
+上述历史记录按各自日期和版本解释。这里的本机自检、真实队列+假模型结果，不代替另一成员复现、真实模型质量或外网部署；人工交叉评审以实际Review为准。

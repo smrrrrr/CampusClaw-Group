@@ -1,5 +1,7 @@
 # 第10课交付总览（测试、交付与运行验证）
 
+当前六节项目报告见根目录 [report.md](../report.md)，2026-11-17 的主干保护、CI与实际Review核验见 [project-gate.md](project-gate.md)、[peer-review.md](peer-review.md)。下方各历史批次保留当时的数字与阻塞状态，不应读成当前仍未配置main保护或PR #3仍Open。
+
 - 变更：`openspec/changes/2026-11-12-lesson10-test-delivery-and-runtime-verification`
 - 交付提交：分支 `deps/upgrade-a-b` 最新提交（含本轮口径同步改动；具体 SHA 以 `git log -1` 为准，早期分批证据见第六节标注）
 - 批次：`reports/lesson-10/20261114T072100Z-apply/`（及后续收口批次）

@@ -1,5 +1,20 @@
 # 高风险检查：本次新增任务权限
 
+## 当前复核（2026-11-17）
+
+| 四项 | 本次记录 |
+| --- | --- |
+| 手段 | `python apitest/probe_security_precheck.py --output .review/security-probe.json`；两班合成账号 HTTP 登录，临时库、假模型/MCP。另执行 `python apitest/check_async_grading.py` 核对任务权限。 |
+| 对象 | 本班与他班讲义下载、跨班检索、学生写工具、未登录/学生/他班教师/他科教师的任务请求。 |
+| 判据 | 有权下载必须 200 且正文正确；同一资源跨班下载必须 404、无他班正文且留审计；未登录任务 401、无权限任务 403；学生写工具不得执行或写分。 |
+| 结果 | 安全探针 41/41、退出 0；SEC-02明确记录本班200和跨班404。异步检查57/57、退出0，含E1拒绝与审计。 |
+
+证据：[project-evidence/security-probe.json](project-evidence/security-probe.json)、[project-evidence/async.json](project-evidence/async.json)、[时间与源码摘要](project-evidence/validation-runs.json)。准备见 [reproduce-checks.md](reproduce-checks.md)。
+
+当前合同按端点区分：资料下载越权404，任务越权403，SSE拒绝检查事件和副作用。以下2026-11-05资料下载403是历史修复前结果；不能据此覆盖当前复验，也不能把所有越权接口统一描述为404。
+
+下文为历史检查，保留原始日期与结果。
+
 | 项目 | 内容 |
 | --- | --- |
 | 用什么手段查 | check_async_grading的E1接口反例，临时库与合成身份 |

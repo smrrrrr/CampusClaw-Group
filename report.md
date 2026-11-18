@@ -1,50 +1,68 @@
-# CampusClaw 课程交付总报告
+# 项目报告 · CampusClaw
 
-本文件只写结论与索引，不复制日志与原始输出；全部证据在 `reports/`。
+仓库 [smrrrrr/CampusClaw-Group](https://github.com/smrrrrr/CampusClaw-Group)，业务基线 `main@8964200`，核查日期 2026-11-17。
 
-- 当前交付提交：分支 `deps/upgrade-a-b` 最新提交（含第10课收口与场景逐条复核改动；具体 SHA 以 `git log -1` 为准）
-- 最近更新：2026-11-16（UTC）
+**演示视频下载地址**：待录制并上传百度网盘或北大网盘后填写。
 
-## 一、总体结论
+**成员与分工**。Jackler / hexzun1 上线智能命题与 MCP，建立健康检查和 CI，复核安全修复，完成检索压测优化、依赖和镜像升级（`13c1cd2`、`4b005e1`、PR #3）。
+Grey_Wolf_King 新增批改、学情与错题，修复跨班访问和 XSS，加入七列审计、工具授权与 CSRF 防御，补安全反例和交接（`e10c81b`、`4cfaa15`、`efbfb67`）。
+**smrrrrr**：同步第 2–5 课个人仓库内容，上线智能备课、讲义发布和作业异步初批，完成安全预检、Windows 部署复验及镜像门禁修复，最后人工进行项目业务语义修正并完成本地验收。[reports/contributions.md](reports/contributions.md)
 
-| 课程 | 结论 | 详细记录 |
-| --- | --- | --- |
-| 第9课 安全修复 | 交叉评审完成；评审发现已修复并归档 | [评审](reports/review-03.md)、[安全证据](reports/security-evidence/) |
-| 第10课 测试交付与运行验证 | 既有验证见历史记录；Next 15 升级本地双门禁绿、远端 `check`/`security`/`images` 三 job 全绿（OS 层 HIGH 走书面例外，CRITICAL 零）；真人、required checks 与线上环节未完成 | [总览](reports/lesson10-delivery.md)、[演示清单](reports/demo-checklist.md) |
+## 1. 一句话介绍
 
-第10课 Next 15 升级验证（2026-11-16 UTC，`next@15.5.28`，分支 `deps/upgrade-a-b`，PR #3）：本地 `make check` **43/43 PASS，exit 0**（含新增 `check_os_vuln_gate` 与 `check_audit_field_bounds`）；`make check-security` 在将本地库只读副本放到 `data/current/` 后 **PASS，exit 0**（npm `critical=0/high=0/low=4` 已登记、`unregistered_vulns=[]`、backend/mcp 各 0 漏洞包），未改门禁判据或注入账号；`openspec validate --all --strict` **39/39**。远端 run `43877256576`：`check` pass、`security` pass（workflow 内写入临时库四个演示身份后转绿）、`images` 已修好流程并处置系统层漏洞（`trivy-action` 上游连续删 tag，最终按 commit 固定到 `v0.36.0`；补构建前一次性 `.env`；backend 与 mcp-server 运行层加 `apt-get upgrade` 修掉有补丁的 zlib1g 两条 CVE；无修复版本的 11 个 CVE 登记书面例外，复查日期 2026-12-15）。run `43885117587`（HEAD `3074cae`）三 job 全绿：backend 47、mcp-tools 47、frontend 0 条 HIGH，CRITICAL 0，门禁由 `scripts/trivy_os_gate.py` 判定（CRITICAL 一票否决，HIGH 未登记或例外过期即失败）。旧 Next 14.2.15 的 critical 适用性论证已由升级替代，见 [next-risk-applicability.md](reports/next-risk-applicability.md)。本轮隔离安装/构建与前端镜像 `.py=0` 通过；HTTP 冒烟 26/29；headless Chrome 在独立栈完成登录、首次改密、刷新恢复、切班与登出 6/6 页面检查，Markdown/KaTeX 预览、学生篡改 `class_id` 返回 403 均通过。**变更清单 14/14 已按本轮实测勾选**；学生按 ID 读取他班材料为防枚举 404（`materials.py` 注释明示，规约未规定 by-ID 状态码）。另补一个附带变更 `2026-11-16-harden-audit-field-bounds`（9/9）：核对第9课历史变更时发现 4.6「日志字段转义与截断」是真缺口——`write_audit_log` 直接赋值、无长度上限，而 SQLite 不校验 `String(N)` 会静默落库超长值；现按 `AuditLog` 列宽在入口统一清洗（控制字符换空格、超长截断、`None` 原样返回），24 条回归断言纳入门禁。实际证据见 [升级批次](reports/lesson-10/20261116T124118Z-next15/README.md) 与 [浏览器/门禁批次](reports/lesson-10/20261116T215000Z-browser/README.md)；交接数据包 `handover-packs/2026-11-16-next15.zip`（含库、`.env`、上传材料与交接说明，**仓库外私下传递**）。
+CampusClaw 面向中学教师和学生，把讲义导入、备课、命题、作业初批与答疑连成流程，减少教师重复整理和批改工作，让学生能用本班本学科资料学习，教师保留发布和最终改分权。[README.md](README.md)
 
-以下为升级前既有第10课记录，历史远端结果未在本轮刷新：backend、mcp-tools、frontend 三镜像均已达成 0 源码（`.py = 0`，OCI revision 可反查提交），并以当前提交重建七服务栈复验；当前提交经空目录独立项目/端口启动成功，本机 registry push/pull digest 与临时库备份/上一 tag 回滚演练通过（均不代表远端或换机）；远端 Draft PR #3 的 run `43826707775` 已实跑：`check` 通过、`security` RED、`images` 跳过，不构成受控绿版本；隔离环境真实 RabbitMQ 异步复现 15 项 PASS；在线用例在 compose 网络内 **24 passed / 1 skipped / 0 failed**（唯一跳过为无模型 Key 时的工具审计）；检索热点优化后瓶颈档（并发 10）P95 **−23.8%**（并发 3 P95 +7.6%）。场景矩阵 505 条已逐条判定：人工复核确认 185、部分覆盖 22、断言名候选 77、人工语义别名 106、关键词别名 89、N/A 23（附理由）、已知缺口 3；待补断言 0、弱候选 0、仅文件级 0。在此状态下不宣称交付完成。
+## 2. AI 写了什么
 
-## 二、第10课证据索引
+代码与规约由 AI 起草，开发与自审使用 Codex，并经脚本和组员复核。其他 AI 产出如下。
 
-| 判据 | 报告 |
+- **规则、用例**：`AGENTS.md` 写明规则入口和七类核查。`apitest/check_async_grading.py` 覆盖幂等和回滚，`apitest/probe_security_precheck.py` 覆盖跨班拒绝。
+- **评审与三查**：`reports/review-04.md`、`reports/review-05.md`、`reports/review-06.md` 归档发现、判据和修复。并发、事务、权限各有一份复跑记录，见第 4 节。
+- **压测与验证编排**：`scripts/lesson10_api_bench.py` 编排同参复测，`reports/bench.md` 记录 P95 和吞吐。`Makefile` 编排普通与安全检查，`.github/workflows/lesson10.yml` 接入 CI。
+- **交付文档**：`README.md` 说明启动和教师验收入口，`reports/demo-recording.md` 编排录屏步骤。完整产出索引见 [reports/contributions.md](reports/contributions.md)。
+
+七类核查问题、步骤和判据详见 [AGENTS.md](AGENTS.md) 的“七类代码核查责任”。
+
+| 类别 | 核查问题与手段 |
 | --- | --- |
-| 第10课交付总览 | [lesson10-delivery.md](reports/lesson10-delivery.md) |
-| 独立演示清单 | [demo-checklist.md](reports/demo-checklist.md) |
-| 测试收口与先红后绿 | [gate-red-green.md](reports/gate-red-green.md) |
-| 从零启动与 H5 等价链路 | [boot-reproduce.md](reports/boot-reproduce.md) |
-| 换目录、registry 与备份回滚演练 | [release-rollback.md](reports/release-rollback.md) |
-| 流水线与镜像追溯 | [pipeline.md](reports/pipeline.md) |
-| 观测、面板与告警 | [observe-alert.md](reports/observe-alert.md) |
-| 压测与改进 | [bench.md](reports/bench.md) |
-| 真实用户反馈 | [feedback.md](reports/feedback.md) |
-| 命令盘点 | [command-inventory.md](reports/command-inventory.md) |
-| 交接材料（私有，不入库） | 交接说明与数据说明随 `handover-packs/2026-11-16-next15.zip` 私下传递；仓库内不含 |
-| 场景矩阵与逐条映射 | [scenario-matrix.md](reports/scenario-matrix.md)、[scenario-coverage.md](reports/scenario-coverage.md) |
-| 镜像 0 源码方案与验证 | [no-source-plan.md](reports/no-source-plan.md) |
-| 在线用例执行记录 | [online-cases.md](reports/online-cases.md) |
-| 安全适用性与技术栈等价 | [next-risk-applicability.md](reports/next-risk-applicability.md)、[stack-equivalence.md](reports/stack-equivalence.md)、[course-decisions-2026-11-14.md](reports/course-decisions-2026-11-14.md) |
-| 索引迁移 | [migration/README.md](reports/lesson-10/20261114T072100Z-apply/migration/README.md) |
-| Next 15 升级批次 | [验证与阻塞记录](reports/lesson-10/20261116T124118Z-next15/README.md) |
-| 原始证据 | `reports/lesson-10/20261114T072100Z-apply/` |
+| 接口入口 | 参数、角色、状态码是否正确；脚本跑合法、未登录及越权请求。 |
+| 业务逻辑 | 幂等与教师终评是否成立；AI 对照规约，脚本验状态和旧结果拒写。 |
+| 数据库 | 失败是否回滚、迁移是否保留数据；脚本做故障注入和重复迁移。 |
+| 公共函数 | 空值、边界、复用是否正确；单元断言、分层检查。 |
+| 错误处理 | 超时、重投是否可恢复且无泄密；脚本注入模型、代理与数据库故障。 |
+| 安全 | 跨班、工具授权、密钥与依赖是否受控；安全探针、双门禁、镜像扫描。 |
+| 性能 | 请求是否等待模型、瓶颈在哪；20 并发断言与独立同参压测。 |
 
-## 三、未完成项
+## 3. 审核记录
 
-1. **真人环节**（本机无法替代）：3 名真实用户（9.5）、换人双跑（10.1）、另一人新目录/新机器启动（10.2）、组员本人签名（4.2）、A/B/C 分工与交叉复核署名（5.1）、真实负责人告警接收（8.5/8.6）。
-2. **远端环节**：main 保护未配置——当前账号 `admin=false, maintain=false`（5.6），故 7.3「不能进 main」未被证明；无线上实例，7.4 反查链缺最后一环。受控绿版本已达成（run `43885117587`，7.2 已勾）。
-3. **手机实机（3.2）与在线用例收口（3.3）**：浏览器验收目前只到桌面 headless Chrome；3.3 需有效模型 Key 才能把第 6 轮唯一的 skip 转成通过。
-4. **依赖/JWT 变更 7 项验收**：`2026-11-14-upgrade-deps-and-jwt` 的 1.4、2.4、3.3、4.4、5.4、6.1、6.2，实施代码已在仓库，缺验收与签字。
-5. **OS 层书面例外复查**：`reports/security-evidence/os-vuln-exceptions.json` 11 个 CVE 无上游修复版本，复查日期 **2026-12-15**，逾期门禁会判失败。
-6. **第9课 4.6 已补修**（`2026-11-16-harden-audit-field-bounds`），但历史变更 `security-fix-lesson09` 的 36 项勾选状态未改动——该变更 33 项已实现、3 项缺当次运行记录（2.5、4.8、7.4），补勾由该变更负责人裁定。
-7. 场景矩阵 505 条已逐条判定：待补断言 **0**、P0 缺口 0、弱候选 **0**、仅文件级 **0**；人工复核确认 185 条、部分覆盖 22 条（备注写明未断言部分）、N/A 23 条（附理由）、已知缺口 3 条（工具说明注入句式；教师端按班级查看 AI 提问历史；AI 解答加入错题本）。部分覆盖与已知缺口不得计入「场景全覆盖」。
+| 记录 | 发现、判据与结果 |
+| --- | --- |
+| [reports/review-04.md](reports/review-04.md) | 合成扫描反例发现空报告及同 CVE 未登记包被放行；要求无效报告退出 2、未登记 HIGH 退出 1。修复 `cc5b0fc`，当时 19/25 转 25/25，本次扩展回归 31/31。 |
+| [reports/review-05.md](reports/review-05.md) | AI 源码核查配合隔离探针发现写工具上下文缺失、权限分类丢失；学生必须被拒且不得写分。修复 `97ba0f5`；本次安全探针 41/41，0 红项。 |
+| [reports/review-06.md](reports/review-06.md) | 远端镜像扫描拦下两份镜像的 ncurses-bin HIGH；保留原始告警，移除不用的 infocmp，并核验实际镜像。修复 `3da68c5` 后 CI 转绿，期限与版本受例外表约束。 |
+
+在 PR #3 复核并正式批准，发现固化为 `apitest/check_os_vuln_gate.py` 中的空报告、同 CVE 不同软件包和缺报告反例。[reports/peer-review.md](reports/peer-review.md)
+
+## 4. 高风险三查
+
+本次在 Windows、临时 SQLite、假模型/MCP 环境复跑，命令均从仓库根执行，环境准备见 [reports/reproduce-checks.md](reports/reproduce-checks.md)。
+
+| 检查与记录 | 手段、判据、实测 |
+| --- | --- |
+| 并发：[reports/risk-concurrency.md](reports/risk-concurrency.md) | `python apitest/check_async_grading.py`：同一提交 20 并发只建一条任务，重复消息不重复生效；C1 通过。 |
+| 事务：[reports/risk-transaction.md](reports/risk-transaction.md) | 同一命令注入第二条任务写入失败：返回 503，整批任务和发件箱标记回滚，原提交仍为 pending；B3 通过。异步检查合计 57/57。 |
+| 权限：[reports/risk-authz.md](reports/risk-authz.md) | `python apitest/probe_security_precheck.py --output .review/security-probe.json`：本班讲义下载 200、跨班 404 且无正文，学生写工具被拒；41/41。任务越权按合同为 403。 |
+
+本次使用离线替身和合成数据，实测范围、时间和源码摘要见 [reports/project-evidence/validation-runs.json](reports/project-evidence/validation-runs.json)。
+
+## 5. 门禁与演示
+
+准入流程为 **AI 初稿 → AI 自审 → 脚本检查 → 人工确认 → 交叉评审 → main**。`main` 要求一次正式批准和普通、安全、镜像三项 CI 通过。PR #3 正式批准后合入 `8964200`，主干 CI `44045260010` 三项通过。完整普通门禁实测 **43/43、退出 0**。安全及镜像结果以该 CI 为准，OS HIGH 按登记例外判断。[reports/project-validation.md](reports/project-validation.md)
+
+先红后绿证据为 PR #5 镜像检查失败的 run `44022376165`，经 `3da68c5` 修复后 run `44042306967` 成功。[reports/gate-red-green.md](reports/gate-red-green.md) · [reports/project-gate.md](reports/project-gate.md)
+
+**录屏待录制**。介绍项目后，从仓库根依次运行第 4 节两条命令并展示结果，再跑 `make check`（Windows 为 `python scripts/check.py`）。随后登录演示学生提交、教师触发 AI 初批并查看结果。录屏总长 3 分钟以内，上传后把下载地址填到报告开头，命令准备及演示细节见 [reports/demo-recording.md](reports/demo-recording.md)。
+
+## 6. 复盘
+
+代价最大的一次返工是镜像门禁。旧判定把空报告当零漏洞、按 CVE 放宽例外。修好后，CI 又发现两份运行镜像含受影响的程序，因而需要修改两份 Dockerfile、重建并扫描三份镜像，再按镜像 ID 核验缓解。下次在首轮 CI 前就加上缺报告、错误结构、未登记包和例外过期四类反例。[reports/review-04.md](reports/review-04.md) · [reports/review-06.md](reports/review-06.md)

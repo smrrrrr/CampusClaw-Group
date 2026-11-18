@@ -72,6 +72,17 @@ reports/lesson-10/**/*.png
 reports/lesson-10/**/*.db
 reports/lesson-10/**/*.env
 
+# 项目报告支撑证据，只允许脱敏的文字和JSON
+!reports/project-evidence/
+reports/project-evidence/*
+!reports/project-evidence/*.md
+!reports/project-evidence/*.json
+!reports/project-evidence/*.txt
+
+# 报告渲染中间文件与阅读副本，正式源文件为 report.md
+/tmp/
+/output/
+
 # ---- 日志与本地临时文件 ----
 # 第10课观测 overlay 的共享日志目录（运行时产物）
 logs/
